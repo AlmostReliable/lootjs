@@ -13,10 +13,13 @@ import dev.latvian.mods.rhino.util.HideFromJS;
 import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.ItemStack;
 import net.minecraft.loot.LootContext;
+import net.minecraft.loot.RandomValueRange;
+import net.minecraft.loot.conditions.*;
 import net.minecraft.util.ResourceLocation;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Predicate;
 import java.util.regex.Pattern;
 
@@ -77,6 +80,33 @@ public interface IConditionBuilder<B extends IConditionBuilder<?>> {
 
     default B type(LootContextType... pTypes) {
         return addCondition(new IsLootTableType(pTypes));
+    }
+
+    default B survivesExplosion() {
+        return addCondition(SurvivesExplosion.survivesExplosion().build());
+    }
+
+    default B timeCheck(long pPeriod, float pMin, float pMax) {
+        return addCondition(new TimeCheck(pPeriod, new RandomValueRange(pMin, pMax)));
+    }
+
+    default B timeCheck(float pMin, float pMax) {
+        return timeCheck(24000L, pMin, pMax);
+    }
+
+    default B weatherCheck(Map<String, Boolean> pMap) {
+        Boolean isRaining = pMap.getOrDefault("raining", null);
+        Boolean isThundering = pMap.getOrDefault("thundering", null);
+
+        return addCondition(new WeatherCheck(isRaining, isThundering));
+    }
+
+    default B randomChance(float pValue) {
+        return addCondition(RandomChance.randomChance(pValue).build());
+    }
+
+    default B randomChanceWithLooting(float pValue, float pLooting) {
+        return addCondition(RandomChanceWithLooting.randomChanceAndLootingBoost(pValue, pLooting).build());
     }
 
     B addCondition(Predicate<LootContext> pCondition);
