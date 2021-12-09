@@ -2,8 +2,12 @@ package com.github.llytho.lootjs.kube;
 
 import com.github.llytho.lootjs.action.CompositeLootAction;
 import com.github.llytho.lootjs.action.ConditionalLootAction;
+import com.github.llytho.lootjs.action.RemoveLootAction;
+import com.github.llytho.lootjs.action.ReplaceLootAction;
 import com.github.llytho.lootjs.kube.action.CustomJSAction;
 import com.github.llytho.lootjs.kube.context.LootContextJS;
+import dev.latvian.kubejs.item.ItemStackJS;
+import dev.latvian.kubejs.item.ingredient.IngredientJS;
 import dev.latvian.mods.rhino.util.HideFromJS;
 import net.minecraft.loot.LootContext;
 import net.minecraft.loot.conditions.LootConditionManager;
@@ -19,6 +23,14 @@ public class CompositeLootActionBuilder implements IConditionBuilder<CompositeLo
 
     public void thenApply(Consumer<LootContextJS> pAction) {
         buildCurrentAction(new CustomJSAction(pAction));
+    }
+
+    public void thenRemove(IngredientJS pIngredient) {
+        buildCurrentAction(new RemoveLootAction(pIngredient.getVanillaPredicate()));
+    }
+
+    public void thenReplace(IngredientJS pIngredient, ItemStackJS pItemStack) {
+        buildCurrentAction(new ReplaceLootAction(pIngredient.getVanillaPredicate(), pItemStack.getItemStack()));
     }
 
     @SuppressWarnings("unchecked")

@@ -6,7 +6,6 @@ import com.github.llytho.lootjs.core.LootContextType;
 import com.github.llytho.lootjs.util.BiomeUtils;
 import dev.latvian.kubejs.item.ingredient.IngredientJS;
 import dev.latvian.kubejs.util.UtilsJS;
-import dev.latvian.mods.rhino.util.HideFromJS;
 import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.ItemStack;
 import net.minecraft.loot.LootContext;
@@ -45,24 +44,14 @@ public interface IConditionBuilder<B extends IConditionBuilder<?>> {
     }
 
     default B anyLoot(IngredientJS... pIngredients) {
-        Arrays.stream(pIngredients).forEach(this::nonEmptyIngredientCheck);
-
-        @SuppressWarnings("unchecked") Predicate<ItemStack>[] predicates = (Predicate<ItemStack>[]) Arrays
-                .stream(pIngredients)
-                .map(IngredientJS::getVanillaPredicate)
-                .toArray(Predicate[]::new);
-
+        IngredientUtils.nonEmptyIngredientCheck(pIngredients);
+        Predicate<ItemStack>[] predicates = IngredientUtils.toVanillaPredicates(pIngredients);
         return addCondition(new ContainsLootCondition(predicates, ICondition::Or));
     }
 
     default B loot(IngredientJS... pIngredients) {
-        Arrays.stream(pIngredients).forEach(this::nonEmptyIngredientCheck);
-
-        @SuppressWarnings("unchecked") Predicate<ItemStack>[] predicates = (Predicate<ItemStack>[]) Arrays
-                .stream(pIngredients)
-                .map(IngredientJS::getVanillaPredicate)
-                .toArray(Predicate[]::new);
-
+        IngredientUtils.nonEmptyIngredientCheck(pIngredients);
+        Predicate<ItemStack>[] predicates = IngredientUtils.toVanillaPredicates(pIngredients);
         return addCondition(new ContainsLootCondition(predicates, ICondition::And));
     }
 
@@ -139,10 +128,4 @@ public interface IConditionBuilder<B extends IConditionBuilder<?>> {
 
     B addCondition(Predicate<LootContext> pCondition);
 
-    @HideFromJS
-    default void nonEmptyIngredientCheck(IngredientJS pIngredient) {
-        if (pIngredient.isEmpty()) {
-            throw new IllegalArgumentException("Given ingredient does not exists or is empty");
-        }
-    }
 }
