@@ -1,12 +1,9 @@
 package com.github.llytho.lootjs.kube;
 
-import com.github.llytho.lootjs.condition.ContainsAllLoot;
-import com.github.llytho.lootjs.condition.ContainsAnyLoot;
-import com.github.llytho.lootjs.condition.IsLootTableType;
-import com.github.llytho.lootjs.condition.MatchLootTableId;
+import com.github.llytho.lootjs.condition.*;
+import com.github.llytho.lootjs.core.ICondition;
 import com.github.llytho.lootjs.core.LootContextType;
-import com.github.llytho.lootjs.kube.condition.MatchSlotJS;
-import dev.latvian.kubejs.item.ItemStackJS;
+import com.github.llytho.lootjs.util.BiomeUtils;
 import dev.latvian.kubejs.item.ingredient.IngredientJS;
 import dev.latvian.kubejs.util.UtilsJS;
 import dev.latvian.mods.rhino.util.HideFromJS;
@@ -15,9 +12,14 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.loot.LootContext;
 import net.minecraft.loot.RandomValueRange;
 import net.minecraft.loot.conditions.*;
+import net.minecraft.util.RegistryKey;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.world.biome.Biome;
+import net.minecraft.world.gen.feature.structure.Structure;
+import net.minecraftforge.common.BiomeDictionary;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Predicate;
@@ -25,7 +27,7 @@ import java.util.regex.Pattern;
 
 public interface IConditionBuilder<B extends IConditionBuilder<?>> {
 
-    default B lootTable(Object... pObjects) {
+    default B anyLootTable(Object... pObjects) {
         List<Pattern> patterns = new ArrayList<>();
         List<ResourceLocation> locations = new ArrayList<>();
 
@@ -42,43 +44,41 @@ public interface IConditionBuilder<B extends IConditionBuilder<?>> {
                 patterns.toArray(new Pattern[0])));
     }
 
-    default B containsAnyLoot(IngredientJS pIngredient) {
-        nonEmptyIngredientCheck(pIngredient);
+    default B anyLoot(IngredientJS... pIngredients) {
+        Arrays.stream(pIngredients).forEach(this::nonEmptyIngredientCheck);
 
-        ItemStack[] vanillaStacks = pIngredient
-                .getStacks()
-                .stream()
-                .map(ItemStackJS::getItemStack)
-                .toArray(ItemStack[]::new);
+        @SuppressWarnings("unchecked") Predicate<ItemStack>[] predicates = (Predicate<ItemStack>[]) Arrays
+                .stream(pIngredients)
+                .map(IngredientJS::getVanillaPredicate)
+                .toArray(Predicate[]::new);
 
-        return addCondition(new ContainsAnyLoot(vanillaStacks));
+        return addCondition(new ContainsLootCondition(predicates, ICondition::Or));
     }
 
-    default B containsAllLoot(IngredientJS pIngredient) {
-        nonEmptyIngredientCheck(pIngredient);
+    default B loot(IngredientJS... pIngredients) {
+        Arrays.stream(pIngredients).forEach(this::nonEmptyIngredientCheck);
 
-        ItemStack[] vanillaStacks = pIngredient
-                .getStacks()
-                .stream()
-                .map(ItemStackJS::getItemStack)
-                .toArray(ItemStack[]::new);
+        @SuppressWarnings("unchecked") Predicate<ItemStack>[] predicates = (Predicate<ItemStack>[]) Arrays
+                .stream(pIngredients)
+                .map(IngredientJS::getVanillaPredicate)
+                .toArray(Predicate[]::new);
 
-        return addCondition(new ContainsAllLoot(vanillaStacks));
+        return addCondition(new ContainsLootCondition(predicates, ICondition::And));
     }
 
     default B matchMainHand(IngredientJS pIngredient) {
-        return addCondition(new MatchSlotJS(EquipmentSlotType.MAINHAND, pIngredient));
+        return addCondition(new MatchEquipmentSlot(EquipmentSlotType.MAINHAND, pIngredient.getVanillaPredicate()));
     }
 
     default B matchOffHand(IngredientJS pIngredient) {
-        return addCondition(new MatchSlotJS(EquipmentSlotType.OFFHAND, pIngredient));
+        return addCondition(new MatchEquipmentSlot(EquipmentSlotType.OFFHAND, pIngredient.getVanillaPredicate()));
     }
 
     default B matchSlot(EquipmentSlotType pSlot, IngredientJS pIngredient) {
-        return addCondition(new MatchSlotJS(pSlot, pIngredient));
+        return addCondition(new MatchEquipmentSlot(pSlot, pIngredient.getVanillaPredicate()));
     }
 
-    default B type(LootContextType... pTypes) {
+    default B anyType(LootContextType... pTypes) {
         return addCondition(new IsLootTableType(pTypes));
     }
 
@@ -109,12 +109,40 @@ public interface IConditionBuilder<B extends IConditionBuilder<?>> {
         return addCondition(RandomChanceWithLooting.randomChanceAndLootingBoost(pValue, pLooting).build());
     }
 
+    default B anyBiome(ResourceLocation... pFilters) {
+        RegistryKey<Biome>[] registryKeys = BiomeUtils.findBiomeKeys(pFilters);
+        return addCondition(new BiomeCheck(registryKeys, ICondition::Or));
+    }
+
+    default B anyBiomeType(String... pTypes) {
+        BiomeDictionary.Type[] types = BiomeUtils.findTypes(pTypes);
+        return addCondition(new BiomeTypeCheck(types, ICondition::Or));
+    }
+
+    default B biomeType(String... pTypes) {
+        BiomeDictionary.Type[] types = BiomeUtils.findTypes(pTypes);
+        return addCondition(new BiomeTypeCheck(types, ICondition::And));
+    }
+
+    default B anyDimension(ResourceLocation... pDimensions) {
+        return addCondition(new AnyDimension(pDimensions));
+    }
+
+    default B anyStructure(ResourceLocation... pStructures) {
+        Structure<?>[] structures = BiomeUtils.findStructures(pStructures);
+        return addCondition(new AnyStructure(structures));
+    }
+
+    default B lightLevel(int min, int max) {
+        return addCondition(new IsLightLevel(min, max));
+    }
+
     B addCondition(Predicate<LootContext> pCondition);
 
     @HideFromJS
     default void nonEmptyIngredientCheck(IngredientJS pIngredient) {
         if (pIngredient.isEmpty()) {
-            throw new IllegalArgumentException("Given pIngredient does not exists or is empty");
+            throw new IllegalArgumentException("Given ingredient does not exists or is empty");
         }
     }
 }

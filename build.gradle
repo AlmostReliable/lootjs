@@ -125,6 +125,7 @@ dependencies {
     runtimeOnly fg.deobf("curse.maven:scalinghealth-248027:3240365")
     runtimeOnly fg.deobf("curse.maven:patchouli-306770:3459118")
     runtimeOnly fg.deobf("curse.maven:mysticalworld-282940:3377210")
+    runtimeOnly fg.deobf("curse.maven:byg-247560:3485079")
 
     annotationProcessor 'org.spongepowered:mixin:0.8.3:processor'
 }

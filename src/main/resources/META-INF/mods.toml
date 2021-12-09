@@ -1,4 +1,3 @@
-
 modLoader = "javafml"
 loaderVersion = "[36,)"
 license = "GNU LGPLv3"
