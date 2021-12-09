@@ -34,6 +34,9 @@ public class LootModificationsAPI {
         ILootContextData contextData = pContext.getParamOrNull(Constants.DATA);
         assert contextData != null;
 
+        // TODO more testing here. I don't really know why there are empty items in the list or better:
+        // TODO There are items which refer to the correct item but their cache flag is true so it acts like air
+        pLoot.removeIf(ItemStack::isEmpty);
         contextData.setGeneratedLoot(pLoot);
         for (Consumer<LootContext> action : actions) {
             action.accept(pContext);
