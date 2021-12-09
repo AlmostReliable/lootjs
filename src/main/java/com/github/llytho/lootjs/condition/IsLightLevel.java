@@ -5,9 +5,7 @@ import net.minecraft.loot.LootParameters;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.vector.Vector3d;
 
-import java.util.function.Predicate;
-
-public class IsLightLevel implements Predicate<LootContext> {
+public class IsLightLevel implements IExtendedLootCondition {
 
     private final int min;
     private final int max;

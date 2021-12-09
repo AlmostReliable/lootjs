@@ -7,9 +7,7 @@ import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.gen.feature.structure.Structure;
 import net.minecraft.world.gen.feature.structure.StructureStart;
 
-import java.util.function.Predicate;
-
-public class AnyStructure implements Predicate<LootContext> {
+public class AnyStructure implements IExtendedLootCondition {
 
     private final Structure<?>[] structures;
 

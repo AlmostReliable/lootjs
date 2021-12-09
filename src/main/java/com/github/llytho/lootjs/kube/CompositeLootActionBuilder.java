@@ -10,6 +10,7 @@ import dev.latvian.kubejs.item.ItemStackJS;
 import dev.latvian.kubejs.item.ingredient.IngredientJS;
 import dev.latvian.mods.rhino.util.HideFromJS;
 import net.minecraft.loot.LootContext;
+import net.minecraft.loot.conditions.ILootCondition;
 import net.minecraft.loot.conditions.LootConditionManager;
 
 import java.util.ArrayList;
@@ -53,7 +54,7 @@ public class CompositeLootActionBuilder implements IConditionBuilder<CompositeLo
     }
 
     @Override
-    public CompositeLootActionBuilder addCondition(Predicate<LootContext> pCondition) {
+    public CompositeLootActionBuilder addCondition(ILootCondition pCondition) {
         conditions.add(pCondition);
         return this;
     }

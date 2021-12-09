@@ -8,7 +8,6 @@ import dev.latvian.kubejs.item.ingredient.IngredientJS;
 import dev.latvian.kubejs.util.UtilsJS;
 import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.ItemStack;
-import net.minecraft.loot.LootContext;
 import net.minecraft.loot.RandomValueRange;
 import net.minecraft.loot.conditions.*;
 import net.minecraft.util.RegistryKey;
@@ -18,9 +17,9 @@ import net.minecraft.world.gen.feature.structure.Structure;
 import net.minecraftforge.common.BiomeDictionary;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Consumer;
 import java.util.function.Predicate;
 import java.util.regex.Pattern;
 
@@ -126,6 +125,22 @@ public interface IConditionBuilder<B extends IConditionBuilder<?>> {
         return addCondition(new IsLightLevel(min, max));
     }
 
-    B addCondition(Predicate<LootContext> pCondition);
+    default B killedByPlayer() {
+        return addCondition(KilledByPlayer.killedByPlayer().build());
+    }
+
+    default B not(Consumer<InvertedConditionBuilderJS> pAction) {
+        InvertedConditionBuilderJS builder = new InvertedConditionBuilderJS();
+        pAction.accept(builder);
+        return addCondition(builder.build());
+    }
+
+    default B any(Consumer<AlternativeBuilderJS> pAction) {
+        AlternativeBuilderJS builder = new AlternativeBuilderJS();
+        pAction.accept(builder);
+        return addCondition(builder.build());
+    }
+
+    B addCondition(ILootCondition pCondition);
 
 }

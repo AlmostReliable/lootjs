@@ -5,9 +5,7 @@ import com.github.llytho.lootjs.core.ILootContextData;
 import com.github.llytho.lootjs.core.LootContextType;
 import net.minecraft.loot.LootContext;
 
-import java.util.function.Predicate;
-
-public class IsLootTableType implements Predicate<LootContext> {
+public class IsLootTableType implements IExtendedLootCondition {
 
     private final LootContextType[] types;
 

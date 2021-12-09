@@ -6,7 +6,7 @@ import net.minecraft.loot.LootContext;
 import javax.annotation.Nullable;
 import java.util.function.Predicate;
 
-public abstract class ValueCondition<V, T> implements Predicate<LootContext> {
+public abstract class ValueCondition<V, T> implements IExtendedLootCondition {
 
     private final V[] values;
     private final Predicate<T> condition;

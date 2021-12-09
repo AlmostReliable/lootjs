@@ -3,10 +3,9 @@ package com.github.llytho.lootjs.condition;
 import net.minecraft.loot.LootContext;
 import net.minecraft.util.ResourceLocation;
 
-import java.util.function.Predicate;
 import java.util.regex.Pattern;
 
-public class MatchLootTableId implements Predicate<LootContext> {
+public class MatchLootTableId implements IExtendedLootCondition {
 
     public final ResourceLocation[] locations;
     public final Pattern[] patterns;

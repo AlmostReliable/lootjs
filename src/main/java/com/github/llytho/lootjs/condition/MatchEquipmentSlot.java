@@ -12,7 +12,7 @@ import net.minecraft.loot.LootParameters;
 import javax.annotation.Nullable;
 import java.util.function.Predicate;
 
-public class MatchEquipmentSlot implements Predicate<LootContext> {
+public class MatchEquipmentSlot implements IExtendedLootCondition {
 
     private final Predicate<ItemStack> predicate;
     private final EquipmentSlotType slot;
