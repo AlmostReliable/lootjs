@@ -1,40 +1,41 @@
 package com.github.llytho.lootjs.condition;
 
 import com.github.llytho.lootjs.core.Constants;
-import com.github.llytho.lootjs.core.ICondition;
 import com.github.llytho.lootjs.core.ILootContextData;
 import net.minecraft.item.ItemStack;
 import net.minecraft.loot.LootContext;
 
 import javax.annotation.Nullable;
-import java.util.List;
+import java.util.Collection;
 import java.util.function.Predicate;
 
-public class ContainsLootCondition extends ValueCondition<Predicate<ItemStack>, List<ItemStack>> {
+public class ContainsLootCondition extends ValueCondition<ItemStack, Predicate<ItemStack>> {
+    private final Predicate<ItemStack> predicate;
 
-    public ContainsLootCondition(Predicate<ItemStack>[] items, ICondition<Predicate<ItemStack>, List<ItemStack>> func) {
-        super(items, func);
+    public ContainsLootCondition(Predicate<ItemStack> pPredicate, IConditionOp.Factory<ItemStack, Predicate<ItemStack>> pFunc) {
+        super(pFunc);
+        predicate = pPredicate;
     }
 
     @Override
-    protected boolean match(List<ItemStack> pLoot, Predicate<ItemStack> pPredicate) {
-        for (ItemStack itemStack : pLoot) {
-            if (pPredicate.test(itemStack)) {
-                return true;
-            }
-        }
-
-        return false;
+    protected boolean match(ItemStack itemStack, Predicate<ItemStack> itemStackPredicate) {
+        return itemStackPredicate.test(itemStack);
     }
 
     @Nullable
     @Override
-    protected List<ItemStack> getValue(LootContext pContext) {
+    protected Collection<ItemStack> getIterableValue(LootContext pContext) {
         ILootContextData data = pContext.getParamOrNull(Constants.DATA);
         if (data == null) {
             return null;
         }
 
         return data.getGeneratedLoot();
+    }
+
+    @Nullable
+    @Override
+    protected Predicate<ItemStack> getValue(LootContext pContext) {
+        return predicate;
     }
 }

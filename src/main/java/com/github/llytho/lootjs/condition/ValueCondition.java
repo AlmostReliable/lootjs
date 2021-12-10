@@ -1,33 +1,34 @@
 package com.github.llytho.lootjs.condition;
 
-import com.github.llytho.lootjs.core.ICondition;
 import net.minecraft.loot.LootContext;
 
 import javax.annotation.Nullable;
-import java.util.function.Predicate;
+import java.util.Collection;
 
-public abstract class ValueCondition<V, T> implements IExtendedLootCondition {
+public abstract class ValueCondition<I, V> implements IExtendedLootCondition {
 
-    private final V[] values;
-    private final Predicate<T> condition;
+    private final IConditionOp.Predicate<I, V> predicate;
 
-    public ValueCondition(V[] pValues, ICondition<V, T> pCondition) {
-        this.values = pValues;
-        this.condition = pCondition.create(pValues, this::match);
+    public ValueCondition(IConditionOp.Factory<I, V> pFunc) {
+        predicate = pFunc.apply(this::match);
     }
 
-    protected abstract boolean match(T t, V v);
+    protected abstract boolean match(I i, V v);
 
     @Nullable
-    protected abstract T getValue(LootContext pContext);
+    protected abstract Collection<I> getIterableValue(LootContext pContext);
+
+    @Nullable
+    protected abstract V getValue(LootContext pContext);
 
     @Override
     public final boolean test(LootContext pContext) {
-        T value = getValue(pContext);
-        if (value == null) {
+        Collection<I> iterableValue = getIterableValue(pContext);
+        V toCheckValue = getValue(pContext);
+        if (iterableValue == null || toCheckValue == null) {
             return false;
         }
 
-        return condition.test(value);
+        return predicate.test(iterableValue, toCheckValue);
     }
 }

@@ -1,7 +1,7 @@
 package com.github.llytho.lootjs.kube;
 
 import com.github.llytho.lootjs.LootModificationsAPI;
-import com.github.llytho.lootjs.action.CompositeLootAction;
+import com.github.llytho.lootjs.action.CompositeAction;
 import dev.latvian.kubejs.event.EventJS;
 import dev.latvian.mods.rhino.util.HideFromJS;
 
@@ -28,12 +28,12 @@ public class LootModificationEventJS extends EventJS {
     protected void afterPosted(boolean pResult) {
         super.afterPosted(pResult);
 
-        List<CompositeLootAction> actions = getModifierBuilders()
+        List<CompositeAction> actions = getModifierBuilders()
                 .stream()
                 .map(CompositeLootActionBuilder::build)
                 .collect(Collectors.toList());
 
-        for (CompositeLootAction action : actions) {
+        for (CompositeAction action : actions) {
             LootModificationsAPI.get().addAction(action);
         }
     }

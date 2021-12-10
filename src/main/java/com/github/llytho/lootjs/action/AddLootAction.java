@@ -6,22 +6,22 @@ import com.github.llytho.lootjs.core.ILootContextData;
 import net.minecraft.item.ItemStack;
 import net.minecraft.loot.LootContext;
 
-import java.util.function.Predicate;
+public class AddLootAction implements IAction<LootContext> {
 
-public class RemoveLootAction implements IAction<LootContext> {
-    private final Predicate<ItemStack> predicate;
+    private final ItemStack[] itemStacks;
 
-    public RemoveLootAction(Predicate<ItemStack> pPredicate) {
-        predicate = pPredicate;
+    public AddLootAction(ItemStack[] pItemStacks) {
+        this.itemStacks = pItemStacks;
     }
 
     @Override
     public boolean accept(LootContext pContext) {
         ILootContextData data = pContext.getParamOrNull(Constants.DATA);
         if (data != null) {
-            data.getGeneratedLoot().removeIf(predicate);
+            for (ItemStack itemStack : itemStacks) {
+                data.getGeneratedLoot().add(itemStack.copy());
+            }
         }
-
         return true;
     }
 }

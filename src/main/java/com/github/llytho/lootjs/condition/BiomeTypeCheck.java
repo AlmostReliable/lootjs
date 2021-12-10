@@ -1,6 +1,5 @@
 package com.github.llytho.lootjs.condition;
 
-import com.github.llytho.lootjs.core.ICondition;
 import net.minecraft.loot.LootContext;
 import net.minecraft.loot.LootParameters;
 import net.minecraft.util.RegistryKey;
@@ -11,16 +10,28 @@ import net.minecraft.world.biome.Biome;
 import net.minecraftforge.common.BiomeDictionary;
 
 import javax.annotation.Nullable;
+import java.util.Collection;
+import java.util.List;
 import java.util.Set;
 
 public class BiomeTypeCheck extends ValueCondition<BiomeDictionary.Type, Set<BiomeDictionary.Type>> {
-    public BiomeTypeCheck(BiomeDictionary.Type[] pValues, ICondition<BiomeDictionary.Type, Set<BiomeDictionary.Type>> pCondition) {
-        super(pValues, pCondition);
+
+    private final List<BiomeDictionary.Type> types;
+
+    public BiomeTypeCheck(List<BiomeDictionary.Type> pTypes, IConditionOp.Factory<BiomeDictionary.Type, Set<BiomeDictionary.Type>> pFunc) {
+        super(pFunc);
+        types = pTypes;
     }
 
     @Override
-    protected boolean match(Set<BiomeDictionary.Type> pTypes, BiomeDictionary.Type pType) {
-        return pTypes.contains(pType);
+    protected boolean match(BiomeDictionary.Type type, Set<BiomeDictionary.Type> types) {
+        return types.contains(type);
+    }
+
+    @Nullable
+    @Override
+    protected Collection<BiomeDictionary.Type> getIterableValue(LootContext pContext) {
+        return types;
     }
 
     @Nullable

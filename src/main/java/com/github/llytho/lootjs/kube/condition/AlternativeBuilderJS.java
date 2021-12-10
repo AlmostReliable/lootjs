@@ -1,4 +1,4 @@
-package com.github.llytho.lootjs.kube;
+package com.github.llytho.lootjs.kube.condition;
 
 import dev.latvian.mods.rhino.util.HideFromJS;
 import net.minecraft.loot.conditions.Alternative;

@@ -9,8 +9,10 @@ import net.minecraft.world.gen.feature.structure.Structure;
 import net.minecraftforge.common.BiomeDictionary;
 import net.minecraftforge.registries.ForgeRegistries;
 
+import java.util.List;
+
 public class BiomeUtils {
-    public static BiomeDictionary.Type[] findTypes(String[] pTypes) {
+    public static List<BiomeDictionary.Type> findTypes(String[] pTypes) {
         FilterResult<String, BiomeDictionary.Type> filterResult = FilterResult.create(pTypes, (pFilter) -> {
             return BiomeDictionary.Type
                     .getAll()
@@ -22,11 +24,11 @@ public class BiomeUtils {
 
         filterResult.yeetIfUnresolvedFilters();
 
-        return filterResult.getFoundValues().toArray(new BiomeDictionary.Type[0]);
+        return filterResult.getFoundValues();
     }
 
     @SuppressWarnings("unchecked")
-    public static RegistryKey<Biome>[] findBiomeKeys(ResourceLocation[] pBiomes) {
+    public static List<RegistryKey<Biome>> findBiomeKeys(ResourceLocation[] pBiomes) {
         FilterResult<ResourceLocation, RegistryKey<Biome>> filterResult = FilterResult.create(pBiomes, (pLocation) -> {
             if (ForgeRegistries.BIOMES.getValue(pLocation) == null) {
                 return null;
@@ -34,9 +36,8 @@ public class BiomeUtils {
             return RegistryKey.create(Registry.BIOME_REGISTRY, pLocation);
         });
 
-        filterResult.yeetIfUnresolvedFilters();
 
-        return (RegistryKey<Biome>[]) filterResult.getFoundValues().toArray(new RegistryKey[0]);
+        return filterResult.getFoundValues();
     }
 
     public static Structure<?>[] findStructures(ResourceLocation[] pBiomes) {

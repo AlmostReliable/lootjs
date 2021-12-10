@@ -11,7 +11,7 @@ public class LootConditionTypes {
     public static final LootConditionType UNUSED = create();
 
     private static LootConditionType create() {
-        new LootConditionType(new UnusedSerializer());
+        return new LootConditionType(new UnusedSerializer());
     }
 
     private static class UnusedSerializer implements ILootSerializer<ILootCondition> {

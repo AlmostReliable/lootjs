@@ -1,11 +1,7 @@
 package com.github.llytho.lootjs.condition;
 
-import net.minecraft.loot.LootConditionType;
 import net.minecraft.loot.LootContext;
-import net.minecraft.loot.conditions.ILootCondition;
 import net.minecraft.util.ResourceLocation;
-
-import java.util.function.Predicate;
 
 public class AnyDimension implements IExtendedLootCondition {
 

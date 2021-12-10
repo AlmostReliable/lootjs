@@ -1,26 +1,21 @@
-package com.github.llytho.lootjs.kube;
+package com.github.llytho.lootjs.kube.condition;
 
 import com.github.llytho.lootjs.condition.*;
-import com.github.llytho.lootjs.core.ICondition;
 import com.github.llytho.lootjs.core.LootContextType;
+import com.github.llytho.lootjs.kube.IngredientUtils;
 import com.github.llytho.lootjs.util.BiomeUtils;
 import dev.latvian.kubejs.item.ingredient.IngredientJS;
 import dev.latvian.kubejs.util.UtilsJS;
 import net.minecraft.inventory.EquipmentSlotType;
-import net.minecraft.item.ItemStack;
 import net.minecraft.loot.RandomValueRange;
 import net.minecraft.loot.conditions.*;
-import net.minecraft.util.RegistryKey;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.world.biome.Biome;
 import net.minecraft.world.gen.feature.structure.Structure;
-import net.minecraftforge.common.BiomeDictionary;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
-import java.util.function.Predicate;
 import java.util.regex.Pattern;
 
 public interface IConditionBuilder<B extends IConditionBuilder<?>> {
@@ -42,16 +37,17 @@ public interface IConditionBuilder<B extends IConditionBuilder<?>> {
                 patterns.toArray(new Pattern[0])));
     }
 
-    default B anyLoot(IngredientJS... pIngredients) {
-        IngredientUtils.nonEmptyIngredientCheck(pIngredients);
-        Predicate<ItemStack>[] predicates = IngredientUtils.toVanillaPredicates(pIngredients);
-        return addCondition(new ContainsLootCondition(predicates, ICondition::Or));
+    default B matchLoot(IngredientJS pIngredient) {
+        return matchLoot(pIngredient, false);
     }
 
-    default B loot(IngredientJS... pIngredients) {
-        IngredientUtils.nonEmptyIngredientCheck(pIngredients);
-        Predicate<ItemStack>[] predicates = IngredientUtils.toVanillaPredicates(pIngredients);
-        return addCondition(new ContainsLootCondition(predicates, ICondition::And));
+    default B matchLoot(IngredientJS pIngredient, boolean exact) {
+        IngredientUtils.nonEmptyIngredientCheck(pIngredient);
+        if (exact) {
+            return addCondition(new ContainsLootCondition(pIngredient.getVanillaPredicate(),
+                    IConditionOp.Predicate::And));
+        }
+        return addCondition(new ContainsLootCondition(pIngredient.getVanillaPredicate(), IConditionOp.Predicate::Or));
     }
 
     default B matchMainHand(IngredientJS pIngredient) {
@@ -98,18 +94,15 @@ public interface IConditionBuilder<B extends IConditionBuilder<?>> {
     }
 
     default B anyBiome(ResourceLocation... pFilters) {
-        RegistryKey<Biome>[] registryKeys = BiomeUtils.findBiomeKeys(pFilters);
-        return addCondition(new BiomeCheck(registryKeys, ICondition::Or));
+        return addCondition(new BiomeCheck(BiomeUtils.findBiomeKeys(pFilters), IConditionOp.Predicate::Or));
     }
 
     default B anyBiomeType(String... pTypes) {
-        BiomeDictionary.Type[] types = BiomeUtils.findTypes(pTypes);
-        return addCondition(new BiomeTypeCheck(types, ICondition::Or));
+        return addCondition(new BiomeTypeCheck(BiomeUtils.findTypes(pTypes), IConditionOp.Predicate::Or));
     }
 
     default B biomeType(String... pTypes) {
-        BiomeDictionary.Type[] types = BiomeUtils.findTypes(pTypes);
-        return addCondition(new BiomeTypeCheck(types, ICondition::And));
+        return addCondition(new BiomeTypeCheck(BiomeUtils.findTypes(pTypes), IConditionOp.Predicate::And));
     }
 
     default B anyDimension(ResourceLocation... pDimensions) {
@@ -129,8 +122,8 @@ public interface IConditionBuilder<B extends IConditionBuilder<?>> {
         return addCondition(KilledByPlayer.killedByPlayer().build());
     }
 
-    default B not(Consumer<InvertedConditionBuilderJS> pAction) {
-        InvertedConditionBuilderJS builder = new InvertedConditionBuilderJS();
+    default B not(Consumer<InvertedBuilderJS> pAction) {
+        InvertedBuilderJS builder = new InvertedBuilderJS();
         pAction.accept(builder);
         return addCondition(builder.build());
     }

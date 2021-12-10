@@ -1,18 +1,18 @@
 package com.github.llytho.lootjs;
 
 import com.github.llytho.lootjs.core.Constants;
+import com.github.llytho.lootjs.core.IAction;
 import com.github.llytho.lootjs.core.ILootContextData;
 import net.minecraft.item.ItemStack;
 import net.minecraft.loot.LootContext;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Consumer;
 
 public class LootModificationsAPI {
 
     private static LootModificationsAPI instance;
-    private final List<Consumer<LootContext>> actions;
+    private final List<IAction<LootContext>> actions;
 
     public LootModificationsAPI() {
         actions = new ArrayList<>();
@@ -38,13 +38,13 @@ public class LootModificationsAPI {
         // TODO There are items which refer to the correct item but their cache flag is true so it acts like air
         pLoot.removeIf(ItemStack::isEmpty);
         contextData.setGeneratedLoot(pLoot);
-        for (Consumer<LootContext> action : actions) {
+        for (IAction<LootContext> action : actions) {
             action.accept(pContext);
             contextData.reset();
         }
     }
 
-    public void addAction(Consumer<LootContext> pAction) {
+    public void addAction(IAction<LootContext> pAction) {
         actions.add(pAction);
     }
 }

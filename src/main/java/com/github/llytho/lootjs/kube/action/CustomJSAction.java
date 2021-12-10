@@ -1,11 +1,12 @@
 package com.github.llytho.lootjs.kube.action;
 
+import com.github.llytho.lootjs.core.IAction;
 import com.github.llytho.lootjs.kube.context.LootContextJS;
 import net.minecraft.loot.LootContext;
 
 import java.util.function.Consumer;
 
-public class CustomJSAction implements Consumer<LootContext> {
+public class CustomJSAction implements IAction<LootContext> {
 
     private final Consumer<LootContextJS> action;
 
@@ -14,8 +15,9 @@ public class CustomJSAction implements Consumer<LootContext> {
     }
 
     @Override
-    public void accept(LootContext pContext) {
+    public boolean accept(LootContext pContext) {
         LootContextJS contextJS = new LootContextJS(pContext);
         action.accept(contextJS);
+        return !contextJS.isCanceled();
     }
 }

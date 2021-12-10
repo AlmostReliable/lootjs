@@ -8,18 +8,18 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 public class FilterResult<F, T> {
-    private final List<F> notFoundFilters;
-    private final List<T> foundValues;
+    private final ArrayList<F> notFoundFilters;
+    private final ArrayList<T> foundValues;
 
-    private FilterResult(List<F> pNotFoundFilters, List<T> pFoundValues) {
+    private FilterResult(ArrayList<F> pNotFoundFilters, ArrayList<T> pFoundValues) {
         notFoundFilters = pNotFoundFilters;
         foundValues = pFoundValues;
     }
 
     @SuppressWarnings("unchecked")
     public static <F, T> FilterResult<F, T> create(F[] pFilters, Function<F, T> pConverter) {
-        List<F> notFoundFilters = new ArrayList<>();
-        List<T> foundValues = new ArrayList<>();
+        ArrayList<F> notFoundFilters = new ArrayList<>();
+        ArrayList<T> foundValues = new ArrayList<>();
 
         for (F filter : pFilters) {
             T convertedFilter = pConverter.apply(filter);
