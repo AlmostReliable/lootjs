@@ -21,24 +21,24 @@ public class BiomeCheck extends ValueCondition<RegistryKey<Biome>, RegistryKey<B
     }
 
     @Override
-    protected boolean match(RegistryKey<Biome> biomeRegistryKey, RegistryKey<Biome> biomeRegistryKey2) {
-        return biomeRegistryKey == biomeRegistryKey2;
+    protected boolean match(RegistryKey<Biome> biomeThis, RegistryKey<Biome> biomeFromContext) {
+        return biomeThis == biomeFromContext;
     }
 
     @Nullable
     @Override
-    protected Collection<RegistryKey<Biome>> getIterableValue(LootContext pContext) {
+    protected Collection<RegistryKey<Biome>> getLeftIterableValue(LootContext context) {
         return biomes;
     }
 
     @Nullable
     @Override
-    protected RegistryKey<Biome> getValue(LootContext pContext) {
-        Vector3d origin = pContext.getParamOrNull(LootParameters.ORIGIN);
+    protected RegistryKey<Biome> getRightValue(LootContext context) {
+        Vector3d origin = context.getParamOrNull(LootParameters.ORIGIN);
         if (origin == null) return null;
 
         BlockPos blockPos = new BlockPos(origin.x, origin.y, origin.z);
-        Biome biome = pContext.getLevel().getBiome(blockPos);
+        Biome biome = context.getLevel().getBiome(blockPos);
         if (biome.getRegistryName() == null) {
             return null;
         }

@@ -12,14 +12,14 @@ public class ReplaceLootAction implements IAction<LootContext> {
     private final Predicate<ItemStack> predicate;
     private final ItemStack itemStack;
 
-    public ReplaceLootAction(Predicate<ItemStack> pPredicate, ItemStack pItemStack) {
-        predicate = pPredicate;
-        itemStack = pItemStack;
+    public ReplaceLootAction(Predicate<ItemStack> predicate, ItemStack itemStack) {
+        this.predicate = predicate;
+        this.itemStack = itemStack;
     }
 
     @Override
-    public boolean accept(LootContext pContext) {
-        ILootContextData data = pContext.getParamOrNull(Constants.DATA);
+    public boolean accept(LootContext context) {
+        ILootContextData data = context.getParamOrNull(Constants.DATA);
         if (data != null) {
             for (int i = 0; i < data.getGeneratedLoot().size(); i++) {
                 if (predicate.test(data.getGeneratedLoot().get(i))) {

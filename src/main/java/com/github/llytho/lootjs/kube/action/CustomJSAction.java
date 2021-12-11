@@ -15,8 +15,8 @@ public class CustomJSAction implements IAction<LootContext> {
     }
 
     @Override
-    public boolean accept(LootContext pContext) {
-        LootContextJS contextJS = new LootContextJS(pContext);
+    public boolean accept(LootContext context) {
+        LootContextJS contextJS = new LootContextJS(context);
         action.accept(contextJS);
         return !contextJS.isCanceled();
     }

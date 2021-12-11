@@ -11,18 +11,18 @@ public class FilterResult<F, T> {
     private final ArrayList<F> notFoundFilters;
     private final ArrayList<T> foundValues;
 
-    private FilterResult(ArrayList<F> pNotFoundFilters, ArrayList<T> pFoundValues) {
-        notFoundFilters = pNotFoundFilters;
-        foundValues = pFoundValues;
+    private FilterResult(ArrayList<F> notFoundFilters, ArrayList<T> foundValues) {
+        this.notFoundFilters = notFoundFilters;
+        this.foundValues = foundValues;
     }
 
     @SuppressWarnings("unchecked")
-    public static <F, T> FilterResult<F, T> create(F[] pFilters, Function<F, T> pConverter) {
+    public static <F, T> FilterResult<F, T> create(F[] filters, Function<F, T> converter) {
         ArrayList<F> notFoundFilters = new ArrayList<>();
         ArrayList<T> foundValues = new ArrayList<>();
 
-        for (F filter : pFilters) {
-            T convertedFilter = pConverter.apply(filter);
+        for (F filter : filters) {
+            T convertedFilter = converter.apply(filter);
             if (convertedFilter == null) {
                 notFoundFilters.add(filter);
             } else {
@@ -40,15 +40,6 @@ public class FilterResult<F, T> {
     public List<T> getFoundValues() {
         return Collections.unmodifiableList(foundValues);
     }
-//
-//    @SuppressWarnings("unchecked")
-//    public T[] getFoundValuesAsArray() {
-//        T[] result = (T[]) Array.newInstance(castClass, foundValues.size());
-//        for (int i = 0; i < result.length; i++) {
-//            result[i] = foundValues.get(i);
-//        }
-//        return result;
-//    }
 
     public void yeetIfUnresolvedFilters() {
         if (notFoundFilters.isEmpty()) {

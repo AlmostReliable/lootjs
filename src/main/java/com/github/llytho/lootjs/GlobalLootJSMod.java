@@ -18,7 +18,7 @@ public class GlobalLootJSMod {
     }
 
     @SubscribeEvent
-    public void setup(final FMLCommonSetupEvent pEvent) {
+    public void setup(final FMLCommonSetupEvent event) {
         // MinecraftForge.EVENT_BUS.register(MyClassWithEvents.class);
     }
 }

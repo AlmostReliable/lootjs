@@ -17,31 +17,31 @@ public class MatchEquipmentSlot implements IExtendedLootCondition {
     private final Predicate<ItemStack> predicate;
     private final EquipmentSlotType slot;
 
-    public MatchEquipmentSlot(EquipmentSlotType pSlot, Predicate<ItemStack> pPredicate) {
-        this.slot = pSlot;
-        this.predicate = pPredicate;
+    public MatchEquipmentSlot(EquipmentSlotType slot, Predicate<ItemStack> predicate) {
+        this.slot = slot;
+        this.predicate = predicate;
     }
 
     @Override
-    public boolean test(LootContext pContext) {
-        ILootContextData data = pContext.getParamOrNull(Constants.DATA);
+    public boolean test(LootContext context) {
+        ILootContextData data = context.getParamOrNull(Constants.DATA);
         if (data == null) return false;
 
         switch (data.getLootContextType()) {
             case BLOCK:
             case CHEST:
-                return matchSlot(pContext.getParamOrNull(LootParameters.THIS_ENTITY));
+                return matchSlot(context.getParamOrNull(LootParameters.THIS_ENTITY));
             case ENTITY:
             case FISHING:
-                return matchSlot(pContext.getParamOrNull(LootParameters.KILLER_ENTITY));
+                return matchSlot(context.getParamOrNull(LootParameters.KILLER_ENTITY));
         }
 
         return false;
     }
 
-    private boolean matchSlot(@Nullable Entity pEntity) {
-        if (pEntity instanceof ServerPlayerEntity) {
-            return predicate.test(((ServerPlayerEntity) pEntity).getItemBySlot(slot));
+    private boolean matchSlot(@Nullable Entity entity) {
+        if (entity instanceof ServerPlayerEntity) {
+            return predicate.test(((ServerPlayerEntity) entity).getItemBySlot(slot));
         }
 
         return false;

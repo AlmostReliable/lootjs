@@ -12,20 +12,20 @@ import java.util.function.Predicate;
 public class ContainsLootCondition extends ValueCondition<ItemStack, Predicate<ItemStack>> {
     private final Predicate<ItemStack> predicate;
 
-    public ContainsLootCondition(Predicate<ItemStack> pPredicate, IConditionOp.Factory<ItemStack, Predicate<ItemStack>> pFunc) {
-        super(pFunc);
-        predicate = pPredicate;
+    public ContainsLootCondition(Predicate<ItemStack> predicate, IConditionOp.Factory<ItemStack, Predicate<ItemStack>> factory) {
+        super(factory);
+        this.predicate = predicate;
     }
 
     @Override
-    protected boolean match(ItemStack itemStack, Predicate<ItemStack> itemStackPredicate) {
-        return itemStackPredicate.test(itemStack);
+    protected boolean match(ItemStack itemStack, Predicate<ItemStack> predicate) {
+        return predicate.test(itemStack);
     }
 
     @Nullable
     @Override
-    protected Collection<ItemStack> getIterableValue(LootContext pContext) {
-        ILootContextData data = pContext.getParamOrNull(Constants.DATA);
+    protected Collection<ItemStack> getLeftIterableValue(LootContext context) {
+        ILootContextData data = context.getParamOrNull(Constants.DATA);
         if (data == null) {
             return null;
         }
@@ -35,7 +35,7 @@ public class ContainsLootCondition extends ValueCondition<ItemStack, Predicate<I
 
     @Nullable
     @Override
-    protected Predicate<ItemStack> getValue(LootContext pContext) {
+    protected Predicate<ItemStack> getRightValue(LootContext context) {
         return predicate;
     }
 }

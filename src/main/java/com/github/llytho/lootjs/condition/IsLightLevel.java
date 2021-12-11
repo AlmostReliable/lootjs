@@ -16,14 +16,14 @@ public class IsLightLevel implements IExtendedLootCondition {
     }
 
     @Override
-    public boolean test(LootContext pContext) {
-        Vector3d origin = pContext.getParamOrNull(LootParameters.ORIGIN);
+    public boolean test(LootContext context) {
+        Vector3d origin = context.getParamOrNull(LootParameters.ORIGIN);
         if (origin == null) {
             return false;
         }
 
         BlockPos blockPos = new BlockPos(origin.x, origin.y, origin.z);
-        int light = pContext.getLevel().getMaxLocalRawBrightness(blockPos);
+        int light = context.getLevel().getMaxLocalRawBrightness(blockPos);
         return min <= light && light <= max;
     }
 }

@@ -16,7 +16,7 @@ import java.util.List;
 public class ForgeHooksMixin {
 
     @Inject(method = "modifyLoot(Lnet/minecraft/util/ResourceLocation;Ljava/util/List;Lnet/minecraft/loot/LootContext;)Ljava/util/List;", at = @At("RETURN"), remap = false)
-    private static void invokeActions(ResourceLocation pLootTableId, List<ItemStack> pLoot, LootContext pContext, CallbackInfoReturnable<List<ItemStack>> pInfo) {
-        LootModificationsAPI.get().invokeActions(pLoot, pContext);
+    private static void invokeActions(ResourceLocation lootTableID, List<ItemStack> loot, LootContext context, CallbackInfoReturnable<List<ItemStack>> cir) {
+        LootModificationsAPI.get().invokeActions(loot, context);
     }
 }

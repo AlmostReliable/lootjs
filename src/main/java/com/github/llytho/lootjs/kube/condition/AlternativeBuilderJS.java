@@ -22,8 +22,8 @@ public class AlternativeBuilderJS implements IConditionBuilder<AlternativeBuilde
 
     @Override
     @HideFromJS
-    public AlternativeBuilderJS addCondition(ILootCondition pCondition) {
-        conditions.add(pCondition);
+    public AlternativeBuilderJS addCondition(ILootCondition condition) {
+        conditions.add(condition);
         return this;
     }
 }

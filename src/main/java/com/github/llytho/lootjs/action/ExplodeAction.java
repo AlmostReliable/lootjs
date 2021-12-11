@@ -12,17 +12,17 @@ public class ExplodeAction implements IAction<LootContext> {
     private final boolean fire;
     private final Explosion.Mode mode;
 
-    public ExplodeAction(float pRadius, Explosion.Mode pMode, boolean pFire) {
-        radius = pRadius;
-        fire = pFire;
-        mode = pMode;
+    public ExplodeAction(float radius, Explosion.Mode mode, boolean fire) {
+        this.radius = radius;
+        this.fire = fire;
+        this.mode = mode;
     }
 
     @Override
-    public boolean accept(LootContext pContext) {
-        Vector3d origin = pContext.getParamOrNull(LootParameters.ORIGIN);
+    public boolean accept(LootContext context) {
+        Vector3d origin = context.getParamOrNull(LootParameters.ORIGIN);
         if (origin == null) return true;
-        pContext.getLevel().explode(null, origin.x, origin.y, origin.z, radius, fire, mode);
+        context.getLevel().explode(null, origin.x, origin.y, origin.z, radius, fire, mode);
         return true;
     }
 }

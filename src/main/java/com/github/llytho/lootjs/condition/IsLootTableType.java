@@ -9,13 +9,13 @@ public class IsLootTableType implements IExtendedLootCondition {
 
     private final LootContextType[] types;
 
-    public IsLootTableType(LootContextType[] pTypes) {
-        this.types = pTypes;
+    public IsLootTableType(LootContextType[] types) {
+        this.types = types;
     }
 
     @Override
-    public boolean test(LootContext pContext) {
-        ILootContextData data = pContext.getParamOrNull(Constants.DATA);
+    public boolean test(LootContext context) {
+        ILootContextData data = context.getParamOrNull(Constants.DATA);
         return data != null && matchesType(data);
     }
 

@@ -30,21 +30,21 @@ public class LootModificationsAPI {
         instance = null;
     }
 
-    public void invokeActions(List<ItemStack> pLoot, LootContext pContext) {
-        ILootContextData contextData = pContext.getParamOrNull(Constants.DATA);
+    public void invokeActions(List<ItemStack> loot, LootContext context) {
+        ILootContextData contextData = context.getParamOrNull(Constants.DATA);
         assert contextData != null;
 
         // TODO more testing here. I don't really know why there are empty items in the list or better:
         // TODO There are items which refer to the correct item but their cache flag is true so it acts like air
-        pLoot.removeIf(ItemStack::isEmpty);
-        contextData.setGeneratedLoot(pLoot);
+        loot.removeIf(ItemStack::isEmpty);
+        contextData.setGeneratedLoot(loot);
         for (IAction<LootContext> action : actions) {
-            action.accept(pContext);
+            action.accept(context);
             contextData.reset();
         }
     }
 
-    public void addAction(IAction<LootContext> pAction) {
-        actions.add(pAction);
+    public void addAction(IAction<LootContext> action) {
+        actions.add(action);
     }
 }

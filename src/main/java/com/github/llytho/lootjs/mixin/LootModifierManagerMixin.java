@@ -16,9 +16,9 @@ import java.util.function.Consumer;
 public class LootModifierManagerMixin {
 
     @Redirect(method = "apply", at = @At(value = "INVOKE", target = "Ljava/util/ArrayList;forEach(Ljava/util/function/Consumer;)V", ordinal = 0), remap = false)
-    private void lootModifierReload(ArrayList<ResourceLocation> pLocations, Consumer<ResourceLocation> pOriginalAction) {
+    private void lootModifierReload(ArrayList<ResourceLocation> locations, Consumer<ResourceLocation> originalAction) {
         LootModificationsAPI.reload();
         new LootModificationEventJS().post(ScriptType.SERVER, "global_loot_modification");
-        pLocations.forEach(pOriginalAction);
+        locations.forEach(originalAction);
     }
 }

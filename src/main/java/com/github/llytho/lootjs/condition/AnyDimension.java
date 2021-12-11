@@ -7,8 +7,8 @@ public class AnyDimension implements IExtendedLootCondition {
 
     private final ResourceLocation[] dimensions;
 
-    public AnyDimension(ResourceLocation[] pDimensions) {
-        this.dimensions = pDimensions;
+    public AnyDimension(ResourceLocation[] dimensions) {
+        this.dimensions = dimensions;
     }
 
     @Override

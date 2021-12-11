@@ -23,9 +23,9 @@ public class LootContextJS {
     protected final LootContext context;
     private final ILootContextData data;
 
-    public LootContextJS(LootContext pContext) {
-        this.context = pContext;
-        this.data = pContext.getParamOrNull(Constants.DATA);
+    public LootContextJS(LootContext context) {
+        this.context = context;
+        this.data = context.getParamOrNull(Constants.DATA);
     }
 
     public ResourceLocation getLootTableId() {
@@ -93,12 +93,12 @@ public class LootContextJS {
         return data.getGeneratedLoot();
     }
 
-    public void addItem(IngredientJS pIngredient) {
-        if (pIngredient.isEmpty()) {
+    public void addItem(IngredientJS ingredient) {
+        if (ingredient.isEmpty()) {
             throw new IllegalArgumentException("Given item can't be empty or air");
         }
 
-        for (ItemStackJS stack : pIngredient.getStacks()) {
+        for (ItemStackJS stack : ingredient.getStacks()) {
             data.getGeneratedLoot().add(stack.getItemStack());
         }
     }

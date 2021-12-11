@@ -8,10 +8,10 @@ public interface IConditionOp {
     interface Factory<I, V> extends Function<Matcher<I, V>, Predicate<I, V>> {}
 
     interface Predicate<I, V> extends BiPredicate<Collection<I>, V> {
-        static <I, T> Predicate<I, T> Or(Matcher<I, T> pMatcher) {
+        static <I, T> Predicate<I, T> Or(Matcher<I, T> matcher) {
             return (is, v) -> {
                 for (I i : is) {
-                    if (pMatcher.match(i, v)) {
+                    if (matcher.match(i, v)) {
                         return true;
                     }
                 }
@@ -19,10 +19,10 @@ public interface IConditionOp {
             };
         }
 
-        static <I, T> Predicate<I, T> And(Matcher<I, T> pMatcher) {
+        static <I, T> Predicate<I, T> And(Matcher<I, T> matcher) {
             return (is, v) -> {
                 for (I i : is) {
-                    if (!pMatcher.match(i, v)) {
+                    if (!matcher.match(i, v)) {
                         return false;
                     }
                 }

@@ -18,9 +18,9 @@ public class BiomeTypeCheck extends ValueCondition<BiomeDictionary.Type, Set<Bio
 
     private final List<BiomeDictionary.Type> types;
 
-    public BiomeTypeCheck(List<BiomeDictionary.Type> pTypes, IConditionOp.Factory<BiomeDictionary.Type, Set<BiomeDictionary.Type>> pFunc) {
+    public BiomeTypeCheck(List<BiomeDictionary.Type> types, IConditionOp.Factory<BiomeDictionary.Type, Set<BiomeDictionary.Type>> pFunc) {
         super(pFunc);
-        types = pTypes;
+        this.types = types;
     }
 
     @Override
@@ -30,18 +30,18 @@ public class BiomeTypeCheck extends ValueCondition<BiomeDictionary.Type, Set<Bio
 
     @Nullable
     @Override
-    protected Collection<BiomeDictionary.Type> getIterableValue(LootContext pContext) {
+    protected Collection<BiomeDictionary.Type> getLeftIterableValue(LootContext context) {
         return types;
     }
 
     @Nullable
     @Override
-    protected Set<BiomeDictionary.Type> getValue(LootContext pContext) {
-        Vector3d origin = pContext.getParamOrNull(LootParameters.ORIGIN);
+    protected Set<BiomeDictionary.Type> getRightValue(LootContext context) {
+        Vector3d origin = context.getParamOrNull(LootParameters.ORIGIN);
         if (origin == null) return null;
 
         BlockPos blockPos = new BlockPos(origin.x, origin.y, origin.z);
-        Biome biome = pContext.getLevel().getBiome(blockPos);
+        Biome biome = context.getLevel().getBiome(blockPos);
         if (biome.getRegistryName() == null) {
             return null;
         }

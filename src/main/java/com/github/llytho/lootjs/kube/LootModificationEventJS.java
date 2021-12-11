@@ -25,8 +25,8 @@ public class LootModificationEventJS extends EventJS {
     }
 
     @Override
-    protected void afterPosted(boolean pResult) {
-        super.afterPosted(pResult);
+    protected void afterPosted(boolean result) {
+        super.afterPosted(result);
 
         List<CompositeAction> actions = getModifierBuilders()
                 .stream()

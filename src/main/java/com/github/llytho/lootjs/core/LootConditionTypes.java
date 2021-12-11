@@ -16,12 +16,12 @@ public class LootConditionTypes {
 
     private static class UnusedSerializer implements ILootSerializer<ILootCondition> {
         @Override
-        public void serialize(JsonObject pJson, ILootCondition pValue, JsonSerializationContext pSerializationContext) {
+        public void serialize(JsonObject json, ILootCondition value, JsonSerializationContext context) {
             throw new UnsupportedOperationException();
         }
 
         @Override
-        public ILootCondition deserialize(JsonObject pJson, JsonDeserializationContext pSerializationContext) {
+        public ILootCondition deserialize(JsonObject serializer, JsonDeserializationContext context) {
             throw new UnsupportedOperationException();
         }
     }

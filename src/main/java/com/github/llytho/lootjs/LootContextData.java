@@ -29,8 +29,8 @@ public class LootContextData implements ILootContextData {
         return canceled;
     }
 
-    public void setCanceled(boolean pFlag) {
-        canceled = pFlag;
+    public void setCanceled(boolean flag) {
+        canceled = flag;
     }
 
     public Map<String, Object> getAdditionalData() {
@@ -41,8 +41,8 @@ public class LootContextData implements ILootContextData {
         return generatedLoot;
     }
 
-    public void setGeneratedLoot(List<ItemStack> pLoot) {
-        this.generatedLoot = pLoot;
+    public void setGeneratedLoot(List<ItemStack> loot) {
+        this.generatedLoot = loot;
     }
 
     public void reset() {

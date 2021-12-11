@@ -10,14 +10,14 @@ import net.minecraft.world.server.ServerWorld;
 public class BlockPredicateJS extends BlockPredicate {
     private final dev.latvian.kubejs.block.predicate.BlockPredicate kubeBlockPredicate;
 
-    public BlockPredicateJS(dev.latvian.kubejs.block.predicate.BlockPredicate pKubeBlockPredicate) {
+    public BlockPredicateJS(dev.latvian.kubejs.block.predicate.BlockPredicate kubeBlockPredicate) {
         // As we override `matches` we just null this and set defaults. We don't want them! >:(
         super(null, null, StatePropertiesPredicate.ANY, NBTPredicate.ANY);
-        kubeBlockPredicate = pKubeBlockPredicate;
+        this.kubeBlockPredicate = kubeBlockPredicate;
     }
 
     @Override
-    public boolean matches(ServerWorld pLevel, BlockPos pBlockPos) {
-        return kubeBlockPredicate.check(new BlockContainerJS(pLevel, pBlockPos));
+    public boolean matches(ServerWorld level, BlockPos blockPos) {
+        return kubeBlockPredicate.check(new BlockContainerJS(level, blockPos));
     }
 }

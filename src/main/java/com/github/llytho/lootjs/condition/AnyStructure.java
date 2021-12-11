@@ -11,19 +11,19 @@ public class AnyStructure implements IExtendedLootCondition {
 
     private final Structure<?>[] structures;
 
-    public AnyStructure(Structure<?>[] pStructures) {
-        this.structures = pStructures;
+    public AnyStructure(Structure<?>[] structures) {
+        this.structures = structures;
     }
 
     @Override
-    public boolean test(LootContext pContext) {
-        Vector3d origin = pContext.getParamOrNull(LootParameters.ORIGIN);
+    public boolean test(LootContext context) {
+        Vector3d origin = context.getParamOrNull(LootParameters.ORIGIN);
 
         if (origin != null) {
             BlockPos blockPos = new BlockPos(origin.x, origin.y, origin.z);
 
             for (Structure<?> structure : structures) {
-                StructureStart<?> structureAt = pContext
+                StructureStart<?> structureAt = context
                         .getLevel()
                         .structureFeatureManager()
                         .getStructureAt(blockPos, true, structure);

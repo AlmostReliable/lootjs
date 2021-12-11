@@ -7,16 +7,16 @@ import java.util.function.Predicate;
 
 public class ConditionalAction implements IAction<LootContext> {
 
-    private final IAction<LootContext> pAction;
-    private final Predicate<LootContext> pPredicate;
+    private final IAction<LootContext> actions;
+    private final Predicate<LootContext> predicate;
 
-    public ConditionalAction(IAction<LootContext> pAction, Predicate<LootContext> pPredicate) {
-        this.pAction = pAction;
-        this.pPredicate = pPredicate;
+    public ConditionalAction(IAction<LootContext> actions, Predicate<LootContext> predicate) {
+        this.actions = actions;
+        this.predicate = predicate;
     }
 
     @Override
-    public boolean accept(LootContext pContext) {
-        return pPredicate.test(pContext) && pAction.accept(pContext);
+    public boolean accept(LootContext context) {
+        return predicate.test(context) && actions.accept(context);
     }
 }

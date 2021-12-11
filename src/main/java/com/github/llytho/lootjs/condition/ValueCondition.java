@@ -9,22 +9,22 @@ public abstract class ValueCondition<I, V> implements IExtendedLootCondition {
 
     private final IConditionOp.Predicate<I, V> predicate;
 
-    public ValueCondition(IConditionOp.Factory<I, V> pFunc) {
-        predicate = pFunc.apply(this::match);
+    public ValueCondition(IConditionOp.Factory<I, V> factory) {
+        predicate = factory.apply(this::match);
     }
 
     protected abstract boolean match(I i, V v);
 
     @Nullable
-    protected abstract Collection<I> getIterableValue(LootContext pContext);
+    protected abstract Collection<I> getLeftIterableValue(LootContext context);
 
     @Nullable
-    protected abstract V getValue(LootContext pContext);
+    protected abstract V getRightValue(LootContext context);
 
     @Override
-    public final boolean test(LootContext pContext) {
-        Collection<I> iterableValue = getIterableValue(pContext);
-        V toCheckValue = getValue(pContext);
+    public final boolean test(LootContext context) {
+        Collection<I> iterableValue = getLeftIterableValue(context);
+        V toCheckValue = getRightValue(context);
         if (iterableValue == null || toCheckValue == null) {
             return false;
         }

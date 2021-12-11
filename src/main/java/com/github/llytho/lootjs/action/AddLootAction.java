@@ -10,13 +10,13 @@ public class AddLootAction implements IAction<LootContext> {
 
     private final ItemStack[] itemStacks;
 
-    public AddLootAction(ItemStack[] pItemStacks) {
-        this.itemStacks = pItemStacks;
+    public AddLootAction(ItemStack[] itemStacks) {
+        this.itemStacks = itemStacks;
     }
 
     @Override
-    public boolean accept(LootContext pContext) {
-        ILootContextData data = pContext.getParamOrNull(Constants.DATA);
+    public boolean accept(LootContext context) {
+        ILootContextData data = context.getParamOrNull(Constants.DATA);
         if (data != null) {
             for (ItemStack itemStack : itemStacks) {
                 data.getGeneratedLoot().add(itemStack.copy());

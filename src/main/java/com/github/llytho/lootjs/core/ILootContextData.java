@@ -11,13 +11,13 @@ public interface ILootContextData {
 
     boolean isCanceled();
 
-    void setCanceled(boolean pFlag);
+    void setCanceled(boolean flag);
 
     Map<String, Object> getAdditionalData();
 
     List<ItemStack> getGeneratedLoot();
 
-    void setGeneratedLoot(List<ItemStack> pLoot);
+    void setGeneratedLoot(List<ItemStack> loot);
 
     void reset();
 }

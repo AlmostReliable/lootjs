@@ -19,12 +19,12 @@ public class InvertedBuilderJS implements IConditionBuilder<InvertedBuilderJS> {
 
     @Override
     @HideFromJS
-    public InvertedBuilderJS addCondition(ILootCondition pCondition) {
-        if (condition != null) {
+    public InvertedBuilderJS addCondition(ILootCondition condition) {
+        if (this.condition != null) {
             throw new IllegalArgumentException("Already set a condition");
         }
 
-        condition = pCondition;
+        this.condition = condition;
         return this;
     }
 }

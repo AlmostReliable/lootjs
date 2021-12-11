@@ -8,14 +8,14 @@ public class CompositeAction implements IAction<LootContext> {
 
     private final IAction<LootContext>[] actions;
 
-    public CompositeAction(IAction<LootContext>[] pActions) {
-        this.actions = pActions;
+    public CompositeAction(IAction<LootContext>[] actions) {
+        this.actions = actions;
     }
 
     @Override
-    public boolean accept(LootContext pContext) {
+    public boolean accept(LootContext context) {
         for (IAction<LootContext> action : actions) {
-            if (!action.accept(pContext)) {
+            if (!action.accept(context)) {
                 return false;
             }
         }

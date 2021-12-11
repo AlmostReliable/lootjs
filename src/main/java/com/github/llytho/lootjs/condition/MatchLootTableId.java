@@ -10,21 +10,21 @@ public class MatchLootTableId implements IExtendedLootCondition {
     public final ResourceLocation[] locations;
     public final Pattern[] patterns;
 
-    public MatchLootTableId(ResourceLocation[] pLocations, Pattern[] pPatterns) {
-        this.locations = pLocations;
-        this.patterns = pPatterns;
+    public MatchLootTableId(ResourceLocation[] locations, Pattern[] patterns) {
+        this.locations = locations;
+        this.patterns = patterns;
     }
 
     @Override
-    public boolean test(LootContext pContext) {
+    public boolean test(LootContext context) {
         for (ResourceLocation location : locations) {
-            if (location.equals(pContext.getQueriedLootTableId())) {
+            if (location.equals(context.getQueriedLootTableId())) {
                 return true;
             }
         }
 
         for (Pattern pattern : patterns) {
-            if (pattern.matcher(pContext.getQueriedLootTableId().toString()).matches()) {
+            if (pattern.matcher(context.getQueriedLootTableId().toString()).matches()) {
                 return true;
             }
         }

@@ -6,7 +6,7 @@ import dev.latvian.kubejs.script.BindingsEvent;
 
 public class LootJSPlugin extends KubeJSPlugin {
     @Override
-    public void addBindings(BindingsEvent pEvent) {
-        pEvent.add("LootType", LootContextType.class);
+    public void addBindings(BindingsEvent event) {
+        event.add("LootType", LootContextType.class);
     }
 }

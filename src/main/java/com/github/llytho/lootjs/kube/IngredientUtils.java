@@ -9,16 +9,16 @@ import java.util.function.Predicate;
 
 public class IngredientUtils {
 
-    public static List<Predicate<ItemStack>> toVanillaPredicates(IngredientJS... pIngredients) {
+    public static List<Predicate<ItemStack>> toVanillaPredicates(IngredientJS... ingredients) {
         ArrayList<Predicate<ItemStack>> result = new ArrayList<>();
-        for (IngredientJS pIngredient : pIngredients) {
+        for (IngredientJS pIngredient : ingredients) {
             result.add(pIngredient.getVanillaPredicate());
         }
         return result;
     }
 
-    public static void nonEmptyIngredientCheck(IngredientJS... pIngredients) {
-        for (IngredientJS pIngredient : pIngredients) {
+    public static void nonEmptyIngredientCheck(IngredientJS... ingredients) {
+        for (IngredientJS pIngredient : ingredients) {
             if (pIngredient.isEmpty()) {
                 throw new IllegalArgumentException("Given ingredient does not exists or is empty");
             }

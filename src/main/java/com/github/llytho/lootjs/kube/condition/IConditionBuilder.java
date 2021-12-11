@@ -20,11 +20,11 @@ import java.util.regex.Pattern;
 
 public interface IConditionBuilder<B extends IConditionBuilder<?>> {
 
-    default B anyLootTable(Object... pObjects) {
+    default B anyLootTable(Object... objects) {
         List<Pattern> patterns = new ArrayList<>();
         List<ResourceLocation> locations = new ArrayList<>();
 
-        for (Object o : pObjects) {
+        for (Object o : objects) {
             Pattern pattern = UtilsJS.parseRegex(o);
             if (pattern == null) {
                 locations.add(new ResourceLocation((String) o));
@@ -37,80 +37,80 @@ public interface IConditionBuilder<B extends IConditionBuilder<?>> {
                 patterns.toArray(new Pattern[0])));
     }
 
-    default B matchLoot(IngredientJS pIngredient) {
-        return matchLoot(pIngredient, false);
+    default B matchLoot(IngredientJS ingredient) {
+        return matchLoot(ingredient, false);
     }
 
-    default B matchLoot(IngredientJS pIngredient, boolean exact) {
-        IngredientUtils.nonEmptyIngredientCheck(pIngredient);
+    default B matchLoot(IngredientJS ingredient, boolean exact) {
+        IngredientUtils.nonEmptyIngredientCheck(ingredient);
         if (exact) {
-            return addCondition(new ContainsLootCondition(pIngredient.getVanillaPredicate(),
+            return addCondition(new ContainsLootCondition(ingredient.getVanillaPredicate(),
                     IConditionOp.Predicate::And));
         }
-        return addCondition(new ContainsLootCondition(pIngredient.getVanillaPredicate(), IConditionOp.Predicate::Or));
+        return addCondition(new ContainsLootCondition(ingredient.getVanillaPredicate(), IConditionOp.Predicate::Or));
     }
 
-    default B matchMainHand(IngredientJS pIngredient) {
-        return addCondition(new MatchEquipmentSlot(EquipmentSlotType.MAINHAND, pIngredient.getVanillaPredicate()));
+    default B matchMainHand(IngredientJS ingredient) {
+        return addCondition(new MatchEquipmentSlot(EquipmentSlotType.MAINHAND, ingredient.getVanillaPredicate()));
     }
 
-    default B matchOffHand(IngredientJS pIngredient) {
-        return addCondition(new MatchEquipmentSlot(EquipmentSlotType.OFFHAND, pIngredient.getVanillaPredicate()));
+    default B matchOffHand(IngredientJS ingredient) {
+        return addCondition(new MatchEquipmentSlot(EquipmentSlotType.OFFHAND, ingredient.getVanillaPredicate()));
     }
 
-    default B matchSlot(EquipmentSlotType pSlot, IngredientJS pIngredient) {
-        return addCondition(new MatchEquipmentSlot(pSlot, pIngredient.getVanillaPredicate()));
+    default B matchSlot(EquipmentSlotType slot, IngredientJS ingredient) {
+        return addCondition(new MatchEquipmentSlot(slot, ingredient.getVanillaPredicate()));
     }
 
-    default B anyType(LootContextType... pTypes) {
-        return addCondition(new IsLootTableType(pTypes));
+    default B anyType(LootContextType... types) {
+        return addCondition(new IsLootTableType(types));
     }
 
     default B survivesExplosion() {
         return addCondition(SurvivesExplosion.survivesExplosion().build());
     }
 
-    default B timeCheck(long pPeriod, float pMin, float pMax) {
-        return addCondition(new TimeCheck(pPeriod, new RandomValueRange(pMin, pMax)));
+    default B timeCheck(long period, float min, float max) {
+        return addCondition(new TimeCheck(period, new RandomValueRange(min, max)));
     }
 
-    default B timeCheck(float pMin, float pMax) {
-        return timeCheck(24000L, pMin, pMax);
+    default B timeCheck(float min, float max) {
+        return timeCheck(24000L, min, max);
     }
 
-    default B weatherCheck(Map<String, Boolean> pMap) {
-        Boolean isRaining = pMap.getOrDefault("raining", null);
-        Boolean isThundering = pMap.getOrDefault("thundering", null);
+    default B weatherCheck(Map<String, Boolean> map) {
+        Boolean isRaining = map.getOrDefault("raining", null);
+        Boolean isThundering = map.getOrDefault("thundering", null);
 
         return addCondition(new WeatherCheck(isRaining, isThundering));
     }
 
-    default B randomChance(float pValue) {
-        return addCondition(RandomChance.randomChance(pValue).build());
+    default B randomChance(float value) {
+        return addCondition(RandomChance.randomChance(value).build());
     }
 
-    default B randomChanceWithLooting(float pValue, float pLooting) {
-        return addCondition(RandomChanceWithLooting.randomChanceAndLootingBoost(pValue, pLooting).build());
+    default B randomChanceWithLooting(float value, float looting) {
+        return addCondition(RandomChanceWithLooting.randomChanceAndLootingBoost(value, looting).build());
     }
 
-    default B anyBiome(ResourceLocation... pFilters) {
-        return addCondition(new BiomeCheck(BiomeUtils.findBiomeKeys(pFilters), IConditionOp.Predicate::Or));
+    default B anyBiome(ResourceLocation... locations) {
+        return addCondition(new BiomeCheck(BiomeUtils.findBiomeKeys(locations), IConditionOp.Predicate::Or));
     }
 
-    default B anyBiomeType(String... pTypes) {
-        return addCondition(new BiomeTypeCheck(BiomeUtils.findTypes(pTypes), IConditionOp.Predicate::Or));
+    default B anyBiomeType(String... types) {
+        return addCondition(new BiomeTypeCheck(BiomeUtils.findTypes(types), IConditionOp.Predicate::Or));
     }
 
-    default B biomeType(String... pTypes) {
-        return addCondition(new BiomeTypeCheck(BiomeUtils.findTypes(pTypes), IConditionOp.Predicate::And));
+    default B biomeType(String... types) {
+        return addCondition(new BiomeTypeCheck(BiomeUtils.findTypes(types), IConditionOp.Predicate::And));
     }
 
-    default B anyDimension(ResourceLocation... pDimensions) {
-        return addCondition(new AnyDimension(pDimensions));
+    default B anyDimension(ResourceLocation... dimensions) {
+        return addCondition(new AnyDimension(dimensions));
     }
 
-    default B anyStructure(ResourceLocation... pStructures) {
-        Structure<?>[] structures = BiomeUtils.findStructures(pStructures);
+    default B anyStructure(ResourceLocation... locations) {
+        Structure<?>[] structures = BiomeUtils.findStructures(locations);
         return addCondition(new AnyStructure(structures));
     }
 
@@ -122,15 +122,15 @@ public interface IConditionBuilder<B extends IConditionBuilder<?>> {
         return addCondition(KilledByPlayer.killedByPlayer().build());
     }
 
-    default B not(Consumer<InvertedBuilderJS> pAction) {
+    default B not(Consumer<InvertedBuilderJS> action) {
         InvertedBuilderJS builder = new InvertedBuilderJS();
-        pAction.accept(builder);
+        action.accept(builder);
         return addCondition(builder.build());
     }
 
-    default B any(Consumer<AlternativeBuilderJS> pAction) {
+    default B any(Consumer<AlternativeBuilderJS> action) {
         AlternativeBuilderJS builder = new AlternativeBuilderJS();
-        pAction.accept(builder);
+        action.accept(builder);
         return addCondition(builder.build());
     }
 

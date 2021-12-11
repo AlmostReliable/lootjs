@@ -10,9 +10,9 @@ import net.minecraft.util.math.vector.Vector3d;
 public class BlockLootContextJS extends LootContextJS {
     private final BlockPos blockPos;
 
-    public BlockLootContextJS(LootContext pContext) {
-        super(pContext);
-        Vector3d vec = pContext.getParamOrNull(LootParameters.ORIGIN);
+    public BlockLootContextJS(LootContext context) {
+        super(context);
+        Vector3d vec = context.getParamOrNull(LootParameters.ORIGIN);
         assert vec != null;
         this.blockPos = new BlockPos(vec);
     }

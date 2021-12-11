@@ -4,7 +4,7 @@ import net.minecraft.loot.LootContext;
 
 // TODO USE IT
 public class EntityLootContextJS extends LootContextJS {
-    public EntityLootContextJS(LootContext pContext) {
-        super(pContext);
+    public EntityLootContextJS(LootContext context) {
+        super(context);
     }
 }

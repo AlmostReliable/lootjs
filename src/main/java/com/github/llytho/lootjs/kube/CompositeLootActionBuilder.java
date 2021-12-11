@@ -24,45 +24,45 @@ public class CompositeLootActionBuilder implements IConditionBuilder<CompositeLo
     private final List<ConditionalAction> actions = new ArrayList<ConditionalAction>();
     private final List<Predicate<LootContext>> conditions = new ArrayList<Predicate<LootContext>>();
 
-    public CompositeLootActionBuilder thenApply(Consumer<LootContextJS> pAction) {
-        buildCurrentAction(new CustomJSAction(pAction));
+    public CompositeLootActionBuilder thenApply(Consumer<LootContextJS> action) {
+        buildCurrentAction(new CustomJSAction(action));
         return this;
     }
 
-    public CompositeLootActionBuilder thenAdd(ItemStackJS... pIngredient) {
-        ItemStack[] itemStacks = Arrays.stream(pIngredient).map(ItemStackJS::getItemStack).toArray(ItemStack[]::new);
+    public CompositeLootActionBuilder thenAdd(ItemStackJS... ingredient) {
+        ItemStack[] itemStacks = Arrays.stream(ingredient).map(ItemStackJS::getItemStack).toArray(ItemStack[]::new);
         buildCurrentAction(new AddLootAction(itemStacks));
         return this;
     }
 
-    public CompositeLootActionBuilder thenRemove(IngredientJS pIngredient) {
-        buildCurrentAction(new RemoveLootAction(pIngredient.getVanillaPredicate()));
+    public CompositeLootActionBuilder thenRemove(IngredientJS ingredient) {
+        buildCurrentAction(new RemoveLootAction(ingredient.getVanillaPredicate()));
         return this;
     }
 
-    public CompositeLootActionBuilder thenReplace(IngredientJS pIngredient, ItemStackJS pItemStack) {
-        buildCurrentAction(new ReplaceLootAction(pIngredient.getVanillaPredicate(), pItemStack.getItemStack()));
+    public CompositeLootActionBuilder thenReplace(IngredientJS ingredient, ItemStackJS itemStack) {
+        buildCurrentAction(new ReplaceLootAction(ingredient.getVanillaPredicate(), itemStack.getItemStack()));
         return this;
     }
 
-    public CompositeLootActionBuilder thenExplode(float pRadius, boolean pDestroy, boolean pFire) {
-        Explosion.Mode mode = pDestroy ? Explosion.Mode.DESTROY : Explosion.Mode.NONE;
-        buildCurrentAction(new ExplodeAction(pRadius, mode, pFire));
+    public CompositeLootActionBuilder thenExplode(float radius, boolean destroy, boolean fire) {
+        Explosion.Mode mode = destroy ? Explosion.Mode.DESTROY : Explosion.Mode.NONE;
+        buildCurrentAction(new ExplodeAction(radius, mode, fire));
         return this;
     }
 
-    public CompositeLootActionBuilder thenLightningStrike(boolean pShouldDamage) {
-        buildCurrentAction(new LightningStrikeAction(pShouldDamage));
+    public CompositeLootActionBuilder thenLightningStrike(boolean shouldDamage) {
+        buildCurrentAction(new LightningStrikeAction(shouldDamage));
         return this;
     }
 
     @SuppressWarnings("unchecked")
-    public void buildCurrentAction(IAction<LootContext> pAction) {
+    public void buildCurrentAction(IAction<LootContext> action) {
         Predicate<LootContext>[] conditionsArray = (Predicate<LootContext>[]) conditions.toArray(new Predicate[0]);
         Predicate<LootContext> predicate = LootConditionManager.andConditions(conditionsArray);
         conditions.clear();
-        ConditionalAction action = new ConditionalAction(pAction, predicate);
-        actions.add(action);
+        ConditionalAction conditionalAction = new ConditionalAction(action, predicate);
+        actions.add(conditionalAction);
     }
 
     @HideFromJS

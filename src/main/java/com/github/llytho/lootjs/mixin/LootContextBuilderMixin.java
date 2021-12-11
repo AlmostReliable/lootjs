@@ -15,11 +15,11 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 @Mixin(LootContext.Builder.class)
 public abstract class LootContextBuilderMixin {
     @Shadow
-    public abstract <T> LootContext.Builder withParameter(LootParameter<T> pParameter, T pValue);
+    public abstract <T> LootContext.Builder withParameter(LootParameter<T> param, T value);
 
     @Inject(method = "create", at = @At("HEAD"))
-    public void addTypeOnCreate(LootParameterSet pParameterSet, CallbackInfoReturnable<LootContext> pInfo) {
-        LootContextType type = Constants.PSETS_TO_TYPE.getOrDefault(pParameterSet, LootContextType.UNKNOWN);
+    public void addTypeOnCreate(LootParameterSet paramSet, CallbackInfoReturnable<LootContext> info) {
+        LootContextType type = Constants.PSETS_TO_TYPE.getOrDefault(paramSet, LootContextType.UNKNOWN);
         this.withParameter(Constants.DATA, new LootContextData(type));
     }
 }
