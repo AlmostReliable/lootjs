@@ -11,13 +11,13 @@ import java.util.Map;
 
 public class LootContextData implements ILootContextData {
     private final LootContextType type;
-    private final Map<String, Object> additionalData;
+    private final Map<String, Object> customData;
     private boolean canceled;
     private List<ItemStack> generatedLoot;
 
     public LootContextData(LootContextType pType) {
         this.type = pType;
-        this.additionalData = new HashMap<>();
+        this.customData = new HashMap<>();
         this.generatedLoot = new ArrayList<>();
     }
 
@@ -33,8 +33,8 @@ public class LootContextData implements ILootContextData {
         canceled = flag;
     }
 
-    public Map<String, Object> getAdditionalData() {
-        return additionalData;
+    public Map<String, Object> getCustomData() {
+        return customData;
     }
 
     public List<ItemStack> getGeneratedLoot() {

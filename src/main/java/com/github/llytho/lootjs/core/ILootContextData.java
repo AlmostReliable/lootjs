@@ -13,7 +13,7 @@ public interface ILootContextData {
 
     void setCanceled(boolean flag);
 
-    Map<String, Object> getAdditionalData();
+    Map<String, Object> getCustomData();
 
     List<ItemStack> getGeneratedLoot();
 

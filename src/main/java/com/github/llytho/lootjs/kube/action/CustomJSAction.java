@@ -1,7 +1,7 @@
 package com.github.llytho.lootjs.kube.action;
 
 import com.github.llytho.lootjs.core.IAction;
-import com.github.llytho.lootjs.kube.context.LootContextJS;
+import com.github.llytho.lootjs.kube.LootContextJS;
 import net.minecraft.loot.LootContext;
 
 import java.util.function.Consumer;

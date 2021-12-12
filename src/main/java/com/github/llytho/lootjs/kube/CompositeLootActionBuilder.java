@@ -4,7 +4,6 @@ import com.github.llytho.lootjs.action.*;
 import com.github.llytho.lootjs.core.IAction;
 import com.github.llytho.lootjs.kube.action.CustomJSAction;
 import com.github.llytho.lootjs.kube.condition.IConditionBuilder;
-import com.github.llytho.lootjs.kube.context.LootContextJS;
 import dev.latvian.kubejs.item.ItemStackJS;
 import dev.latvian.kubejs.item.ingredient.IngredientJS;
 import dev.latvian.mods.rhino.util.HideFromJS;
