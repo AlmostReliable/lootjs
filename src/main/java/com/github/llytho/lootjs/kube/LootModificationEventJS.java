@@ -1,8 +1,8 @@
 package com.github.llytho.lootjs.kube;
 
 import com.github.llytho.lootjs.LootModificationsAPI;
-import com.github.llytho.lootjs.action.CompositeAction;
 import dev.latvian.kubejs.event.EventJS;
+import dev.latvian.kubejs.util.ConsoleJS;
 import dev.latvian.mods.rhino.util.HideFromJS;
 import net.minecraft.util.ResourceLocation;
 
@@ -62,15 +62,16 @@ public class LootModificationEventJS extends EventJS {
     protected void afterPosted(boolean result) {
         super.afterPosted(result);
 
-        List<CompositeAction> actions = getModifierBuilders()
-                .stream()
-                .map(CompositeLootActionBuilder::build)
-                .collect(Collectors.toList());
-
-        for (CompositeAction action : actions) {
-            LootModificationsAPI.get().addAction(action);
+        for (CompositeLootActionBuilder modifierBuilder : getModifierBuilders()) {
+            try {
+                LootModificationsAPI.get().addAction(modifierBuilder.build());
+            } catch (Exception exception) {
+                ConsoleJS.SERVER.error(exception);
+            }
         }
 
         originalLocations.removeIf(locationsToRemove::contains);
+
+
     }
 }

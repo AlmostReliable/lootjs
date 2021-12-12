@@ -4,9 +4,11 @@ import com.github.llytho.lootjs.condition.*;
 import com.github.llytho.lootjs.core.LootContextType;
 import com.github.llytho.lootjs.kube.IngredientUtils;
 import com.github.llytho.lootjs.util.BiomeUtils;
+import com.google.gson.JsonObject;
 import dev.latvian.kubejs.item.ingredient.IngredientJS;
 import dev.latvian.kubejs.util.UtilsJS;
 import net.minecraft.inventory.EquipmentSlotType;
+import net.minecraft.loot.LootTableManager;
 import net.minecraft.loot.RandomValueRange;
 import net.minecraft.loot.conditions.*;
 import net.minecraft.util.ResourceLocation;
@@ -132,6 +134,11 @@ public interface IConditionBuilder<B extends IConditionBuilder<?>> {
         AlternativeBuilderJS builder = new AlternativeBuilderJS();
         action.accept(builder);
         return addCondition(builder.build());
+    }
+
+    default B customCondition(JsonObject json) {
+        ILootCondition condition = LootTableManager.GSON.fromJson(json, ILootCondition.class);
+        return addCondition(condition);
     }
 
     B addCondition(ILootCondition pCondition);
