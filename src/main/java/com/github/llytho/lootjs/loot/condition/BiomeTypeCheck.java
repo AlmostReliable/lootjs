@@ -1,4 +1,4 @@
-package com.github.llytho.lootjs.condition;
+package com.github.llytho.lootjs.loot.condition;
 
 import net.minecraft.loot.LootContext;
 import net.minecraft.loot.LootParameters;

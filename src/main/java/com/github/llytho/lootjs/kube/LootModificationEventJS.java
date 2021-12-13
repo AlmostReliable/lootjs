@@ -1,6 +1,7 @@
 package com.github.llytho.lootjs.kube;
 
 import com.github.llytho.lootjs.LootModificationsAPI;
+import com.github.llytho.lootjs.kube.builder.LootModifierBuilderJS;
 import dev.latvian.kubejs.event.EventJS;
 import dev.latvian.kubejs.util.ConsoleJS;
 import dev.latvian.mods.rhino.util.HideFromJS;
@@ -11,7 +12,7 @@ import java.util.stream.Collectors;
 
 public class LootModificationEventJS extends EventJS {
 
-    private final List<CompositeLootActionBuilder> modifierBuilders = new ArrayList<>();
+    private final List<LootModifierBuilderJS> modifierBuilders = new ArrayList<>();
     private final List<ResourceLocation> originalLocations;
     private final Set<ResourceLocation> locationsToRemove = new HashSet<>();
 
@@ -47,14 +48,14 @@ public class LootModificationEventJS extends EventJS {
         locationsToRemove.addAll(collectedByLocations);
     }
 
-    public CompositeLootActionBuilder addModifier() {
-        CompositeLootActionBuilder builder = new CompositeLootActionBuilder();
+    public LootModifierBuilderJS addModifier() {
+        LootModifierBuilderJS builder = new LootModifierBuilderJS();
         modifierBuilders.add(builder);
         return builder;
     }
 
     @HideFromJS
-    public List<CompositeLootActionBuilder> getModifierBuilders() {
+    public List<LootModifierBuilderJS> getModifierBuilders() {
         return modifierBuilders;
     }
 
@@ -62,7 +63,7 @@ public class LootModificationEventJS extends EventJS {
     protected void afterPosted(boolean result) {
         super.afterPosted(result);
 
-        for (CompositeLootActionBuilder modifierBuilder : getModifierBuilders()) {
+        for (LootModifierBuilderJS modifierBuilder : getModifierBuilders()) {
             try {
                 LootModificationsAPI.get().addAction(modifierBuilder.build());
             } catch (Exception exception) {

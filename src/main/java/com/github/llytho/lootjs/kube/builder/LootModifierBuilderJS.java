@@ -1,9 +1,10 @@
-package com.github.llytho.lootjs.kube;
+package com.github.llytho.lootjs.kube.builder;
 
-import com.github.llytho.lootjs.action.*;
 import com.github.llytho.lootjs.core.IAction;
+import com.github.llytho.lootjs.kube.ConditionsContainer;
+import com.github.llytho.lootjs.kube.LootContextJS;
 import com.github.llytho.lootjs.kube.action.CustomJSAction;
-import com.github.llytho.lootjs.kube.condition.IConditionBuilder;
+import com.github.llytho.lootjs.loot.action.*;
 import dev.latvian.kubejs.item.ItemStackJS;
 import dev.latvian.kubejs.item.ingredient.IngredientJS;
 import dev.latvian.mods.rhino.util.HideFromJS;
@@ -19,38 +20,38 @@ import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 
-public class CompositeLootActionBuilder implements IConditionBuilder<CompositeLootActionBuilder> {
+public class LootModifierBuilderJS implements ConditionsContainer<LootModifierBuilderJS> {
     private final List<ConditionalAction> actions = new ArrayList<ConditionalAction>();
     private final List<Predicate<LootContext>> conditions = new ArrayList<Predicate<LootContext>>();
 
-    public CompositeLootActionBuilder thenApply(Consumer<LootContextJS> action) {
+    public LootModifierBuilderJS thenApply(Consumer<LootContextJS> action) {
         buildCurrentAction(new CustomJSAction(action));
         return this;
     }
 
-    public CompositeLootActionBuilder thenAdd(ItemStackJS... ingredient) {
+    public LootModifierBuilderJS thenAdd(ItemStackJS... ingredient) {
         ItemStack[] itemStacks = Arrays.stream(ingredient).map(ItemStackJS::getItemStack).toArray(ItemStack[]::new);
         buildCurrentAction(new AddLootAction(itemStacks));
         return this;
     }
 
-    public CompositeLootActionBuilder thenRemove(IngredientJS ingredient) {
+    public LootModifierBuilderJS thenRemove(IngredientJS ingredient) {
         buildCurrentAction(new RemoveLootAction(ingredient.getVanillaPredicate()));
         return this;
     }
 
-    public CompositeLootActionBuilder thenReplace(IngredientJS ingredient, ItemStackJS itemStack) {
+    public LootModifierBuilderJS thenReplace(IngredientJS ingredient, ItemStackJS itemStack) {
         buildCurrentAction(new ReplaceLootAction(ingredient.getVanillaPredicate(), itemStack.getItemStack()));
         return this;
     }
 
-    public CompositeLootActionBuilder thenExplode(float radius, boolean destroy, boolean fire) {
+    public LootModifierBuilderJS thenExplode(float radius, boolean destroy, boolean fire) {
         Explosion.Mode mode = destroy ? Explosion.Mode.DESTROY : Explosion.Mode.NONE;
         buildCurrentAction(new ExplodeAction(radius, mode, fire));
         return this;
     }
 
-    public CompositeLootActionBuilder thenLightningStrike(boolean shouldDamage) {
+    public LootModifierBuilderJS thenLightningStrike(boolean shouldDamage) {
         buildCurrentAction(new LightningStrikeAction(shouldDamage));
         return this;
     }
@@ -75,7 +76,7 @@ public class CompositeLootActionBuilder implements IConditionBuilder<CompositeLo
     }
 
     @Override
-    public CompositeLootActionBuilder addCondition(ILootCondition pCondition) {
+    public LootModifierBuilderJS addCondition(ILootCondition pCondition) {
         conditions.add(pCondition);
         return this;
     }

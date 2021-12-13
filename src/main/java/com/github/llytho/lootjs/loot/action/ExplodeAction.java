@@ -1,4 +1,4 @@
-package com.github.llytho.lootjs.action;
+package com.github.llytho.lootjs.loot.action;
 
 import com.github.llytho.lootjs.core.IAction;
 import net.minecraft.loot.LootContext;

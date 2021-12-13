@@ -1,8 +1,10 @@
-package com.github.llytho.lootjs.condition;
+package com.github.llytho.lootjs.loot.condition;
 
 import com.github.llytho.lootjs.core.Constants;
 import com.github.llytho.lootjs.core.ILootContextData;
+import com.github.llytho.lootjs.predicate.MatchEquipmentPredicate;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.ItemStack;
@@ -13,13 +15,10 @@ import javax.annotation.Nullable;
 import java.util.function.Predicate;
 
 public class MatchEquipmentSlot implements IExtendedLootCondition {
-
-    private final Predicate<ItemStack> predicate;
-    private final EquipmentSlotType slot;
+    MatchEquipmentPredicate predicate;
 
     public MatchEquipmentSlot(EquipmentSlotType slot, Predicate<ItemStack> predicate) {
-        this.slot = slot;
-        this.predicate = predicate;
+        this.predicate = new MatchEquipmentPredicate(slot, predicate);
     }
 
     @Override
@@ -41,7 +40,7 @@ public class MatchEquipmentSlot implements IExtendedLootCondition {
 
     private boolean matchSlot(@Nullable Entity entity) {
         if (entity instanceof ServerPlayerEntity) {
-            return predicate.test(((ServerPlayerEntity) entity).getItemBySlot(slot));
+            return predicate.test((PlayerEntity) entity);
         }
 
         return false;

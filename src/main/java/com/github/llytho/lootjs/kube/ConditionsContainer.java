@@ -1,13 +1,17 @@
-package com.github.llytho.lootjs.kube.condition;
+package com.github.llytho.lootjs.kube;
 
-import com.github.llytho.lootjs.condition.*;
 import com.github.llytho.lootjs.core.LootContextType;
-import com.github.llytho.lootjs.kube.IngredientUtils;
+import com.github.llytho.lootjs.kube.builder.AlternativeConditionBuilderJS;
+import com.github.llytho.lootjs.kube.builder.DamageSourcePredicateBuilderJS;
+import com.github.llytho.lootjs.kube.builder.EntityPredicateBuilderJS;
+import com.github.llytho.lootjs.kube.builder.InvertedConditionBuilderJS;
+import com.github.llytho.lootjs.loot.condition.*;
 import com.github.llytho.lootjs.util.BiomeUtils;
 import com.google.gson.JsonObject;
 import dev.latvian.kubejs.item.ingredient.IngredientJS;
 import dev.latvian.kubejs.util.UtilsJS;
 import net.minecraft.inventory.EquipmentSlotType;
+import net.minecraft.loot.LootContext;
 import net.minecraft.loot.LootTableManager;
 import net.minecraft.loot.RandomValueRange;
 import net.minecraft.loot.conditions.*;
@@ -20,7 +24,7 @@ import java.util.Map;
 import java.util.function.Consumer;
 import java.util.regex.Pattern;
 
-public interface IConditionBuilder<B extends IConditionBuilder<?>> {
+public interface ConditionsContainer<B extends ConditionsContainer<?>> {
 
     default B anyLootTable(Object... objects) {
         List<Pattern> patterns = new ArrayList<>();
@@ -124,14 +128,45 @@ public interface IConditionBuilder<B extends IConditionBuilder<?>> {
         return addCondition(KilledByPlayer.killedByPlayer().build());
     }
 
-    default B not(Consumer<InvertedBuilderJS> action) {
-        InvertedBuilderJS builder = new InvertedBuilderJS();
+
+    default B matchEntity(Consumer<EntityPredicateBuilderJS> action) {
+        EntityPredicateBuilderJS builder = new EntityPredicateBuilderJS();
+        action.accept(builder);
+        return addCondition(new EntityHasProperty(builder.build(), LootContext.EntityTarget.THIS));
+    }
+
+    default B matchKillerEntity(Consumer<EntityPredicateBuilderJS> action) {
+        EntityPredicateBuilderJS builder = new EntityPredicateBuilderJS();
+        action.accept(builder);
+        return addCondition(new EntityHasProperty(builder.build(), LootContext.EntityTarget.KILLER));
+    }
+
+    default B matchDirectKillerEntity(Consumer<EntityPredicateBuilderJS> action) {
+        EntityPredicateBuilderJS builder = new EntityPredicateBuilderJS();
+        action.accept(builder);
+        return addCondition(new EntityHasProperty(builder.build(), LootContext.EntityTarget.DIRECT_KILLER));
+    }
+
+    default B matchLastDamagePlayer(Consumer<EntityPredicateBuilderJS> action) {
+        EntityPredicateBuilderJS builder = new EntityPredicateBuilderJS();
+        action.accept(builder);
+        return addCondition(new EntityHasProperty(builder.build(), LootContext.EntityTarget.KILLER_PLAYER));
+    }
+
+    default B matchDamageSource(Consumer<DamageSourcePredicateBuilderJS> action) {
+        DamageSourcePredicateBuilderJS builder = new DamageSourcePredicateBuilderJS();
+        action.accept(builder);
+        return addCondition(new DamageSourceProperties(builder.build()));
+    }
+
+    default B not(Consumer<InvertedConditionBuilderJS> action) {
+        InvertedConditionBuilderJS builder = new InvertedConditionBuilderJS();
         action.accept(builder);
         return addCondition(builder.build());
     }
 
-    default B any(Consumer<AlternativeBuilderJS> action) {
-        AlternativeBuilderJS builder = new AlternativeBuilderJS();
+    default B any(Consumer<AlternativeConditionBuilderJS> action) {
+        AlternativeConditionBuilderJS builder = new AlternativeConditionBuilderJS();
         action.accept(builder);
         return addCondition(builder.build());
     }

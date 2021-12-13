@@ -1,5 +1,6 @@
-package com.github.llytho.lootjs.kube.condition;
+package com.github.llytho.lootjs.kube.builder;
 
+import com.github.llytho.lootjs.kube.ConditionsContainer;
 import dev.latvian.mods.rhino.util.HideFromJS;
 import net.minecraft.loot.conditions.Alternative;
 import net.minecraft.loot.conditions.ILootCondition;
@@ -7,7 +8,7 @@ import net.minecraft.loot.conditions.ILootCondition;
 import java.util.ArrayList;
 import java.util.List;
 
-public class AlternativeBuilderJS implements IConditionBuilder<AlternativeBuilderJS> {
+public class AlternativeConditionBuilderJS implements ConditionsContainer<AlternativeConditionBuilderJS> {
 
     private final List<ILootCondition> conditions = new ArrayList<>();
 
@@ -22,7 +23,7 @@ public class AlternativeBuilderJS implements IConditionBuilder<AlternativeBuilde
 
     @Override
     @HideFromJS
-    public AlternativeBuilderJS addCondition(ILootCondition condition) {
+    public AlternativeConditionBuilderJS addCondition(ILootCondition condition) {
         conditions.add(condition);
         return this;
     }

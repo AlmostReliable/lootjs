@@ -1,10 +1,11 @@
-package com.github.llytho.lootjs.kube.condition;
+package com.github.llytho.lootjs.kube.builder;
 
+import com.github.llytho.lootjs.kube.ConditionsContainer;
 import dev.latvian.mods.rhino.util.HideFromJS;
 import net.minecraft.loot.conditions.ILootCondition;
 import net.minecraft.loot.conditions.Inverted;
 
-public class InvertedBuilderJS implements IConditionBuilder<InvertedBuilderJS> {
+public class InvertedConditionBuilderJS implements ConditionsContainer<InvertedConditionBuilderJS> {
 
     private ILootCondition condition = null;
 
@@ -19,7 +20,7 @@ public class InvertedBuilderJS implements IConditionBuilder<InvertedBuilderJS> {
 
     @Override
     @HideFromJS
-    public InvertedBuilderJS addCondition(ILootCondition condition) {
+    public InvertedConditionBuilderJS addCondition(ILootCondition condition) {
         if (this.condition != null) {
             throw new IllegalArgumentException("Already set a condition");
         }
