@@ -12,7 +12,7 @@ import net.minecraftforge.registries.ForgeRegistries;
 import java.util.List;
 
 public class BiomeUtils {
-    public static List<BiomeDictionary.Type> findTypes(String[] types) {
+    public static List<BiomeDictionary.Type> findTypes(List<String> types) {
         FilterResult<String, BiomeDictionary.Type> filterResult = FilterResult.create(types, (pFilter) -> {
             return BiomeDictionary.Type
                     .getAll()
@@ -28,7 +28,7 @@ public class BiomeUtils {
     }
 
     @SuppressWarnings("unchecked")
-    public static List<RegistryKey<Biome>> findBiomeKeys(ResourceLocation[] biomes) {
+    public static List<RegistryKey<Biome>> findBiomeKeys(List<ResourceLocation> biomes) {
         FilterResult<ResourceLocation, RegistryKey<Biome>> filterResult = FilterResult.create(biomes, (pLocation) -> {
             if (ForgeRegistries.BIOMES.getValue(pLocation) == null) {
                 return null;
@@ -40,7 +40,7 @@ public class BiomeUtils {
         return filterResult.getFoundValues();
     }
 
-    public static Structure<?>[] findStructures(ResourceLocation[] structures) {
+    public static Structure<?>[] findStructures(List<ResourceLocation> structures) {
         FilterResult<ResourceLocation, Structure<?>> filterResult = FilterResult.create(structures,
                 ForgeRegistries.STRUCTURE_FEATURES::getValue);
 

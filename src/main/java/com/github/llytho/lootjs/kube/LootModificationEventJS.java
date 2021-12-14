@@ -1,6 +1,7 @@
 package com.github.llytho.lootjs.kube;
 
 import com.github.llytho.lootjs.LootModificationsAPI;
+import com.github.llytho.lootjs.core.LootContextType;
 import com.github.llytho.lootjs.kube.builder.LootModifierBuilderJS;
 import dev.latvian.kubejs.event.EventJS;
 import dev.latvian.kubejs.util.ConsoleJS;
@@ -48,8 +49,16 @@ public class LootModificationEventJS extends EventJS {
         locationsToRemove.addAll(collectedByLocations);
     }
 
-    public LootModifierBuilderJS addModifier() {
+    public LootModifierBuilderJS addModifier(String... idOrPattern) {
         LootModifierBuilderJS builder = new LootModifierBuilderJS();
+        builder.anyLootTable(idOrPattern);
+        modifierBuilders.add(builder);
+        return builder;
+    }
+
+    public LootModifierBuilderJS addModifier(LootContextType... types) {
+        LootModifierBuilderJS builder = new LootModifierBuilderJS();
+        builder.anyType(types);
         modifierBuilders.add(builder);
         return builder;
     }

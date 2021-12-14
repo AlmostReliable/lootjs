@@ -15,25 +15,30 @@ import net.minecraft.loot.LootContext;
 import net.minecraft.loot.LootTableManager;
 import net.minecraft.loot.RandomValueRange;
 import net.minecraft.loot.conditions.*;
+import net.minecraft.util.RegistryKey;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.world.biome.Biome;
 import net.minecraft.world.gen.feature.structure.Structure;
+import net.minecraftforge.common.BiomeDictionary;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 public interface ConditionsContainer<B extends ConditionsContainer<?>> {
 
-    default B anyLootTable(Object... objects) {
+    default B anyLootTable(String... idsOrRegex) {
         List<Pattern> patterns = new ArrayList<>();
         List<ResourceLocation> locations = new ArrayList<>();
 
-        for (Object o : objects) {
-            Pattern pattern = UtilsJS.parseRegex(o);
+        for (String str : idsOrRegex) {
+            Pattern pattern = UtilsJS.parseRegex(str);
             if (pattern == null) {
-                locations.add(new ResourceLocation((String) o));
+                locations.add(new ResourceLocation(str));
             } else {
                 patterns.add(pattern);
             }
@@ -48,12 +53,7 @@ public interface ConditionsContainer<B extends ConditionsContainer<?>> {
     }
 
     default B matchLoot(IngredientJS ingredient, boolean exact) {
-        IngredientUtils.nonEmptyIngredientCheck(ingredient);
-        if (exact) {
-            return addCondition(new ContainsLootCondition(ingredient.getVanillaPredicate(),
-                    IConditionOp.Predicate::And));
-        }
-        return addCondition(new ContainsLootCondition(ingredient.getVanillaPredicate(), IConditionOp.Predicate::Or));
+        return addCondition(new ContainsLootCondition(ingredient.getVanillaPredicate(), exact));
     }
 
     default B matchMainHand(IngredientJS ingredient) {
@@ -99,16 +99,42 @@ public interface ConditionsContainer<B extends ConditionsContainer<?>> {
         return addCondition(RandomChanceWithLooting.randomChanceAndLootingBoost(value, looting).build());
     }
 
-    default B anyBiome(ResourceLocation... locations) {
-        return addCondition(new BiomeCheck(BiomeUtils.findBiomeKeys(locations), IConditionOp.Predicate::Or));
+    default B biome(String... biomesOrTags) {
+        Map<Boolean, List<String>> lists = Arrays
+                .stream(biomesOrTags)
+                .collect(Collectors.partitioningBy(s -> s.startsWith("#")));
+
+        List<RegistryKey<Biome>> biomeKeys = BiomeUtils.findBiomeKeys(lists
+                .get(true)
+                .stream()
+                .map(ResourceLocation::new)
+                .collect(Collectors.toList()));
+        List<BiomeDictionary.Type> types = BiomeUtils.findTypes(lists
+                .get(true)
+                .stream()
+                .map(s -> s.substring(1))
+                .collect(Collectors.toList()));
+
+        return addCondition(new BiomeCheck(biomeKeys, types));
     }
 
-    default B anyBiomeType(String... types) {
-        return addCondition(new BiomeTypeCheck(BiomeUtils.findTypes(types), IConditionOp.Predicate::Or));
-    }
+    default B anyBiome(String... biomesOrTags) {
+        Map<Boolean, List<String>> lists = Arrays
+                .stream(biomesOrTags)
+                .collect(Collectors.partitioningBy(s -> s.startsWith("#")));
 
-    default B biomeType(String... types) {
-        return addCondition(new BiomeTypeCheck(BiomeUtils.findTypes(types), IConditionOp.Predicate::And));
+        List<RegistryKey<Biome>> biomeKeys = BiomeUtils.findBiomeKeys(lists
+                .get(true)
+                .stream()
+                .map(ResourceLocation::new)
+                .collect(Collectors.toList()));
+        List<BiomeDictionary.Type> types = BiomeUtils.findTypes(lists
+                .get(true)
+                .stream()
+                .map(s -> s.substring(1))
+                .collect(Collectors.toList()));
+
+        return addCondition(new AnyBiomeCheck(biomeKeys, types));
     }
 
     default B anyDimension(ResourceLocation... dimensions) {
@@ -116,7 +142,7 @@ public interface ConditionsContainer<B extends ConditionsContainer<?>> {
     }
 
     default B anyStructure(ResourceLocation... locations) {
-        Structure<?>[] structures = BiomeUtils.findStructures(locations);
+        Structure<?>[] structures = BiomeUtils.findStructures(Arrays.asList(locations));
         return addCondition(new AnyStructure(structures));
     }
 

@@ -7,42 +7,49 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.world.biome.Biome;
+import net.minecraftforge.common.BiomeDictionary;
 
-import javax.annotation.Nullable;
-import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 
-public class BiomeCheck extends ValueCondition<RegistryKey<Biome>, RegistryKey<Biome>> {
-    private final List<RegistryKey<Biome>> biomes;
+public class BiomeCheck implements IExtendedLootCondition {
+    protected final List<RegistryKey<Biome>> biomes;
+    protected final List<BiomeDictionary.Type> types;
 
-    public BiomeCheck(List<RegistryKey<Biome>> pBiomes, IConditionOp.Factory<RegistryKey<Biome>, RegistryKey<Biome>> pFunc) {
-        super(pFunc);
-        biomes = pBiomes;
+    public BiomeCheck(List<RegistryKey<Biome>> biomes, List<BiomeDictionary.Type> types) {
+        this.biomes = biomes;
+        this.types = types;
     }
 
     @Override
-    protected boolean match(RegistryKey<Biome> biomeThis, RegistryKey<Biome> biomeFromContext) {
-        return biomeThis == biomeFromContext;
-    }
-
-    @Nullable
-    @Override
-    protected Collection<RegistryKey<Biome>> getLeftIterableValue(LootContext context) {
-        return biomes;
-    }
-
-    @Nullable
-    @Override
-    protected RegistryKey<Biome> getRightValue(LootContext context) {
+    public boolean test(LootContext context) {
         Vector3d origin = context.getParamOrNull(LootParameters.ORIGIN);
-        if (origin == null) return null;
+        if (origin == null) return false;
 
         BlockPos blockPos = new BlockPos(origin.x, origin.y, origin.z);
         Biome biome = context.getLevel().getBiome(blockPos);
         if (biome.getRegistryName() == null) {
-            return null;
+            return false;
         }
 
-        return RegistryKey.create(Registry.BIOME_REGISTRY, biome.getRegistryName());
+        RegistryKey<Biome> ctxBiomeKey = RegistryKey.create(Registry.BIOME_REGISTRY, biome.getRegistryName());
+        Set<BiomeDictionary.Type> ctxBiomeTypes = BiomeDictionary.getTypes(ctxBiomeKey);
+        return match(ctxBiomeKey, ctxBiomeTypes);
+    }
+
+    protected boolean match(RegistryKey<Biome> biomeKey, Set<BiomeDictionary.Type> biomeTypes) {
+        for (RegistryKey<Biome> biome : biomes) {
+            if (biome != biomeKey) {
+                return false;
+            }
+        }
+
+        for (BiomeDictionary.Type type : types) {
+            if (!biomeTypes.contains(type)) {
+                return false;
+            }
+        }
+
+        return true;
     }
 }

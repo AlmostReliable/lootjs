@@ -17,7 +17,7 @@ public class FilterResult<F, T> {
     }
 
     @SuppressWarnings("unchecked")
-    public static <F, T> FilterResult<F, T> create(F[] filters, Function<F, T> converter) {
+    public static <F, T> FilterResult<F, T> create(List<F> filters, Function<F, T> converter) {
         ArrayList<F> notFoundFilters = new ArrayList<>();
         ArrayList<T> foundValues = new ArrayList<>();
 

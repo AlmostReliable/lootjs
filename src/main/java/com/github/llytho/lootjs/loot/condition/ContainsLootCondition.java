@@ -5,37 +5,45 @@ import com.github.llytho.lootjs.core.ILootContextData;
 import net.minecraft.item.ItemStack;
 import net.minecraft.loot.LootContext;
 
-import javax.annotation.Nullable;
-import java.util.Collection;
+import java.util.List;
 import java.util.function.Predicate;
 
-public class ContainsLootCondition extends ValueCondition<ItemStack, Predicate<ItemStack>> {
+public class ContainsLootCondition implements IExtendedLootCondition {
     private final Predicate<ItemStack> predicate;
+    private final boolean exact;
 
-    public ContainsLootCondition(Predicate<ItemStack> predicate, IConditionOp.Factory<ItemStack, Predicate<ItemStack>> factory) {
-        super(factory);
+    public ContainsLootCondition(Predicate<ItemStack> predicate, boolean exact) {
         this.predicate = predicate;
+        this.exact = exact;
     }
 
     @Override
-    protected boolean match(ItemStack itemStack, Predicate<ItemStack> predicate) {
-        return predicate.test(itemStack);
-    }
-
-    @Nullable
-    @Override
-    protected Collection<ItemStack> getLeftIterableValue(LootContext context) {
+    public boolean test(LootContext context) {
         ILootContextData data = context.getParamOrNull(Constants.DATA);
         if (data == null) {
-            return null;
+            return false;
         }
 
-        return data.getGeneratedLoot();
+        return exact ? matchExact(data.getGeneratedLoot()) : match(data.getGeneratedLoot());
     }
 
-    @Nullable
-    @Override
-    protected Predicate<ItemStack> getRightValue(LootContext context) {
-        return predicate;
+    private boolean match(List<ItemStack> generatedLoot) {
+        for (ItemStack itemStack : generatedLoot) {
+            if (predicate.test(itemStack)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private boolean matchExact(List<ItemStack> generatedLoot) {
+        for (ItemStack itemStack : generatedLoot) {
+            if (!predicate.test(itemStack)) {
+                return false;
+            }
+        }
+
+        return true;
     }
 }
