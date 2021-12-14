@@ -3,8 +3,11 @@ package com.github.llytho.lootjs;
 import com.github.llytho.lootjs.core.Constants;
 import com.github.llytho.lootjs.core.IAction;
 import com.github.llytho.lootjs.core.ILootContextData;
+import net.minecraft.block.BlockState;
+import net.minecraft.block.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.loot.LootContext;
+import net.minecraft.loot.LootParameters;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,6 +37,10 @@ public class LootModificationsAPI {
         ILootContextData contextData = context.getParamOrNull(Constants.DATA);
         assert contextData != null;
 
+        if (isFireBlock(context)) {
+            return;
+        }
+
         // TODO more testing here. I don't really know why there are empty items in the list or better:
         // TODO There are items which refer to the correct item but their cache flag is true so it acts like air
         loot.removeIf(ItemStack::isEmpty);
@@ -46,5 +53,10 @@ public class LootModificationsAPI {
 
     public void addAction(IAction<LootContext> action) {
         actions.add(action);
+    }
+
+    private boolean isFireBlock(LootContext context) {
+        BlockState b = context.getParamOrNull(LootParameters.BLOCK_STATE);
+        return b != null && b.getBlock().is(Blocks.FIRE);
     }
 }
