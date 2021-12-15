@@ -1,15 +1,18 @@
 package com.github.llytho.lootjs.kube;
 
 import com.github.llytho.lootjs.core.LootContextType;
-import com.github.llytho.lootjs.kube.builder.AlternativeConditionBuilderJS;
-import com.github.llytho.lootjs.kube.builder.DamageSourcePredicateBuilderJS;
-import com.github.llytho.lootjs.kube.builder.EntityPredicateBuilderJS;
-import com.github.llytho.lootjs.kube.builder.InvertedConditionBuilderJS;
+import com.github.llytho.lootjs.kube.builder.*;
 import com.github.llytho.lootjs.loot.condition.*;
 import com.github.llytho.lootjs.util.BiomeUtils;
+import com.github.llytho.lootjs.util.Utils;
 import com.google.gson.JsonObject;
 import dev.latvian.kubejs.item.ingredient.IngredientJS;
+import dev.latvian.kubejs.util.MapJS;
 import dev.latvian.kubejs.util.UtilsJS;
+import net.minecraft.advancements.criterion.FluidPredicate;
+import net.minecraft.advancements.criterion.MinMaxBounds;
+import net.minecraft.advancements.criterion.StatePropertiesPredicate;
+import net.minecraft.fluid.Fluid;
 import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.loot.LootContext;
 import net.minecraft.loot.LootTableManager;
@@ -20,6 +23,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.gen.feature.structure.Structure;
 import net.minecraftforge.common.BiomeDictionary;
+import net.minecraftforge.registries.ForgeRegistries;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -154,6 +158,20 @@ public interface ConditionsContainer<B extends ConditionsContainer<?>> {
         return addCondition(KilledByPlayer.killedByPlayer().build());
     }
 
+    default B matchBlock(String idOrTag, MapJS propertyMap) {
+        BlockPredicateBuilderJS builder = BlockPredicateBuilderJS.block(idOrTag).properties(propertyMap);
+        return addCondition(new MatchBlock(builder.build()));
+    }
+
+    default B matchBlock(String idOrTag) {
+        return matchBlock(idOrTag, new MapJS());
+    }
+
+    default B matchFluid(String idOrTag) {
+        Utils.TagOrEntry<Fluid> tagOrEntry = Utils.getTagOrEntry(ForgeRegistries.FLUIDS, idOrTag);
+        FluidPredicate predicate = new FluidPredicate(tagOrEntry.tag, tagOrEntry.entry, StatePropertiesPredicate.ANY);
+        return addCondition(new MatchFluid(predicate));
+    }
 
     default B matchEntity(Consumer<EntityPredicateBuilderJS> action) {
         EntityPredicateBuilderJS builder = new EntityPredicateBuilderJS();
@@ -183,6 +201,18 @@ public interface ConditionsContainer<B extends ConditionsContainer<?>> {
         DamageSourcePredicateBuilderJS builder = new DamageSourcePredicateBuilderJS();
         action.accept(builder);
         return addCondition(new DamageSourceProperties(builder.build()));
+    }
+
+    default B distanceToKiller(MinMaxBounds.FloatBound bounds) {
+        return customDistanceToPlayer(builder -> {
+            builder.absolute(bounds);
+        });
+    }
+
+    default B customDistanceToPlayer(Consumer<DistancePredicateBuilderJS> action) {
+        DistancePredicateBuilderJS builder = new DistancePredicateBuilderJS();
+        action.accept(builder);
+        return addCondition(new MatchKillerDistance(builder.build()));
     }
 
     default B not(Consumer<InvertedConditionBuilderJS> action) {

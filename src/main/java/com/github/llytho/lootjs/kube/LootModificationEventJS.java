@@ -3,15 +3,23 @@ package com.github.llytho.lootjs.kube;
 import com.github.llytho.lootjs.LootModificationsAPI;
 import com.github.llytho.lootjs.core.LootContextType;
 import com.github.llytho.lootjs.kube.builder.LootModifierBuilderJS;
+import dev.latvian.kubejs.CommonProperties;
 import dev.latvian.kubejs.event.EventJS;
+import dev.latvian.kubejs.script.ScriptType;
+import dev.latvian.kubejs.server.ServerJS;
 import dev.latvian.kubejs.util.ConsoleJS;
 import dev.latvian.mods.rhino.util.HideFromJS;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.util.text.TextFormatting;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
 public class LootModificationEventJS extends EventJS {
+    private static final Logger LOGGER = LogManager.getLogger();
 
     private final List<LootModifierBuilderJS> modifierBuilders = new ArrayList<>();
     private final List<ResourceLocation> originalLocations;
@@ -49,14 +57,14 @@ public class LootModificationEventJS extends EventJS {
         locationsToRemove.addAll(collectedByLocations);
     }
 
-    public LootModifierBuilderJS addModifier(String... idOrPattern) {
+    public LootModifierBuilderJS addModifierForLootTable(String... idOrPattern) {
         LootModifierBuilderJS builder = new LootModifierBuilderJS();
         builder.anyLootTable(idOrPattern);
         modifierBuilders.add(builder);
         return builder;
     }
 
-    public LootModifierBuilderJS addModifier(LootContextType... types) {
+    public LootModifierBuilderJS addModifierForType(LootContextType... types) {
         LootModifierBuilderJS builder = new LootModifierBuilderJS();
         builder.anyType(types);
         modifierBuilders.add(builder);
@@ -72,11 +80,21 @@ public class LootModificationEventJS extends EventJS {
     protected void afterPosted(boolean result) {
         super.afterPosted(result);
 
-        for (LootModifierBuilderJS modifierBuilder : getModifierBuilders()) {
-            try {
+
+        try {
+            for (LootModifierBuilderJS modifierBuilder : getModifierBuilders()) {
                 LootModificationsAPI.get().addAction(modifierBuilder.build());
-            } catch (Exception exception) {
-                ConsoleJS.SERVER.error(exception);
+            }
+        } catch (Exception exception) {
+            ConsoleJS.SERVER.error(exception);
+        } finally {
+            if (CommonProperties.get().announceReload && ServerJS.instance != null &&
+                !CommonProperties.get().hideServerScriptErrors) {
+                if (!ScriptType.SERVER.errors.isEmpty()) {
+                    ServerJS.instance.tell(new StringTextComponent(
+                            "LootJS Errors found! [" + ScriptType.SERVER.errors.size() +
+                            "]! Run '/kubejs errors' for more info").withStyle(TextFormatting.DARK_RED));
+                }
             }
         }
 

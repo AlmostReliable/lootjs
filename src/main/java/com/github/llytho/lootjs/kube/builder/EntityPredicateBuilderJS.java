@@ -1,76 +1,143 @@
 package com.github.llytho.lootjs.kube.builder;
 
 import com.github.llytho.lootjs.predicate.CustomItemPredicate;
+import com.github.llytho.lootjs.predicate.ExtendedEntityFlagsPredicate;
 import com.github.llytho.lootjs.predicate.MultiEntityTypePredicate;
+import com.github.llytho.lootjs.util.Utils;
 import dev.latvian.kubejs.item.ingredient.IngredientJS;
+import dev.latvian.kubejs.util.MapJS;
 import dev.latvian.mods.rhino.util.HideFromJS;
 import net.minecraft.advancements.criterion.*;
 import net.minecraft.entity.EntityType;
+import net.minecraft.fluid.Fluid;
 import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.potion.Effect;
 import net.minecraft.tags.ITag;
-import net.minecraft.tags.TagCollectionManager;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.registries.ForgeRegistries;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 
-public class EntityPredicateBuilderJS {
+public class EntityPredicateBuilderJS implements ExtendedEntityFlagsPredicate.IBuilder {
     private final EntityPredicate.Builder vanillaBuilder = EntityPredicate.Builder.entity();
-
-    @Nullable
-    private Boolean isOnFire;
-    @Nullable
-    private Boolean isCrouching;
-    @Nullable
-    private Boolean isSprinting;
-    @Nullable
-    private Boolean isSwimming;
-    @Nullable
-    private Boolean isBaby;
-
+    private final Map<Effect, MobEffectsPredicate.InstancePredicate> effects = new HashMap<>();
+    private final ExtendedEntityFlagsPredicate.Builder flagsBuilder = new ExtendedEntityFlagsPredicate.Builder();
     @Nullable
     private EntityEquipmentPredicate.Builder equipmentPredicateBuilder;
 
-    private Map<Effect, MobEffectsPredicate.InstancePredicate> effects;
-
     @Nullable
-    private Float minDistanceToPlayer;
+    private FluidPredicate fluidPredicate;
     @Nullable
-    private Float maxDistanceToPlayer;
+    private BlockPredicate blockPredicate;
 
     public EntityPredicateBuilderJS catType(ResourceLocation type) {
         vanillaBuilder.catType(type);
         return this;
     }
 
+    @Override
     public EntityPredicateBuilderJS isOnFire(boolean flag) {
-        isOnFire = flag;
+        flagsBuilder.isOnFire(flag);
         return this;
     }
 
+    @Override
     public EntityPredicateBuilderJS isCrouching(boolean flag) {
-        isCrouching = flag;
+        flagsBuilder.isCrouching(flag);
         return this;
     }
 
+    @Override
     public EntityPredicateBuilderJS isSprinting(boolean flag) {
-        isSprinting = flag;
+        flagsBuilder.isSprinting(flag);
         return this;
     }
 
+    @Override
     public EntityPredicateBuilderJS isSwimming(boolean flag) {
-        isSwimming = flag;
+        flagsBuilder.isSwimming(flag);
         return this;
     }
 
+    @Override
     public EntityPredicateBuilderJS isBaby(boolean flag) {
-        isBaby = flag;
+        flagsBuilder.isBaby(flag);
+        return this;
+    }
+
+    @Override
+    public EntityPredicateBuilderJS isInWater(boolean flag) {
+        flagsBuilder.isInWater(flag);
+        return this;
+    }
+
+    @Override
+    public EntityPredicateBuilderJS isUnderWater(boolean flag) {
+        flagsBuilder.isUnderWater(flag);
+        return this;
+    }
+
+    @Override
+    public EntityPredicateBuilderJS isMonster(boolean flag) {
+        flagsBuilder.isMonster(flag);
+        return this;
+    }
+
+    @Override
+    public EntityPredicateBuilderJS isCreature(boolean flag) {
+        flagsBuilder.isCreature(flag);
+        return this;
+    }
+
+    @Override
+    public EntityPredicateBuilderJS isOnGround(boolean flag) {
+        flagsBuilder.isOnGround(flag);
+        return this;
+    }
+
+    @Override
+    public EntityPredicateBuilderJS isUndeadMob(boolean flag) {
+        flagsBuilder.isUndeadMob(flag);
+        return this;
+    }
+
+    @Override
+    public EntityPredicateBuilderJS isArthropodMob(boolean flag) {
+        flagsBuilder.isArthropodMob(flag);
+        return this;
+    }
+
+    @Override
+    public EntityPredicateBuilderJS isIllegarMob(boolean flag) {
+        flagsBuilder.isIllegarMob(flag);
+        return this;
+    }
+
+    @Override
+    public EntityPredicateBuilderJS isWaterMob(boolean flag) {
+        flagsBuilder.isWaterMob(flag);
+        return this;
+    }
+
+    public EntityPredicateBuilderJS matchBlock(String idOrTag, MapJS propertyMap) {
+        BlockPredicateBuilderJS builder = BlockPredicateBuilderJS.block(idOrTag).properties(propertyMap);
+        blockPredicate = builder.build();
+        return this;
+    }
+
+    public EntityPredicateBuilderJS matchBlock(String idOrTag) {
+        return matchBlock(idOrTag, new MapJS());
+    }
+
+    public EntityPredicateBuilderJS matchFluid(String idOrTag) {
+        Utils.TagOrEntry<Fluid> tagOrEntry = Utils.getTagOrEntry(ForgeRegistries.FLUIDS, idOrTag);
+        fluidPredicate = new FluidPredicate(tagOrEntry.tag, tagOrEntry.entry, StatePropertiesPredicate.ANY);
         return this;
     }
 
@@ -141,21 +208,11 @@ public class EntityPredicateBuilderJS {
         List<ITag<EntityType<?>>> tags = new ArrayList<>();
 
         for (String unknown : unknowns) {
-            if (unknown.startsWith("#")) {
-                ITag<EntityType<?>> tag = TagCollectionManager
-                        .getInstance()
-                        .getEntityTypes()
-                        .getTag(new ResourceLocation(unknown.substring(1)));
-                if (tag == null) {
-                    throw new IllegalArgumentException("Tag " + unknown + " does not exists for entities");
-                }
-                tags.add(tag);
+            Utils.TagOrEntry<EntityType<?>> tagOrEntry = Utils.getTagOrEntry(ForgeRegistries.ENTITIES, unknown);
+            if (tagOrEntry.isTag()) {
+                tags.add(tagOrEntry.tag);
             } else {
-                EntityType<?> type = ForgeRegistries.ENTITIES.getValue(new ResourceLocation(unknown));
-                if (type == null) {
-                    throw new IllegalArgumentException("Entity type " + unknown + " does not exists");
-                }
-                types.add(type);
+                types.add(tagOrEntry.entry);
             }
         }
 
@@ -163,23 +220,25 @@ public class EntityPredicateBuilderJS {
         return this;
     }
 
-    public EntityPredicateBuilderJS minDistanceToPlayer(float distance) {
-        minDistanceToPlayer = distance;
-        return this;
-    }
-
-    public EntityPredicateBuilderJS maxDistanceToPlayer(float distance) {
-        maxDistanceToPlayer = distance;
-        return this;
-    }
-
     @HideFromJS
     public EntityPredicate build() {
         tryBuildFLags();
         tryBuildEffects();
-        tryBuildDistance();
         tryBuildEquipment();
+        tryBuildLocation();
         return vanillaBuilder.build();
+    }
+
+    private void tryBuildLocation() {
+        LocationPredicate.Builder locationBuilder = new LocationPredicate.Builder();
+        if (blockPredicate != null) {
+            locationBuilder.block = blockPredicate;
+        }
+
+        if (fluidPredicate != null) {
+            locationBuilder.fluid = fluidPredicate;
+        }
+        vanillaBuilder.located(locationBuilder.build());
     }
 
     private void tryBuildEquipment() {
@@ -188,16 +247,6 @@ public class EntityPredicateBuilderJS {
         }
     }
 
-    private void tryBuildDistance() {
-        if (minDistanceToPlayer != null | maxDistanceToPlayer != null) {
-            MinMaxBounds.FloatBound distance = new MinMaxBounds.FloatBound(minDistanceToPlayer, maxDistanceToPlayer);
-            vanillaBuilder.distance(new DistancePredicate(MinMaxBounds.FloatBound.ANY,
-                    MinMaxBounds.FloatBound.ANY,
-                    MinMaxBounds.FloatBound.ANY,
-                    MinMaxBounds.FloatBound.ANY,
-                    distance));
-        }
-    }
 
     private void tryBuildEffects() {
         if (!effects.isEmpty()) {
@@ -206,8 +255,6 @@ public class EntityPredicateBuilderJS {
     }
 
     private void tryBuildFLags() {
-        if (isOnFire != null || isCrouching != null || isBaby != null || isSprinting != null || isSwimming != null) {
-            vanillaBuilder.flags(new EntityFlagsPredicate(isOnFire, isCrouching, isSprinting, isSwimming, isBaby));
-        }
+        vanillaBuilder.flags(flagsBuilder.build());
     }
 }
