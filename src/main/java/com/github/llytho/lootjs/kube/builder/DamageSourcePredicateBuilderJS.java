@@ -1,12 +1,18 @@
 package com.github.llytho.lootjs.kube.builder;
 
+import com.github.llytho.lootjs.predicate.ExtendedDamageSourcePredicate;
 import dev.latvian.mods.rhino.util.HideFromJS;
 import net.minecraft.advancements.criterion.DamageSourcePredicate;
 
 import java.util.function.Consumer;
 
 public class DamageSourcePredicateBuilderJS {
-    private final DamageSourcePredicate.Builder vanillaBuilder = new DamageSourcePredicate.Builder();
+    private final ExtendedDamageSourcePredicate.Builder vanillaBuilder = new ExtendedDamageSourcePredicate.Builder();
+
+    public DamageSourcePredicateBuilderJS anyType(String ...types) {
+        vanillaBuilder.anyType(types);
+        return this;
+    }
 
     public DamageSourcePredicateBuilderJS isProjectile(boolean flag) {
         vanillaBuilder.isProjectile = flag;
@@ -63,7 +69,7 @@ public class DamageSourcePredicateBuilderJS {
     }
 
     @HideFromJS
-    public DamageSourcePredicate build() {
+    public ExtendedDamageSourcePredicate build() {
         return vanillaBuilder.build();
     }
 }

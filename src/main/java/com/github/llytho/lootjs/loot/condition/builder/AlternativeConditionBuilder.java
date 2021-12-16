@@ -1,18 +1,16 @@
-package com.github.llytho.lootjs.kube.builder;
+package com.github.llytho.lootjs.loot.condition.builder;
 
 import com.github.llytho.lootjs.kube.ConditionsContainer;
-import dev.latvian.mods.rhino.util.HideFromJS;
 import net.minecraft.loot.conditions.Alternative;
 import net.minecraft.loot.conditions.ILootCondition;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class AlternativeConditionBuilderJS implements ConditionsContainer<AlternativeConditionBuilderJS> {
+public class AlternativeConditionBuilder implements ConditionsContainer<AlternativeConditionBuilder> {
 
     private final List<ILootCondition> conditions = new ArrayList<>();
 
-    @HideFromJS
     public Alternative build() {
         if (conditions.isEmpty()) {
             throw new IllegalArgumentException("No conditions set for `any`");
@@ -22,8 +20,7 @@ public class AlternativeConditionBuilderJS implements ConditionsContainer<Altern
     }
 
     @Override
-    @HideFromJS
-    public AlternativeConditionBuilderJS addCondition(ILootCondition condition) {
+    public AlternativeConditionBuilder addCondition(ILootCondition condition) {
         conditions.add(condition);
         return this;
     }

@@ -56,8 +56,8 @@ public class LootModifierBuilderJS implements ConditionsContainer<LootModifierBu
         return this;
     }
 
-    @SuppressWarnings("unchecked")
     public void buildCurrentAction(IAction<LootContext> action) {
+        @SuppressWarnings("unchecked")
         Predicate<LootContext>[] conditionsArray = (Predicate<LootContext>[]) conditions.toArray(new Predicate[0]);
         Predicate<LootContext> predicate = LootConditionManager.andConditions(conditionsArray);
         conditions.clear();

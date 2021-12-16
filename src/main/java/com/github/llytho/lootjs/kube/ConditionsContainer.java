@@ -1,8 +1,14 @@
 package com.github.llytho.lootjs.kube;
 
 import com.github.llytho.lootjs.core.LootContextType;
-import com.github.llytho.lootjs.kube.builder.*;
+import com.github.llytho.lootjs.kube.builder.BlockPredicateBuilderJS;
+import com.github.llytho.lootjs.kube.builder.DamageSourcePredicateBuilderJS;
+import com.github.llytho.lootjs.kube.builder.EntityPredicateBuilderJS;
 import com.github.llytho.lootjs.loot.condition.*;
+import com.github.llytho.lootjs.loot.condition.builder.AlternativeConditionBuilder;
+import com.github.llytho.lootjs.loot.condition.builder.DistancePredicateBuilder;
+import com.github.llytho.lootjs.loot.condition.builder.InvertedConditionBuilder;
+import com.github.llytho.lootjs.predicate.MainHandTableBonus;
 import com.github.llytho.lootjs.util.BiomeUtils;
 import com.github.llytho.lootjs.util.Utils;
 import com.google.gson.JsonObject;
@@ -12,6 +18,7 @@ import dev.latvian.kubejs.util.UtilsJS;
 import net.minecraft.advancements.criterion.FluidPredicate;
 import net.minecraft.advancements.criterion.MinMaxBounds;
 import net.minecraft.advancements.criterion.StatePropertiesPredicate;
+import net.minecraft.enchantment.Enchantment;
 import net.minecraft.fluid.Fluid;
 import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.loot.LootContext;
@@ -25,6 +32,7 @@ import net.minecraft.world.gen.feature.structure.Structure;
 import net.minecraftforge.common.BiomeDictionary;
 import net.minecraftforge.registries.ForgeRegistries;
 
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -60,15 +68,15 @@ public interface ConditionsContainer<B extends ConditionsContainer<?>> {
         return addCondition(new ContainsLootCondition(ingredient.getVanillaPredicate(), exact));
     }
 
-    default B matchMainHand(IngredientJS ingredient) {
+    default B matchPlayerMainHand(IngredientJS ingredient) {
         return addCondition(new MatchEquipmentSlot(EquipmentSlotType.MAINHAND, ingredient.getVanillaPredicate()));
     }
 
-    default B matchOffHand(IngredientJS ingredient) {
+    default B matchPlayerOffHand(IngredientJS ingredient) {
         return addCondition(new MatchEquipmentSlot(EquipmentSlotType.OFFHAND, ingredient.getVanillaPredicate()));
     }
 
-    default B matchSlot(EquipmentSlotType slot, IngredientJS ingredient) {
+    default B matchPlayerEquip(EquipmentSlotType slot, IngredientJS ingredient) {
         return addCondition(new MatchEquipmentSlot(slot, ingredient.getVanillaPredicate()));
     }
 
@@ -101,6 +109,14 @@ public interface ConditionsContainer<B extends ConditionsContainer<?>> {
 
     default B randomChanceWithLooting(float value, float looting) {
         return addCondition(RandomChanceWithLooting.randomChanceAndLootingBoost(value, looting).build());
+    }
+
+    default B randomChanceWithEnchantment(@Nullable Enchantment enchantment, float[] chances) {
+        if (enchantment == null) {
+            throw new IllegalArgumentException("Enchant not found");
+        }
+
+        return addCondition(new MainHandTableBonus(enchantment, chances));
     }
 
     default B biome(String... biomesOrTags) {
@@ -179,22 +195,22 @@ public interface ConditionsContainer<B extends ConditionsContainer<?>> {
         return addCondition(new EntityHasProperty(builder.build(), LootContext.EntityTarget.THIS));
     }
 
-    default B matchKillerEntity(Consumer<EntityPredicateBuilderJS> action) {
+    default B matchKiller(Consumer<EntityPredicateBuilderJS> action) {
         EntityPredicateBuilderJS builder = new EntityPredicateBuilderJS();
         action.accept(builder);
         return addCondition(new EntityHasProperty(builder.build(), LootContext.EntityTarget.KILLER));
     }
 
-    default B matchDirectKillerEntity(Consumer<EntityPredicateBuilderJS> action) {
+    default B matchDirectKiller(Consumer<EntityPredicateBuilderJS> action) {
         EntityPredicateBuilderJS builder = new EntityPredicateBuilderJS();
         action.accept(builder);
         return addCondition(new EntityHasProperty(builder.build(), LootContext.EntityTarget.DIRECT_KILLER));
     }
 
-    default B matchLastDamagePlayer(Consumer<EntityPredicateBuilderJS> action) {
+    default B matchPlayer(Consumer<EntityPredicateBuilderJS> action) {
         EntityPredicateBuilderJS builder = new EntityPredicateBuilderJS();
         action.accept(builder);
-        return addCondition(new EntityHasProperty(builder.build(), LootContext.EntityTarget.KILLER_PLAYER));
+        return addCondition(new MatchPlayer(builder.build()));
     }
 
     default B matchDamageSource(Consumer<DamageSourcePredicateBuilderJS> action) {
@@ -209,20 +225,20 @@ public interface ConditionsContainer<B extends ConditionsContainer<?>> {
         });
     }
 
-    default B customDistanceToPlayer(Consumer<DistancePredicateBuilderJS> action) {
-        DistancePredicateBuilderJS builder = new DistancePredicateBuilderJS();
+    default B customDistanceToPlayer(Consumer<DistancePredicateBuilder> action) {
+        DistancePredicateBuilder builder = new DistancePredicateBuilder();
         action.accept(builder);
         return addCondition(new MatchKillerDistance(builder.build()));
     }
 
-    default B not(Consumer<InvertedConditionBuilderJS> action) {
-        InvertedConditionBuilderJS builder = new InvertedConditionBuilderJS();
+    default B not(Consumer<InvertedConditionBuilder> action) {
+        InvertedConditionBuilder builder = new InvertedConditionBuilder();
         action.accept(builder);
         return addCondition(builder.build());
     }
 
-    default B any(Consumer<AlternativeConditionBuilderJS> action) {
-        AlternativeConditionBuilderJS builder = new AlternativeConditionBuilderJS();
+    default B any(Consumer<AlternativeConditionBuilder> action) {
+        AlternativeConditionBuilder builder = new AlternativeConditionBuilder();
         action.accept(builder);
         return addCondition(builder.build());
     }

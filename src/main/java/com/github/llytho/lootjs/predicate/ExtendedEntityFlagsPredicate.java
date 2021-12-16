@@ -55,7 +55,7 @@ public class ExtendedEntityFlagsPredicate extends EntityFlagsPredicate {
                matchesMobType(isWaterMob, entity, CreatureAttribute.WATER);
     }
 
-    private boolean matchesMobType(Boolean flag, Entity entity, CreatureAttribute mobType) {
+    private boolean matchesMobType(@Nullable Boolean flag, Entity entity, CreatureAttribute mobType) {
         if (flag == null) {
             return true;
         }

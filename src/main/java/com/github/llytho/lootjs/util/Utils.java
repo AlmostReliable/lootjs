@@ -10,8 +10,8 @@ import net.minecraftforge.registries.IForgeRegistryEntry;
 
 public class Utils {
     public static <T extends IForgeRegistryEntry<T>> TagOrEntry<T> getTagOrEntry(IForgeRegistry<T> registry, String idOrTag) {
-        @SuppressWarnings("unchecked") ITagCollection<T> tagCollection = (ITagCollection<T>) getTagCollectionByRegistry(
-                registry);
+        @SuppressWarnings("unchecked")
+        ITagCollection<T> tagCollection = (ITagCollection<T>) getTagCollectionByRegistry(registry);
         if (idOrTag.startsWith("#")) {
             ITag<T> tag = tagCollection.getTag(new ResourceLocation(idOrTag.substring(1)));
             if (tag == null) {

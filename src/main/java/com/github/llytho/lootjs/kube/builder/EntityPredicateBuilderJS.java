@@ -6,7 +6,6 @@ import com.github.llytho.lootjs.predicate.MultiEntityTypePredicate;
 import com.github.llytho.lootjs.util.Utils;
 import dev.latvian.kubejs.item.ingredient.IngredientJS;
 import dev.latvian.kubejs.util.MapJS;
-import dev.latvian.mods.rhino.util.HideFromJS;
 import net.minecraft.advancements.criterion.*;
 import net.minecraft.entity.EntityType;
 import net.minecraft.fluid.Fluid;
@@ -220,7 +219,6 @@ public class EntityPredicateBuilderJS implements ExtendedEntityFlagsPredicate.IB
         return this;
     }
 
-    @HideFromJS
     public EntityPredicate build() {
         tryBuildFLags();
         tryBuildEffects();
