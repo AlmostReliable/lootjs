@@ -1,22 +1,32 @@
-package com.github.llytho.lootjs.loot.condition;
+package com.github.llytho.lootjs.core;
 
 import net.minecraft.loot.LootContext;
 import net.minecraft.util.ResourceLocation;
 
+import java.util.List;
 import java.util.regex.Pattern;
 
-public class MatchLootTableId implements IExtendedLootCondition {
+public class LootModificationByTable extends AbstractLootModification {
 
-    public final ResourceLocation[] locations;
-    public final Pattern[] patterns;
+    public final List<ResourceLocation> locations;
+    public final List<Pattern> patterns;
+    private final String name;
 
-    public MatchLootTableId(ResourceLocation[] locations, Pattern[] patterns) {
+
+    public LootModificationByTable(String name, List<ResourceLocation> locations, List<Pattern> patterns, List<LootAction> actions) {
+        super(actions);
+        this.name = name;
         this.locations = locations;
         this.patterns = patterns;
     }
 
     @Override
-    public boolean test(LootContext context) {
+    public String getName() {
+        return name;
+    }
+
+    @Override
+    public boolean shouldExecute(LootContext context) {
         for (ResourceLocation location : locations) {
             if (location.equals(context.getQueriedLootTableId())) {
                 return true;
@@ -31,5 +41,4 @@ public class MatchLootTableId implements IExtendedLootCondition {
 
         return false;
     }
-
 }

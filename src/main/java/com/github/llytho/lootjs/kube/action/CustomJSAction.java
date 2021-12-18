@@ -1,12 +1,12 @@
 package com.github.llytho.lootjs.kube.action;
 
-import com.github.llytho.lootjs.core.IAction;
+import com.github.llytho.lootjs.core.LootAction;
 import com.github.llytho.lootjs.kube.LootContextJS;
 import net.minecraft.loot.LootContext;
 
 import java.util.function.Consumer;
 
-public class CustomJSAction implements IAction<LootContext> {
+public class CustomJSAction implements LootAction {
 
     private final Consumer<LootContextJS> action;
 

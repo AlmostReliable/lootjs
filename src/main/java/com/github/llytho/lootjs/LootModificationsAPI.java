@@ -1,8 +1,9 @@
 package com.github.llytho.lootjs;
 
 import com.github.llytho.lootjs.core.Constants;
-import com.github.llytho.lootjs.core.IAction;
 import com.github.llytho.lootjs.core.ILootContextData;
+import com.github.llytho.lootjs.core.ILootModification;
+import com.github.llytho.lootjs.core.ILootModificationResult;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.item.ItemStack;
@@ -15,10 +16,10 @@ import java.util.List;
 public class LootModificationsAPI {
 
     private static LootModificationsAPI instance;
-    private final List<IAction<LootContext>> actions;
+    private final List<ILootModification> modifications;
 
     public LootModificationsAPI() {
-        actions = new ArrayList<>();
+        modifications = new ArrayList<>();
     }
 
     public static LootModificationsAPI get() {
@@ -45,14 +46,16 @@ public class LootModificationsAPI {
         // TODO There are items which refer to the correct item but their cache flag is true so it acts like air
         loot.removeIf(ItemStack::isEmpty);
         contextData.setGeneratedLoot(loot);
-        for (IAction<LootContext> action : actions) {
-            action.accept(context);
+        for (ILootModification modification : modifications) {
+            if (modification.shouldExecute(context)) {
+                modification.execute(context);
+            }
             contextData.reset();
         }
     }
 
-    public void addAction(IAction<LootContext> action) {
-        actions.add(action);
+    public void addModification(ILootModification modification) {
+        modifications.add(modification);
     }
 
     private boolean isFireBlock(LootContext context) {

@@ -1,6 +1,5 @@
 package com.github.llytho.lootjs.kube;
 
-import com.github.llytho.lootjs.core.LootContextType;
 import com.github.llytho.lootjs.kube.builder.BlockPredicateBuilderJS;
 import com.github.llytho.lootjs.kube.builder.DamageSourcePredicateBuilderJS;
 import com.github.llytho.lootjs.kube.builder.EntityPredicateBuilderJS;
@@ -14,7 +13,6 @@ import com.github.llytho.lootjs.util.Utils;
 import com.google.gson.JsonObject;
 import dev.latvian.kubejs.item.ingredient.IngredientJS;
 import dev.latvian.kubejs.util.MapJS;
-import dev.latvian.kubejs.util.UtilsJS;
 import net.minecraft.advancements.criterion.FluidPredicate;
 import net.minecraft.advancements.criterion.MinMaxBounds;
 import net.minecraft.advancements.criterion.StatePropertiesPredicate;
@@ -33,32 +31,13 @@ import net.minecraftforge.common.BiomeDictionary;
 import net.minecraftforge.registries.ForgeRegistries;
 
 import javax.annotation.Nullable;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 public interface ConditionsContainer<B extends ConditionsContainer<?>> {
-
-    default B anyLootTable(String... idsOrRegex) {
-        List<Pattern> patterns = new ArrayList<>();
-        List<ResourceLocation> locations = new ArrayList<>();
-
-        for (String str : idsOrRegex) {
-            Pattern pattern = UtilsJS.parseRegex(str);
-            if (pattern == null) {
-                locations.add(new ResourceLocation(str));
-            } else {
-                patterns.add(pattern);
-            }
-        }
-
-        return addCondition(new MatchLootTableId(locations.toArray(new ResourceLocation[0]),
-                patterns.toArray(new Pattern[0])));
-    }
 
     default B matchLoot(IngredientJS ingredient) {
         return matchLoot(ingredient, false);
@@ -78,10 +57,6 @@ public interface ConditionsContainer<B extends ConditionsContainer<?>> {
 
     default B matchPlayerEquip(EquipmentSlotType slot, IngredientJS ingredient) {
         return addCondition(new MatchEquipmentSlot(slot, ingredient.getVanillaPredicate()));
-    }
-
-    default B anyType(LootContextType... types) {
-        return addCondition(new IsLootTableType(types));
     }
 
     default B survivesExplosion() {

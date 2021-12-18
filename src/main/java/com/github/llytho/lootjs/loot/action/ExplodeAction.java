@@ -1,12 +1,12 @@
 package com.github.llytho.lootjs.loot.action;
 
-import com.github.llytho.lootjs.core.IAction;
+import com.github.llytho.lootjs.core.LootAction;
 import net.minecraft.loot.LootContext;
 import net.minecraft.loot.LootParameters;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.Explosion;
 
-public class ExplodeAction implements IAction<LootContext> {
+public class ExplodeAction implements LootAction {
 
     private final float radius;
     private final boolean fire;

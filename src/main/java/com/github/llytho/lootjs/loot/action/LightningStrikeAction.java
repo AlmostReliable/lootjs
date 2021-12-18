@@ -1,6 +1,6 @@
 package com.github.llytho.lootjs.loot.action;
 
-import com.github.llytho.lootjs.core.IAction;
+import com.github.llytho.lootjs.core.LootAction;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.effect.LightningBoltEntity;
 import net.minecraft.loot.LootContext;
@@ -8,7 +8,7 @@ import net.minecraft.loot.LootParameters;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.vector.Vector3d;
 
-public class LightningStrikeAction implements IAction<LootContext> {
+public class LightningStrikeAction implements LootAction {
     private final boolean shouldDamageEntity;
 
     public LightningStrikeAction(boolean shouldDamageEntity) {

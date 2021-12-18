@@ -2,6 +2,7 @@ package com.github.llytho.lootjs.util;
 
 import com.github.llytho.lootjs.core.Constants;
 import com.github.llytho.lootjs.core.ILootContextData;
+import com.github.llytho.lootjs.core.ILootModificationResult;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.loot.LootContext;
@@ -26,6 +27,26 @@ public class LootContextUtils {
         }
 
         return null;
+    }
+
+    public static void popResultLayer(LootContext context) {
+        ILootModificationResult result = context.getParamOrNull(Constants.RESULT_LOGGER);
+        if (result == null) return;
+        result.popLayer();
+    }
+
+
+    public static void pushResultLayer(LootContext context) {
+        ILootModificationResult result = context.getParamOrNull(Constants.RESULT_LOGGER);
+        if (result == null) return;
+        result.pushLayer();
+    }
+
+    public static void writeResult(LootContext context, boolean succeed, Object o) {
+        ILootModificationResult result = context.getParamOrNull(Constants.RESULT_LOGGER);
+        if (result == null) return;
+
+        result.add(succeed, o);
     }
 
     @Nullable
