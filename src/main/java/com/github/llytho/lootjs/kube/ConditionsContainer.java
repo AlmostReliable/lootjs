@@ -1,12 +1,8 @@
 package com.github.llytho.lootjs.kube;
 
-import com.github.llytho.lootjs.kube.builder.BlockPredicateBuilderJS;
-import com.github.llytho.lootjs.kube.builder.DamageSourcePredicateBuilderJS;
-import com.github.llytho.lootjs.kube.builder.EntityPredicateBuilderJS;
+import com.github.llytho.lootjs.kube.builder.*;
 import com.github.llytho.lootjs.loot.condition.*;
-import com.github.llytho.lootjs.loot.condition.builder.AlternativeConditionBuilder;
 import com.github.llytho.lootjs.loot.condition.builder.DistancePredicateBuilder;
-import com.github.llytho.lootjs.loot.condition.builder.InvertedConditionBuilder;
 import com.github.llytho.lootjs.util.BiomeUtils;
 import com.github.llytho.lootjs.util.Utils;
 import com.google.gson.JsonObject;
@@ -205,14 +201,20 @@ public interface ConditionsContainer<B extends ConditionsContainer<?>> {
         return addCondition(new MatchKillerDistance(builder.build()));
     }
 
-    default B not(Consumer<InvertedConditionBuilder> action) {
-        InvertedConditionBuilder builder = new InvertedConditionBuilder();
+    default B not(Consumer<NotConditionBuilder> action) {
+        NotConditionBuilder builder = new NotConditionBuilder();
         action.accept(builder);
         return addCondition(builder.build());
     }
 
-    default B any(Consumer<AlternativeConditionBuilder> action) {
-        AlternativeConditionBuilder builder = new AlternativeConditionBuilder();
+    default B or(Consumer<OrConditionBuilder> action) {
+        OrConditionBuilder builder = new OrConditionBuilder();
+        action.accept(builder);
+        return addCondition(builder.build());
+    }
+
+    default B and(Consumer<AndConditionBuilder> action) {
+        AndConditionBuilder builder = new AndConditionBuilder();
         action.accept(builder);
         return addCondition(builder.build());
     }

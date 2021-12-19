@@ -1,6 +1,7 @@
 package com.github.llytho.lootjs.core;
 
 import com.github.llytho.lootjs.util.LootContextUtils;
+import com.github.llytho.lootjs.util.Utils;
 import com.google.common.base.Strings;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.inventory.EquipmentSlotType;
@@ -14,15 +15,49 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class LootModificationDebug {
-
+public class DebugStack {
+    public static final String CONDITION_PREFIX = "";
     public static final int BASE_LAYER = 1;
     protected final List<Entry> entries = new ArrayList<>();
     private int layer = BASE_LAYER;
 
+    public static void popLayer(@Nullable DebugStack stack) {
+        if (stack != null) {
+            stack.popLayer();
+        }
+    }
 
-    public static LootModificationDebug context(LootContext context) {
-        LootModificationDebug cd = new LootModificationDebug();
+    public static void pushLayer(@Nullable DebugStack stack) {
+        if (stack != null) {
+            stack.pushLayer();
+        }
+    }
+
+    public static void write(@Nullable DebugStack stack, String text) {
+        if (stack != null) {
+            stack.write(text);
+        }
+    }
+
+    public static <T> void write(@Nullable DebugStack stack, String prefix, T t) {
+        if (stack != null) {
+            stack.write(prefix + Utils.getClassNameEnding(t));
+        }
+    }
+
+    @Nullable
+    public static <T> TestedEntry write(@Nullable DebugStack stack, @Nullable String prefix, T t, @Nullable String suffix, boolean succeed) {
+        if (stack == null) {
+            return null;
+        }
+
+        String prefixStr = prefix == null ? "" : prefix;
+        String suffixStr = suffix == null ? "" : suffix;
+        return stack.write(succeed, prefixStr + Utils.getClassNameEnding(t) + suffixStr);
+    }
+
+    public static DebugStack context(LootContext context) {
+        DebugStack cd = new DebugStack();
 
         cd.write("LootTable", context.getQueriedLootTableId());
 
@@ -79,8 +114,10 @@ public class LootModificationDebug {
         entries.add(new Entry(layer, string));
     }
 
-    public void write(boolean succeed, String string) {
-        entries.add(new TestedEntry(layer, succeed, string));
+    public TestedEntry write(boolean succeed, String string) {
+        TestedEntry testedEntry = new TestedEntry(layer, succeed, string);
+        entries.add(testedEntry);
+        return testedEntry;
     }
 
     public <T> void write(String prefix, @Nullable T t) {
@@ -117,7 +154,7 @@ public class LootModificationDebug {
     }
 
     public static class TestedEntry extends Entry {
-        protected final boolean succeed;
+        protected boolean succeed;
 
         protected TestedEntry(int layer, boolean succeed, String text) {
             super(layer, text);
@@ -126,7 +163,11 @@ public class LootModificationDebug {
 
         @Override
         public String getText() {
-            return (succeed ? "\uD83D\uDFE2" : "\uD83D\uDD34") + super.getText();
+            return (succeed ? "\u2714\uFE0F" : "\u274C") + " " + super.getText();
+        }
+
+        public void setSucceed(boolean flag) {
+            succeed = flag;
         }
     }
 }

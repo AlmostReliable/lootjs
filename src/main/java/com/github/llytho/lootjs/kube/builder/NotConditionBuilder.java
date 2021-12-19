@@ -1,10 +1,10 @@
-package com.github.llytho.lootjs.loot.condition.builder;
+package com.github.llytho.lootjs.kube.builder;
 
 import com.github.llytho.lootjs.kube.ConditionsContainer;
 import net.minecraft.loot.conditions.ILootCondition;
 import net.minecraft.loot.conditions.Inverted;
 
-public class InvertedConditionBuilder implements ConditionsContainer<InvertedConditionBuilder> {
+public class NotConditionBuilder implements ConditionsContainer<NotConditionBuilder> {
 
     private ILootCondition condition = null;
 
@@ -17,7 +17,7 @@ public class InvertedConditionBuilder implements ConditionsContainer<InvertedCon
     }
 
     @Override
-    public InvertedConditionBuilder addCondition(ILootCondition condition) {
+    public NotConditionBuilder addCondition(ILootCondition condition) {
         if (this.condition != null) {
             throw new IllegalArgumentException("Already set a condition");
         }

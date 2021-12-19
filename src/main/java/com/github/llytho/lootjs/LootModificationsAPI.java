@@ -1,9 +1,9 @@
 package com.github.llytho.lootjs;
 
 import com.github.llytho.lootjs.core.Constants;
+import com.github.llytho.lootjs.core.DebugStack;
 import com.github.llytho.lootjs.core.ILootContextData;
 import com.github.llytho.lootjs.core.ILootModification;
-import com.github.llytho.lootjs.core.LootModificationDebug;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.item.ItemStack;
@@ -18,7 +18,7 @@ import java.util.function.BiConsumer;
 public class LootModificationsAPI {
 
     @Nullable
-    public static BiConsumer<LootContext, LootModificationDebug> DEBUG_ACTION;
+    public static BiConsumer<LootContext, DebugStack> DEBUG_ACTION;
 
     private static LootModificationsAPI instance;
     private final List<ILootModification> modifications;
@@ -47,7 +47,7 @@ public class LootModificationsAPI {
             return;
         }
 
-        LootModificationDebug debug = context.getParamOrNull(Constants.RESULT_LOGGER);
+        DebugStack debug = context.getParamOrNull(Constants.RESULT_LOGGER);
 
         // TODO more testing here. I don't really know why there are empty items in the list or better:
         // TODO There are items which refer to the correct item but their cache flag is true so it acts like air
@@ -55,8 +55,9 @@ public class LootModificationsAPI {
         contextData.setGeneratedLoot(loot);
         for (ILootModification modification : modifications) {
             if (modification.shouldExecute(context)) {
-                if (debug != null) debug.write(modification.getName());
+                DebugStack.write(debug, "\uD83D\uDD27 " + modification.getName() + " {");
                 modification.execute(context);
+                DebugStack.write(debug, "}");
             }
             contextData.reset();
         }

@@ -13,12 +13,16 @@ public abstract class AbstractLootModification implements ILootModification {
 
     @Override
     public boolean execute(LootContext context) {
+        DebugStack stack = context.getParamOrNull(Constants.RESULT_LOGGER);
+        DebugStack.pushLayer(stack);
         for (ILootAction action : actions) {
             if (!action.accept(context)) {
+                DebugStack.popLayer(stack);
                 return false;
             }
         }
 
+        DebugStack.popLayer(stack);
         return true;
     }
 }

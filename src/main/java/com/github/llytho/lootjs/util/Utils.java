@@ -9,6 +9,12 @@ import net.minecraftforge.registries.IForgeRegistry;
 import net.minecraftforge.registries.IForgeRegistryEntry;
 
 public class Utils {
+
+    public static <T> String getClassNameEnding(T t) {
+        String tName = t.getClass().getName();
+        return tName.substring(tName.lastIndexOf('.') + 1);
+    }
+
     public static <T extends IForgeRegistryEntry<T>> TagOrEntry<T> getTagOrEntry(IForgeRegistry<T> registry, String idOrTag) {
         @SuppressWarnings("unchecked")
         ITagCollection<T> tagCollection = (ITagCollection<T>) getTagCollectionByRegistry(registry);
