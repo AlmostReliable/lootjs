@@ -1,31 +1,32 @@
 package com.github.llytho.lootjs.loot.action;
 
-import com.github.llytho.lootjs.core.LootAction;
+import com.github.llytho.lootjs.core.ILootAction;
 import com.github.llytho.lootjs.util.LootContextUtils;
 import net.minecraft.loot.LootContext;
 import net.minecraft.loot.conditions.ILootCondition;
 
-public class ConditionalAction implements LootAction {
+public class ConditionalAction implements ILootAction {
 
-    private final LootAction action;
-    private final ILootCondition[] predicates;
+    private final ILootAction action;
+    private final ILootCondition[] conditions;
 
-    public ConditionalAction(LootAction action, ILootCondition[] predicates) {
+    public ConditionalAction(ILootAction action, ILootCondition[] conditions) {
         this.action = action;
-        this.predicates = predicates;
+        this.conditions = conditions;
     }
 
     @Override
     public boolean accept(LootContext context) {
-        LootContextUtils.pushResultLayer(context);
-        for (ILootCondition predicate : predicates) {
-            boolean succeed = predicate.test(context);
-            LootContextUtils.writeResult(context, succeed, predicate);
+        for (ILootCondition condition : conditions) {
+            boolean succeed = condition.test(context);
+            LootContextUtils.writeConditionInLayer(context, succeed, condition);
             if (!succeed) {
                 return false;
             }
         }
 
-        return action.accept(context);
+        boolean actionSucceed = action.accept(context);
+        LootContextUtils.writeActionInLayer(context, actionSucceed, action);
+        return actionSucceed;
     }
 }

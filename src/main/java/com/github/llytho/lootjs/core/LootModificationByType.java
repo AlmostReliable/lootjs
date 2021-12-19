@@ -9,7 +9,7 @@ public class LootModificationByType extends AbstractLootModification {
     private final String name;
     private final List<LootContextType> types;
 
-    public LootModificationByType(String name, List<LootContextType> types, List<LootAction> actions) {
+    public LootModificationByType(String name, List<LootContextType> types, List<ILootAction> actions) {
         super(actions);
         this.name = name;
         this.types = types;

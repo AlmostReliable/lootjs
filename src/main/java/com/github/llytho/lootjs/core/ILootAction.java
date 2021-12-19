@@ -2,6 +2,6 @@ package com.github.llytho.lootjs.core;
 
 import net.minecraft.loot.LootContext;
 
-public interface LootAction {
+public interface ILootAction {
     boolean accept(LootContext context);
 }

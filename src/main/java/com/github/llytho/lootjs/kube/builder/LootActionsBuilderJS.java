@@ -1,6 +1,6 @@
 package com.github.llytho.lootjs.kube.builder;
 
-import com.github.llytho.lootjs.core.LootAction;
+import com.github.llytho.lootjs.core.ILootAction;
 import com.github.llytho.lootjs.kube.ConditionsContainer;
 import com.github.llytho.lootjs.kube.LootContextJS;
 import com.github.llytho.lootjs.kube.action.CustomJSAction;
@@ -9,7 +9,6 @@ import dev.latvian.kubejs.item.ItemStackJS;
 import dev.latvian.kubejs.item.ingredient.IngredientJS;
 import dev.latvian.mods.rhino.util.HideFromJS;
 import net.minecraft.item.ItemStack;
-import net.minecraft.loot.LootContext;
 import net.minecraft.loot.conditions.ILootCondition;
 import net.minecraft.world.Explosion;
 
@@ -19,7 +18,7 @@ import java.util.List;
 import java.util.function.Consumer;
 
 public class LootActionsBuilderJS implements ConditionsContainer<LootActionsBuilderJS> {
-    private final List<LootAction> actions = new ArrayList<>();
+    private final List<ILootAction> actions = new ArrayList<>();
     private final List<ILootCondition> conditions = new ArrayList<>();
 
     public LootActionsBuilderJS thenApply(Consumer<LootContextJS> action) {
@@ -54,7 +53,7 @@ public class LootActionsBuilderJS implements ConditionsContainer<LootActionsBuil
         return this;
     }
 
-    public void buildCurrentAction(LootAction action) {
+    public void buildCurrentAction(ILootAction action) {
         ILootCondition[] conditionsArray = conditions.toArray(new ILootCondition[0]);
         conditions.clear();
         ConditionalAction conditionalAction = new ConditionalAction(action, conditionsArray);
@@ -62,7 +61,7 @@ public class LootActionsBuilderJS implements ConditionsContainer<LootActionsBuil
     }
 
     @HideFromJS
-    public List<LootAction> getActions() {
+    public List<ILootAction> getActions() {
         if (actions.isEmpty()) {
             throw new IllegalArgumentException("No actions were added to the modifier");
         }

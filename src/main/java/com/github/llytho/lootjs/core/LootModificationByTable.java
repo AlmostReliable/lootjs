@@ -13,7 +13,7 @@ public class LootModificationByTable extends AbstractLootModification {
     private final String name;
 
 
-    public LootModificationByTable(String name, List<ResourceLocation> locations, List<Pattern> patterns, List<LootAction> actions) {
+    public LootModificationByTable(String name, List<ResourceLocation> locations, List<Pattern> patterns, List<ILootAction> actions) {
         super(actions);
         this.name = name;
         this.locations = locations;

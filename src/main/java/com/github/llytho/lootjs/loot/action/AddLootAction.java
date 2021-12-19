@@ -1,12 +1,12 @@
 package com.github.llytho.lootjs.loot.action;
 
 import com.github.llytho.lootjs.core.Constants;
-import com.github.llytho.lootjs.core.LootAction;
+import com.github.llytho.lootjs.core.ILootAction;
 import com.github.llytho.lootjs.core.ILootContextData;
 import net.minecraft.item.ItemStack;
 import net.minecraft.loot.LootContext;
 
-public class AddLootAction implements LootAction {
+public class AddLootAction implements ILootAction {
 
     private final ItemStack[] itemStacks;
 

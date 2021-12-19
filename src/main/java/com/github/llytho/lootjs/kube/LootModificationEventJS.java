@@ -9,7 +9,6 @@ import dev.latvian.kubejs.script.ScriptType;
 import dev.latvian.kubejs.server.ServerJS;
 import dev.latvian.kubejs.util.ConsoleJS;
 import dev.latvian.kubejs.util.UtilsJS;
-import net.minecraft.loot.LootContext;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
@@ -75,7 +74,7 @@ public class LootModificationEventJS extends EventJS {
 
         LootActionsBuilderJS builder = new LootActionsBuilderJS();
         modifierSuppliers.add(() -> {
-            List<LootAction> actions = builder.getActions();
+            List<ILootAction> actions = builder.getActions();
             return new LootModificationByTable(name,
                     new ArrayList<>(locations),
                     new ArrayList<>(patterns),
@@ -87,7 +86,7 @@ public class LootModificationEventJS extends EventJS {
     public LootActionsBuilderJS addModifierForType(String name, LootContextType... types) {
         LootActionsBuilderJS builder = new LootActionsBuilderJS();
         modifierSuppliers.add(() -> {
-            List<LootAction> actions = builder.getActions();
+            List<ILootAction> actions = builder.getActions();
             return new LootModificationByType(name, new ArrayList<>(Arrays.asList(types)), new ArrayList<>(actions));
         });
         return builder;

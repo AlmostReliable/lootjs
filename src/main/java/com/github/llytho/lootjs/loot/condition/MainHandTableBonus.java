@@ -1,4 +1,4 @@
-package com.github.llytho.lootjs.predicate;
+package com.github.llytho.lootjs.loot.condition;
 
 import com.github.llytho.lootjs.loot.condition.IExtendedLootCondition;
 import com.github.llytho.lootjs.util.LootContextUtils;

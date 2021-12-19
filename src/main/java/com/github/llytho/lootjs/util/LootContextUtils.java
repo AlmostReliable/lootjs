@@ -1,12 +1,14 @@
 package com.github.llytho.lootjs.util;
 
 import com.github.llytho.lootjs.core.Constants;
+import com.github.llytho.lootjs.core.ILootAction;
 import com.github.llytho.lootjs.core.ILootContextData;
-import com.github.llytho.lootjs.core.ILootModificationResult;
+import com.github.llytho.lootjs.core.LootModificationDebug;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.loot.LootContext;
 import net.minecraft.loot.LootParameters;
+import net.minecraft.loot.conditions.ILootCondition;
 
 import javax.annotation.Nullable;
 
@@ -30,23 +32,37 @@ public class LootContextUtils {
     }
 
     public static void popResultLayer(LootContext context) {
-        ILootModificationResult result = context.getParamOrNull(Constants.RESULT_LOGGER);
+        LootModificationDebug result = context.getParamOrNull(Constants.RESULT_LOGGER);
         if (result == null) return;
         result.popLayer();
     }
 
 
     public static void pushResultLayer(LootContext context) {
-        ILootModificationResult result = context.getParamOrNull(Constants.RESULT_LOGGER);
+        LootModificationDebug result = context.getParamOrNull(Constants.RESULT_LOGGER);
         if (result == null) return;
         result.pushLayer();
     }
 
-    public static void writeResult(LootContext context, boolean succeed, Object o) {
-        ILootModificationResult result = context.getParamOrNull(Constants.RESULT_LOGGER);
+    public static void writeConditionInLayer(LootContext context, boolean succeed, ILootCondition condition) {
+        LootModificationDebug result = context.getParamOrNull(Constants.RESULT_LOGGER);
         if (result == null) return;
 
-        result.add(succeed, o);
+        result.pushLayer();
+        String conName = condition.getClass().getName();
+        result.write(succeed, "[C] " + conName.substring(conName.lastIndexOf('.') + 1));
+        result.popLayer();
+    }
+
+    public static boolean writeActionInLayer(LootContext context, boolean succeed, ILootAction action) {
+        LootModificationDebug result = context.getParamOrNull(Constants.RESULT_LOGGER);
+        if (result == null) return succeed;
+
+        result.pushLayer();
+        String actionName = action.getClass().getName();
+        result.write(succeed, "[A] " + actionName.substring(actionName.lastIndexOf('.') + 1));
+        result.popLayer();
+        return succeed;
     }
 
     @Nullable
