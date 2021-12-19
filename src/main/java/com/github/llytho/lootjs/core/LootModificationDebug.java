@@ -7,7 +7,6 @@ import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.ItemStack;
 import net.minecraft.loot.LootContext;
 import net.minecraft.loot.LootParameters;
-import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.math.vector.Vector3d;
 
 import javax.annotation.Nullable;
@@ -34,7 +33,7 @@ public class LootModificationDebug {
             cd.pushLayer();
             for (ItemStack itemStack : data.getGeneratedLoot()) {
                 String tag = "";
-                if(itemStack.hasTag()) tag += " " + itemStack.getTag();
+                if (itemStack.hasTag()) tag += " " + itemStack.getTag();
                 cd.write("- " + itemStack + tag);
             }
             cd.popLayer();

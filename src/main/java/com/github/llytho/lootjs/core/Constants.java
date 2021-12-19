@@ -14,7 +14,8 @@ public class Constants {
     public static final LootParameter<ILootContextData> DATA = new LootParameter<>(new ResourceLocation(MODID,
             "param_data"));
 
-    public static final LootParameter<LootModificationDebug> RESULT_LOGGER = new LootParameter<>(new ResourceLocation(MODID,
+    public static final LootParameter<LootModificationDebug> RESULT_LOGGER = new LootParameter<>(new ResourceLocation(
+            MODID,
             "result_logger"));
 
     public static final Map<LootParameterSet, LootContextType> PSETS_TO_TYPE = ImmutableMap

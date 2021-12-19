@@ -1,6 +1,5 @@
 package com.github.llytho.lootjs.loot.condition;
 
-import com.github.llytho.lootjs.loot.condition.IExtendedLootCondition;
 import com.github.llytho.lootjs.util.LootContextUtils;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentHelper;

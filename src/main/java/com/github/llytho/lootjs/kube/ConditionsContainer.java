@@ -7,7 +7,6 @@ import com.github.llytho.lootjs.loot.condition.*;
 import com.github.llytho.lootjs.loot.condition.builder.AlternativeConditionBuilder;
 import com.github.llytho.lootjs.loot.condition.builder.DistancePredicateBuilder;
 import com.github.llytho.lootjs.loot.condition.builder.InvertedConditionBuilder;
-import com.github.llytho.lootjs.loot.condition.MainHandTableBonus;
 import com.github.llytho.lootjs.util.BiomeUtils;
 import com.github.llytho.lootjs.util.Utils;
 import com.google.gson.JsonObject;
