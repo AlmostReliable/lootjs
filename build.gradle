@@ -51,7 +51,7 @@ minecraft {
             property 'forge.logging.console.level', 'debug'
             property 'mixin.env.remapRefMap', 'true'
             property 'mixin.env.refMapRemappingFile', "${projectDir}/build/createSrgToMcp/output.srg"
-            args '-mixin.config=lootjs.mixins.json', '-Dmixin.debug=true'
+            args '-mixin.config=lootjs.mixins.json'
 
             mods {
                 lootjs {
