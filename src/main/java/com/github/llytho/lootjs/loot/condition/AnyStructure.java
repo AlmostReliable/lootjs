@@ -10,9 +10,11 @@ import net.minecraft.world.gen.feature.structure.StructureStart;
 public class AnyStructure implements IExtendedLootCondition {
 
     private final Structure<?>[] structures;
+    private final boolean exact;
 
-    public AnyStructure(Structure<?>[] structures) {
+    public AnyStructure(Structure<?>[] structures, boolean exact) {
         this.structures = structures;
+        this.exact = exact;
     }
 
     @Override
@@ -26,7 +28,7 @@ public class AnyStructure implements IExtendedLootCondition {
                 StructureStart<?> structureAt = context
                         .getLevel()
                         .structureFeatureManager()
-                        .getStructureAt(blockPos, true, structure);
+                        .getStructureAt(blockPos, exact, structure);
 
                 if (structureAt.isValid()) {
                     return true;

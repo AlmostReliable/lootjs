@@ -4,10 +4,10 @@ import com.github.llytho.lootjs.kube.builder.*;
 import com.github.llytho.lootjs.loot.condition.*;
 import com.github.llytho.lootjs.loot.condition.builder.DistancePredicateBuilder;
 import com.github.llytho.lootjs.util.BiomeUtils;
+import com.github.llytho.lootjs.util.TagOrEntry;
 import com.github.llytho.lootjs.util.Utils;
 import com.google.gson.JsonObject;
 import dev.latvian.kubejs.item.ingredient.IngredientJS;
-import dev.latvian.kubejs.util.MapJS;
 import net.minecraft.advancements.criterion.FluidPredicate;
 import net.minecraft.advancements.criterion.MinMaxBounds;
 import net.minecraft.advancements.criterion.StatePropertiesPredicate;
@@ -27,6 +27,7 @@ import net.minecraftforge.registries.ForgeRegistries;
 
 import javax.annotation.Nullable;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
@@ -95,7 +96,7 @@ public interface ConditionsContainer<B extends ConditionsContainer<?>> {
                 .collect(Collectors.partitioningBy(s -> s.startsWith("#")));
 
         List<RegistryKey<Biome>> biomeKeys = BiomeUtils.findBiomeKeys(lists
-                .get(true)
+                .get(false)
                 .stream()
                 .map(ResourceLocation::new)
                 .collect(Collectors.toList()));
@@ -114,7 +115,7 @@ public interface ConditionsContainer<B extends ConditionsContainer<?>> {
                 .collect(Collectors.partitioningBy(s -> s.startsWith("#")));
 
         List<RegistryKey<Biome>> biomeKeys = BiomeUtils.findBiomeKeys(lists
-                .get(true)
+                .get(false)
                 .stream()
                 .map(ResourceLocation::new)
                 .collect(Collectors.toList()));
@@ -131,9 +132,9 @@ public interface ConditionsContainer<B extends ConditionsContainer<?>> {
         return addCondition(new AnyDimension(dimensions));
     }
 
-    default B anyStructure(ResourceLocation... locations) {
+    default B anyStructure(ResourceLocation[] locations, boolean exact) {
         Structure<?>[] structures = BiomeUtils.findStructures(Arrays.asList(locations));
-        return addCondition(new AnyStructure(structures));
+        return addCondition(new AnyStructure(structures, exact));
     }
 
     default B lightLevel(int min, int max) {
@@ -144,17 +145,17 @@ public interface ConditionsContainer<B extends ConditionsContainer<?>> {
         return addCondition(KilledByPlayer.killedByPlayer().build());
     }
 
-    default B matchBlock(String idOrTag, MapJS propertyMap) {
+    default B matchBlock(String idOrTag, Map<String, String> propertyMap) {
         BlockPredicateBuilderJS builder = BlockPredicateBuilderJS.block(idOrTag).properties(propertyMap);
         return addCondition(new MatchBlock(builder.build()));
     }
 
     default B matchBlock(String idOrTag) {
-        return matchBlock(idOrTag, new MapJS());
+        return matchBlock(idOrTag, new HashMap<>());
     }
 
     default B matchFluid(String idOrTag) {
-        Utils.TagOrEntry<Fluid> tagOrEntry = Utils.getTagOrEntry(ForgeRegistries.FLUIDS, idOrTag);
+        TagOrEntry<Fluid> tagOrEntry = Utils.getTagOrEntry(ForgeRegistries.FLUIDS, idOrTag);
         FluidPredicate predicate = new FluidPredicate(tagOrEntry.tag, tagOrEntry.entry, StatePropertiesPredicate.ANY);
         return addCondition(new MatchFluid(predicate));
     }

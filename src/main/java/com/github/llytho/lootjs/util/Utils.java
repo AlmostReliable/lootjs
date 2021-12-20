@@ -27,7 +27,8 @@ public class Utils {
             return TagOrEntry.withTag(tag);
         } else {
             T entry = registry.getValue(new ResourceLocation(idOrTag));
-            if (entry == null) {
+            if (entry == null || entry.getRegistryName() == null ||
+                entry.getRegistryName().equals(registry.getDefaultKey())) {
                 throw new IllegalArgumentException(
                         "Type " + idOrTag + " does not exists for " + registry.getRegistryName());
             }
@@ -55,26 +56,4 @@ public class Utils {
         return TagCollectionManager.getInstance().getCustomTypeCollection(registry);
     }
 
-    public static class TagOrEntry<T extends IForgeRegistryEntry<T>> {
-        public ITag<T> tag;
-        public T entry;
-
-        private TagOrEntry() {}
-
-        public static <T extends IForgeRegistryEntry<T>> TagOrEntry<T> withTag(ITag<T> tag) {
-            TagOrEntry<T> te = new TagOrEntry<>();
-            te.tag = tag;
-            return te;
-        }
-
-        public static <T extends IForgeRegistryEntry<T>> TagOrEntry<T> withEntry(T entry) {
-            TagOrEntry<T> te = new TagOrEntry<>();
-            te.entry = entry;
-            return te;
-        }
-
-        public boolean isTag() {
-            return tag != null;
-        }
-    }
 }

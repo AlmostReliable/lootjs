@@ -1,7 +1,7 @@
 package com.github.llytho.lootjs.kube.builder;
 
+import com.github.llytho.lootjs.util.TagOrEntry;
 import com.github.llytho.lootjs.util.Utils;
-import dev.latvian.kubejs.util.MapJS;
 import net.minecraft.advancements.criterion.BlockPredicate;
 import net.minecraft.advancements.criterion.NBTPredicate;
 import net.minecraft.advancements.criterion.StatePropertiesPredicate;
@@ -10,12 +10,13 @@ import net.minecraft.state.Property;
 import net.minecraftforge.registries.ForgeRegistries;
 
 import java.util.Collection;
+import java.util.Map;
 import java.util.Optional;
 
 public class BlockPredicateBuilderJS {
 
     private final StatePropertiesPredicate.Builder propBuilder = StatePropertiesPredicate.Builder.properties();
-    private Utils.TagOrEntry<Block> tagOrEntry;
+    private TagOrEntry<Block> tagOrEntry;
 
     private BlockPredicateBuilderJS() {}
 
@@ -25,7 +26,7 @@ public class BlockPredicateBuilderJS {
         return builder;
     }
 
-    public BlockPredicateBuilderJS properties(MapJS propertyMap) {
+    public BlockPredicateBuilderJS properties(Map<String, String> propertyMap) {
         if (propertyMap.isEmpty()) return this;
 
         Block block = tagOrEntry.isTag() ? tagOrEntry.tag.getValues().get(0) : tagOrEntry.entry;

@@ -24,7 +24,7 @@ public abstract class LootContextBuilderMixin {
         LootContextType type = Constants.PSETS_TO_TYPE.getOrDefault(paramSet, LootContextType.UNKNOWN);
         this.withParameter(Constants.DATA, new LootContextData(type));
 
-        if(LootModificationsAPI.DEBUG_STACK_ENABLED) {
+        if (LootModificationsAPI.DEBUG_STACK_ENABLED) {
             this.withParameter(Constants.RESULT_LOGGER, new DebugStack());
         }
     }

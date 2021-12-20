@@ -3,6 +3,7 @@ package com.github.llytho.lootjs.kube;
 import com.github.llytho.lootjs.core.Constants;
 import com.github.llytho.lootjs.core.ILootContextData;
 import com.github.llytho.lootjs.core.LootContextType;
+import com.github.llytho.lootjs.util.LootContextUtils;
 import dev.latvian.kubejs.entity.DamageSourceJS;
 import dev.latvian.kubejs.entity.EntityJS;
 import dev.latvian.kubejs.item.ItemStackJS;
@@ -15,7 +16,6 @@ import dev.latvian.kubejs.world.BlockContainerJS;
 import dev.latvian.kubejs.world.WorldJS;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.loot.LootContext;
 import net.minecraft.loot.LootParameters;
@@ -40,7 +40,6 @@ public class LootContextJS {
         this.context = context;
         this.data = context.getParamOrNull(Constants.DATA);
         assert data != null;
-
     }
 
     public ResourceLocation getLootTableId() {
@@ -95,23 +94,7 @@ public class LootContextJS {
 
     @Nullable
     public PlayerJS<?> getPlayer() {
-        Entity entity = null;
-        switch (data.getLootContextType()) {
-            case BLOCK:
-            case CHEST:
-                entity = context.getParamOrNull(LootParameters.THIS_ENTITY);
-                break;
-            case ENTITY:
-            case FISHING:
-                entity = context.getParamOrNull(LootParameters.KILLER_ENTITY);
-                break;
-        }
-
-        if (entity instanceof ServerPlayerEntity) {
-            return getLevel().getPlayer(entity);
-        }
-
-        return null;
+        return getLevel().getPlayer(LootContextUtils.getPlayerOrNull(context));
     }
 
     @Nullable
@@ -182,6 +165,10 @@ public class LootContextJS {
 
     public LootContext getVanillaContext() {
         return context;
+    }
+
+    public int lootSize() {
+        return data.getGeneratedLoot().size();
     }
 
     public void addLoot(ItemStackJS itemStack) {

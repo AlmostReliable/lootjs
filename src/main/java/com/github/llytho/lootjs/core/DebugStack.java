@@ -110,6 +110,18 @@ public class DebugStack {
         }
     }
 
+    public void h1(String string) {
+        write("- \uD83E\uDDF0 " + string);
+    }
+
+    public void h2(String string) {
+        write("- \uD83D\uDD27 " + string);
+    }
+
+    public void h3(String string) {
+        write("- \uD83D\uDD29 " + string);
+    }
+
     public void write(String string) {
         entries.add(new Entry(layer, string));
     }

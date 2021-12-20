@@ -39,9 +39,7 @@ minecraft {
             args '-mixin.config=lootjs.mixins.json', '-Dmixin.debug=true'
 
             mods {
-                lootjs {
-                    source sourceSets.main
-                }
+                lootjs { source sourceSets.main }
             }
         }
 
@@ -54,9 +52,7 @@ minecraft {
             args '-mixin.config=lootjs.mixins.json'
 
             mods {
-                lootjs {
-                    source sourceSets.main
-                }
+                lootjs { source sourceSets.main }
             }
         }
 
@@ -69,9 +65,25 @@ minecraft {
                     file('src/main/resources/')
 
             mods {
-                lootjs {
-                    source sourceSets.main
-                }
+                lootjs { source sourceSets.main }
+            }
+        }
+
+        clientTest {
+            parent runs.client
+            environment 'MOD_CLASSES', 'dummy' // From Forge: FG will replace this but it's needed to run
+            mods {
+                lootjs { source sourceSets.main }
+                lootjs_test { source sourceSets.test }
+            }
+        }
+
+        serverTest {
+            parent runs.server
+            environment 'MOD_CLASSES', 'dummy' // From Forge: FG will replace this but it's needed to run
+            mods {
+                lootjs { source sourceSets.main }
+                lootjs_test { source sourceSets.test }
             }
         }
     }

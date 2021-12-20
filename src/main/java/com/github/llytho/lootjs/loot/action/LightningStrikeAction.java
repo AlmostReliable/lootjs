@@ -20,7 +20,6 @@ public class LightningStrikeAction implements ILootAction {
         Vector3d origin = context.getParamOrNull(LootParameters.ORIGIN);
         if (origin == null) return true;
 
-        BlockPos blockPos = new BlockPos(origin.x, origin.y, origin.z);
         LightningBoltEntity lightning = EntityType.LIGHTNING_BOLT.create(context.getLevel());
         if (lightning != null) {
             lightning.moveTo(origin.x, origin.y, origin.z);

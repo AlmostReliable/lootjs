@@ -89,37 +89,39 @@ public class ExtendedEntityFlagsPredicate extends EntityFlagsPredicate {
 
 
     @SuppressWarnings("UnusedReturnValue")
-    public interface IBuilder {
-        IBuilder isOnFire(boolean flag);
+    public interface IBuilder<T> {
+        T build();
 
-        IBuilder isCrouching(boolean flag);
+        IBuilder<T> isOnFire(boolean flag);
 
-        IBuilder isSprinting(boolean flag);
+        IBuilder<T> isCrouching(boolean flag);
 
-        IBuilder isSwimming(boolean flag);
+        IBuilder<T> isSprinting(boolean flag);
 
-        IBuilder isBaby(boolean flag);
+        IBuilder<T> isSwimming(boolean flag);
 
-        IBuilder isInWater(boolean flag);
+        IBuilder<T> isBaby(boolean flag);
 
-        IBuilder isUnderWater(boolean flag);
+        IBuilder<T> isInWater(boolean flag);
 
-        IBuilder isMonster(boolean flag);
+        IBuilder<T> isUnderWater(boolean flag);
 
-        IBuilder isCreature(boolean flag);
+        IBuilder<T> isMonster(boolean flag);
 
-        IBuilder isOnGround(boolean flag);
+        IBuilder<T> isCreature(boolean flag);
 
-        IBuilder isUndeadMob(boolean flag);
+        IBuilder<T> isOnGround(boolean flag);
 
-        IBuilder isArthropodMob(boolean flag);
+        IBuilder<T> isUndeadMob(boolean flag);
 
-        IBuilder isIllegarMob(boolean flag);
+        IBuilder<T> isArthropodMob(boolean flag);
 
-        IBuilder isWaterMob(boolean flag);
+        IBuilder<T> isIllegarMob(boolean flag);
+
+        IBuilder<T> isWaterMob(boolean flag);
     }
 
-    public static class Builder extends EntityFlagsPredicate.Builder implements IBuilder {
+    public static class Builder extends EntityFlagsPredicate.Builder implements IBuilder<ExtendedEntityFlagsPredicate> {
         @Nullable
         protected Boolean isInWater;
         @Nullable
@@ -138,7 +140,6 @@ public class ExtendedEntityFlagsPredicate extends EntityFlagsPredicate {
         protected Boolean isIllegarMob;
         @Nullable
         protected Boolean isWaterMob;
-
 
         @Override
         public ExtendedEntityFlagsPredicate build() {
@@ -159,85 +160,85 @@ public class ExtendedEntityFlagsPredicate extends EntityFlagsPredicate {
         }
 
         @Override
-        public IBuilder isOnFire(boolean flag) {
+        public Builder isOnFire(boolean flag) {
             isOnFire = flag;
             return this;
         }
 
         @Override
-        public IBuilder isCrouching(boolean flag) {
+        public Builder isCrouching(boolean flag) {
             isCrouching = flag;
             return this;
         }
 
         @Override
-        public IBuilder isSprinting(boolean flag) {
+        public Builder isSprinting(boolean flag) {
             isSprinting = flag;
             return this;
         }
 
         @Override
-        public IBuilder isSwimming(boolean flag) {
+        public Builder isSwimming(boolean flag) {
             isSwimming = flag;
             return this;
         }
 
         @Override
-        public IBuilder isBaby(boolean flag) {
+        public Builder isBaby(boolean flag) {
             isBaby = flag;
             return this;
         }
 
         @Override
-        public IBuilder isInWater(boolean flag) {
+        public Builder isInWater(boolean flag) {
             isInWater = flag;
             return this;
         }
 
         @Override
-        public IBuilder isUnderWater(boolean flag) {
+        public Builder isUnderWater(boolean flag) {
             isUnderWater = flag;
             return this;
         }
 
         @Override
-        public IBuilder isMonster(boolean flag) {
+        public Builder isMonster(boolean flag) {
             isMonster = flag;
             return this;
         }
 
         @Override
-        public IBuilder isCreature(boolean flag) {
+        public Builder isCreature(boolean flag) {
             isCreature = flag;
             return this;
         }
 
         @Override
-        public IBuilder isOnGround(boolean flag) {
+        public Builder isOnGround(boolean flag) {
             isOnGround = flag;
             return this;
         }
 
         @Override
-        public IBuilder isUndeadMob(boolean flag) {
+        public Builder isUndeadMob(boolean flag) {
             isUndeadMob = flag;
             return this;
         }
 
         @Override
-        public IBuilder isArthropodMob(boolean flag) {
+        public Builder isArthropodMob(boolean flag) {
             isArthropodMob = flag;
             return this;
         }
 
         @Override
-        public IBuilder isIllegarMob(boolean flag) {
+        public Builder isIllegarMob(boolean flag) {
             isIllegarMob = flag;
             return this;
         }
 
         @Override
-        public IBuilder isWaterMob(boolean flag) {
+        public Builder isWaterMob(boolean flag) {
             isWaterMob = flag;
             return this;
         }

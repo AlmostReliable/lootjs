@@ -3,9 +3,9 @@ package com.github.llytho.lootjs.kube.builder;
 import com.github.llytho.lootjs.predicate.CustomItemPredicate;
 import com.github.llytho.lootjs.predicate.ExtendedEntityFlagsPredicate;
 import com.github.llytho.lootjs.predicate.MultiEntityTypePredicate;
+import com.github.llytho.lootjs.util.TagOrEntry;
 import com.github.llytho.lootjs.util.Utils;
 import dev.latvian.kubejs.item.ingredient.IngredientJS;
-import dev.latvian.kubejs.util.MapJS;
 import net.minecraft.advancements.criterion.*;
 import net.minecraft.entity.EntityType;
 import net.minecraft.fluid.Fluid;
@@ -23,7 +23,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 
-public class EntityPredicateBuilderJS implements ExtendedEntityFlagsPredicate.IBuilder {
+public class EntityPredicateBuilderJS implements ExtendedEntityFlagsPredicate.IBuilder<EntityPredicate> {
     private final EntityPredicate.Builder vanillaBuilder = EntityPredicate.Builder.entity();
     private final Map<Effect, MobEffectsPredicate.InstancePredicate> effects = new HashMap<>();
     private final ExtendedEntityFlagsPredicate.Builder flagsBuilder = new ExtendedEntityFlagsPredicate.Builder();
@@ -124,18 +124,18 @@ public class EntityPredicateBuilderJS implements ExtendedEntityFlagsPredicate.IB
         return this;
     }
 
-    public EntityPredicateBuilderJS matchBlock(String idOrTag, MapJS propertyMap) {
+    public EntityPredicateBuilderJS matchBlock(String idOrTag, Map<String, String> propertyMap) {
         BlockPredicateBuilderJS builder = BlockPredicateBuilderJS.block(idOrTag).properties(propertyMap);
         blockPredicate = builder.build();
         return this;
     }
 
     public EntityPredicateBuilderJS matchBlock(String idOrTag) {
-        return matchBlock(idOrTag, new MapJS());
+        return matchBlock(idOrTag, new HashMap<>());
     }
 
     public EntityPredicateBuilderJS matchFluid(String idOrTag) {
-        Utils.TagOrEntry<Fluid> tagOrEntry = Utils.getTagOrEntry(ForgeRegistries.FLUIDS, idOrTag);
+        TagOrEntry<Fluid> tagOrEntry = Utils.getTagOrEntry(ForgeRegistries.FLUIDS, idOrTag);
         fluidPredicate = new FluidPredicate(tagOrEntry.tag, tagOrEntry.entry, StatePropertiesPredicate.ANY);
         return this;
     }
@@ -207,7 +207,7 @@ public class EntityPredicateBuilderJS implements ExtendedEntityFlagsPredicate.IB
         List<ITag<EntityType<?>>> tags = new ArrayList<>();
 
         for (String unknown : unknowns) {
-            Utils.TagOrEntry<EntityType<?>> tagOrEntry = Utils.getTagOrEntry(ForgeRegistries.ENTITIES, unknown);
+            TagOrEntry<EntityType<?>> tagOrEntry = Utils.getTagOrEntry(ForgeRegistries.ENTITIES, unknown);
             if (tagOrEntry.isTag()) {
                 tags.add(tagOrEntry.tag);
             } else {

@@ -1,0 +1,11 @@
+modLoader = "javafml"
+loaderVersion = "[36,)"
+license = "GNU LGPLv3"
+
+[[mods]]
+modId = "lootjs_test"
+[[dependencies.lootjs_test]]
+modId = "lootjs"
+mandatory = true
+ordering = "AFTER"
+side = "BOTH"

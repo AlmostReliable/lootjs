@@ -20,6 +20,11 @@ public class LootContextUtils {
             case CHEST:
                 return tryGetPlayer(context.getParamOrNull(LootParameters.THIS_ENTITY));
             case ENTITY:
+                ServerPlayerEntity player = tryGetPlayer(context.getParamOrNull(LootParameters.KILLER_ENTITY));
+                if (player != null) {
+                    return player;
+                }
+
                 return tryGetPlayer(context.getParamOrNull(LootParameters.LAST_DAMAGE_PLAYER));
             case FISHING:
                 return tryGetPlayer(context.getParamOrNull(LootParameters.KILLER_ENTITY));
@@ -27,47 +32,6 @@ public class LootContextUtils {
 
         return null;
     }
-
-//    public static void popDebugLayer(LootContext context) {
-//        DebugStack result = context.getParamOrNull(Constants.RESULT_LOGGER);
-//        if (result == null) return;
-//        result.popLayer();
-//    }
-//
-//
-//    public static void pushDebugLayer(LootContext context) {
-//        DebugStack result = context.getParamOrNull(Constants.RESULT_LOGGER);
-//        if (result == null) return;
-//        result.pushLayer();
-//    }
-//
-//    public static void writeDebug(LootContext context, String text) {
-//        DebugStack result = context.getParamOrNull(Constants.RESULT_LOGGER);
-//        if (result == null) return;
-//
-////        result.pushLayer();
-//        result.write(text);
-////        result.popLayer();
-//    }
-//
-//    public static void writeDebug(LootContext context, String prefix, boolean succeed, ILootCondition condition) {
-//        DebugStack result = context.getParamOrNull(Constants.RESULT_LOGGER);
-//        if (result == null) return;
-//
-//        result.pushLayer();
-//        result.write(succeed, "[C] " + prefix + Utils.getClassNameEnding(condition));
-//        result.popLayer();
-//    }
-//
-//    public static boolean writeDebug(LootContext context, boolean succeed, ILootAction action) {
-//        DebugStack result = context.getParamOrNull(Constants.RESULT_LOGGER);
-//        if (result == null) return succeed;
-//
-//        result.pushLayer();
-//        result.write(succeed, "[A] " + Utils.getClassNameEnding(action));
-//        result.popLayer();
-//        return succeed;
-//    }
 
     @Nullable
     private static ServerPlayerEntity tryGetPlayer(@Nullable Entity entity) {

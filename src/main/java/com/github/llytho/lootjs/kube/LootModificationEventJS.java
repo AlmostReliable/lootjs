@@ -31,8 +31,8 @@ public class LootModificationEventJS extends EventJS {
         this.originalLocations = originalLocations;
     }
 
-    public List<ResourceLocation> getModifiers() {
-        return Collections.unmodifiableList(originalLocations);
+    public List<String> getModifiers() {
+        return originalLocations.stream().map(ResourceLocation::toString).collect(Collectors.toList());
     }
 
     public void enableLogging() {

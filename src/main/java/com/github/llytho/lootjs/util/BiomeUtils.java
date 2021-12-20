@@ -23,7 +23,6 @@ public class BiomeUtils {
         });
 
         filterResult.yeetIfUnresolvedFilters();
-
         return filterResult.getFoundValues();
     }
 
@@ -36,7 +35,7 @@ public class BiomeUtils {
             return RegistryKey.create(Registry.BIOME_REGISTRY, pLocation);
         });
 
-
+        filterResult.yeetIfUnresolvedFilters();
         return filterResult.getFoundValues();
     }
 
@@ -45,7 +44,6 @@ public class BiomeUtils {
                 ForgeRegistries.STRUCTURE_FEATURES::getValue);
 
         filterResult.yeetIfUnresolvedFilters();
-
         return (Structure<?>[]) filterResult.getFoundValues().toArray(new Structure[0]);
     }
 }
