@@ -20,6 +20,8 @@ public class LootModificationsAPI {
     @Nullable
     public static BiConsumer<LootContext, DebugStack> DEBUG_ACTION;
 
+    public static boolean DEBUG_STACK_ENABLED = false;
+
     private static LootModificationsAPI instance;
     private final List<ILootModification> modifications;
 
@@ -37,6 +39,7 @@ public class LootModificationsAPI {
 
     public static void reload() {
         instance = null;
+        DEBUG_STACK_ENABLED = false;
     }
 
     public void invokeActions(List<ItemStack> loot, LootContext context) {

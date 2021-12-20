@@ -35,6 +35,10 @@ public class LootModificationEventJS extends EventJS {
         return Collections.unmodifiableList(originalLocations);
     }
 
+    public void enableLogging() {
+        LootModificationsAPI.DEBUG_STACK_ENABLED = true;
+    }
+
     public void removeGlobalLoot(String... locationOrModIds) {
         Set<String> modIds = new HashSet<>();
         Set<ResourceLocation> locations = new HashSet<>();

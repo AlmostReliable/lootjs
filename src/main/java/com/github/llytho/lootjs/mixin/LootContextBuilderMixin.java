@@ -1,6 +1,7 @@
 package com.github.llytho.lootjs.mixin;
 
 import com.github.llytho.lootjs.LootContextData;
+import com.github.llytho.lootjs.LootModificationsAPI;
 import com.github.llytho.lootjs.core.Constants;
 import com.github.llytho.lootjs.core.DebugStack;
 import com.github.llytho.lootjs.core.LootContextType;
@@ -22,6 +23,9 @@ public abstract class LootContextBuilderMixin {
     public void addTypeOnCreate(LootParameterSet paramSet, CallbackInfoReturnable<LootContext> info) {
         LootContextType type = Constants.PSETS_TO_TYPE.getOrDefault(paramSet, LootContextType.UNKNOWN);
         this.withParameter(Constants.DATA, new LootContextData(type));
-        this.withParameter(Constants.RESULT_LOGGER, new DebugStack());
+
+        if(LootModificationsAPI.DEBUG_STACK_ENABLED) {
+            this.withParameter(Constants.RESULT_LOGGER, new DebugStack());
+        }
     }
 }
