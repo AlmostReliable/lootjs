@@ -47,6 +47,8 @@ public class LootModificationsAPI {
             return;
         }
 
+        context.getLevel().getProfiler().push("LootModificationsAPI::invokeActions");
+
         DebugStack debug = context.getParamOrNull(Constants.RESULT_LOGGER);
 
         // TODO more testing here. I don't really know why there are empty items in the list or better:
@@ -65,6 +67,8 @@ public class LootModificationsAPI {
         if (debug != null && DEBUG_ACTION != null) {
             DEBUG_ACTION.accept(context, debug);
         }
+
+        context.getLevel().getProfiler().pop();
     }
 
     public void addModification(ILootModification modification) {
