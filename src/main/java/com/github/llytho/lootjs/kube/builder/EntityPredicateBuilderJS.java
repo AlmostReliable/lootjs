@@ -159,10 +159,10 @@ public class EntityPredicateBuilderJS implements ExtendedEntityFlagsPredicate.IB
         return this;
     }
 
-    public EntityPredicateBuilderJS matchVehicle(Consumer<EntityPredicateBuilderJS> action) {
-        EntityPredicateBuilderJS vehiclePredicateBuilder = new EntityPredicateBuilderJS();
-        action.accept(vehiclePredicateBuilder);
-        vanillaBuilder.vehicle(vehiclePredicateBuilder.build());
+    public EntityPredicateBuilderJS matchMount(Consumer<EntityPredicateBuilderJS> action) {
+        EntityPredicateBuilderJS mountPredicateBuilder = new EntityPredicateBuilderJS();
+        action.accept(mountPredicateBuilder);
+        vanillaBuilder.vehicle(mountPredicateBuilder.build());
         return this;
     }
 

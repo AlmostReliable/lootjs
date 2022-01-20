@@ -64,6 +64,11 @@ public class LootModificationEventJS extends EventJS {
     }
 
     public LootActionsBuilderJS addModifierForLootTable(String name, String... idOrPattern) {
+        if (idOrPattern.length == 0) {
+            throw new IllegalArgumentException("No loot table were given.");
+        }
+
+
         List<Pattern> patterns = new ArrayList<>();
         List<ResourceLocation> locations = new ArrayList<>();
 
@@ -88,6 +93,10 @@ public class LootModificationEventJS extends EventJS {
     }
 
     public LootActionsBuilderJS addModifierForType(String name, LootContextType... types) {
+        if (types.length == 0) {
+            throw new IllegalArgumentException("No loot type were given.");
+        }
+
         LootActionsBuilderJS builder = new LootActionsBuilderJS();
         modifierSuppliers.add(() -> {
             List<ILootAction> actions = builder.getActions();
