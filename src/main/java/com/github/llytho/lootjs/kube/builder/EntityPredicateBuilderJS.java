@@ -7,6 +7,7 @@ import com.github.llytho.lootjs.util.TagOrEntry;
 import com.github.llytho.lootjs.util.Utils;
 import dev.latvian.kubejs.item.ingredient.IngredientJS;
 import net.minecraft.advancements.criterion.*;
+import net.minecraft.block.Block;
 import net.minecraft.entity.EntityType;
 import net.minecraft.fluid.Fluid;
 import net.minecraft.inventory.EquipmentSlotType;
@@ -125,8 +126,9 @@ public class EntityPredicateBuilderJS implements ExtendedEntityFlagsPredicate.IB
     }
 
     public EntityPredicateBuilderJS matchBlock(String idOrTag, Map<String, String> propertyMap) {
-        BlockPredicateBuilderJS builder = BlockPredicateBuilderJS.block(idOrTag).properties(propertyMap);
-        blockPredicate = builder.build();
+        TagOrEntry<Block> tagOrEntry = Utils.getTagOrEntry(ForgeRegistries.BLOCKS, idOrTag);
+        StatePropertiesPredicate properties = Utils.createProperties(tagOrEntry.getFirst(), propertyMap);
+        blockPredicate = new BlockPredicate(tagOrEntry.tag, tagOrEntry.entry, properties, NBTPredicate.ANY);
         return this;
     }
 

@@ -4,21 +4,43 @@ import net.minecraft.tags.ITag;
 import net.minecraftforge.registries.IForgeRegistryEntry;
 
 public class TagOrEntry<T extends IForgeRegistryEntry<T>> {
-    public ITag<T> tag;
-    public T entry;
+    public final ITag<T> tag;
+    public final T entry;
 
-    TagOrEntry() {}
+    TagOrEntry(ITag<T> tag) {
+        this.tag = tag;
+        this.entry = null;
+    }
+
+    TagOrEntry(T entry) {
+        this.tag = null;
+        this.entry = entry;
+    }
 
     public static <T extends IForgeRegistryEntry<T>> TagOrEntry<T> withTag(ITag<T> tag) {
-        TagOrEntry<T> te = new TagOrEntry<>();
-        te.tag = tag;
-        return te;
+        return new TagOrEntry<>(tag);
     }
 
     public static <T extends IForgeRegistryEntry<T>> TagOrEntry<T> withEntry(T entry) {
-        TagOrEntry<T> te = new TagOrEntry<>();
-        te.entry = entry;
-        return te;
+        return new TagOrEntry<>(entry);
+    }
+
+    public T getFirst() {
+        if (tag != null) {
+            return tag.getValues().get(0);
+        } else {
+            assert entry != null;
+            return entry;
+        }
+    }
+
+    public boolean is(T t) {
+        if (tag != null) {
+            return tag.contains(t);
+        } else {
+            assert entry != null;
+            return entry.equals(t);
+        }
     }
 
     public boolean isTag() {

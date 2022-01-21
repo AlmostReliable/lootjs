@@ -11,6 +11,7 @@ import dev.latvian.kubejs.item.ingredient.IngredientJS;
 import net.minecraft.advancements.criterion.FluidPredicate;
 import net.minecraft.advancements.criterion.MinMaxBounds;
 import net.minecraft.advancements.criterion.StatePropertiesPredicate;
+import net.minecraft.block.Block;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.fluid.Fluid;
 import net.minecraft.inventory.EquipmentSlotType;
@@ -146,8 +147,9 @@ public interface ConditionsContainer<B extends ConditionsContainer<?>> {
     }
 
     default B matchBlock(String idOrTag, Map<String, String> propertyMap) {
-        BlockPredicateBuilderJS builder = BlockPredicateBuilderJS.block(idOrTag).properties(propertyMap);
-        return addCondition(new MatchBlock(builder.build()));
+        TagOrEntry<Block> tagOrEntry = Utils.getTagOrEntry(ForgeRegistries.BLOCKS, idOrTag);
+        StatePropertiesPredicate properties = Utils.createProperties(tagOrEntry.getFirst(), propertyMap);
+        return addCondition(new MatchBlockState(tagOrEntry, properties));
     }
 
     default B matchBlock(String idOrTag) {

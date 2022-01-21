@@ -1,7 +1,10 @@
 package com.github.llytho.lootjs.util;
 
+import net.minecraft.advancements.criterion.StatePropertiesPredicate;
+import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
 import net.minecraft.item.ItemStack;
+import net.minecraft.state.Property;
 import net.minecraft.tags.ITag;
 import net.minecraft.tags.ITagCollection;
 import net.minecraft.tags.TagCollectionManager;
@@ -12,12 +15,34 @@ import net.minecraftforge.registries.IForgeRegistry;
 import net.minecraftforge.registries.IForgeRegistryEntry;
 
 import javax.annotation.Nullable;
+import java.util.Collection;
+import java.util.Map;
+import java.util.Optional;
 
 public class Utils {
 
     public static <T> String getClassNameEnding(T t) {
         String tName = t.getClass().getName();
         return tName.substring(tName.lastIndexOf('.') + 1);
+    }
+
+    public static StatePropertiesPredicate createProperties(Block block, Map<String, String> propertyMap) {
+        StatePropertiesPredicate.Builder propBuilder = StatePropertiesPredicate.Builder.properties();
+        if (propertyMap.isEmpty()) return StatePropertiesPredicate.ANY;
+
+        Collection<Property<?>> properties = block.defaultBlockState().getProperties();
+        for (Property<?> property : properties) {
+            Object o = propertyMap.remove(property.getName());
+            if (o != null) {
+                Optional<?> value = property.getValue(o.toString());
+                if (!value.isPresent()) {
+                    throw new IllegalArgumentException(
+                            "Property " + o + " does not exists for block " + block.getRegistryName());
+                }
+                propBuilder.hasProperty(property, value.get().toString());
+            }
+        }
+        return propBuilder.build();
     }
 
     public static <T extends IForgeRegistryEntry<T>> TagOrEntry<T> getTagOrEntry(IForgeRegistry<T> registry, String idOrTag) {
