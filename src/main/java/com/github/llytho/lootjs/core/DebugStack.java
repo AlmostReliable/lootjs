@@ -59,7 +59,7 @@ public class DebugStack {
     public static DebugStack context(LootContext context) {
         DebugStack debugStack = new DebugStack();
 
-        debugStack.write("LootTable", context.getQueriedLootTableId());
+        debugStack.write("LootTable", Utils.quote(context.getQueriedLootTableId()));
 
         ILootContextData data = context.getParamOrNull(Constants.DATA);
         if (data != null) {

@@ -5,6 +5,7 @@ import com.github.llytho.lootjs.kube.ConditionsContainer;
 import com.github.llytho.lootjs.kube.LootContextJS;
 import com.github.llytho.lootjs.kube.action.CustomJSAction;
 import com.github.llytho.lootjs.loot.action.*;
+import com.github.llytho.lootjs.util.Utils;
 import dev.latvian.kubejs.item.ItemStackJS;
 import dev.latvian.kubejs.item.ingredient.IngredientJS;
 import dev.latvian.mods.rhino.util.HideFromJS;
@@ -12,7 +13,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.loot.conditions.ILootCondition;
 import net.minecraft.world.Explosion;
 
-import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -86,11 +86,11 @@ public class LootActionsBuilderJS implements ConditionsContainer<LootActionsBuil
     }
 
     public String getLogName(String alternative) {
-        if(logName == null) {
+        if (logName == null) {
             return alternative;
         }
 
-        return "\"" + logName + "\"";
+        return Utils.quote(logName);
     }
 
     @Override

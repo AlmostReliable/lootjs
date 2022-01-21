@@ -15,9 +15,11 @@ import net.minecraftforge.registries.IForgeRegistry;
 import net.minecraftforge.registries.IForgeRegistryEntry;
 
 import javax.annotation.Nullable;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 public class Utils {
 
@@ -92,10 +94,10 @@ public class Utils {
             return null;
         }
 
-        return String.format("Type='%s', Id=%s, Dim='%s', x=%.2f, y=%.2f, z=%.2f",
-                entity.getType().getRegistryName(),
+        return String.format("Type=%s, Id=%s, Dim=%s, x=%.2f, y=%.2f, z=%.2f",
+                quote(entity.getType().getRegistryName()),
                 entity.getId(),
-                entity.level == null ? "~NO DIM~" : entity.level.dimension().location(),
+                entity.level == null ? "~NO DIM~" : quote(entity.level.dimension().location()),
                 entity.getX(),
                 entity.getY(),
                 entity.getZ());
@@ -119,5 +121,18 @@ public class Utils {
         String tag = "";
         if (itemStack.hasTag()) tag += " " + itemStack.getTag();
         return itemStack + tag;
+    }
+
+    public static String quote(String s) {
+        return "\"" + s + "\"";
+    }
+
+    public static String quote(@Nullable ResourceLocation rl) {
+        return quote(rl == null ? "NO_LOCATION" : rl.toString());
+    }
+
+    public static String quote(String prefix, Object[] objects) {
+        return prefix + "[" +
+               Arrays.stream(objects).map(Object::toString).map(Utils::quote).collect(Collectors.joining(",")) + "]";
     }
 }

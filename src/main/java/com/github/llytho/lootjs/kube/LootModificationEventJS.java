@@ -3,6 +3,7 @@ package com.github.llytho.lootjs.kube;
 import com.github.llytho.lootjs.LootModificationsAPI;
 import com.github.llytho.lootjs.core.*;
 import com.github.llytho.lootjs.kube.builder.LootActionsBuilderJS;
+import com.github.llytho.lootjs.util.Utils;
 import dev.latvian.kubejs.CommonProperties;
 import dev.latvian.kubejs.event.EventJS;
 import dev.latvian.kubejs.script.ScriptType;
@@ -83,7 +84,7 @@ public class LootModificationEventJS extends EventJS {
         LootActionsBuilderJS builder = new LootActionsBuilderJS();
         modifierSuppliers.add(() -> {
             List<ILootAction> actions = builder.getActions();
-            String logName = builder.getLogName("LootTables[" + String.join(",", idOrPattern) + "]");
+            String logName = builder.getLogName(Utils.quote("LootTables", idOrPattern));
             return new LootModificationByTable(logName,
                     new ArrayList<>(locations),
                     new ArrayList<>(patterns),
@@ -100,8 +101,7 @@ public class LootModificationEventJS extends EventJS {
         LootActionsBuilderJS builder = new LootActionsBuilderJS();
         modifierSuppliers.add(() -> {
             List<ILootAction> actions = builder.getActions();
-            String logName = builder.getLogName(
-                    "Types[" + Arrays.stream(types).map(Enum::name).collect(Collectors.joining(",")) + "]");
+            String logName = builder.getLogName(Utils.quote("Types", types));
             return new LootModificationByType(logName, new ArrayList<>(Arrays.asList(types)), new ArrayList<>(actions));
         });
         return builder;
