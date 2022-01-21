@@ -83,10 +83,7 @@ public class LootModificationEventJS extends EventJS {
         LootActionsBuilderJS builder = new LootActionsBuilderJS();
         modifierSuppliers.add(() -> {
             List<ILootAction> actions = builder.getActions();
-            String logName = builder.getLogName();
-            if (logName == null) {
-                logName = "LootTables[" + String.join(",", idOrPattern) + "]";
-            }
+            String logName = builder.getLogName("LootTables[" + String.join(",", idOrPattern) + "]");
             return new LootModificationByTable(logName,
                     new ArrayList<>(locations),
                     new ArrayList<>(patterns),
@@ -103,10 +100,8 @@ public class LootModificationEventJS extends EventJS {
         LootActionsBuilderJS builder = new LootActionsBuilderJS();
         modifierSuppliers.add(() -> {
             List<ILootAction> actions = builder.getActions();
-            String logName = builder.getLogName();
-            if (logName == null) {
-                logName = "Types[" + Arrays.stream(types).map(Enum::name).collect(Collectors.joining(",")) + "]";
-            }
+            String logName = builder.getLogName(
+                    "Types[" + Arrays.stream(types).map(Enum::name).collect(Collectors.joining(",")) + "]");
             return new LootModificationByType(logName, new ArrayList<>(Arrays.asList(types)), new ArrayList<>(actions));
         });
         return builder;

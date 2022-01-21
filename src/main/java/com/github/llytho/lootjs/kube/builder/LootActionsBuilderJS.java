@@ -85,9 +85,12 @@ public class LootActionsBuilderJS implements ConditionsContainer<LootActionsBuil
         return actions;
     }
 
-    @Nullable
-    public String getLogName() {
-        return logName;
+    public String getLogName(String alternative) {
+        if(logName == null) {
+            return alternative;
+        }
+
+        return "\"" + logName + "\"";
     }
 
     @Override
