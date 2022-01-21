@@ -25,6 +25,6 @@ public class ForgeHooksMixin {
                     "Something went wrong - LootContext has no data. Please report this for the mod LootJS");
         }
 
-        LootModificationsAPI.get().invokeActions(loot, context);
+        LootModificationsAPI.invokeActions(loot, context);
     }
 }

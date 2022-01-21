@@ -1,14 +1,12 @@
 package com.github.llytho.lootjs;
 
-import com.github.llytho.lootjs.core.Constants;
-import com.github.llytho.lootjs.core.DebugStack;
-import com.github.llytho.lootjs.core.ILootContextData;
-import com.github.llytho.lootjs.core.ILootModification;
+import com.github.llytho.lootjs.core.*;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.loot.LootContext;
 import net.minecraft.loot.LootParameters;
+import net.minecraft.util.ResourceLocation;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
@@ -17,36 +15,27 @@ import java.util.function.BiConsumer;
 
 public class LootModificationsAPI {
 
+    public static final ModificationFilter FILTER = new ModificationFilter();
+    private static final List<ILootModification> modifications = new ArrayList<>();
     @Nullable
     public static BiConsumer<LootContext, DebugStack> DEBUG_ACTION;
-
     public static boolean DEBUG_STACK_ENABLED = false;
 
-    private static LootModificationsAPI instance;
-    private final List<ILootModification> modifications;
-
-    public LootModificationsAPI() {
-        modifications = new ArrayList<>();
-    }
-
-    public static LootModificationsAPI get() {
-        if (instance == null) {
-            instance = new LootModificationsAPI();
-        }
-
-        return instance;
+    private LootModificationsAPI() {
     }
 
     public static void reload() {
-        instance = null;
+        modifications.clear();
         DEBUG_STACK_ENABLED = false;
+        FILTER.clear();
+        FILTER.add(new ResourceLocation("minecraft:blocks/fire"));
     }
 
-    public void invokeActions(List<ItemStack> loot, LootContext context) {
+    public static void invokeActions(List<ItemStack> loot, LootContext context) {
         ILootContextData contextData = context.getParamOrNull(Constants.DATA);
         assert contextData != null;
 
-        if (isFireBlock(context)) {
+        if (FILTER.matches(context)) {
             return;
         }
 
@@ -74,7 +63,7 @@ public class LootModificationsAPI {
         context.getLevel().getProfiler().pop();
     }
 
-    public void addModification(ILootModification modification) {
+    public static void addModification(ILootModification modification) {
         modifications.add(modification);
     }
 

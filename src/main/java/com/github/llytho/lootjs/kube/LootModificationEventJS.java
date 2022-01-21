@@ -36,6 +36,19 @@ public class LootModificationEventJS extends EventJS {
         return originalLocations.stream().map(ResourceLocation::toString).collect(Collectors.toList());
     }
 
+    public void disableLootModification(String... idOrPattern) {
+        if (idOrPattern.length == 0) {
+            throw new IllegalArgumentException("No loot table were given.");
+        }
+
+        List<Pattern> patterns = new ArrayList<>();
+        List<ResourceLocation> locations = new ArrayList<>();
+        splitLocationsOrPattern(idOrPattern, patterns, locations);
+
+        patterns.forEach(LootModificationsAPI.FILTER::add);
+        locations.forEach(LootModificationsAPI.FILTER::add);
+    }
+
     public void enableLogging() {
         LootModificationsAPI.DEBUG_STACK_ENABLED = true;
     }
@@ -71,15 +84,7 @@ public class LootModificationEventJS extends EventJS {
 
         List<Pattern> patterns = new ArrayList<>();
         List<ResourceLocation> locations = new ArrayList<>();
-
-        for (String str : idOrPattern) {
-            Pattern pattern = UtilsJS.parseRegex(str);
-            if (pattern == null) {
-                locations.add(new ResourceLocation(str));
-            } else {
-                patterns.add(pattern);
-            }
-        }
+        splitLocationsOrPattern(idOrPattern, patterns, locations);
 
         LootActionsBuilderJS builder = new LootActionsBuilderJS();
         modifierSuppliers.add(() -> {
@@ -113,7 +118,7 @@ public class LootModificationEventJS extends EventJS {
 
         try {
             for (Supplier<ILootModification> modifierSupplier : modifierSuppliers) {
-                LootModificationsAPI.get().addModification(modifierSupplier.get());
+                LootModificationsAPI.addModification(modifierSupplier.get());
             }
         } catch (Exception exception) {
             ConsoleJS.SERVER.error(exception);
@@ -131,5 +136,16 @@ public class LootModificationEventJS extends EventJS {
         originalLocations.removeIf(locationsToRemove::contains);
 
 
+    }
+
+    public void splitLocationsOrPattern(String[] locationsOrPattern, List<Pattern> patterns, List<ResourceLocation> locations) {
+        for (String str : locationsOrPattern) {
+            Pattern pattern = UtilsJS.parseRegex(str);
+            if (pattern == null) {
+                locations.add(new ResourceLocation(str));
+            } else {
+                patterns.add(pattern);
+            }
+        }
     }
 }

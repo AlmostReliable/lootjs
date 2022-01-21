@@ -68,6 +68,19 @@ onEvent("lootjs", (event) => {
 For more information about the usage and the functionality of the mod, please
 visit our [wiki] or explore the [examples].
 
+## **❌ Disable loot tables for loot modifications**
+Some blocks like leaves are getting randomly destroyed. If you don't want them to trigger your loot modifications, you can disable their loot tables. The default loot tables will still be triggered.
+```js
+onEvent("lootjs", (event) => {
+    // all leaves disabled via regex
+    event.disableLootModification(/.*:blocks\/.*_leaves/);
+    
+    // disable bats
+    event.disableLootModification("minecraft:entities/bat");
+});
+
+```
+
 ## **📜 Enable logging for loot modifications**
 With a lot of modifications it can be hard to track which modification triggers on specific conditions. With `enableLogging` LootJS will log every modification trigger into `your_minecraft_instance/logs/kubejs/server.txt`
 ```js
