@@ -146,14 +146,9 @@ public interface ConditionsContainer<B extends ConditionsContainer<?>> {
         return addCondition(KilledByPlayer.killedByPlayer().build());
     }
 
-    default B matchBlock(String idOrTag, Map<String, String> propertyMap) {
-        TagOrEntry<Block> tagOrEntry = Utils.getTagOrEntry(ForgeRegistries.BLOCKS, idOrTag);
-        StatePropertiesPredicate properties = Utils.createProperties(tagOrEntry.getFirst(), propertyMap);
-        return addCondition(new MatchBlockState(tagOrEntry, properties));
-    }
-
-    default B matchBlock(String idOrTag) {
-        return matchBlock(idOrTag, new HashMap<>());
+    default B matchBlockState(Block block, Map<String, String> propertyMap) {
+        StatePropertiesPredicate properties = Utils.createProperties(block, propertyMap);
+        return addCondition(new BlockStateProperty(block, properties));
     }
 
     default B matchFluid(String idOrTag) {
