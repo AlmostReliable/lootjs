@@ -15,7 +15,6 @@ import net.minecraftforge.registries.IForgeRegistry;
 import net.minecraftforge.registries.IForgeRegistryEntry;
 
 import javax.annotation.Nullable;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Optional;
@@ -131,8 +130,8 @@ public class Utils {
         return quote(rl == null ? "NO_LOCATION" : rl.toString());
     }
 
-    public static String quote(String prefix, Object[] objects) {
+    public static String quote(String prefix, Collection<?> objects) {
         return prefix + "[" +
-               Arrays.stream(objects).map(Object::toString).map(Utils::quote).collect(Collectors.joining(",")) + "]";
+               objects.stream().map(Object::toString).map(Utils::quote).collect(Collectors.joining(",")) + "]";
     }
 }

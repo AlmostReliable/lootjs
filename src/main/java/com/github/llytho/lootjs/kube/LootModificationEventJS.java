@@ -5,14 +5,18 @@ import com.github.llytho.lootjs.core.*;
 import com.github.llytho.lootjs.kube.builder.LootActionsBuilderJS;
 import com.github.llytho.lootjs.util.Utils;
 import dev.latvian.kubejs.CommonProperties;
+import dev.latvian.kubejs.block.BlockStatePredicate;
 import dev.latvian.kubejs.event.EventJS;
 import dev.latvian.kubejs.script.ScriptType;
 import dev.latvian.kubejs.server.ServerJS;
 import dev.latvian.kubejs.util.ConsoleJS;
 import dev.latvian.kubejs.util.UtilsJS;
+import net.minecraft.block.Block;
+import net.minecraft.entity.EntityType;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
+import net.minecraftforge.registries.ForgeRegistryEntry;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -77,7 +81,7 @@ public class LootModificationEventJS extends EventJS {
         locationsToRemove.addAll(collectedByLocations);
     }
 
-    public LootActionsBuilderJS addModifierForLootTable(String... idOrPattern) {
+    public LootActionsBuilderJS addLootTableModifier(String... idOrPattern) {
         if (idOrPattern.length == 0) {
             throw new IllegalArgumentException("No loot table were given.");
         }
@@ -89,7 +93,7 @@ public class LootModificationEventJS extends EventJS {
         LootActionsBuilderJS builder = new LootActionsBuilderJS();
         modifierSuppliers.add(() -> {
             List<ILootAction> actions = builder.getActions();
-            String logName = builder.getLogName(Utils.quote("LootTables", idOrPattern));
+            String logName = builder.getLogName(Utils.quote("LootTables", Arrays.asList(idOrPattern)));
             return new LootModificationByTable(logName,
                     new ArrayList<>(locations),
                     new ArrayList<>(patterns),
@@ -98,7 +102,7 @@ public class LootModificationEventJS extends EventJS {
         return builder;
     }
 
-    public LootActionsBuilderJS addModifierForType(LootContextType... types) {
+    public LootActionsBuilderJS addLootTypeModifier(LootContextType... types) {
         if (types.length == 0) {
             throw new IllegalArgumentException("No loot type were given.");
         }
@@ -106,8 +110,47 @@ public class LootModificationEventJS extends EventJS {
         LootActionsBuilderJS builder = new LootActionsBuilderJS();
         modifierSuppliers.add(() -> {
             List<ILootAction> actions = builder.getActions();
-            String logName = builder.getLogName(Utils.quote("Types", types));
+            String logName = builder.getLogName(Utils.quote("Types", Arrays.asList(types)));
             return new LootModificationByType(logName, new ArrayList<>(Arrays.asList(types)), new ArrayList<>(actions));
+        });
+        return builder;
+    }
+
+    public LootActionsBuilderJS addBlockLootModifier(BlockStatePredicate blocks) {
+        HashSet<Block> set = new HashSet<>();
+        blocks
+                .getBlocks()
+                .stream()
+                .filter(block -> !BlockStatePredicate.AIR_ID.equals(block.getRegistryName()))
+                .forEach(set::add);
+
+        if (set.isEmpty()) {
+            throw new IllegalArgumentException("No valid block given.");
+        }
+
+        LootActionsBuilderJS builder = new LootActionsBuilderJS();
+        modifierSuppliers.add(() -> {
+            List<ILootAction> actions = builder.getActions();
+            String logName = builder.getLogName(Utils.quote("Blocks", set));
+            return new LootModificationByBlock(logName, set, new ArrayList<>(actions));
+        });
+        return builder;
+    }
+
+    public LootActionsBuilderJS addEntityLootModifier(EntityType<?>... entities) {
+        HashSet<EntityType<?>> set = new HashSet<>();
+        Arrays.stream(entities).filter(Objects::nonNull).forEach(set::add);
+
+        if (set.isEmpty()) {
+            throw new IllegalArgumentException("No valid entities given.");
+        }
+
+        LootActionsBuilderJS builder = new LootActionsBuilderJS();
+        modifierSuppliers.add(() -> {
+            List<ILootAction> actions = builder.getActions();
+            String logName = builder.getLogName(Utils.quote("Entities",
+                    set.stream().map(ForgeRegistryEntry::getRegistryName).collect(Collectors.toList())));
+            return new LootModificationByEntity(logName, set, new ArrayList<>(actions));
         });
         return builder;
     }

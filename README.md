@@ -28,7 +28,7 @@ Let's add a simple example which adds an additional gunpowder for creepers:
 ```js
 onEvent("lootjs", (event) => {
     event
-        .addModifierForLootTable("minecraft:entities/creeper")
+        .addModifierForLootTables("minecraft:entities/creeper")
         .randomChance(0.3) // 30% chance
         .thenAdd("minecraft:gunpowder");
 });
@@ -38,7 +38,7 @@ Instead of using a loot table for reference you also can apply the modification 
 ```js
 onEvent("lootjs", (event) => {
     event
-        .addModifierForType(LootType.ENTITY) // you also can use multiple types
+        .addModifierForTypes(LootType.ENTITY) // you also can use multiple types
         .logName("It's raining loot") // you can set a custom name for logging
         .weatherCheck({
             raining: true,
@@ -53,7 +53,7 @@ Now, let's check if the player holds a specific item:
 ```js
 onEvent("lootjs", (event) => {
     event
-        .addModifierForType(LootType.BLOCK)
+        .addModifierForTypes(LootType.BLOCK)
         .matchBlock("#forge:ores") // keep in mind this is a block tag not an item tag
         .matchEquip(EquipmentSlot.MAINHAND, Item.of("minecraft:netherite_pickaxe").ignoreNBT())
         .thenAdd("minecraft:gravel");
