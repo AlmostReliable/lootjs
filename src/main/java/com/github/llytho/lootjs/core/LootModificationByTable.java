@@ -10,19 +10,11 @@ public class LootModificationByTable extends AbstractLootModification {
 
     public final List<ResourceLocation> locations;
     public final List<Pattern> patterns;
-    private final String name;
-
 
     public LootModificationByTable(String name, List<ResourceLocation> locations, List<Pattern> patterns, List<ILootAction> actions) {
-        super(actions);
-        this.name = name;
+        super(name, actions);
         this.locations = locations;
         this.patterns = patterns;
-    }
-
-    @Override
-    public String getName() {
-        return name;
     }
 
     @Override

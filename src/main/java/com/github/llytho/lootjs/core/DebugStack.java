@@ -57,47 +57,49 @@ public class DebugStack {
     }
 
     public static DebugStack context(LootContext context) {
-        DebugStack cd = new DebugStack();
+        DebugStack debugStack = new DebugStack();
 
-        cd.write("LootTable", context.getQueriedLootTableId());
+        debugStack.write("LootTable", context.getQueriedLootTableId());
 
         ILootContextData data = context.getParamOrNull(Constants.DATA);
         if (data != null) {
-            cd.write("Loot type", data.getLootContextType());
-            cd.write("Current loot :");
-            cd.pushLayer();
+            debugStack.write("Loot type", data.getLootContextType());
+            debugStack.write("Current loot :");
+            debugStack.pushLayer();
             for (ItemStack itemStack : data.getGeneratedLoot()) {
-                String tag = "";
-                if (itemStack.hasTag()) tag += " " + itemStack.getTag();
-                cd.write("- " + itemStack + tag);
+                String s = Utils.formatItemStack(itemStack);
+                if (s != null) {
+                    debugStack.write("- " + s);
+                }
             }
-            cd.popLayer();
+            debugStack.popLayer();
         }
 
         Vector3d origin = context.getParamOrNull(LootParameters.ORIGIN);
-        cd.write("Position", origin);
-        cd.write("Block", context.getParamOrNull(LootParameters.BLOCK_STATE));
-        cd.write("Explosion", context.getParamOrNull(LootParameters.EXPLOSION_RADIUS));
-        cd.write("Entity", context.getParamOrNull(LootParameters.THIS_ENTITY));
-        cd.write("Killer Entity", context.getParamOrNull(LootParameters.KILLER_ENTITY));
-        cd.write("Direct Killer", context.getParamOrNull(LootParameters.DIRECT_KILLER_ENTITY));
+        debugStack.write("Position", Utils.formatPosition(origin));
+        debugStack.write("Block", context.getParamOrNull(LootParameters.BLOCK_STATE));
+        debugStack.write("Explosion", context.getParamOrNull(LootParameters.EXPLOSION_RADIUS));
+        debugStack.write("Entity", Utils.formatEntity(context.getParamOrNull(LootParameters.THIS_ENTITY)));
+        debugStack.write("Killer Entity", Utils.formatEntity(context.getParamOrNull(LootParameters.KILLER_ENTITY)));
+        debugStack.write("Direct Killer",
+                Utils.formatEntity(context.getParamOrNull(LootParameters.DIRECT_KILLER_ENTITY)));
 
         ServerPlayerEntity playerOrNull = LootContextUtils.getPlayerOrNull(context);
         if (playerOrNull != null) {
-            cd.write("Player", playerOrNull);
-            cd.write("Player Pos", playerOrNull.position());
+            debugStack.write("Player", Utils.formatEntity(playerOrNull));
+            debugStack.write("Player Pos", Utils.formatPosition(playerOrNull.position()));
             if (origin != null) {
-                cd.write("Distance", playerOrNull.position().distanceTo(origin));
+                debugStack.write("Distance", playerOrNull.position().distanceTo(origin));
             }
-            cd.write("Mainhand", playerOrNull.getItemBySlot(EquipmentSlotType.MAINHAND));
-            cd.write("Offhand", playerOrNull.getItemBySlot(EquipmentSlotType.OFFHAND));
-            cd.write("Head Item", playerOrNull.getItemBySlot(EquipmentSlotType.HEAD));
-            cd.write("Chest Item", playerOrNull.getItemBySlot(EquipmentSlotType.CHEST));
-            cd.write("Legs Item", playerOrNull.getItemBySlot(EquipmentSlotType.LEGS));
-            cd.write("Feet Item", playerOrNull.getItemBySlot(EquipmentSlotType.FEET));
+            debugStack.write("MainHand", Utils.formatItemStack(playerOrNull.getItemBySlot(EquipmentSlotType.MAINHAND)));
+            debugStack.write("OffHand", Utils.formatItemStack(playerOrNull.getItemBySlot(EquipmentSlotType.OFFHAND)));
+            debugStack.write("Head", Utils.formatItemStack(playerOrNull.getItemBySlot(EquipmentSlotType.HEAD)));
+            debugStack.write("Chest", Utils.formatItemStack(playerOrNull.getItemBySlot(EquipmentSlotType.CHEST)));
+            debugStack.write("Legs", Utils.formatItemStack(playerOrNull.getItemBySlot(EquipmentSlotType.LEGS)));
+            debugStack.write("Feet", Utils.formatItemStack(playerOrNull.getItemBySlot(EquipmentSlotType.FEET)));
         }
 
-        return cd;
+        return debugStack;
     }
 
     public void pushLayer() {

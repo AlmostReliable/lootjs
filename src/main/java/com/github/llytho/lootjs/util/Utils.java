@@ -1,12 +1,17 @@
 package com.github.llytho.lootjs.util;
 
+import net.minecraft.entity.Entity;
+import net.minecraft.item.ItemStack;
 import net.minecraft.tags.ITag;
 import net.minecraft.tags.ITagCollection;
 import net.minecraft.tags.TagCollectionManager;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.vector.Vector3d;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.IForgeRegistry;
 import net.minecraftforge.registries.IForgeRegistryEntry;
+
+import javax.annotation.Nullable;
 
 public class Utils {
 
@@ -56,4 +61,38 @@ public class Utils {
         return TagCollectionManager.getInstance().getCustomTypeCollection(registry);
     }
 
+    @Nullable
+    public static String formatEntity(@Nullable Entity entity) {
+        if (entity == null) {
+            return null;
+        }
+
+        return String.format("Type='%s', Id=%s, Dim='%s', x=%.2f, y=%.2f, z=%.2f",
+                entity.getType().getRegistryName(),
+                entity.getId(),
+                entity.level == null ? "~NO DIM~" : entity.level.dimension().location(),
+                entity.getX(),
+                entity.getY(),
+                entity.getZ());
+    }
+
+    @Nullable
+    public static String formatPosition(@Nullable Vector3d position) {
+        if (position == null) {
+            return null;
+        }
+
+        return String.format("(%.2f, %.2f, %.2f)", position.x, position.y, position.z);
+    }
+
+    @Nullable
+    public static String formatItemStack(ItemStack itemStack) {
+        if (itemStack.isEmpty()) {
+            return null;
+        }
+
+        String tag = "";
+        if (itemStack.hasTag()) tag += " " + itemStack.getTag();
+        return itemStack + tag;
+    }
 }

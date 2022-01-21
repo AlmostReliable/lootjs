@@ -12,6 +12,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.loot.conditions.ILootCondition;
 import net.minecraft.world.Explosion;
 
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -20,6 +21,12 @@ import java.util.function.Consumer;
 public class LootActionsBuilderJS implements ConditionsContainer<LootActionsBuilderJS> {
     private final List<ILootAction> actions = new ArrayList<>();
     private final List<ILootCondition> conditions = new ArrayList<>();
+    private String logName;
+
+    public LootActionsBuilderJS logName(String name) {
+        logName = name;
+        return this;
+    }
 
     public LootActionsBuilderJS thenApply(Consumer<LootContextJS> action) {
         buildCurrentAction(new CustomJSAction(action));
@@ -67,6 +74,11 @@ public class LootActionsBuilderJS implements ConditionsContainer<LootActionsBuil
         }
 
         return actions;
+    }
+
+    @Nullable
+    public String getLogName() {
+        return logName;
     }
 
     @Override

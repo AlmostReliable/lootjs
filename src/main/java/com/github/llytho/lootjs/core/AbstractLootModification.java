@@ -5,9 +5,12 @@ import net.minecraft.loot.LootContext;
 import java.util.List;
 
 public abstract class AbstractLootModification implements ILootModification {
+    public static final String UNUSED_NAME = "NO_NAME_PROVIDED";
     protected final List<ILootAction> actions;
+    private final String name;
 
-    public AbstractLootModification(List<ILootAction> actions) {
+    public AbstractLootModification(String name, List<ILootAction> actions) {
+        this.name = name;
         this.actions = actions;
     }
 
@@ -24,5 +27,10 @@ public abstract class AbstractLootModification implements ILootModification {
 
         DebugStack.popLayer(stack);
         return true;
+    }
+
+    @Override
+    public String getName() {
+        return name;
     }
 }

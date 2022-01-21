@@ -5,19 +5,11 @@ import net.minecraft.loot.LootContext;
 import java.util.List;
 
 public class LootModificationByType extends AbstractLootModification {
-
-    private final String name;
     private final List<LootContextType> types;
 
     public LootModificationByType(String name, List<LootContextType> types, List<ILootAction> actions) {
-        super(actions);
-        this.name = name;
+        super(name, actions);
         this.types = types;
-    }
-
-    @Override
-    public String getName() {
-        return name;
     }
 
     @Override

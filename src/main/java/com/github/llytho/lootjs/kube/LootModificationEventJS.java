@@ -63,11 +63,10 @@ public class LootModificationEventJS extends EventJS {
         locationsToRemove.addAll(collectedByLocations);
     }
 
-    public LootActionsBuilderJS addModifierForLootTable(String name, String... idOrPattern) {
+    public LootActionsBuilderJS addModifierForLootTable(String... idOrPattern) {
         if (idOrPattern.length == 0) {
             throw new IllegalArgumentException("No loot table were given.");
         }
-
 
         List<Pattern> patterns = new ArrayList<>();
         List<ResourceLocation> locations = new ArrayList<>();
@@ -84,7 +83,11 @@ public class LootModificationEventJS extends EventJS {
         LootActionsBuilderJS builder = new LootActionsBuilderJS();
         modifierSuppliers.add(() -> {
             List<ILootAction> actions = builder.getActions();
-            return new LootModificationByTable(name,
+            String logName = builder.getLogName();
+            if (logName == null) {
+                logName = "LootTables[" + String.join(",", idOrPattern) + "]";
+            }
+            return new LootModificationByTable(logName,
                     new ArrayList<>(locations),
                     new ArrayList<>(patterns),
                     new ArrayList<>(actions));
@@ -92,7 +95,7 @@ public class LootModificationEventJS extends EventJS {
         return builder;
     }
 
-    public LootActionsBuilderJS addModifierForType(String name, LootContextType... types) {
+    public LootActionsBuilderJS addModifierForType(LootContextType... types) {
         if (types.length == 0) {
             throw new IllegalArgumentException("No loot type were given.");
         }
@@ -100,7 +103,11 @@ public class LootModificationEventJS extends EventJS {
         LootActionsBuilderJS builder = new LootActionsBuilderJS();
         modifierSuppliers.add(() -> {
             List<ILootAction> actions = builder.getActions();
-            return new LootModificationByType(name, new ArrayList<>(Arrays.asList(types)), new ArrayList<>(actions));
+            String logName = builder.getLogName();
+            if (logName == null) {
+                logName = "Types[" + Arrays.stream(types).map(Enum::name).collect(Collectors.joining(",")) + "]";
+            }
+            return new LootModificationByType(logName, new ArrayList<>(Arrays.asList(types)), new ArrayList<>(actions));
         });
         return builder;
     }
