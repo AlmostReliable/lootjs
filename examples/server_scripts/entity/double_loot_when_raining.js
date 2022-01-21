@@ -6,7 +6,7 @@ onEvent("lootjs", (event) => {
             raining: true,
         })
         .thenModify(Ingredient.getAll(), (itemStack) => {
-            // you have to return a new item!
+            // you have to return an item!
             return itemStack.withCount(itemStack.getCount() * 2);
         });
 });

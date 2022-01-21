@@ -15,16 +15,14 @@ A [Minecraft] mod for packdevs to easily modify the loot system with [KubeJS].
 ## **📑 Overview**
 This is a mod for [Minecraft] [Forge] and needs [KubeJS].<br>
 The mod uses the [Global Loot System][forgeloot] from Forge together with KubeJS to add functionality to modify loot based on given conditions and actions. 
-## **🎓 License**
-This project is licensed under the [GNU Lesser General Public License v3.0][license].
 ## **🔧 Installation**
 1. Download the latest **mod jar** from [CurseForge] or the latest [releases].
-2. Download the latest **mod jar** from [KubeJS]
+2. Download the latest **mod jar** from [KubeJS].
 3. Install Minecraft [Forge].
 4. Drop both **jar files** into your mods folder.
 
 ## **✏️ Your first loot modification**
-Loot modifications are handled server sided. So all your scripts will go into your `your_minecraft_instance/kubejs/server_scripts` directory. Just create a `.js` file and let's get started.
+Loot modifications are handled server side. So all your scripts will go into your `your_minecraft_instance/kubejs/server_scripts` directory. Just create a `.js` file and let's get started.
 
 Let's add a simple example which adds an additional gunpowder for creepers:
 ```js
@@ -46,12 +44,12 @@ onEvent("lootjs", (event) => {
             raining: true,
         })
         .thenModify(Ingredient.getAll(), (itemStack) => {
-            // you have to return a new item!
+            // you have to return an item!
             return itemStack.withCount(itemStack.getCount() * 2);
         });
 });
 ```
-Now let's check if the player holds a specific item
+Now, let's check if the player holds a specific item:
 ```js
 onEvent("lootjs", (event) => {
     event
@@ -66,6 +64,10 @@ onEvent("lootjs", (event) => {
 });
 ```
 
+## **⚙️ More Information**
+For more information about the usage and the functionality of the mod, please
+visit our [wiki] or explore the [examples].
+
 ## **📜 Enable logging for loot modifications**
 With a lot of modifications it can be hard to track which modification triggers on specific conditions. With `enableLogging` LootJS will log every modification trigger into `your_minecraft_instance/logs/kubejs/server.txt`
 ```js
@@ -75,21 +77,21 @@ onEvent("lootjs", (event) => {
 ```
 
 How it would look like for the `additional gunpowder` and `raining loot` examples:
-```java
+```lua
 [ Loot information ] 
-    LootTable    : minecraft:entities/creeper
-    Loot type    : ENTITY
+    LootTable    : "minecraft:entities/creeper"
+    Loot Type    : ENTITY
     Current loot :
-    Position     : (63.30, 78.00, -255.70)
-    Entity       : Type='minecraft:creeper', Id=314, Dim='minecraft:overworld', x=63.30, y=78.00, z=-255.70
-    Killer Entity: Type='minecraft:player', Id=161, Dim='minecraft:overworld', x=64.54, y=78.00, z=-254.88
-    Direct Killer: Type='minecraft:player', Id=161, Dim='minecraft:overworld', x=64.54, y=78.00, z=-254.88
-    Player       : Type='minecraft:player', Id=161, Dim='minecraft:overworld', x=64.54, y=78.00, z=-254.88
-    Player Pos   : (64.54, 78.00, -254.88)
-    Distance     : 1.4844638109207153
+    Position     : (151.86, 80.00, -264.23)
+    Entity       : Type="minecraft:creeper", Id=378, Dim="minecraft:overworld", x=151.86, y=80.00, z=-264.23
+    Killer Entity: Type="minecraft:player", Id=122, Dim="minecraft:overworld", x=152.52, y=80.00, z=-262.85
+    Direct Killer: Type="minecraft:player", Id=122, Dim="minecraft:overworld", x=152.52, y=80.00, z=-262.85
+    Player       : Type="minecraft:player", Id=122, Dim="minecraft:overworld", x=152.52, y=80.00, z=-262.85
+    Player Pos   : (152.52, 80.00, -262.85)
+    Distance     : 1.53
     MainHand     : 1 netherite_sword {Damage:0}
 [ Modifications ] 
-    🔧 LootTables[minecraft:entities/creeper] {
+    🔧 LootTables["minecraft:entities/creeper"] {
         ❌ RandomChance
         ➥ conditions are false. Stopping at AddLootAction
     }
@@ -99,10 +101,8 @@ How it would look like for the `additional gunpowder` and `raining loot` example
     }
 ```
 
-## **⚙️ More Information**
-For more information about the usage and the functionality of the mod, please
-visit our [wiki].
-
+## **🎓 License**
+This project is licensed under the [GNU Lesser General Public License v3.0][license].
 
 <!-- Badges -->
 [version_badge]: https://img.shields.io/github/v/release/AlmostReliable/lootjs-forge?style=flat-square
@@ -123,3 +123,4 @@ visit our [wiki].
 [wiki]: https://github.com/AlmostReliable/lootjs-forge/wiki
 [changelog]: CHANGELOG.md
 [license]: LICENSE
+[examples]: examples/server_scripts
