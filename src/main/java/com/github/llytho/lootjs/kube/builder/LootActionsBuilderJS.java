@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.function.Consumer;
+import java.util.function.Function;
 
 public class LootActionsBuilderJS implements ConditionsContainer<LootActionsBuilderJS> {
     private final List<ILootAction> actions = new ArrayList<>();
@@ -49,11 +50,19 @@ public class LootActionsBuilderJS implements ConditionsContainer<LootActionsBuil
         return this;
     }
 
+    public LootActionsBuilderJS thenModify(IngredientJS ingredient, Function<ItemStackJS, ItemStackJS> function) {
+        buildCurrentAction(new ModifyLootAction(ingredient.getVanillaPredicate(), (itemStack) -> {
+            return function.apply(new ItemStackJS(itemStack)).getItemStack();
+        }));
+        return this;
+    }
+
     public LootActionsBuilderJS thenExplode(float radius, boolean destroy, boolean fire) {
         Explosion.Mode mode = destroy ? Explosion.Mode.DESTROY : Explosion.Mode.NONE;
         buildCurrentAction(new ExplodeAction(radius, mode, fire));
         return this;
     }
+
 
     public LootActionsBuilderJS thenLightningStrike(boolean shouldDamage) {
         buildCurrentAction(new LightningStrikeAction(shouldDamage));
