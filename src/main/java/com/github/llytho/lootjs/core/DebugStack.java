@@ -89,7 +89,7 @@ public class DebugStack {
             debugStack.write("Player", Utils.formatEntity(playerOrNull));
             debugStack.write("Player Pos", Utils.formatPosition(playerOrNull.position()));
             if (origin != null) {
-                debugStack.write("Distance", playerOrNull.position().distanceTo(origin));
+                debugStack.write("Distance", String.format("%.2f", playerOrNull.position().distanceTo(origin)));
             }
             debugStack.write("MainHand", Utils.formatItemStack(playerOrNull.getItemBySlot(EquipmentSlotType.MAINHAND)));
             debugStack.write("OffHand", Utils.formatItemStack(playerOrNull.getItemBySlot(EquipmentSlotType.OFFHAND)));
