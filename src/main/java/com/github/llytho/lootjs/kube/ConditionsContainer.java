@@ -43,15 +43,15 @@ public interface ConditionsContainer<B extends ConditionsContainer<?>> {
         return addCondition(new ContainsLootCondition(ingredient.getVanillaPredicate(), exact));
     }
 
-    default B matchPlayerMainHand(IngredientJS ingredient) {
+    default B matchMainHand(IngredientJS ingredient) {
         return addCondition(new MatchEquipmentSlot(EquipmentSlotType.MAINHAND, ingredient.getVanillaPredicate()));
     }
 
-    default B matchPlayerOffHand(IngredientJS ingredient) {
+    default B matchOffHand(IngredientJS ingredient) {
         return addCondition(new MatchEquipmentSlot(EquipmentSlotType.OFFHAND, ingredient.getVanillaPredicate()));
     }
 
-    default B matchPlayerEquip(EquipmentSlotType slot, IngredientJS ingredient) {
+    default B matchEquip(EquipmentSlotType slot, IngredientJS ingredient) {
         return addCondition(new MatchEquipmentSlot(slot, ingredient.getVanillaPredicate()));
     }
 
