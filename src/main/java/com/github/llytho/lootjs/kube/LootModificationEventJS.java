@@ -32,7 +32,7 @@ public class LootModificationEventJS extends EventJS {
         this.originalLocations = originalLocations;
     }
 
-    public List<String> getModifiers() {
+    public List<String> getGlobalModifiers() {
         return originalLocations.stream().map(ResourceLocation::toString).collect(Collectors.toList());
     }
 
@@ -53,7 +53,7 @@ public class LootModificationEventJS extends EventJS {
         LootModificationsAPI.DEBUG_STACK_ENABLED = true;
     }
 
-    public void removeGlobalLoot(String... locationOrModIds) {
+    public void removeGlobalModifier(String... locationOrModIds) {
         Set<String> modIds = new HashSet<>();
         Set<ResourceLocation> locations = new HashSet<>();
         for (String locationOrModId : locationOrModIds) {
