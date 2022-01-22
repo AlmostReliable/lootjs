@@ -1,6 +1,6 @@
 onEvent("lootjs", (event) => {
     event
-        .addModifierForType([LootType.ENTITY])
+        .addLootTypeModifier([LootType.ENTITY])
         .matchEntity((entity) => {
             entity.anyType("#skeletons");
             entity.matchMount((mount) => {
