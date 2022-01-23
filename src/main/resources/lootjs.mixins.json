@@ -1,8 +1,12 @@
 {
   "required": true,
-  "package": "com.github.llytho.lootjs.mixin",
+  "package": "${project.group}.mixin",
   "compatibilityLevel": "JAVA_8",
-  "refmap": "lootjs.refmap.json",
-  "mixins": ["ForgeHooksMixin", "LootContextBuilderMixin", "LootModifierManagerMixin"],
+  "refmap": "${mod_id}.refmap.json",
+  "mixins": [
+    "ForgeHooksMixin",
+    "LootContextBuilderMixin",
+    "LootModifierManagerMixin"
+  ],
   "minVersion": "0.8"
 }

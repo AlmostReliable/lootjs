@@ -1,34 +1,32 @@
 modLoader = "javafml"
-loaderVersion = "[36,)"
+loaderVersion = "${loader_version_range}"
+issueTrackerURL = "https://github.com/${github_user}/${github_repo}/issues"
 license = "GNU LGPLv3"
 
 [[mods]]
-modId = "lootjs"
-version = "${file.jarVersion}"
-displayName = "LootJS"
-logoFile = "lootjs.png"
-authors = "Lytho" #optional
-description = '''
-Modify global loot drops through kubejs
-'''
+modId = "${mod_id}"
+version = "${mod_version}"
+displayName = "${mod_name}"
+authors = "${mod_authors}"
+description = '''${mod_description}'''
 
-[[dependencies.lootjs]]
+[[dependencies.${ mod_id }]]
 modId = "forge"
 mandatory = true
-versionRange = "[36,)"
+versionRange = "${forge_version_range}"
 ordering = "NONE"
 side = "BOTH"
 
-[[dependencies.lootjs]]
+[[dependencies.${ mod_id }]]
 modId = "minecraft"
 mandatory = true
-versionRange = "[1.16.5,1.17)"
+versionRange = "${minecraft_version_range}"
 ordering = "NONE"
 side = "BOTH"
 
-[[dependencies.lootjs]]
+[[dependencies.${ mod_id }]]
 modId = "kubejs"
 mandatory = true
-versionRange = "[1605.3.18-build.154,)"
+versionRange = "${kubejs_version_range}"
 ordering = "AFTER"
 side = "BOTH"
