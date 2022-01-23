@@ -15,6 +15,7 @@ A [Minecraft] mod for packdevs to easily modify the loot system with [KubeJS].
 ## **📑 Overview**
 This is a mod for [Minecraft] [Forge] and needs [KubeJS].<br>
 The mod uses the [Global Loot System][forgeloot] from Forge together with KubeJS to add functionality to modify loot based on given conditions and actions. 
+
 ## **🔧 Installation**
 1. Download the latest **mod jar** from [CurseForge] or the latest [releases].
 2. Download the latest **mod jar** from [KubeJS].
@@ -24,7 +25,7 @@ The mod uses the [Global Loot System][forgeloot] from Forge together with KubeJS
 ## **✏️ Your first loot modification**
 Loot modifications are handled server side. So all your scripts will go into your `your_minecraft_instance/kubejs/server_scripts` directory. Just create a `.js` file and let's get started.
 
-Let's add a simple example which adds an additional gunpowder for creepers:
+Here's simple example which adds a gunpowder for creepers:
 ```js
 onEvent("lootjs", (event) => {
     event
@@ -34,7 +35,7 @@ onEvent("lootjs", (event) => {
 });
 ```
 
-Instead of using a loot table for reference you also can apply the modification to all entities:
+Instead of using a loot table for reference, you can also apply the modification to all entities:
 ```js
 onEvent("lootjs", (event) => {
     event
@@ -49,7 +50,8 @@ onEvent("lootjs", (event) => {
         });
 });
 ```
-Now, let's check if the player holds a specific item:
+
+Next, let's check if the player holds a specific item:
 ```js
 onEvent("lootjs", (event) => {
     event
@@ -81,14 +83,14 @@ onEvent("lootjs", (event) => {
 ```
 
 ## **📜 Enable logging for loot modifications**
-With a lot of modifications it can be hard to track which modification triggers on specific conditions. With `enableLogging` LootJS will log every modification trigger into `your_minecraft_instance/logs/kubejs/server.txt`
+With a lot of modifications, it can be hard to track which modification triggers on specific conditions. With `enableLogging`, LootJS will log every modification trigger into `your_minecraft_instance/logs/kubejs/server.txt`.
 ```js
 onEvent("lootjs", (event) => {
     event.enableLogging();
 });
 ```
 
-How it would look like for the `additional gunpowder` and `raining loot` examples:
+Here's the output for the `additional gunpowder` and `raining loot` examples:
 ```lua
 [ Loot information ] 
     LootTable    : "minecraft:entities/creeper"
