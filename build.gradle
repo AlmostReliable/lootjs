@@ -11,6 +11,10 @@ buildscript {
     }
 }
 
+plugins {
+    id "com.matthewprenger.cursegradle" version "1.4.0"
+}
+
 apply plugin: 'net.minecraftforge.gradle'
 apply plugin: 'org.parchmentmc.librarian.forgegradle'
 apply plugin: 'org.spongepowered.mixin'
@@ -199,6 +203,27 @@ processResources {
                 }
                 into target
             }
+        }
+    }
+}
+
+curseforge {
+    if (System.getenv('CF_API_KEY') != null) {
+        // GitHub actions
+        apiKey = System.getenv('CF_API_KEY')
+    } else {
+        // error prevention
+        apiKey = "none"
+    }
+    project {
+        id = project_id
+        changelogType = 'markdown'
+        changelog = "The whole changelog can be found [here](https://github.com/${github_user}/${github_repo}/blob/${github_branch}/CHANGELOG.md)."
+        releaseType = 'release'
+        addGameVersion minecraft_version
+
+        mainArtifact(jar) {
+            displayName = "${System.getenv('FILE_NAME')}-${minecraft_version}-${mod_version}"
         }
     }
 }
