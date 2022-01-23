@@ -7,5 +7,6 @@ modId = "lootjs_test"
 [[dependencies.lootjs_test]]
 modId = "lootjs"
 mandatory = true
+versionRange = "[0.0.1,)" # needed ...
 ordering = "AFTER"
 side = "BOTH"
