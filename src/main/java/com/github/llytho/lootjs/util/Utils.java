@@ -1,6 +1,8 @@
 package com.github.llytho.lootjs.util;
 
 import net.minecraft.advancements.critereon.StatePropertiesPredicate;
+import net.minecraft.core.Registry;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.*;
 import net.minecraft.world.entity.Entity;
@@ -67,21 +69,20 @@ public class Utils {
 
     public static TagCollection<? extends IForgeRegistryEntry<?>> getTagCollectionByRegistry(IForgeRegistry<?> registry) {
         if (registry == ForgeRegistries.BLOCKS) {
-            return BlockTags.getAllTags();
+            return SerializationTags.getInstance().getOrEmpty(Registry.BLOCK_REGISTRY);
         }
 
         if (registry == ForgeRegistries.FLUIDS) {
-            return FluidTags.getAllTags();
+            return SerializationTags.getInstance().getOrEmpty(Registry.FLUID_REGISTRY);
         }
 
         if (registry == ForgeRegistries.ITEMS) {
-            return ItemTags.getAllTags();
+            return SerializationTags.getInstance().getOrEmpty(Registry.ITEM_REGISTRY);
         }
 
         if (registry == ForgeRegistries.ENTITIES) {
-            return EntityTypeTags.getAllTags();
+            return SerializationTags.getInstance().getOrEmpty(Registry.ENTITY_TYPE_REGISTRY);
         }
-
 
         throw new IllegalArgumentException(registry.getRegistryName() + " does not provide tags");
     }

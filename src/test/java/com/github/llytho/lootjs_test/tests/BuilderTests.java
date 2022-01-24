@@ -15,34 +15,34 @@ public class BuilderTests {
 
             helper.debugStack.h2("NULL checks for default values");
             WrappedDamageSourceCondition defaultP = new DamageSourcePredicateBuilderJS().build();
-            helper.shouldBeNull(defaultP, "isProjectile");
-            helper.shouldBeNull(defaultP, "isExplosion");
-            helper.shouldBeNull(defaultP, "bypassesArmor");
-            helper.shouldBeNull(defaultP, "bypassesInvulnerability");
-            helper.shouldBeNull(defaultP, "bypassesMagic");
-            helper.shouldBeNull(defaultP, "isFire");
-            helper.shouldBeNull(defaultP, "isMagic");
-            helper.shouldBeNull(defaultP, "isLightning");
+            helper.shouldBeNull(defaultP, "predicate/isProjectile");
+            helper.shouldBeNull(defaultP, "predicate/isExplosion");
+            helper.shouldBeNull(defaultP, "predicate/bypassesArmor");
+            helper.shouldBeNull(defaultP, "predicate/bypassesInvulnerability");
+            helper.shouldBeNull(defaultP, "predicate/bypassesMagic");
+            helper.shouldBeNull(defaultP, "predicate/isFire");
+            helper.shouldBeNull(defaultP, "predicate/isMagic");
+            helper.shouldBeNull(defaultP, "predicate/isLightning");
 
             helper.debugStack.h2("TRUE checks");
-            helper.shouldBeTrue(dsb.get().isProjectile(true).build(), "isProjectile");
-            helper.shouldBeTrue(dsb.get().isExplosion(true).build(), "isExplosion");
-            helper.shouldBeTrue(dsb.get().doesBypassArmor(true).build(), "bypassesArmor");
-            helper.shouldBeTrue(dsb.get().doesBypassInvulnerability(true).build(), "bypassesInvulnerability");
-            helper.shouldBeTrue(dsb.get().doesBypassMagic(true).build(), "bypassesMagic");
-            helper.shouldBeTrue(dsb.get().isFire(true).build(), "isFire");
-            helper.shouldBeTrue(dsb.get().isMagic(true).build(), "isMagic");
-            helper.shouldBeTrue(dsb.get().isLightning(true).build(), "isLightning");
+            helper.shouldBeTrue(dsb.get().isProjectile(true).build(), "predicate/isProjectile");
+            helper.shouldBeTrue(dsb.get().isExplosion(true).build(), "predicate/isExplosion");
+            helper.shouldBeTrue(dsb.get().doesBypassArmor(true).build(), "predicate/bypassesArmor");
+            helper.shouldBeTrue(dsb.get().doesBypassInvulnerability(true).build(), "predicate/bypassesInvulnerability");
+            helper.shouldBeTrue(dsb.get().doesBypassMagic(true).build(), "predicate/bypassesMagic");
+            helper.shouldBeTrue(dsb.get().isFire(true).build(), "predicate/isFire");
+            helper.shouldBeTrue(dsb.get().isMagic(true).build(), "predicate/isMagic");
+            helper.shouldBeTrue(dsb.get().isLightning(true).build(), "predicate/isLightning");
 
             helper.debugStack.h2("FALSE checks");
-            helper.shouldBeFalse(dsb.get().isProjectile(false).build(), "isProjectile");
-            helper.shouldBeFalse(dsb.get().isExplosion(false).build(), "isExplosion");
-            helper.shouldBeFalse(dsb.get().doesBypassArmor(false).build(), "bypassesArmor");
-            helper.shouldBeFalse(dsb.get().doesBypassInvulnerability(false).build(), "bypassesInvulnerability");
-            helper.shouldBeFalse(dsb.get().doesBypassMagic(false).build(), "bypassesMagic");
-            helper.shouldBeFalse(dsb.get().isFire(false).build(), "isFire");
-            helper.shouldBeFalse(dsb.get().isMagic(false).build(), "isMagic");
-            helper.shouldBeFalse(dsb.get().isLightning(false).build(), "isLightning");
+            helper.shouldBeFalse(dsb.get().isProjectile(false).build(), "predicate/isProjectile");
+            helper.shouldBeFalse(dsb.get().isExplosion(false).build(), "predicate/isExplosion");
+            helper.shouldBeFalse(dsb.get().doesBypassArmor(false).build(), "predicate/bypassesArmor");
+            helper.shouldBeFalse(dsb.get().doesBypassInvulnerability(false).build(), "predicate/bypassesInvulnerability");
+            helper.shouldBeFalse(dsb.get().doesBypassMagic(false).build(), "predicate/bypassesMagic");
+            helper.shouldBeFalse(dsb.get().isFire(false).build(), "predicate/isFire");
+            helper.shouldBeFalse(dsb.get().isMagic(false).build(), "predicate/isMagic");
+            helper.shouldBeFalse(dsb.get().isLightning(false).build(), "predicate/isLightning");
 
             helper.debugStack.popLayer();
         });

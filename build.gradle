@@ -164,12 +164,12 @@ dependencies {
 
     // mods with some global loot
 //    runtimeOnly fg.deobf("curse.maven:simplefarming-327554:3400041") // TODO not for 1.16 currently
-    runtimeOnly fg.deobf("curse.maven:silentlib-3235738:3543045")
-    runtimeOnly fg.deobf("curse.maven:scalinghealth-248027:3580899")
-    runtimeOnly fg.deobf("curse.maven:patchouli-306770:3594394")
+//    runtimeOnly fg.deobf("curse.maven:silentlib-3235738:3543045")
+//    runtimeOnly fg.deobf("curse.maven:scalinghealth-248027:3580899")
+//    runtimeOnly fg.deobf("curse.maven:patchouli-306770:3594394")
 //    runtimeOnly fg.deobf("curse.maven:mysticalworld-282940:3377210") // TODO not for 1.16 currently
-    runtimeOnly fg.deobf("curse.maven:terrablender-563928:3619749")
-    runtimeOnly fg.deobf("curse.maven:byg-247560:3620164")
+//    runtimeOnly fg.deobf("curse.maven:terrablender-563928:3619749")
+//    runtimeOnly fg.deobf("curse.maven:byg-247560:3620164")
 
     // just ding so I can be brain afk while it's loading
     runtimeOnly fg.deobf("curse.maven:ding-231275:3548400")

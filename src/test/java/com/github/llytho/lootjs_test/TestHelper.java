@@ -191,7 +191,7 @@ public class TestHelper {
 
     @Nullable
     public Object value(Object o, String f) {
-        List<String> collect = Arrays.stream(f.split("/", 1)).collect(Collectors.toList());
+        List<String> collect = Arrays.stream(f.split("/", 2)).collect(Collectors.toList());
         String f_ = collect.remove(0);
 
         Class<?> c = o.getClass();
@@ -204,16 +204,11 @@ public class TestHelper {
             }
         } while ((c = c.getSuperclass()) != null);
 
-        if (field == null) {
-            return null;
-        }
-
         try {
-            field.setAccessible(true);
+            Objects.requireNonNull(field).setAccessible(true);
             return collect.isEmpty() ? field.get(o) : value(field.get(o), collect.get(0));
         } catch (IllegalAccessException e) {
-            e.printStackTrace();
-            return null;
+            throw new IllegalArgumentException("Field '" + f_ + "' does not exist in object " + o.getClass().getSimpleName());
         }
     }
 
