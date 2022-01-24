@@ -6,13 +6,13 @@ import com.mojang.brigadier.Command;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
-import dev.latvian.kubejs.util.ConsoleJS;
-import net.minecraft.command.CommandSource;
-import net.minecraft.command.Commands;
-import net.minecraft.world.entity.Entity;
+import dev.latvian.mods.kubejs.util.ConsoleJS;
+import net.minecraft.ChatFormatting;
+import net.minecraft.commands.CommandSourceStack;
+import net.minecraft.commands.Commands;
+import net.minecraft.network.chat.TextComponent;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.util.text.StringTextComponent;
-import net.minecraft.util.text.TextFormatting;
+import net.minecraft.world.entity.Entity;
 import net.minecraftforge.event.RegisterCommandsEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -24,13 +24,13 @@ import java.util.Map;
 import java.util.function.Supplier;
 
 @Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.FORGE)
-public class ExecuteTestsCommand implements Command<CommandSource> {
+public class ExecuteTestsCommand implements Command<CommandSourceStack> {
     private static final Logger LOGGER = LogManager.getLogger();
     private static final String INDENT = "    ";
 
     @SubscribeEvent
     public static void onRegisterCommandEvent(RegisterCommandsEvent event) {
-        LiteralArgumentBuilder<CommandSource> cmd = Commands
+        LiteralArgumentBuilder<CommandSourceStack> cmd = Commands
                 .literal(TestGlobalLootJSMod.MODID)
                 .requires(commandSource -> commandSource.hasPermission(4))
                 .executes(new ExecuteTestsCommand());
@@ -38,7 +38,7 @@ public class ExecuteTestsCommand implements Command<CommandSource> {
     }
 
     @Override
-    public int run(CommandContext<CommandSource> context) throws CommandSyntaxException {
+    public int run(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
         Entity e = context.getSource().getEntity();
         if (!(e instanceof ServerPlayer)) {
             return 0;
@@ -49,8 +49,8 @@ public class ExecuteTestsCommand implements Command<CommandSource> {
             return instant.substring(instant.indexOf('T') + 1).replace("Z", "").replace(".", "_");
         };
 
-        context.getSource().sendSuccess(new StringTextComponent("______________________________________"), true);
-        context.getSource().sendSuccess(new StringTextComponent(instantNow.get() + " Starting tests..."), true);
+        context.getSource().sendSuccess(new TextComponent("______________________________________"), true);
+        context.getSource().sendSuccess(new TextComponent(instantNow.get() + " Starting tests..."), true);
         AllTests.loadAll();
 
         DebugStack debugStack = new DebugStack();
@@ -67,10 +67,10 @@ public class ExecuteTestsCommand implements Command<CommandSource> {
             String result = helper.getFailed() + " / " + helper.getSum() + " failed";
 
             builder.append("\n").append(fin).append("\n").append(INDENT).append(result).append("\n");
-            context.getSource().sendSuccess(new StringTextComponent(instantNow.get() + " " + fin + " " + result), true);
+            context.getSource().sendSuccess(new TextComponent(instantNow.get() + " " + fin + " " + result), true);
         } catch (Exception exception) {
             String crash = "Tests crashed. Stacktrace logged. Abort further tests.";
-            context.getSource().sendFailure(new StringTextComponent(crash).withStyle(TextFormatting.DARK_RED));
+            context.getSource().sendFailure(new TextComponent(crash).withStyle(ChatFormatting.DARK_RED));
 
             StackTraceElement[] stackTrace = exception.getStackTrace();
             debugStack.pushLayer();

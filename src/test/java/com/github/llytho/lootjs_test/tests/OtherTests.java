@@ -3,10 +3,10 @@ package com.github.llytho.lootjs_test.tests;
 import com.github.llytho.lootjs.util.TagOrEntry;
 import com.github.llytho.lootjs.util.Utils;
 import com.github.llytho.lootjs_test.AllTests;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
-import net.minecraft.item.Item;
-import net.minecraft.item.Items;
 import net.minecraftforge.registries.ForgeRegistries;
 
 public class OtherTests {

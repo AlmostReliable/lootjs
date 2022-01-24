@@ -4,12 +4,12 @@ import com.github.llytho.lootjs.core.ILootContextData;
 import com.github.llytho.lootjs.loot.action.*;
 import com.github.llytho.lootjs_test.AllTests;
 import net.minecraft.world.entity.EntityType;
-import net.minecraft.entity.effect.LightningBoltEntity;
+import net.minecraft.world.entity.LightningBolt;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.item.Items;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.level.Explosion;
 import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.phys.Vec3;
-import net.minecraft.world.Explosion;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.world.ExplosionEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -85,7 +85,7 @@ public class ActionTests {
             helper.debugStack.h2("shouldDamageEntity: false");
             LightningStrikeAction action = new LightningStrikeAction(false);
             lightningTest = event -> {
-                LightningBoltEntity entity = (LightningBoltEntity) event.getEntity();
+                LightningBolt entity = (LightningBolt) event.getEntity();
                 helper.shouldSucceed(entity.visualOnly, "Is only visual");
                 helper.shouldSucceed(entity.position().equals(helper.player.position()), "Correct position");
             };
@@ -94,7 +94,7 @@ public class ActionTests {
             helper.debugStack.h2("shouldDamageEntity: true");
             action = new LightningStrikeAction(true);
             lightningTest = event -> {
-                LightningBoltEntity entity = (LightningBoltEntity) event.getEntity();
+                LightningBolt entity = (LightningBolt) event.getEntity();
                 helper.shouldFail(entity.visualOnly, "Will damage entity");
                 helper.shouldSucceed(entity.position().equals(helper.player.position()), "Correct position");
             };
@@ -104,27 +104,27 @@ public class ActionTests {
 
         AllTests.add("ExplodeAction", helper -> {
             helper.debugStack.pushLayer();
-            Vector3d airPosition = new Vector3d(helper.player.position().x, 256, helper.player.position().z);
+            Vec3 airPosition = new Vec3(helper.player.position().x, 256, helper.player.position().z);
             LootContext ctx = helper.chestContext(airPosition, true);
 
             helper.debugStack.h2("Explosion with radius 5, mode NONE, fire false");
-            ExplodeAction action = new ExplodeAction(5, Explosion.Mode.NONE, false);
+            ExplodeAction action = new ExplodeAction(5, Explosion.BlockInteraction.NONE, false);
             explosionTest = event -> {
                 Explosion explosion = event.getExplosion();
                 helper.shouldSucceed(explosion.getPosition().equals(airPosition), "Correct position");
                 helper.shouldSucceed(!explosion.fire, "Fire is off");
-                helper.shouldSucceed(explosion.blockInteraction == Explosion.Mode.NONE, "Mode is NONE");
+                helper.shouldSucceed(explosion.blockInteraction == Explosion.BlockInteraction.NONE, "Mode is NONE");
                 helper.shouldSucceed(explosion.radius == 5f, "Radius is 5");
             };
             action.accept(ctx);
 
             helper.debugStack.h2("Explosion with radius 3, mode DESTROY, fire true");
-            action = new ExplodeAction(3, Explosion.Mode.DESTROY, true);
+            action = new ExplodeAction(3, Explosion.BlockInteraction.DESTROY, true);
             explosionTest = event -> {
                 Explosion explosion = event.getExplosion();
                 helper.shouldSucceed(explosion.getPosition().equals(airPosition), "Correct position");
                 helper.shouldSucceed(explosion.fire, "Fire is on");
-                helper.shouldSucceed(explosion.blockInteraction == Explosion.Mode.DESTROY, "Mode is DESTROY");
+                helper.shouldSucceed(explosion.blockInteraction == Explosion.BlockInteraction.DESTROY, "Mode is DESTROY");
                 helper.shouldSucceed(explosion.radius == 3f, "Radius is 3");
             };
             action.accept(ctx);

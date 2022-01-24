@@ -3,26 +3,26 @@ package com.github.llytho.lootjs_test;
 import com.github.llytho.lootjs.core.Constants;
 import com.github.llytho.lootjs.core.DebugStack;
 import com.github.llytho.lootjs.core.ILootContextData;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EntityType;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.SpawnReason;
-import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.entity.projectile.FishingBobberEntity;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.item.Items;
-import net.minecraft.world.level.storage.loot.LootContext;
-import net.minecraft.world.level.storage.loot.parameters.LootContextParamset;
-import net.minecraft.world.level.storage.loot.parameters.LootContextParamsets;
-import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
-import net.minecraft.util.DamageSource;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.phys.Vec3;
-import net.minecraft.core.Registry;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.MobSpawnType;
+import net.minecraft.world.entity.projectile.FishingHook;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.level.biome.Biome;
-import net.minecraft.world.server.ServerWorld;
+import net.minecraft.world.level.storage.loot.LootContext;
+import net.minecraft.world.level.storage.loot.parameters.LootContextParamSet;
+import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
+import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
+import net.minecraft.world.phys.Vec3;
 
 import javax.annotation.Nullable;
 import java.lang.reflect.Field;
@@ -34,13 +34,13 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class TestHelper {
-    public final ServerWorld level;
+    public final ServerLevel level;
     public final ServerPlayer player;
     public final DebugStack debugStack;
     private int sum;
     private int failed;
 
-    public TestHelper(DebugStack debugStack, ServerWorld level, ServerPlayer player) {
+    public TestHelper(DebugStack debugStack, ServerLevel level, ServerPlayer player) {
         this.debugStack = debugStack;
         this.level = level;
         this.player = player;
@@ -48,25 +48,25 @@ public class TestHelper {
         this.sum = 0;
     }
 
-    public LootContext unknownContext(Vector3d origin) {
+    public LootContext unknownContext(Vec3 origin) {
         LootContext.Builder builder = new LootContext.Builder(level).withParameter(LootContextParams.ORIGIN, origin);
-        return builder.create(new LootContextParamset.Builder().required(LootContextParams.ORIGIN).build());
+        return builder.create(new LootContextParamSet.Builder().required(LootContextParams.ORIGIN).build());
     }
 
-    public LootContext chestContext(Vector3d origin, boolean usePlayer) {
+    public LootContext chestContext(Vec3 origin, boolean usePlayer) {
         LootContext.Builder builder = new LootContext.Builder(level).withParameter(LootContextParams.ORIGIN, origin);
         if (usePlayer) {
             builder.withParameter(LootContextParams.THIS_ENTITY, player);
 
         }
-        return builder.create(LootContextParamsets.CHEST);
+        return builder.create(LootContextParamSets.CHEST);
     }
 
-    public <E extends LivingEntity> LootContext entityContext(EntityType<E> entityType, Vector3d origin) {
+    public <E extends LivingEntity> LootContext entityContext(EntityType<E> entityType, Vec3 origin) {
         E entity = simpleEntity(entityType, new BlockPos(origin));
         LootContext ctx = entity
                 .createLootContext(true, DamageSource.playerAttack(player))
-                .create(LootContextParamsets.ENTITY);
+                .create(LootContextParamSets.ENTITY);
         yeet(entity);
         return ctx;
     }
@@ -74,17 +74,17 @@ public class TestHelper {
     public LootContext blockContext(BlockPos blockPos, boolean usePlayer) {
         LootContext.Builder builder = new LootContext.Builder(level)
                 .withRandom(level.getRandom())
-                .withParameter(LootContextParams.ORIGIN, Vector3d.atCenterOf(blockPos))
+                .withParameter(LootContextParams.ORIGIN, Vec3.atCenterOf(blockPos))
                 .withParameter(LootContextParams.TOOL, player.getMainHandItem())
                 .withParameter(LootContextParams.BLOCK_STATE, level.getBlockState(blockPos));
         if (usePlayer) {
             builder.withOptionalParameter(LootContextParams.THIS_ENTITY, player);
         }
-        return builder.create(LootContextParamsets.BLOCK);
+        return builder.create(LootContextParamSets.BLOCK);
     }
 
-    public LootContext fishingContext(Vector3d origin, int luck) {
-        FishingBobberEntity bobber = new FishingBobberEntity(this.level, player, origin.x, origin.y, origin.z);
+    public LootContext fishingContext(Vec3 origin, int luck) {
+        FishingHook bobber = new FishingHook(player, this.level, luck, 0);
         LootContext.Builder builder = new LootContext.Builder(level)
                 .withParameter(LootContextParams.ORIGIN, origin)
                 .withParameter(LootContextParams.TOOL, player.getMainHandItem())
@@ -93,7 +93,7 @@ public class TestHelper {
                 .withRandom(level.getRandom())
                 .withLuck(luck);
         yeet(bobber);
-        return builder.create(LootContextParamsets.FISHING);
+        return builder.create(LootContextParamSets.FISHING);
     }
 
     public ILootContextData fillExampleLoot(LootContext context) {
@@ -109,7 +109,7 @@ public class TestHelper {
 
     public <E extends Entity> E simpleEntity(EntityType<E> entityType, BlockPos pos) {
         @SuppressWarnings("unchecked")
-        E entity = (E) entityType.spawn(level, null, null, pos, SpawnReason.COMMAND, false, false);
+        E entity = (E) entityType.spawn(level, null, null, pos, MobSpawnType.COMMAND, false, false);
         if (entity == null) {
             throw new RuntimeException("Entity type + '" + entityType.getRegistryName() +
                                        "' cannot be created through 'TestHelper::simpleEntity'");

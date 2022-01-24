@@ -5,24 +5,24 @@ import com.github.llytho.lootjs.core.ILootContextData;
 import com.github.llytho.lootjs.loot.condition.*;
 import com.github.llytho.lootjs.loot.condition.builder.DistancePredicateBuilder;
 import com.github.llytho.lootjs_test.AllTests;
-import net.minecraft.advancements.criterion.MinMaxBounds;
-import net.minecraft.world.entity.EntityType;
-import net.minecraft.entity.passive.CowEntity;
-import net.minecraft.world.entity.EquipmentSlot;
-import net.minecraft.item.Item;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.item.Items;
-import net.minecraft.world.level.storage.loot.LootContext;
-import net.minecraft.world.level.storage.loot.parameters.LootContextParamsets;
-import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
-import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
-import net.minecraft.util.DamageSource;
+import net.minecraft.advancements.critereon.MinMaxBounds;
+import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.animal.Cow;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.levelgen.feature.StructureFeature;
+import net.minecraft.world.level.storage.loot.LootContext;
+import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
+import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
+import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
+import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.common.BiomeDictionary;
 
 import java.util.*;
@@ -86,7 +86,7 @@ public class ConditionTests {
                     false);
 
             if (featurePos != null) {
-                LootContext ctx = helper.unknownContext(new Vector3d(featurePos.getX(),
+                LootContext ctx = helper.unknownContext(new Vec3(featurePos.getX(),
                         featurePos.getY(),
                         featurePos.getZ()));
 
@@ -153,7 +153,7 @@ public class ConditionTests {
             LootContext.Builder builder = new LootContext.Builder(helper.level)
                     .withParameter(LootContextParams.ORIGIN, helper.player.position())
                     .withParameter(LootContextParams.THIS_ENTITY, helper.player);
-            LootContext ctx = builder.create(LootContextParamsets.CHEST);
+            LootContext ctx = builder.create(LootContextParamSets.CHEST);
 
             helper.player.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(Items.DIAMOND));
             helper.player.setItemSlot(EquipmentSlot.OFFHAND, new ItemStack(Items.STICK));
@@ -202,19 +202,19 @@ public class ConditionTests {
         });
 
         AllTests.add("MatchKillerDistance", helper -> {
-            CowEntity cow = helper.simpleEntity(EntityType.COW, helper.player.blockPosition().offset(5, 0, 0));
+            Cow cow = helper.simpleEntity(EntityType.COW, helper.player.blockPosition().offset(5, 0, 0));
             LootContext ctx = cow
                     .createLootContext(true, DamageSource.playerAttack(helper.player))
-                    .create(LootContextParamsets.ENTITY);
+                    .create(LootContextParamSets.ENTITY);
 
-            float dist = helper.player.distanceTo(cow);
+            double dist = helper.player.distanceTo(cow);
             MatchKillerDistance mkd = new MatchKillerDistance(new DistancePredicateBuilder()
-                    .absolute(new MinMaxBounds.FloatBound(dist - 1f, dist + 1f))
+                    .absolute(new MinMaxBounds.Doubles(dist - 1f, dist + 1f))
                     .build());
             helper.shouldSucceed(mkd.test(ctx), "Distance to mob is correct");
 
             mkd = new MatchKillerDistance(new DistancePredicateBuilder()
-                    .absolute(new MinMaxBounds.FloatBound(1000f, 1000f))
+                    .absolute(new MinMaxBounds.Doubles(1000d, 1000d))
                     .build());
             helper.shouldFail(mkd.test(ctx), "Distance to mob is incorrect");
 

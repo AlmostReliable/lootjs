@@ -1,7 +1,7 @@
 package com.github.llytho.lootjs_test.tests;
 
 import com.github.llytho.lootjs.kube.builder.DamageSourcePredicateBuilderJS;
-import com.github.llytho.lootjs.predicate.ExtendedDamageSourcePredicate;
+import com.github.llytho.lootjs.loot.condition.WrappedDamageSourceCondition;
 import com.github.llytho.lootjs.predicate.ExtendedEntityFlagsPredicate;
 import com.github.llytho.lootjs_test.AllTests;
 
@@ -14,7 +14,7 @@ public class BuilderTests {
             Supplier<DamageSourcePredicateBuilderJS> dsb = DamageSourcePredicateBuilderJS::new;
 
             helper.debugStack.h2("NULL checks for default values");
-            ExtendedDamageSourcePredicate defaultP = new DamageSourcePredicateBuilderJS().build();
+            WrappedDamageSourceCondition defaultP = new DamageSourcePredicateBuilderJS().build();
             helper.shouldBeNull(defaultP, "isProjectile");
             helper.shouldBeNull(defaultP, "isExplosion");
             helper.shouldBeNull(defaultP, "bypassesArmor");

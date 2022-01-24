@@ -6,12 +6,12 @@ import com.github.llytho.lootjs.loot.condition.AnyStructure;
 import com.github.llytho.lootjs.loot.condition.BiomeCheck;
 import com.github.llytho.lootjs_test.AllTests;
 import com.github.llytho.lootjs_test.TestHelper;
-import net.minecraft.world.level.storage.loot.LootContext;
-import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.levelgen.feature.StructureFeature;
+import net.minecraft.world.level.storage.loot.LootContext;
+import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
 import net.minecraftforge.common.BiomeDictionary;
 
 import java.util.List;

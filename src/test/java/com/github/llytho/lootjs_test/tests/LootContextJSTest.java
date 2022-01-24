@@ -3,15 +3,15 @@ package com.github.llytho.lootjs_test.tests;
 import com.github.llytho.lootjs.kube.LootContextJS;
 import com.github.llytho.lootjs_test.AllTests;
 import com.github.llytho.lootjs_test.TestHelper;
-import dev.latvian.kubejs.item.ItemStackJS;
-import dev.latvian.kubejs.item.ingredient.IngredientJS;
-import net.minecraft.world.level.block.state.BlockState;
+import dev.latvian.mods.kubejs.item.ItemStackJS;
+import dev.latvian.mods.kubejs.item.ingredient.IngredientJS;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.EntityType;
-import net.minecraft.entity.monster.CreeperEntity;
-import net.minecraft.entity.monster.SkeletonEntity;
-import net.minecraft.world.level.storage.loot.parameters.LootContextParamsets;
-import net.minecraft.util.DamageSource;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.entity.monster.Creeper;
+import net.minecraft.world.entity.monster.Skeleton;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
 
 import java.util.ArrayList;
 
@@ -120,11 +120,11 @@ public class LootContextJSTest {
                 "Correct player for fishing context");
         helper.shouldSucceed(unknownCtx.getPlayer() == null, "No player for unknown context");
 
-        CreeperEntity creeper = helper.simpleEntity(EntityType.CREEPER, new BlockPos(helper.player.position()));
-        SkeletonEntity skeleton = helper.simpleEntity(EntityType.SKELETON, new BlockPos(helper.player.position()));
+        Creeper creeper = helper.simpleEntity(EntityType.CREEPER, new BlockPos(helper.player.position()));
+        Skeleton skeleton = helper.simpleEntity(EntityType.SKELETON, new BlockPos(helper.player.position()));
         LootContextJS ctxKilledBySkeleton = new LootContextJS(creeper
                 .createLootContext(true, DamageSource.mobAttack(skeleton))
-                .create(LootContextParamsets.ENTITY));
+                .create(LootContextParamSets.ENTITY));
         helper.yeet(creeper);
         helper.yeet(skeleton);
         helper.shouldSucceed(ctxKilledBySkeleton.getPlayer() == null, "No player. Killed by skeleton");

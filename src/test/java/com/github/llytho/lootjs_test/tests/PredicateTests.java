@@ -3,11 +3,11 @@ package com.github.llytho.lootjs_test.tests;
 import com.github.llytho.lootjs.predicate.ExtendedEntityFlagsPredicate;
 import com.github.llytho.lootjs_test.AllTests;
 import net.minecraft.world.entity.EntityType;
-import net.minecraft.entity.monster.PillagerEntity;
-import net.minecraft.entity.monster.SkeletonEntity;
-import net.minecraft.entity.monster.SpiderEntity;
-import net.minecraft.entity.passive.CowEntity;
-import net.minecraft.entity.passive.TurtleEntity;
+import net.minecraft.world.entity.animal.Cow;
+import net.minecraft.world.entity.animal.Turtle;
+import net.minecraft.world.entity.monster.Pillager;
+import net.minecraft.world.entity.monster.Skeleton;
+import net.minecraft.world.entity.monster.Spider;
 
 import java.util.function.Supplier;
 
@@ -18,11 +18,11 @@ public class PredicateTests {
 
             Supplier<ExtendedEntityFlagsPredicate.Builder> fb = ExtendedEntityFlagsPredicate.Builder::new;
 
-            CowEntity cow = helper.simpleEntity(EntityType.COW, helper.player.blockPosition());
-            SpiderEntity spider = helper.simpleEntity(EntityType.SPIDER, helper.player.blockPosition());
-            SkeletonEntity skeleton = helper.simpleEntity(EntityType.SKELETON, helper.player.blockPosition());
-            PillagerEntity pillager = helper.simpleEntity(EntityType.PILLAGER, helper.player.blockPosition());
-            TurtleEntity turtle = helper.simpleEntity(EntityType.TURTLE, helper.player.blockPosition());
+            Cow cow = helper.simpleEntity(EntityType.COW, helper.player.blockPosition());
+            Spider spider = helper.simpleEntity(EntityType.SPIDER, helper.player.blockPosition());
+            Skeleton skeleton = helper.simpleEntity(EntityType.SKELETON, helper.player.blockPosition());
+            Pillager pillager = helper.simpleEntity(EntityType.PILLAGER, helper.player.blockPosition());
+            Turtle turtle = helper.simpleEntity(EntityType.TURTLE, helper.player.blockPosition());
 
             cow.setOnGround(true);
             spider.setOnGround(false);
