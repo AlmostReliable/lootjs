@@ -27,7 +27,8 @@ public class AnyStructure implements IExtendedLootCondition {
             StructureFeatureManager sfm = context.getLevel().structureFeatureManager();
             for (StructureFeature<?> structure : structures) {
                 // TODO testing this
-                StructureStart<?> structureAt = exact ? sfm.getStructureWithPieceAt(blockPos, structure) : sfm.getStructureAt(blockPos, structure);
+                StructureStart<?> structureAt = exact ? sfm.getStructureWithPieceAt(blockPos, structure)
+                                                      : sfm.getStructureAt(blockPos, structure);
                 if (structureAt.isValid()) {
                     return true;
                 }

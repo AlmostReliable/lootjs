@@ -13,14 +13,13 @@ import java.util.List;
 
 public class BiomeUtils {
     public static List<BiomeDictionary.Type> findTypes(List<String> types) {
-        FilterResult<String, BiomeDictionary.Type> filterResult = FilterResult.create(types, (pFilter) -> {
-            return BiomeDictionary.Type
-                    .getAll()
-                    .stream()
-                    .filter(type -> type.getName().equalsIgnoreCase(pFilter))
-                    .findFirst()
-                    .orElse(null);
-        });
+        FilterResult<String, BiomeDictionary.Type> filterResult = FilterResult.create(types,
+                (pFilter) -> BiomeDictionary.Type
+                        .getAll()
+                        .stream()
+                        .filter(type -> type.getName().equalsIgnoreCase(pFilter))
+                        .findFirst()
+                        .orElse(null));
 
         filterResult.yeetIfUnresolvedFilters();
         return filterResult.getFoundValues();

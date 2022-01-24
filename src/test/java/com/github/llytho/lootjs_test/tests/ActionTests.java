@@ -124,7 +124,8 @@ public class ActionTests {
                 Explosion explosion = event.getExplosion();
                 helper.shouldSucceed(explosion.getPosition().equals(airPosition), "Correct position");
                 helper.shouldSucceed(explosion.fire, "Fire is on");
-                helper.shouldSucceed(explosion.blockInteraction == Explosion.BlockInteraction.DESTROY, "Mode is DESTROY");
+                helper.shouldSucceed(explosion.blockInteraction == Explosion.BlockInteraction.DESTROY,
+                        "Mode is DESTROY");
                 helper.shouldSucceed(explosion.radius == 3f, "Radius is 3");
             };
             action.accept(ctx);

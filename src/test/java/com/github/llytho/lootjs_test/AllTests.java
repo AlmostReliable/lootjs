@@ -6,7 +6,7 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 
 public class AllTests {
-    public static HashMap<String, SimpleTest> TESTS = new LinkedHashMap<>();
+    public static final HashMap<String, SimpleTest> TESTS = new LinkedHashMap<>();
 
     public static void loadAll() {
         TESTS.clear();

@@ -30,7 +30,7 @@ public class FilterResult<F, T> {
             }
         }
 
-        return new FilterResult<F, T>(notFoundFilters, foundValues);
+        return new FilterResult<>(notFoundFilters, foundValues);
     }
 
     public List<F> getNotFoundFilters() {

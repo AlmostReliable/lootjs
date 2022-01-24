@@ -10,6 +10,7 @@ import java.util.function.Consumer;
 public class DamageSourcePredicateBuilderJS implements LootItemCondition.Builder {
     private final DamageSourcePredicate.Builder vanillaBuilder = new DamageSourcePredicate.Builder();
     private String[] sourceNames;
+
     public DamageSourcePredicateBuilderJS anyType(String... names) {
         sourceNames = names;
         return this;

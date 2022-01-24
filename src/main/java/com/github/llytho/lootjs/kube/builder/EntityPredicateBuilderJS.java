@@ -190,24 +190,12 @@ public class EntityPredicateBuilderJS implements ExtendedEntityFlagsPredicate.IB
 
         CustomItemPredicate predicate = new CustomItemPredicate(ingredient.getVanillaPredicate());
         switch (slot) {
-            case MAINHAND:
-                equipmentPredicateBuilder.mainhand(predicate);
-                break;
-            case OFFHAND:
-                equipmentPredicateBuilder.offhand(predicate);
-                break;
-            case FEET:
-                equipmentPredicateBuilder.feet(predicate);
-                break;
-            case LEGS:
-                equipmentPredicateBuilder.legs(predicate);
-                break;
-            case CHEST:
-                equipmentPredicateBuilder.chest(predicate);
-                break;
-            case HEAD:
-                equipmentPredicateBuilder.head(predicate);
-                break;
+            case MAINHAND -> equipmentPredicateBuilder.mainhand(predicate);
+            case OFFHAND -> equipmentPredicateBuilder.offhand(predicate);
+            case FEET -> equipmentPredicateBuilder.feet(predicate);
+            case LEGS -> equipmentPredicateBuilder.legs(predicate);
+            case CHEST -> equipmentPredicateBuilder.chest(predicate);
+            case HEAD -> equipmentPredicateBuilder.head(predicate);
         }
         return this;
     }

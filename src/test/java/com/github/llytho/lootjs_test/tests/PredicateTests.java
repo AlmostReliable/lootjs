@@ -26,7 +26,7 @@ public class PredicateTests {
 
             cow.setOnGround(true);
             spider.setOnGround(false);
-            skeleton.wasEyeInWater = true; // under water check
+            skeleton.wasEyeInWater = true; // underwater check
             skeleton.wasTouchingWater = true; // in water check. Underwater => wasEyeInWater && wasTouchingWater
             pillager.wasTouchingWater = true; // in water check
 

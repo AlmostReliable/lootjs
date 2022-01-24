@@ -38,7 +38,8 @@ public class BuilderTests {
             helper.shouldBeFalse(dsb.get().isProjectile(false).build(), "predicate/isProjectile");
             helper.shouldBeFalse(dsb.get().isExplosion(false).build(), "predicate/isExplosion");
             helper.shouldBeFalse(dsb.get().doesBypassArmor(false).build(), "predicate/bypassesArmor");
-            helper.shouldBeFalse(dsb.get().doesBypassInvulnerability(false).build(), "predicate/bypassesInvulnerability");
+            helper.shouldBeFalse(dsb.get().doesBypassInvulnerability(false).build(),
+                    "predicate/bypassesInvulnerability");
             helper.shouldBeFalse(dsb.get().doesBypassMagic(false).build(), "predicate/bypassesMagic");
             helper.shouldBeFalse(dsb.get().isFire(false).build(), "predicate/isFire");
             helper.shouldBeFalse(dsb.get().isMagic(false).build(), "predicate/isMagic");

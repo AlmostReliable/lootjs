@@ -37,7 +37,7 @@ public class ConditionTests {
             Biome biome = helper.level.getBiome(blockPos);
             LootContext ctx = helper.unknownContext(helper.player.position());
 
-            ResourceKey<Biome> bKey = helper.biome(biome.getRegistryName());
+            ResourceKey<Biome> bKey = helper.biome(Objects.requireNonNull(biome.getRegistryName()));
             AnyBiomeCheck anyBiomeCheck = new AnyBiomeCheck(Collections.singletonList(bKey), new ArrayList<>());
             helper.shouldSucceed(anyBiomeCheck.test(ctx), "Biome " + bKey.location() + " should match");
 
@@ -90,14 +90,16 @@ public class ConditionTests {
                         featurePos.getY(),
                         featurePos.getZ()));
 
-                AnyStructure shStructure = new AnyStructure(new StructureFeature[]{ StructureFeature.STRONGHOLD }, false);
+                AnyStructure shStructure = new AnyStructure(new StructureFeature[]{ StructureFeature.STRONGHOLD },
+                        false);
                 helper.shouldSucceed(shStructure.test(ctx), "StructureFeature is a stronghold");
             } else {
                 helper.shouldFail(true, "Stronghold not found error. This should not happen");
             }
 
             LootContext ctx = helper.unknownContext(helper.player.position());
-            AnyStructure shStructure = new AnyStructure(new StructureFeature[]{ StructureFeature.BASTION_REMNANT }, false);
+            AnyStructure shStructure = new AnyStructure(new StructureFeature[]{ StructureFeature.BASTION_REMNANT },
+                    false);
             helper.shouldFail(shStructure.test(ctx), "StructureFeature is not a nether bastion [exact = false]");
 
             shStructure = new AnyStructure(new StructureFeature[]{ StructureFeature.BASTION_REMNANT }, true);
@@ -113,29 +115,20 @@ public class ConditionTests {
 
             data.setGeneratedLoot(Arrays.asList(new ItemStack(Items.DIAMOND), new ItemStack(Items.DIAMOND_HELMET)));
 
-            ContainsLootCondition nonExact = new ContainsLootCondition(itemStack -> {
-                return itemStack.getItem() == Items.DIAMOND;
-            }, false);
+            ContainsLootCondition nonExact = new ContainsLootCondition(itemStack -> itemStack.getItem() == Items.DIAMOND, false);
             helper.shouldSucceed(nonExact.test(ctx), "Contains diamond");
 
-            ContainsLootCondition exact = new ContainsLootCondition(itemStack -> {
-                return itemStack.getItem() == Items.DIAMOND || itemStack.getItem() == Items.DIAMOND_HELMET;
-            }, true);
+            ContainsLootCondition exact = new ContainsLootCondition(itemStack -> itemStack.getItem() == Items.DIAMOND || itemStack.getItem() == Items.DIAMOND_HELMET, true);
             helper.shouldSucceed(exact.test(ctx), "Contains diamond & helmet");
 
-            ContainsLootCondition nonExactNotExist = new ContainsLootCondition(itemStack -> {
-                return itemStack.getItem() == Items.NETHER_BRICK;
-            }, false);
+            ContainsLootCondition nonExactNotExist = new ContainsLootCondition(itemStack -> itemStack.getItem() == Items.NETHER_BRICK, false);
             helper.shouldFail(nonExactNotExist.test(ctx), "No nether brick");
 
-            ContainsLootCondition exactFailNotExist = new ContainsLootCondition(itemStack -> {
-                return itemStack.getItem() == Items.DIAMOND || itemStack.getItem() == Items.NETHER_BRICK;
-            }, true);
+            ContainsLootCondition exactFailNotExist = new ContainsLootCondition(itemStack ->
+                    itemStack.getItem() == Items.DIAMOND || itemStack.getItem() == Items.NETHER_BRICK, true);
             helper.shouldFail(exactFailNotExist.test(ctx), "No nether brick");
 
-            ContainsLootCondition exactFail = new ContainsLootCondition(itemStack -> {
-                return itemStack.getItem() == Items.DIAMOND;
-            }, true);
+            ContainsLootCondition exactFail = new ContainsLootCondition(itemStack -> itemStack.getItem() == Items.DIAMOND, true);
             helper.shouldFail(exactFail.test(ctx), "Contains only diamond");
         });
 

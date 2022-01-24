@@ -51,14 +51,14 @@ public class LootActionsBuilderJS implements ConditionsContainer<LootActionsBuil
     }
 
     public LootActionsBuilderJS thenModify(IngredientJS ingredient, Function<ItemStackJS, ItemStackJS> function) {
-        buildCurrentAction(new ModifyLootAction(ingredient.getVanillaPredicate(), (itemStack) -> {
-            return function.apply(new ItemStackJS(itemStack)).getItemStack();
-        }));
+        buildCurrentAction(new ModifyLootAction(ingredient.getVanillaPredicate(),
+                (itemStack) -> function.apply(new ItemStackJS(itemStack)).getItemStack()));
         return this;
     }
 
     public LootActionsBuilderJS thenExplode(float radius, boolean destroy, boolean fire) {
-        Explosion.BlockInteraction mode = destroy ? Explosion.BlockInteraction.DESTROY : Explosion.BlockInteraction.NONE;
+        Explosion.BlockInteraction mode =
+                destroy ? Explosion.BlockInteraction.DESTROY : Explosion.BlockInteraction.NONE;
         buildCurrentAction(new ExplodeAction(radius, mode, fire));
         return this;
     }

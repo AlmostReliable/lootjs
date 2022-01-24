@@ -159,19 +159,22 @@ public interface ConditionsContainer<B extends ConditionsContainer<?>> {
     default B matchEntity(Consumer<EntityPredicateBuilderJS> action) {
         EntityPredicateBuilderJS builder = new EntityPredicateBuilderJS();
         action.accept(builder);
-        return addCondition(LootItemEntityPropertyCondition.hasProperties(LootContext.EntityTarget.THIS, builder.build()));
+        return addCondition(LootItemEntityPropertyCondition.hasProperties(LootContext.EntityTarget.THIS,
+                builder.build()));
     }
 
     default B matchKiller(Consumer<EntityPredicateBuilderJS> action) {
         EntityPredicateBuilderJS builder = new EntityPredicateBuilderJS();
         action.accept(builder);
-        return addCondition(LootItemEntityPropertyCondition.hasProperties(LootContext.EntityTarget.KILLER, builder.build()));
+        return addCondition(LootItemEntityPropertyCondition.hasProperties(LootContext.EntityTarget.KILLER,
+                builder.build()));
     }
 
     default B matchDirectKiller(Consumer<EntityPredicateBuilderJS> action) {
         EntityPredicateBuilderJS builder = new EntityPredicateBuilderJS();
         action.accept(builder);
-        return addCondition(LootItemEntityPropertyCondition.hasProperties(LootContext.EntityTarget.DIRECT_KILLER, builder.build()));
+        return addCondition(LootItemEntityPropertyCondition.hasProperties(LootContext.EntityTarget.DIRECT_KILLER,
+                builder.build()));
     }
 
     default B matchPlayer(Consumer<EntityPredicateBuilderJS> action) {
@@ -187,9 +190,7 @@ public interface ConditionsContainer<B extends ConditionsContainer<?>> {
     }
 
     default B distanceToKiller(MinMaxBounds.Doubles bounds) {
-        return customDistanceToPlayer(builder -> {
-            builder.absolute(bounds);
-        });
+        return customDistanceToPlayer(builder -> builder.absolute(bounds));
     }
 
     default B customDistanceToPlayer(Consumer<DistancePredicateBuilder> action) {

@@ -208,7 +208,8 @@ public class TestHelper {
             Objects.requireNonNull(field).setAccessible(true);
             return collect.isEmpty() ? field.get(o) : value(field.get(o), collect.get(0));
         } catch (IllegalAccessException e) {
-            throw new IllegalArgumentException("Field '" + f_ + "' does not exist in object " + o.getClass().getSimpleName());
+            throw new IllegalArgumentException(
+                    "Field '" + f_ + "' does not exist in object " + o.getClass().getSimpleName());
         }
     }
 

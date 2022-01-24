@@ -27,12 +27,12 @@ public class OtherTests {
             helper.shouldSucceed(oresTag.tag.contains(Items.IRON_ORE), "Tag is ORES");
 
             helper.debugStack.h2("Invalid tag or entry");
-            helper.shouldThrow(() -> {
-                Utils.getTagOrEntry(ForgeRegistries.ITEMS, "#not_a_tag");
-            }, IllegalArgumentException.class, "Tag '#not_a_tag' does not exist");
-            helper.shouldThrow(() -> {
-                Utils.getTagOrEntry(ForgeRegistries.ITEMS, "relentless_cant_read_this");
-            }, IllegalArgumentException.class, "Entry 'relentless_cant_read_this' does not exist");
+            helper.shouldThrow(() -> Utils.getTagOrEntry(ForgeRegistries.ITEMS, "#not_a_tag"),
+                    IllegalArgumentException.class,
+                    "Tag '#not_a_tag' does not exist");
+            helper.shouldThrow(() -> Utils.getTagOrEntry(ForgeRegistries.ITEMS, "relentless_cant_read_this"),
+                    IllegalArgumentException.class,
+                    "Entry 'relentless_cant_read_this' does not exist");
             helper.debugStack.popLayer();
         });
     }
