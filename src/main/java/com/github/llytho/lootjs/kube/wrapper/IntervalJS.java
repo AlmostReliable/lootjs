@@ -1,39 +1,39 @@
 package com.github.llytho.lootjs.kube.wrapper;
 
-import net.minecraft.advancements.criterion.MinMaxBounds;
+import net.minecraft.advancements.critereon.MinMaxBounds;
 
 public class IntervalJS {
-    private MinMaxBounds.FloatBound bound = MinMaxBounds.FloatBound.ANY;
+    private MinMaxBounds.Doubles bound = MinMaxBounds.Doubles.ANY;
 
     public IntervalJS() {}
 
-    private IntervalJS(MinMaxBounds.FloatBound bound) {
-        this.bound = new MinMaxBounds.FloatBound(bound.getMin(), bound.getMax());
+    private IntervalJS(MinMaxBounds.Doubles bound) {
+        this.bound = new MinMaxBounds.Doubles(bound.getMin(), bound.getMax());
     }
 
-    public static MinMaxBounds.FloatBound ofFloat(Object o) {
+    public static MinMaxBounds.Doubles ofDoubles(Object o) {
         if (o instanceof Number) {
-            return new MinMaxBounds.FloatBound(((Number) o).floatValue(), null);
+            return MinMaxBounds.Doubles.atLeast(((Number) o).doubleValue());
         }
 
-        if (o instanceof MinMaxBounds.FloatBound) {
-            return (MinMaxBounds.FloatBound) o;
+        if (o instanceof MinMaxBounds.Doubles) {
+            return (MinMaxBounds.Doubles) o;
         }
 
         if (o instanceof IntervalJS) {
-            return ((IntervalJS) o).getVanillaFloat();
+            return ((IntervalJS) o).getVanillaDoubles();
         }
 
         throw new IllegalArgumentException("Argument is not a MinMaxBound");
     }
 
-    public static MinMaxBounds.IntBound ofInt(Object o) {
+    public static MinMaxBounds.Ints ofInt(Object o) {
         if (o instanceof Number) {
-            return new MinMaxBounds.IntBound(((Number) o).intValue(), null);
+            return MinMaxBounds.Ints.atLeast(((Number) o).intValue());
         }
 
-        if (o instanceof MinMaxBounds.IntBound) {
-            return (MinMaxBounds.IntBound) o;
+        if (o instanceof MinMaxBounds.Ints) {
+            return (MinMaxBounds.Ints) o;
         }
 
         if (o instanceof IntervalJS) {
@@ -43,7 +43,7 @@ public class IntervalJS {
         throw new IllegalArgumentException("Argument is not a MinMaxBound");
     }
 
-    public boolean matches(float value) {
+    public boolean matches(double value) {
         return bound.matches(value);
     }
 
@@ -51,26 +51,26 @@ public class IntervalJS {
         return bound.matchesSqr(value);
     }
 
-    public IntervalJS between(float min, float max) {
+    public IntervalJS between(double min, double max) {
         return new IntervalJS().min(min).max(max);
     }
 
-    public IntervalJS min(float min) {
-        return new IntervalJS(new MinMaxBounds.FloatBound(min, bound.getMax()));
+    public IntervalJS min(double min) {
+        return new IntervalJS(new MinMaxBounds.Doubles(min, bound.getMax()));
     }
 
-    public IntervalJS max(float max) {
-        return new IntervalJS(new MinMaxBounds.FloatBound(bound.getMin(), max));
+    public IntervalJS max(double max) {
+        return new IntervalJS(new MinMaxBounds.Doubles(bound.getMin(), max));
     }
 
-    public MinMaxBounds.IntBound getVanillaInt() {
+    public MinMaxBounds.Ints getVanillaInt() {
         Integer intMin = bound.getMin() == null ? null : bound.getMin().intValue();
         Integer intMax = bound.getMax() == null ? null : bound.getMax().intValue();
-        return new MinMaxBounds.IntBound(intMin, intMax);
+        return new MinMaxBounds.Ints(intMin, intMax);
     }
 
-    public MinMaxBounds.FloatBound getVanillaFloat() {
-        return new MinMaxBounds.FloatBound(bound.getMin(), bound.getMax());
+    public MinMaxBounds.Doubles getVanillaDoubles() {
+        return new MinMaxBounds.Doubles(bound.getMin(), bound.getMax());
     }
 
     @Override

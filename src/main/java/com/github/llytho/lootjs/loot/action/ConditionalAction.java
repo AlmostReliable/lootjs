@@ -5,8 +5,8 @@ import com.github.llytho.lootjs.core.DebugStack;
 import com.github.llytho.lootjs.core.ILootAction;
 import com.github.llytho.lootjs.loot.condition.AndCondition;
 import com.github.llytho.lootjs.loot.condition.OrCondition;
-import net.minecraft.loot.LootContext;
-import net.minecraft.loot.conditions.ILootCondition;
+import net.minecraft.world.level.storage.loot.LootContext;
+import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
 
 public class ConditionalAction implements ILootAction {
 
@@ -14,9 +14,9 @@ public class ConditionalAction implements ILootAction {
     public static final String ACTION_PREFIX_NOT_INVOKED = "\u27A5 conditions are false. Stopping at ";
 
     private final ILootAction action;
-    private final ILootCondition[] conditions;
+    private final LootItemCondition[] conditions;
 
-    public ConditionalAction(ILootAction action, ILootCondition[] conditions) {
+    public ConditionalAction(ILootAction action, LootItemCondition[] conditions) {
         this.action = action;
         this.conditions = conditions;
     }
@@ -24,7 +24,7 @@ public class ConditionalAction implements ILootAction {
     @Override
     public boolean accept(LootContext context) {
         DebugStack stack = context.getParamOrNull(Constants.RESULT_LOGGER);
-        for (ILootCondition condition : conditions) {
+        for (LootItemCondition condition : conditions) {
             boolean succeed = condition.test(context);
             if (!(condition instanceof OrCondition || condition instanceof AndCondition)) {
                 DebugStack.write(stack, DebugStack.CONDITION_PREFIX, condition, null, succeed);

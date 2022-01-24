@@ -5,16 +5,16 @@ import com.github.llytho.lootjs.predicate.ExtendedEntityFlagsPredicate;
 import com.github.llytho.lootjs.predicate.MultiEntityTypePredicate;
 import com.github.llytho.lootjs.util.TagOrEntry;
 import com.github.llytho.lootjs.util.Utils;
-import dev.latvian.kubejs.item.ingredient.IngredientJS;
-import net.minecraft.advancements.criterion.*;
-import net.minecraft.block.Block;
-import net.minecraft.entity.EntityType;
-import net.minecraft.fluid.Fluid;
-import net.minecraft.inventory.EquipmentSlotType;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.potion.Effect;
-import net.minecraft.tags.ITag;
-import net.minecraft.util.ResourceLocation;
+import dev.latvian.mods.kubejs.item.ingredient.IngredientJS;
+import net.minecraft.advancements.critereon.*;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.tags.Tag;
+import net.minecraft.world.effect.MobEffect;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.material.Fluid;
 import net.minecraftforge.registries.ForgeRegistries;
 
 import javax.annotation.Nullable;
@@ -26,7 +26,7 @@ import java.util.function.Consumer;
 
 public class EntityPredicateBuilderJS implements ExtendedEntityFlagsPredicate.IBuilder<EntityPredicate> {
     private final EntityPredicate.Builder vanillaBuilder = EntityPredicate.Builder.entity();
-    private final Map<Effect, MobEffectsPredicate.InstancePredicate> effects = new HashMap<>();
+    private final Map<MobEffect, MobEffectsPredicate.MobEffectInstancePredicate> effects = new HashMap<>();
     private final ExtendedEntityFlagsPredicate.Builder flagsBuilder = new ExtendedEntityFlagsPredicate.Builder();
     @Nullable
     private EntityEquipmentPredicate.Builder equipmentPredicateBuilder;
@@ -127,8 +127,15 @@ public class EntityPredicateBuilderJS implements ExtendedEntityFlagsPredicate.IB
 
     public EntityPredicateBuilderJS matchBlock(String idOrTag, Map<String, String> propertyMap) {
         TagOrEntry<Block> tagOrEntry = Utils.getTagOrEntry(ForgeRegistries.BLOCKS, idOrTag);
-        StatePropertiesPredicate properties = Utils.createProperties(tagOrEntry.getFirst(), propertyMap);
-        blockPredicate = new BlockPredicate(tagOrEntry.tag, tagOrEntry.entry, properties, NBTPredicate.ANY);
+        StatePropertiesPredicate.Builder properties = Utils.createProperties(tagOrEntry.getFirst(), propertyMap);
+        BlockPredicate.Builder builder = BlockPredicate.Builder.block().setProperties(properties.build());
+        if (tagOrEntry.tag != null) {
+            builder.of(tagOrEntry.tag);
+        }
+        if (tagOrEntry.entry != null) {
+            builder.of(tagOrEntry.entry);
+        }
+        blockPredicate = builder.build();
         return this;
     }
 
@@ -142,22 +149,23 @@ public class EntityPredicateBuilderJS implements ExtendedEntityFlagsPredicate.IB
         return this;
     }
 
-    public EntityPredicateBuilderJS hasEffect(Effect effect, int amplifier) {
-        MinMaxBounds.IntBound bounds = MinMaxBounds.IntBound.atLeast(amplifier);
-        MobEffectsPredicate.InstancePredicate predicate = new MobEffectsPredicate.InstancePredicate(bounds,
-                MinMaxBounds.IntBound.ANY,
+    public EntityPredicateBuilderJS hasEffect(MobEffect effect, int amplifier) {
+        MinMaxBounds.Ints bounds = MinMaxBounds.Ints.atLeast(amplifier);
+        MobEffectsPredicate.MobEffectInstancePredicate predicate = new MobEffectsPredicate.MobEffectInstancePredicate(
+                bounds,
+                MinMaxBounds.Ints.ANY,
                 null,
                 null);
         effects.put(effect, predicate);
         return this;
     }
 
-    public EntityPredicateBuilderJS hasEffect(Effect effect) {
+    public EntityPredicateBuilderJS hasEffect(MobEffect effect) {
         return hasEffect(effect, 0);
     }
 
-    public EntityPredicateBuilderJS nbt(CompoundNBT nbt) {
-        vanillaBuilder.nbt(new NBTPredicate(nbt));
+    public EntityPredicateBuilderJS nbt(CompoundTag nbt) {
+        vanillaBuilder.nbt(new NbtPredicate(nbt));
         return this;
     }
 
@@ -175,7 +183,7 @@ public class EntityPredicateBuilderJS implements ExtendedEntityFlagsPredicate.IB
         return this;
     }
 
-    public EntityPredicateBuilderJS matchSlot(EquipmentSlotType slot, IngredientJS ingredient) {
+    public EntityPredicateBuilderJS matchSlot(EquipmentSlot slot, IngredientJS ingredient) {
         if (equipmentPredicateBuilder == null) {
             equipmentPredicateBuilder = new EntityEquipmentPredicate.Builder();
         }
@@ -183,10 +191,10 @@ public class EntityPredicateBuilderJS implements ExtendedEntityFlagsPredicate.IB
         CustomItemPredicate predicate = new CustomItemPredicate(ingredient.getVanillaPredicate());
         switch (slot) {
             case MAINHAND:
-                equipmentPredicateBuilder.mainhand = predicate;
+                equipmentPredicateBuilder.mainhand(predicate);
                 break;
             case OFFHAND:
-                equipmentPredicateBuilder.offhand = predicate;
+                equipmentPredicateBuilder.offhand(predicate);
                 break;
             case FEET:
                 equipmentPredicateBuilder.feet(predicate);
@@ -206,7 +214,7 @@ public class EntityPredicateBuilderJS implements ExtendedEntityFlagsPredicate.IB
 
     public EntityPredicateBuilderJS anyType(String... unknowns) {
         List<EntityType<?>> types = new ArrayList<>();
-        List<ITag<EntityType<?>>> tags = new ArrayList<>();
+        List<Tag<EntityType<?>>> tags = new ArrayList<>();
 
         for (String unknown : unknowns) {
             TagOrEntry<EntityType<?>> tagOrEntry = Utils.getTagOrEntry(ForgeRegistries.ENTITIES, unknown);
@@ -232,11 +240,11 @@ public class EntityPredicateBuilderJS implements ExtendedEntityFlagsPredicate.IB
     private void tryBuildLocation() {
         LocationPredicate.Builder locationBuilder = new LocationPredicate.Builder();
         if (blockPredicate != null) {
-            locationBuilder.block = blockPredicate;
+            locationBuilder.setBlock(blockPredicate);
         }
 
         if (fluidPredicate != null) {
-            locationBuilder.fluid = fluidPredicate;
+            locationBuilder.setFluid(fluidPredicate);
         }
         vanillaBuilder.located(locationBuilder.build());
     }

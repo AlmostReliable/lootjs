@@ -2,8 +2,8 @@ package com.github.llytho.lootjs.kube;
 
 import com.github.llytho.lootjs.core.DebugStack;
 import com.google.common.base.Strings;
-import dev.latvian.kubejs.util.ConsoleJS;
-import net.minecraft.loot.LootContext;
+import dev.latvian.mods.kubejs.util.ConsoleJS;
+import net.minecraft.world.level.storage.loot.LootContext;
 
 import java.util.function.BiConsumer;
 

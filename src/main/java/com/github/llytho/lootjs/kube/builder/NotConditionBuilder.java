@@ -1,23 +1,23 @@
 package com.github.llytho.lootjs.kube.builder;
 
 import com.github.llytho.lootjs.kube.ConditionsContainer;
-import net.minecraft.loot.conditions.ILootCondition;
-import net.minecraft.loot.conditions.Inverted;
+import net.minecraft.world.level.storage.loot.predicates.InvertedLootItemCondition;
+import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
 
 public class NotConditionBuilder implements ConditionsContainer<NotConditionBuilder> {
 
-    private ILootCondition condition = null;
+    private LootItemCondition condition = null;
 
-    public Inverted build() {
+    public InvertedLootItemCondition build() {
         if (condition == null) {
             throw new IllegalArgumentException("No condition was set");
         }
 
-        return new Inverted(condition);
+        return new InvertedLootItemCondition(condition);
     }
 
     @Override
-    public NotConditionBuilder addCondition(ILootCondition condition) {
+    public NotConditionBuilder addCondition(LootItemCondition condition) {
         if (this.condition != null) {
             throw new IllegalArgumentException("Already set a condition");
         }

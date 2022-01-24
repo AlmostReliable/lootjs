@@ -1,10 +1,10 @@
 package com.github.llytho.lootjs.predicate;
 
-import net.minecraft.advancements.criterion.DamageSourcePredicate;
-import net.minecraft.advancements.criterion.EntityPredicate;
-import net.minecraft.util.DamageSource;
-import net.minecraft.util.math.vector.Vector3d;
-import net.minecraft.world.server.ServerWorld;
+import net.minecraft.advancements.critereon.DamageSourcePredicate;
+import net.minecraft.advancements.critereon.EntityPredicate;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.phys.Vec3;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
@@ -29,8 +29,8 @@ public class ExtendedDamageSourcePredicate extends DamageSourcePredicate {
     }
 
     @Override
-    public boolean matches(ServerWorld level, Vector3d origin, DamageSource damageSource) {
-        return super.matches(level, origin, damageSource);
+    public boolean matches(ServerLevel level, Vec3 origin, DamageSource damageSource) {
+        return super.matches(level, origin, damageSource) && containsId(damageSource);
     }
 
     private boolean containsId(DamageSource damageSource) {
@@ -54,18 +54,7 @@ public class ExtendedDamageSourcePredicate extends DamageSourcePredicate {
 
         @Override
         public ExtendedDamageSourcePredicate build() {
-            return new ExtendedDamageSourcePredicate(this.isProjectile,
-                    this.isExplosion,
-                    this.bypassesArmor,
-                    this.bypassesInvulnerability,
-                    this.bypassesMagic,
-                    this.isFire,
-                    this.isMagic,
-                    this.isLightning,
-                    this.directEntity,
-                    this.sourceEntity,
-                    sourceNames.toArray(new String[0]));
-
+            return null;
         }
     }
 }

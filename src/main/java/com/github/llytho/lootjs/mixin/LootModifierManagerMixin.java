@@ -2,8 +2,8 @@ package com.github.llytho.lootjs.mixin;
 
 import com.github.llytho.lootjs.LootModificationsAPI;
 import com.github.llytho.lootjs.kube.LootModificationEventJS;
-import dev.latvian.kubejs.script.ScriptType;
-import net.minecraft.util.ResourceLocation;
+import dev.latvian.mods.kubejs.script.ScriptType;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.common.loot.LootModifierManager;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;

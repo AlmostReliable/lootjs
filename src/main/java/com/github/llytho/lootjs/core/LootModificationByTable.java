@@ -1,7 +1,7 @@
 package com.github.llytho.lootjs.core;
 
-import net.minecraft.loot.LootContext;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.level.storage.loot.LootContext;
 
 import java.util.List;
 import java.util.regex.Pattern;

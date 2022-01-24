@@ -3,12 +3,12 @@ package com.github.llytho.lootjs.core;
 import com.github.llytho.lootjs.util.LootContextUtils;
 import com.github.llytho.lootjs.util.Utils;
 import com.google.common.base.Strings;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.inventory.EquipmentSlotType;
-import net.minecraft.item.ItemStack;
-import net.minecraft.loot.LootContext;
-import net.minecraft.loot.LootParameters;
-import net.minecraft.util.math.vector.Vector3d;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.storage.loot.LootContext;
+import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
+import net.minecraft.world.phys.Vec3;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
@@ -75,28 +75,28 @@ public class DebugStack {
             debugStack.popLayer();
         }
 
-        Vector3d origin = context.getParamOrNull(LootParameters.ORIGIN);
+        Vec3 origin = context.getParamOrNull(LootContextParams.ORIGIN);
         debugStack.write("Position", Utils.formatPosition(origin));
-        debugStack.write("Block", context.getParamOrNull(LootParameters.BLOCK_STATE));
-        debugStack.write("Explosion", context.getParamOrNull(LootParameters.EXPLOSION_RADIUS));
-        debugStack.write("Entity", Utils.formatEntity(context.getParamOrNull(LootParameters.THIS_ENTITY)));
-        debugStack.write("Killer Entity", Utils.formatEntity(context.getParamOrNull(LootParameters.KILLER_ENTITY)));
+        debugStack.write("Block", context.getParamOrNull(LootContextParams.BLOCK_STATE));
+        debugStack.write("Explosion", context.getParamOrNull(LootContextParams.EXPLOSION_RADIUS));
+        debugStack.write("Entity", Utils.formatEntity(context.getParamOrNull(LootContextParams.THIS_ENTITY)));
+        debugStack.write("Killer Entity", Utils.formatEntity(context.getParamOrNull(LootContextParams.KILLER_ENTITY)));
         debugStack.write("Direct Killer",
-                Utils.formatEntity(context.getParamOrNull(LootParameters.DIRECT_KILLER_ENTITY)));
+                Utils.formatEntity(context.getParamOrNull(LootContextParams.DIRECT_KILLER_ENTITY)));
 
-        ServerPlayerEntity playerOrNull = LootContextUtils.getPlayerOrNull(context);
+        ServerPlayer playerOrNull = LootContextUtils.getPlayerOrNull(context);
         if (playerOrNull != null) {
             debugStack.write("Player", Utils.formatEntity(playerOrNull));
             debugStack.write("Player Pos", Utils.formatPosition(playerOrNull.position()));
             if (origin != null) {
                 debugStack.write("Distance", String.format("%.2f", playerOrNull.position().distanceTo(origin)));
             }
-            debugStack.write("MainHand", Utils.formatItemStack(playerOrNull.getItemBySlot(EquipmentSlotType.MAINHAND)));
-            debugStack.write("OffHand", Utils.formatItemStack(playerOrNull.getItemBySlot(EquipmentSlotType.OFFHAND)));
-            debugStack.write("Head", Utils.formatItemStack(playerOrNull.getItemBySlot(EquipmentSlotType.HEAD)));
-            debugStack.write("Chest", Utils.formatItemStack(playerOrNull.getItemBySlot(EquipmentSlotType.CHEST)));
-            debugStack.write("Legs", Utils.formatItemStack(playerOrNull.getItemBySlot(EquipmentSlotType.LEGS)));
-            debugStack.write("Feet", Utils.formatItemStack(playerOrNull.getItemBySlot(EquipmentSlotType.FEET)));
+            debugStack.write("MainHand", Utils.formatItemStack(playerOrNull.getItemBySlot(EquipmentSlot.MAINHAND)));
+            debugStack.write("OffHand", Utils.formatItemStack(playerOrNull.getItemBySlot(EquipmentSlot.OFFHAND)));
+            debugStack.write("Head", Utils.formatItemStack(playerOrNull.getItemBySlot(EquipmentSlot.HEAD)));
+            debugStack.write("Chest", Utils.formatItemStack(playerOrNull.getItemBySlot(EquipmentSlot.CHEST)));
+            debugStack.write("Legs", Utils.formatItemStack(playerOrNull.getItemBySlot(EquipmentSlot.LEGS)));
+            debugStack.write("Feet", Utils.formatItemStack(playerOrNull.getItemBySlot(EquipmentSlot.FEET)));
         }
 
         return debugStack;

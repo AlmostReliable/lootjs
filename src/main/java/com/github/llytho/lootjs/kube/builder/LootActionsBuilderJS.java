@@ -6,12 +6,12 @@ import com.github.llytho.lootjs.kube.LootContextJS;
 import com.github.llytho.lootjs.kube.action.CustomJSAction;
 import com.github.llytho.lootjs.loot.action.*;
 import com.github.llytho.lootjs.util.Utils;
-import dev.latvian.kubejs.item.ItemStackJS;
-import dev.latvian.kubejs.item.ingredient.IngredientJS;
+import dev.latvian.mods.kubejs.item.ItemStackJS;
+import dev.latvian.mods.kubejs.item.ingredient.IngredientJS;
 import dev.latvian.mods.rhino.util.HideFromJS;
-import net.minecraft.item.ItemStack;
-import net.minecraft.loot.conditions.ILootCondition;
-import net.minecraft.world.Explosion;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Explosion;
+import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -21,7 +21,7 @@ import java.util.function.Function;
 
 public class LootActionsBuilderJS implements ConditionsContainer<LootActionsBuilderJS> {
     private final List<ILootAction> actions = new ArrayList<>();
-    private final List<ILootCondition> conditions = new ArrayList<>();
+    private final List<LootItemCondition> conditions = new ArrayList<>();
     private String logName;
 
     public LootActionsBuilderJS logName(String name) {
@@ -58,7 +58,7 @@ public class LootActionsBuilderJS implements ConditionsContainer<LootActionsBuil
     }
 
     public LootActionsBuilderJS thenExplode(float radius, boolean destroy, boolean fire) {
-        Explosion.Mode mode = destroy ? Explosion.Mode.DESTROY : Explosion.Mode.NONE;
+        Explosion.BlockInteraction mode = destroy ? Explosion.BlockInteraction.DESTROY : Explosion.BlockInteraction.NONE;
         buildCurrentAction(new ExplodeAction(radius, mode, fire));
         return this;
     }
@@ -70,7 +70,7 @@ public class LootActionsBuilderJS implements ConditionsContainer<LootActionsBuil
     }
 
     public void buildCurrentAction(ILootAction action) {
-        ILootCondition[] conditionsArray = conditions.toArray(new ILootCondition[0]);
+        LootItemCondition[] conditionsArray = conditions.toArray(new LootItemCondition[0]);
         conditions.clear();
         ConditionalAction conditionalAction = new ConditionalAction(action, conditionsArray);
         actions.add(conditionalAction);
@@ -94,7 +94,7 @@ public class LootActionsBuilderJS implements ConditionsContainer<LootActionsBuil
     }
 
     @Override
-    public LootActionsBuilderJS addCondition(ILootCondition pCondition) {
+    public LootActionsBuilderJS addCondition(LootItemCondition pCondition) {
         conditions.add(pCondition);
         return this;
     }

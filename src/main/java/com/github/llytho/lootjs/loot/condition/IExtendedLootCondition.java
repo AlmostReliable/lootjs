@@ -1,12 +1,12 @@
 package com.github.llytho.lootjs.loot.condition;
 
 import com.github.llytho.lootjs.core.LootConditionTypes;
-import net.minecraft.loot.LootConditionType;
-import net.minecraft.loot.conditions.ILootCondition;
+import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
+import net.minecraft.world.level.storage.loot.predicates.LootItemConditionType;
 
-public interface IExtendedLootCondition extends ILootCondition {
+public interface IExtendedLootCondition extends LootItemCondition {
     @Override
-    default LootConditionType getType() {
+    default LootItemConditionType getType() {
         return LootConditionTypes.UNUSED;
     }
 }

@@ -6,23 +6,23 @@ import com.github.llytho.lootjs.loot.condition.*;
 import com.github.llytho.lootjs.loot.condition.builder.DistancePredicateBuilder;
 import com.github.llytho.lootjs_test.AllTests;
 import net.minecraft.advancements.criterion.MinMaxBounds;
-import net.minecraft.entity.EntityType;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.entity.passive.CowEntity;
-import net.minecraft.inventory.EquipmentSlotType;
+import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.item.Items;
-import net.minecraft.loot.LootContext;
-import net.minecraft.loot.LootParameterSets;
-import net.minecraft.loot.LootParameters;
-import net.minecraft.loot.conditions.ILootCondition;
+import net.minecraft.world.level.storage.loot.LootContext;
+import net.minecraft.world.level.storage.loot.parameters.LootContextParamsets;
+import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
+import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
 import net.minecraft.util.DamageSource;
-import net.minecraft.util.RegistryKey;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.vector.Vector3d;
-import net.minecraft.world.biome.Biome;
-import net.minecraft.world.gen.feature.structure.Structure;
+import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.level.biome.Biome;
+import net.minecraft.world.level.levelgen.feature.StructureFeature;
 import net.minecraftforge.common.BiomeDictionary;
 
 import java.util.*;
@@ -37,11 +37,11 @@ public class ConditionTests {
             Biome biome = helper.level.getBiome(blockPos);
             LootContext ctx = helper.unknownContext(helper.player.position());
 
-            RegistryKey<Biome> bKey = helper.biome(biome.getRegistryName());
+            ResourceKey<Biome> bKey = helper.biome(biome.getRegistryName());
             AnyBiomeCheck anyBiomeCheck = new AnyBiomeCheck(Collections.singletonList(bKey), new ArrayList<>());
             helper.shouldSucceed(anyBiomeCheck.test(ctx), "Biome " + bKey.location() + " should match");
 
-            RegistryKey<Biome> oceanKey = helper.biome(new ResourceLocation("minecraft:deep_ocean"));
+            ResourceKey<Biome> oceanKey = helper.biome(new ResourceLocation("minecraft:deep_ocean"));
             AnyBiomeCheck anyBiomeCheckFail = new AnyBiomeCheck(Collections.singletonList(oceanKey), new ArrayList<>());
             helper.shouldFail(anyBiomeCheckFail.test(ctx), "Biome " + oceanKey.location() + " should not match");
 
@@ -80,7 +80,7 @@ public class ConditionTests {
         });
 
         AllTests.add("AnyStructure", helper -> {
-            BlockPos featurePos = helper.level.findNearestMapFeature(Structure.STRONGHOLD,
+            BlockPos featurePos = helper.level.findNearestMapFeature(StructureFeature.STRONGHOLD,
                     helper.player.blockPosition(),
                     100,
                     false);
@@ -90,18 +90,18 @@ public class ConditionTests {
                         featurePos.getY(),
                         featurePos.getZ()));
 
-                AnyStructure shStructure = new AnyStructure(new Structure[]{ Structure.STRONGHOLD }, false);
-                helper.shouldSucceed(shStructure.test(ctx), "Structure is a stronghold");
+                AnyStructure shStructure = new AnyStructure(new StructureFeature[]{ StructureFeature.STRONGHOLD }, false);
+                helper.shouldSucceed(shStructure.test(ctx), "StructureFeature is a stronghold");
             } else {
                 helper.shouldFail(true, "Stronghold not found error. This should not happen");
             }
 
             LootContext ctx = helper.unknownContext(helper.player.position());
-            AnyStructure shStructure = new AnyStructure(new Structure[]{ Structure.BASTION_REMNANT }, false);
-            helper.shouldFail(shStructure.test(ctx), "Structure is not a nether bastion [exact = false]");
+            AnyStructure shStructure = new AnyStructure(new StructureFeature[]{ StructureFeature.BASTION_REMNANT }, false);
+            helper.shouldFail(shStructure.test(ctx), "StructureFeature is not a nether bastion [exact = false]");
 
-            shStructure = new AnyStructure(new Structure[]{ Structure.BASTION_REMNANT }, true);
-            helper.shouldFail(shStructure.test(ctx), "Structure is not a nether bastion [exact = true]");
+            shStructure = new AnyStructure(new StructureFeature[]{ StructureFeature.BASTION_REMNANT }, true);
+            helper.shouldFail(shStructure.test(ctx), "StructureFeature is not a nether bastion [exact = true]");
         });
 
         AllTests.add("ContainsLootCondition", helper -> {
@@ -151,61 +151,61 @@ public class ConditionTests {
 
         AllTests.add("MatchEquipmentSlot", helper -> {
             LootContext.Builder builder = new LootContext.Builder(helper.level)
-                    .withParameter(LootParameters.ORIGIN, helper.player.position())
-                    .withParameter(LootParameters.THIS_ENTITY, helper.player);
-            LootContext ctx = builder.create(LootParameterSets.CHEST);
+                    .withParameter(LootContextParams.ORIGIN, helper.player.position())
+                    .withParameter(LootContextParams.THIS_ENTITY, helper.player);
+            LootContext ctx = builder.create(LootContextParamsets.CHEST);
 
-            helper.player.setItemSlot(EquipmentSlotType.MAINHAND, new ItemStack(Items.DIAMOND));
-            helper.player.setItemSlot(EquipmentSlotType.OFFHAND, new ItemStack(Items.STICK));
-            helper.player.setItemSlot(EquipmentSlotType.HEAD, new ItemStack(Items.DIAMOND_HELMET));
-            helper.player.setItemSlot(EquipmentSlotType.CHEST, new ItemStack(Items.DIAMOND_CHESTPLATE));
-            helper.player.setItemSlot(EquipmentSlotType.LEGS, new ItemStack(Items.DIAMOND_LEGGINGS));
-            helper.player.setItemSlot(EquipmentSlotType.FEET, new ItemStack(Items.DIAMOND_BOOTS));
+            helper.player.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(Items.DIAMOND));
+            helper.player.setItemSlot(EquipmentSlot.OFFHAND, new ItemStack(Items.STICK));
+            helper.player.setItemSlot(EquipmentSlot.HEAD, new ItemStack(Items.DIAMOND_HELMET));
+            helper.player.setItemSlot(EquipmentSlot.CHEST, new ItemStack(Items.DIAMOND_CHESTPLATE));
+            helper.player.setItemSlot(EquipmentSlot.LEGS, new ItemStack(Items.DIAMOND_LEGGINGS));
+            helper.player.setItemSlot(EquipmentSlot.FEET, new ItemStack(Items.DIAMOND_BOOTS));
 
             Function<Item, Predicate<ItemStack>> generator = item -> itemStack -> itemStack.getItem() == item;
-            MatchEquipmentSlot slotCheck = new MatchEquipmentSlot(EquipmentSlotType.MAINHAND,
+            MatchEquipmentSlot slotCheck = new MatchEquipmentSlot(EquipmentSlot.MAINHAND,
                     generator.apply(Items.DIAMOND));
-            helper.shouldSucceed(slotCheck.test(ctx), "Match slot " + EquipmentSlotType.MAINHAND.name());
+            helper.shouldSucceed(slotCheck.test(ctx), "Match slot " + EquipmentSlot.MAINHAND.name());
 
-            slotCheck = new MatchEquipmentSlot(EquipmentSlotType.OFFHAND, generator.apply(Items.STICK));
-            helper.shouldSucceed(slotCheck.test(ctx), "Match slot " + EquipmentSlotType.OFFHAND.name());
+            slotCheck = new MatchEquipmentSlot(EquipmentSlot.OFFHAND, generator.apply(Items.STICK));
+            helper.shouldSucceed(slotCheck.test(ctx), "Match slot " + EquipmentSlot.OFFHAND.name());
 
-            slotCheck = new MatchEquipmentSlot(EquipmentSlotType.HEAD, generator.apply(Items.DIAMOND_HELMET));
-            helper.shouldSucceed(slotCheck.test(ctx), "Match slot " + EquipmentSlotType.HEAD.name());
+            slotCheck = new MatchEquipmentSlot(EquipmentSlot.HEAD, generator.apply(Items.DIAMOND_HELMET));
+            helper.shouldSucceed(slotCheck.test(ctx), "Match slot " + EquipmentSlot.HEAD.name());
 
-            slotCheck = new MatchEquipmentSlot(EquipmentSlotType.CHEST, generator.apply(Items.DIAMOND_CHESTPLATE));
-            helper.shouldSucceed(slotCheck.test(ctx), "Match slot " + EquipmentSlotType.CHEST.name());
+            slotCheck = new MatchEquipmentSlot(EquipmentSlot.CHEST, generator.apply(Items.DIAMOND_CHESTPLATE));
+            helper.shouldSucceed(slotCheck.test(ctx), "Match slot " + EquipmentSlot.CHEST.name());
 
-            slotCheck = new MatchEquipmentSlot(EquipmentSlotType.LEGS, generator.apply(Items.DIAMOND_LEGGINGS));
-            helper.shouldSucceed(slotCheck.test(ctx), "Match slot " + EquipmentSlotType.MAINHAND.name());
+            slotCheck = new MatchEquipmentSlot(EquipmentSlot.LEGS, generator.apply(Items.DIAMOND_LEGGINGS));
+            helper.shouldSucceed(slotCheck.test(ctx), "Match slot " + EquipmentSlot.MAINHAND.name());
 
-            slotCheck = new MatchEquipmentSlot(EquipmentSlotType.FEET, generator.apply(Items.DIAMOND_BOOTS));
-            helper.shouldSucceed(slotCheck.test(ctx), "Match slot " + EquipmentSlotType.FEET.name());
+            slotCheck = new MatchEquipmentSlot(EquipmentSlot.FEET, generator.apply(Items.DIAMOND_BOOTS));
+            helper.shouldSucceed(slotCheck.test(ctx), "Match slot " + EquipmentSlot.FEET.name());
 
-            slotCheck = new MatchEquipmentSlot(EquipmentSlotType.MAINHAND, generator.apply(Items.APPLE));
-            helper.shouldFail(slotCheck.test(ctx), "Not matching slot " + EquipmentSlotType.MAINHAND.name());
+            slotCheck = new MatchEquipmentSlot(EquipmentSlot.MAINHAND, generator.apply(Items.APPLE));
+            helper.shouldFail(slotCheck.test(ctx), "Not matching slot " + EquipmentSlot.MAINHAND.name());
 
-            slotCheck = new MatchEquipmentSlot(EquipmentSlotType.OFFHAND, generator.apply(Items.GREEN_CARPET));
-            helper.shouldFail(slotCheck.test(ctx), "Not matching slot " + EquipmentSlotType.OFFHAND.name());
+            slotCheck = new MatchEquipmentSlot(EquipmentSlot.OFFHAND, generator.apply(Items.GREEN_CARPET));
+            helper.shouldFail(slotCheck.test(ctx), "Not matching slot " + EquipmentSlot.OFFHAND.name());
 
-            slotCheck = new MatchEquipmentSlot(EquipmentSlotType.HEAD, generator.apply(Items.LEATHER_HELMET));
-            helper.shouldFail(slotCheck.test(ctx), "Not matching slot " + EquipmentSlotType.HEAD.name());
+            slotCheck = new MatchEquipmentSlot(EquipmentSlot.HEAD, generator.apply(Items.LEATHER_HELMET));
+            helper.shouldFail(slotCheck.test(ctx), "Not matching slot " + EquipmentSlot.HEAD.name());
 
-            slotCheck = new MatchEquipmentSlot(EquipmentSlotType.CHEST, generator.apply(Items.LEATHER_CHESTPLATE));
-            helper.shouldFail(slotCheck.test(ctx), "Not matching slot " + EquipmentSlotType.CHEST.name());
+            slotCheck = new MatchEquipmentSlot(EquipmentSlot.CHEST, generator.apply(Items.LEATHER_CHESTPLATE));
+            helper.shouldFail(slotCheck.test(ctx), "Not matching slot " + EquipmentSlot.CHEST.name());
 
-            slotCheck = new MatchEquipmentSlot(EquipmentSlotType.LEGS, generator.apply(Items.LEATHER_LEGGINGS));
-            helper.shouldFail(slotCheck.test(ctx), "Not matching slot " + EquipmentSlotType.MAINHAND.name());
+            slotCheck = new MatchEquipmentSlot(EquipmentSlot.LEGS, generator.apply(Items.LEATHER_LEGGINGS));
+            helper.shouldFail(slotCheck.test(ctx), "Not matching slot " + EquipmentSlot.MAINHAND.name());
 
-            slotCheck = new MatchEquipmentSlot(EquipmentSlotType.FEET, generator.apply(Items.LEATHER_BOOTS));
-            helper.shouldFail(slotCheck.test(ctx), "Not matching slot " + EquipmentSlotType.FEET.name());
+            slotCheck = new MatchEquipmentSlot(EquipmentSlot.FEET, generator.apply(Items.LEATHER_BOOTS));
+            helper.shouldFail(slotCheck.test(ctx), "Not matching slot " + EquipmentSlot.FEET.name());
         });
 
         AllTests.add("MatchKillerDistance", helper -> {
             CowEntity cow = helper.simpleEntity(EntityType.COW, helper.player.blockPosition().offset(5, 0, 0));
             LootContext ctx = cow
                     .createLootContext(true, DamageSource.playerAttack(helper.player))
-                    .create(LootParameterSets.ENTITY);
+                    .create(LootContextParamsets.ENTITY);
 
             float dist = helper.player.distanceTo(cow);
             MatchKillerDistance mkd = new MatchKillerDistance(new DistancePredicateBuilder()
@@ -223,13 +223,13 @@ public class ConditionTests {
 
         AllTests.add("AndCondition", helper -> {
             LootContext ctx = helper.unknownContext(helper.player.position());
-            AndCondition ac = new AndCondition(new ILootCondition[]{
+            AndCondition ac = new AndCondition(new LootItemCondition[]{
                     new AnyDimension(new ResourceLocation[]{ new ResourceLocation("overworld") }),
                     new IsLightLevel(0, 15)
             });
             helper.shouldSucceed(ac.test(ctx), "Matches all conditions");
 
-            ac = new AndCondition(new ILootCondition[]{
+            ac = new AndCondition(new LootItemCondition[]{
                     new AnyDimension(new ResourceLocation[]{ new ResourceLocation("overworld") }),
                     new IsLightLevel(0, 7),
                     new IsLightLevel(8, 15)
@@ -239,18 +239,18 @@ public class ConditionTests {
 
         AllTests.add("OrCondition", helper -> {
             LootContext ctx = helper.unknownContext(helper.player.position());
-            OrCondition or = new OrCondition(new ILootCondition[]{
+            OrCondition or = new OrCondition(new LootItemCondition[]{
                     new AnyDimension(new ResourceLocation[]{ new ResourceLocation("overworld") }),
                     new IsLightLevel(0, 15)
             });
             helper.shouldSucceed(or.test(ctx), "Matches");
 
-            or = new OrCondition(new ILootCondition[]{
+            or = new OrCondition(new LootItemCondition[]{
                     new IsLightLevel(0, 7), new IsLightLevel(8, 15)
             });
             helper.shouldSucceed(or.test(ctx), "Still match");
 
-            or = new OrCondition(new ILootCondition[]{
+            or = new OrCondition(new LootItemCondition[]{
                     new AnyDimension(new ResourceLocation[]{ new ResourceLocation("nether") }),
                     new AnyDimension(new ResourceLocation[]{ new ResourceLocation("end") })
             });

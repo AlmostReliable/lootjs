@@ -2,7 +2,7 @@ package com.github.llytho.lootjs;
 
 import com.github.llytho.lootjs.core.ILootContextData;
 import com.github.llytho.lootjs.core.LootContextType;
-import net.minecraft.item.ItemStack;
+import net.minecraft.world.item.ItemStack;
 
 import java.util.ArrayList;
 import java.util.HashMap;

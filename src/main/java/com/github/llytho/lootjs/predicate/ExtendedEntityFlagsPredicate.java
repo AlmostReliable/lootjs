@@ -1,10 +1,10 @@
 package com.github.llytho.lootjs.predicate;
 
-import net.minecraft.advancements.criterion.EntityFlagsPredicate;
-import net.minecraft.entity.CreatureAttribute;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityClassification;
-import net.minecraft.entity.LivingEntity;
+import net.minecraft.advancements.critereon.EntityFlagsPredicate;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.MobCategory;
+import net.minecraft.world.entity.MobType;
 
 import javax.annotation.Nullable;
 
@@ -49,13 +49,13 @@ public class ExtendedEntityFlagsPredicate extends EntityFlagsPredicate {
     }
 
     private boolean matchesMobTypes(Entity entity) {
-        return matchesMobType(isUndeadMob, entity, CreatureAttribute.UNDEAD) &&
-               matchesMobType(isArthropodMob, entity, CreatureAttribute.ARTHROPOD) &&
-               matchesMobType(isIllegarMob, entity, CreatureAttribute.ILLAGER) &&
-               matchesMobType(isWaterMob, entity, CreatureAttribute.WATER);
+        return matchesMobType(isUndeadMob, entity, MobType.UNDEAD) &&
+               matchesMobType(isArthropodMob, entity, MobType.ARTHROPOD) &&
+               matchesMobType(isIllegarMob, entity, MobType.ILLAGER) &&
+               matchesMobType(isWaterMob, entity, MobType.WATER);
     }
 
-    private boolean matchesMobType(@Nullable Boolean flag, Entity entity, CreatureAttribute mobType) {
+    private boolean matchesMobType(@Nullable Boolean flag, Entity entity, MobType mobType) {
         if (flag == null) {
             return true;
         }
@@ -72,11 +72,11 @@ public class ExtendedEntityFlagsPredicate extends EntityFlagsPredicate {
     }
 
     private boolean matchesCreature(Entity entity) {
-        return isCreature == null || (entity.getType().getCategory() == EntityClassification.CREATURE) == isCreature;
+        return isCreature == null || (entity.getType().getCategory() == MobCategory.CREATURE) == isCreature;
     }
 
     private boolean matchesMonster(Entity entity) {
-        return isMonster == null || (entity.getType().getCategory() == EntityClassification.MONSTER) == isMonster;
+        return isMonster == null || (entity.getType().getCategory() == MobCategory.MONSTER) == isMonster;
     }
 
     private boolean matchesUnderWater(Entity entity) {

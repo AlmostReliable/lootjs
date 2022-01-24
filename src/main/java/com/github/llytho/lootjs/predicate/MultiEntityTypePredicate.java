@@ -1,18 +1,18 @@
 package com.github.llytho.lootjs.predicate;
 
 import com.google.gson.JsonElement;
-import net.minecraft.advancements.criterion.EntityTypePredicate;
-import net.minecraft.entity.EntityType;
-import net.minecraft.tags.ITag;
+import net.minecraft.advancements.critereon.EntityTypePredicate;
+import net.minecraft.tags.Tag;
+import net.minecraft.world.entity.EntityType;
 
 import java.util.List;
 
 public class MultiEntityTypePredicate extends EntityTypePredicate {
 
     private final List<EntityType<?>> types;
-    private final List<ITag<EntityType<?>>> tags;
+    private final List<Tag<EntityType<?>>> tags;
 
-    public MultiEntityTypePredicate(List<ITag<EntityType<?>>> tags, List<EntityType<?>> types) {
+    public MultiEntityTypePredicate(List<Tag<EntityType<?>>> tags, List<EntityType<?>> types) {
         this.tags = tags;
         this.types = types;
     }
@@ -25,7 +25,7 @@ public class MultiEntityTypePredicate extends EntityTypePredicate {
             }
         }
 
-        for (ITag<EntityType<?>> tag : tags) {
+        for (Tag<EntityType<?>> tag : tags) {
             if (tag.contains(typeToCheck)) {
                 return true;
             }

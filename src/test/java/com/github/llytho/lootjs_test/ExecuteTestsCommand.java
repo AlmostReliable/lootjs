@@ -9,8 +9,8 @@ import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import dev.latvian.kubejs.util.ConsoleJS;
 import net.minecraft.command.CommandSource;
 import net.minecraft.command.Commands;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.event.RegisterCommandsEvent;
@@ -40,7 +40,7 @@ public class ExecuteTestsCommand implements Command<CommandSource> {
     @Override
     public int run(CommandContext<CommandSource> context) throws CommandSyntaxException {
         Entity e = context.getSource().getEntity();
-        if (!(e instanceof ServerPlayerEntity)) {
+        if (!(e instanceof ServerPlayer)) {
             return 0;
         }
 
@@ -54,7 +54,7 @@ public class ExecuteTestsCommand implements Command<CommandSource> {
         AllTests.loadAll();
 
         DebugStack debugStack = new DebugStack();
-        TestHelper helper = new TestHelper(debugStack, context.getSource().getLevel(), (ServerPlayerEntity) e);
+        TestHelper helper = new TestHelper(debugStack, context.getSource().getLevel(), (ServerPlayer) e);
         StringBuilder builder = new StringBuilder().append("\n");
 
         try {

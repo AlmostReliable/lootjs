@@ -1,10 +1,10 @@
 package com.github.llytho.lootjs.loot.condition;
 
-import net.minecraft.advancements.criterion.FluidPredicate;
-import net.minecraft.loot.LootContext;
-import net.minecraft.loot.LootParameters;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.vector.Vector3d;
+import net.minecraft.advancements.critereon.FluidPredicate;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.storage.loot.LootContext;
+import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
+import net.minecraft.world.phys.Vec3;
 
 public class MatchFluid implements IExtendedLootCondition {
 
@@ -16,7 +16,7 @@ public class MatchFluid implements IExtendedLootCondition {
 
     @Override
     public boolean test(LootContext context) {
-        Vector3d origin = context.getParamOrNull(LootParameters.ORIGIN);
+        Vec3 origin = context.getParamOrNull(LootContextParams.ORIGIN);
         if (origin == null) return false;
 
         BlockPos blockPos = new BlockPos(origin.x, origin.y, origin.z);

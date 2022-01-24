@@ -1,11 +1,11 @@
 package com.github.llytho.lootjs.util;
 
 import com.github.llytho.lootjs.core.FilterResult;
-import net.minecraft.util.RegistryKey;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.registry.Registry;
-import net.minecraft.world.biome.Biome;
-import net.minecraft.world.gen.feature.structure.Structure;
+import net.minecraft.core.Registry;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.level.biome.Biome;
+import net.minecraft.world.level.levelgen.feature.StructureFeature;
 import net.minecraftforge.common.BiomeDictionary;
 import net.minecraftforge.registries.ForgeRegistries;
 
@@ -27,23 +27,23 @@ public class BiomeUtils {
     }
 
     @SuppressWarnings("unchecked")
-    public static List<RegistryKey<Biome>> findBiomeKeys(List<ResourceLocation> biomes) {
-        FilterResult<ResourceLocation, RegistryKey<Biome>> filterResult = FilterResult.create(biomes, (pLocation) -> {
+    public static List<ResourceKey<Biome>> findBiomeKeys(List<ResourceLocation> biomes) {
+        FilterResult<ResourceLocation, ResourceKey<Biome>> filterResult = FilterResult.create(biomes, (pLocation) -> {
             if (ForgeRegistries.BIOMES.getValue(pLocation) == null) {
                 return null;
             }
-            return RegistryKey.create(Registry.BIOME_REGISTRY, pLocation);
+            return ResourceKey.create(Registry.BIOME_REGISTRY, pLocation);
         });
 
         filterResult.yeetIfUnresolvedFilters();
         return filterResult.getFoundValues();
     }
 
-    public static Structure<?>[] findStructures(List<ResourceLocation> structures) {
-        FilterResult<ResourceLocation, Structure<?>> filterResult = FilterResult.create(structures,
+    public static StructureFeature<?>[] findStructures(List<ResourceLocation> structures) {
+        FilterResult<ResourceLocation, StructureFeature<?>> filterResult = FilterResult.create(structures,
                 ForgeRegistries.STRUCTURE_FEATURES::getValue);
 
         filterResult.yeetIfUnresolvedFilters();
-        return (Structure<?>[]) filterResult.getFoundValues().toArray(new Structure[0]);
+        return (StructureFeature<?>[]) filterResult.getFoundValues().toArray(new StructureFeature[0]);
     }
 }

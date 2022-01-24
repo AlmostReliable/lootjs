@@ -2,41 +2,41 @@ package com.github.llytho.lootjs.util;
 
 import com.github.llytho.lootjs.core.Constants;
 import com.github.llytho.lootjs.core.ILootContextData;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.loot.LootContext;
-import net.minecraft.loot.LootParameters;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.level.storage.loot.LootContext;
+import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 
 import javax.annotation.Nullable;
 
 public class LootContextUtils {
     @Nullable
-    public static ServerPlayerEntity getPlayerOrNull(LootContext context) {
+    public static ServerPlayer getPlayerOrNull(LootContext context) {
         ILootContextData data = context.getParamOrNull(Constants.DATA);
         if (data == null) return null;
 
         switch (data.getLootContextType()) {
             case BLOCK:
             case CHEST:
-                return tryGetPlayer(context.getParamOrNull(LootParameters.THIS_ENTITY));
+                return tryGetPlayer(context.getParamOrNull(LootContextParams.THIS_ENTITY));
             case ENTITY:
-                ServerPlayerEntity player = tryGetPlayer(context.getParamOrNull(LootParameters.KILLER_ENTITY));
+                ServerPlayer player = tryGetPlayer(context.getParamOrNull(LootContextParams.KILLER_ENTITY));
                 if (player != null) {
                     return player;
                 }
 
-                return tryGetPlayer(context.getParamOrNull(LootParameters.LAST_DAMAGE_PLAYER));
+                return tryGetPlayer(context.getParamOrNull(LootContextParams.LAST_DAMAGE_PLAYER));
             case FISHING:
-                return tryGetPlayer(context.getParamOrNull(LootParameters.KILLER_ENTITY));
+                return tryGetPlayer(context.getParamOrNull(LootContextParams.KILLER_ENTITY));
         }
 
         return null;
     }
 
     @Nullable
-    private static ServerPlayerEntity tryGetPlayer(@Nullable Entity entity) {
-        if (entity instanceof ServerPlayerEntity) {
-            return (ServerPlayerEntity) entity;
+    private static ServerPlayer tryGetPlayer(@Nullable Entity entity) {
+        if (entity instanceof ServerPlayer) {
+            return (ServerPlayer) entity;
         }
 
         return null;

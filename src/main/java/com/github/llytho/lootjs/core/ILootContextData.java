@@ -1,6 +1,6 @@
 package com.github.llytho.lootjs.core;
 
-import net.minecraft.item.ItemStack;
+import net.minecraft.world.item.ItemStack;
 
 import java.util.List;
 import java.util.Map;

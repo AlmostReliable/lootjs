@@ -2,8 +2,8 @@ package com.github.llytho.lootjs.loot.condition;
 
 import com.github.llytho.lootjs.core.Constants;
 import com.github.llytho.lootjs.core.ILootContextData;
-import net.minecraft.item.ItemStack;
-import net.minecraft.loot.LootContext;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.storage.loot.LootContext;
 
 import java.util.List;
 import java.util.function.Predicate;

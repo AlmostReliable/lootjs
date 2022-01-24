@@ -2,13 +2,13 @@ package com.github.llytho.lootjs.loot.condition;
 
 import com.github.llytho.lootjs.core.Constants;
 import com.github.llytho.lootjs.core.DebugStack;
-import net.minecraft.loot.LootContext;
-import net.minecraft.loot.conditions.ILootCondition;
+import net.minecraft.world.level.storage.loot.LootContext;
+import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
 
 public class OrCondition implements IExtendedLootCondition {
-    private final ILootCondition[] conditions;
+    private final LootItemCondition[] conditions;
 
-    public OrCondition(ILootCondition[] conditions) {
+    public OrCondition(LootItemCondition[] conditions) {
         this.conditions = conditions;
     }
 
@@ -19,7 +19,7 @@ public class OrCondition implements IExtendedLootCondition {
         DebugStack.pushLayer(stack);
 
         boolean succeed = false;
-        for (ILootCondition condition : conditions) {
+        for (LootItemCondition condition : conditions) {
             succeed = condition.test(context);
             if (!(condition instanceof OrCondition || condition instanceof AndCondition)) {
                 DebugStack.write(stack, DebugStack.CONDITION_PREFIX, condition, null, succeed);

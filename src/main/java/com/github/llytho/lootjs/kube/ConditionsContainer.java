@@ -7,28 +7,27 @@ import com.github.llytho.lootjs.util.BiomeUtils;
 import com.github.llytho.lootjs.util.TagOrEntry;
 import com.github.llytho.lootjs.util.Utils;
 import com.google.gson.JsonObject;
-import dev.latvian.kubejs.item.ingredient.IngredientJS;
-import net.minecraft.advancements.criterion.FluidPredicate;
-import net.minecraft.advancements.criterion.MinMaxBounds;
-import net.minecraft.advancements.criterion.StatePropertiesPredicate;
-import net.minecraft.block.Block;
-import net.minecraft.enchantment.Enchantment;
-import net.minecraft.fluid.Fluid;
-import net.minecraft.inventory.EquipmentSlotType;
-import net.minecraft.loot.LootContext;
-import net.minecraft.loot.LootTableManager;
-import net.minecraft.loot.RandomValueRange;
-import net.minecraft.loot.conditions.*;
-import net.minecraft.util.RegistryKey;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.world.biome.Biome;
-import net.minecraft.world.gen.feature.structure.Structure;
+import dev.latvian.mods.kubejs.item.ingredient.IngredientJS;
+import net.minecraft.advancements.critereon.FluidPredicate;
+import net.minecraft.advancements.critereon.MinMaxBounds;
+import net.minecraft.advancements.critereon.StatePropertiesPredicate;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.item.enchantment.Enchantment;
+import net.minecraft.world.level.biome.Biome;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.levelgen.feature.StructureFeature;
+import net.minecraft.world.level.material.Fluid;
+import net.minecraft.world.level.storage.loot.IntRange;
+import net.minecraft.world.level.storage.loot.LootContext;
+import net.minecraft.world.level.storage.loot.PredicateManager;
+import net.minecraft.world.level.storage.loot.predicates.*;
 import net.minecraftforge.common.BiomeDictionary;
 import net.minecraftforge.registries.ForgeRegistries;
 
 import javax.annotation.Nullable;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
@@ -45,42 +44,42 @@ public interface ConditionsContainer<B extends ConditionsContainer<?>> {
     }
 
     default B matchMainHand(IngredientJS ingredient) {
-        return addCondition(new MatchEquipmentSlot(EquipmentSlotType.MAINHAND, ingredient.getVanillaPredicate()));
+        return addCondition(new MatchEquipmentSlot(EquipmentSlot.MAINHAND, ingredient.getVanillaPredicate()));
     }
 
     default B matchOffHand(IngredientJS ingredient) {
-        return addCondition(new MatchEquipmentSlot(EquipmentSlotType.OFFHAND, ingredient.getVanillaPredicate()));
+        return addCondition(new MatchEquipmentSlot(EquipmentSlot.OFFHAND, ingredient.getVanillaPredicate()));
     }
 
-    default B matchEquip(EquipmentSlotType slot, IngredientJS ingredient) {
+    default B matchEquip(EquipmentSlot slot, IngredientJS ingredient) {
         return addCondition(new MatchEquipmentSlot(slot, ingredient.getVanillaPredicate()));
     }
 
     default B survivesExplosion() {
-        return addCondition(SurvivesExplosion.survivesExplosion().build());
+        return addCondition(ExplosionCondition.survivesExplosion());
     }
 
-    default B timeCheck(long period, float min, float max) {
-        return addCondition(new TimeCheck(period, new RandomValueRange(min, max)));
+    default B timeCheck(long period, int min, int max) {
+        return addCondition(new TimeCheck.Builder(IntRange.range(min, max)).setPeriod(period));
     }
 
-    default B timeCheck(float min, float max) {
+    default B timeCheck(int min, int max) {
         return timeCheck(24000L, min, max);
     }
 
     default B weatherCheck(Map<String, Boolean> map) {
         Boolean isRaining = map.getOrDefault("raining", null);
         Boolean isThundering = map.getOrDefault("thundering", null);
-
-        return addCondition(new WeatherCheck(isRaining, isThundering));
+        return addCondition(new WeatherCheck.Builder().setRaining(isRaining).setThundering(isThundering));
     }
 
     default B randomChance(float value) {
-        return addCondition(RandomChance.randomChance(value).build());
+        return addCondition(LootItemRandomChanceCondition.randomChance(value));
     }
 
     default B randomChanceWithLooting(float value, float looting) {
-        return addCondition(RandomChanceWithLooting.randomChanceAndLootingBoost(value, looting).build());
+        // wtf are this class names
+        return addCondition(LootItemRandomChanceWithLootingCondition.randomChanceAndLootingBoost(value, looting));
     }
 
     default B randomChanceWithEnchantment(@Nullable Enchantment enchantment, float[] chances) {
@@ -96,7 +95,7 @@ public interface ConditionsContainer<B extends ConditionsContainer<?>> {
                 .stream(biomesOrTags)
                 .collect(Collectors.partitioningBy(s -> s.startsWith("#")));
 
-        List<RegistryKey<Biome>> biomeKeys = BiomeUtils.findBiomeKeys(lists
+        List<ResourceKey<Biome>> biomeKeys = BiomeUtils.findBiomeKeys(lists
                 .get(false)
                 .stream()
                 .map(ResourceLocation::new)
@@ -115,7 +114,7 @@ public interface ConditionsContainer<B extends ConditionsContainer<?>> {
                 .stream(biomesOrTags)
                 .collect(Collectors.partitioningBy(s -> s.startsWith("#")));
 
-        List<RegistryKey<Biome>> biomeKeys = BiomeUtils.findBiomeKeys(lists
+        List<ResourceKey<Biome>> biomeKeys = BiomeUtils.findBiomeKeys(lists
                 .get(false)
                 .stream()
                 .map(ResourceLocation::new)
@@ -134,7 +133,7 @@ public interface ConditionsContainer<B extends ConditionsContainer<?>> {
     }
 
     default B anyStructure(ResourceLocation[] locations, boolean exact) {
-        Structure<?>[] structures = BiomeUtils.findStructures(Arrays.asList(locations));
+        StructureFeature<?>[] structures = BiomeUtils.findStructures(Arrays.asList(locations));
         return addCondition(new AnyStructure(structures, exact));
     }
 
@@ -143,12 +142,12 @@ public interface ConditionsContainer<B extends ConditionsContainer<?>> {
     }
 
     default B killedByPlayer() {
-        return addCondition(KilledByPlayer.killedByPlayer().build());
+        return addCondition(LootItemKilledByPlayerCondition.killedByPlayer());
     }
 
     default B matchBlockState(Block block, Map<String, String> propertyMap) {
-        StatePropertiesPredicate properties = Utils.createProperties(block, propertyMap);
-        return addCondition(new BlockStateProperty(block, properties));
+        StatePropertiesPredicate.Builder properties = Utils.createProperties(block, propertyMap);
+        return addCondition(new LootItemBlockStatePropertyCondition.Builder(block).setProperties(properties));
     }
 
     default B matchFluid(String idOrTag) {
@@ -160,19 +159,19 @@ public interface ConditionsContainer<B extends ConditionsContainer<?>> {
     default B matchEntity(Consumer<EntityPredicateBuilderJS> action) {
         EntityPredicateBuilderJS builder = new EntityPredicateBuilderJS();
         action.accept(builder);
-        return addCondition(new EntityHasProperty(builder.build(), LootContext.EntityTarget.THIS));
+        return addCondition(LootItemEntityPropertyCondition.hasProperties(LootContext.EntityTarget.THIS, builder.build()));
     }
 
     default B matchKiller(Consumer<EntityPredicateBuilderJS> action) {
         EntityPredicateBuilderJS builder = new EntityPredicateBuilderJS();
         action.accept(builder);
-        return addCondition(new EntityHasProperty(builder.build(), LootContext.EntityTarget.KILLER));
+        return addCondition(LootItemEntityPropertyCondition.hasProperties(LootContext.EntityTarget.KILLER, builder.build()));
     }
 
     default B matchDirectKiller(Consumer<EntityPredicateBuilderJS> action) {
         EntityPredicateBuilderJS builder = new EntityPredicateBuilderJS();
         action.accept(builder);
-        return addCondition(new EntityHasProperty(builder.build(), LootContext.EntityTarget.DIRECT_KILLER));
+        return addCondition(LootItemEntityPropertyCondition.hasProperties(LootContext.EntityTarget.DIRECT_KILLER, builder.build()));
     }
 
     default B matchPlayer(Consumer<EntityPredicateBuilderJS> action) {
@@ -184,10 +183,10 @@ public interface ConditionsContainer<B extends ConditionsContainer<?>> {
     default B matchDamageSource(Consumer<DamageSourcePredicateBuilderJS> action) {
         DamageSourcePredicateBuilderJS builder = new DamageSourcePredicateBuilderJS();
         action.accept(builder);
-        return addCondition(new DamageSourceProperties(builder.build()));
+        return addCondition(builder);
     }
 
-    default B distanceToKiller(MinMaxBounds.FloatBound bounds) {
+    default B distanceToKiller(MinMaxBounds.Doubles bounds) {
         return customDistanceToPlayer(builder -> {
             builder.absolute(bounds);
         });
@@ -218,10 +217,13 @@ public interface ConditionsContainer<B extends ConditionsContainer<?>> {
     }
 
     default B customCondition(JsonObject json) {
-        ILootCondition condition = LootTableManager.GSON.fromJson(json, ILootCondition.class);
+        LootItemCondition condition = PredicateManager.GSON.fromJson(json, LootItemCondition.class);
         return addCondition(condition);
     }
 
-    B addCondition(ILootCondition pCondition);
+    default B addCondition(LootItemCondition.Builder builder) {
+        return addCondition(builder.build());
+    }
 
+    B addCondition(LootItemCondition pCondition);
 }

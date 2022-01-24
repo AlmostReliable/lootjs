@@ -6,15 +6,14 @@ import com.github.llytho.lootjs.loot.condition.AnyStructure;
 import com.github.llytho.lootjs.loot.condition.BiomeCheck;
 import com.github.llytho.lootjs_test.AllTests;
 import com.github.llytho.lootjs_test.TestHelper;
-import net.minecraft.loot.LootContext;
-import net.minecraft.loot.conditions.ILootCondition;
-import net.minecraft.util.RegistryKey;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.world.biome.Biome;
-import net.minecraft.world.gen.feature.structure.Structure;
+import net.minecraft.world.level.storage.loot.LootContext;
+import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.level.biome.Biome;
+import net.minecraft.world.level.levelgen.feature.StructureFeature;
 import net.minecraftforge.common.BiomeDictionary;
 
-import java.util.HashMap;
 import java.util.List;
 
 public class ConditionsContainerTests {
@@ -58,7 +57,7 @@ public class ConditionsContainerTests {
                 new ResourceLocation("stronghold"), new ResourceLocation("village")
         }, true);
         helper.shouldSucceed(conditions.last instanceof AnyStructure, "AnyStructure instance");
-        helper.<Structure<?>[]>shouldSucceed(conditions.last, "structures", structures -> {
+        helper.<StructureFeature<?>[]>shouldSucceed(conditions.last, "structures", structures -> {
             return structures.length == 2;
         });
         helper.shouldThrow(() -> {
@@ -72,7 +71,7 @@ public class ConditionsContainerTests {
         helper.debugStack.h2("anyBiome");
         conditions.anyBiome("minecraft:desert", "#nether", "minecraft:jungle");
         helper.shouldSucceed(conditions.last instanceof AnyBiomeCheck, "AnyBiomeCheck instance");
-        helper.<List<RegistryKey<Biome>>>shouldSucceed(conditions.last, "biomes", biomes -> {
+        helper.<List<ResourceKey<Biome>>>shouldSucceed(conditions.last, "biomes", biomes -> {
             return biomes.size() == 2;
         });
         helper.<List<BiomeDictionary.Type>>shouldSucceed(conditions.last, "types", types -> {
@@ -90,7 +89,7 @@ public class ConditionsContainerTests {
         helper.debugStack.h2("biome");
         conditions.biome("minecraft:desert", "#nether", "minecraft:jungle");
         helper.shouldSucceed(conditions.last instanceof BiomeCheck, "BiomeCheck instance");
-        helper.<List<RegistryKey<Biome>>>shouldSucceed(conditions.last, "biomes", biomes -> {
+        helper.<List<ResourceKey<Biome>>>shouldSucceed(conditions.last, "biomes", biomes -> {
             return biomes.size() == 2;
         });
         helper.<List<BiomeDictionary.Type>>shouldSucceed(conditions.last, "types", types -> {
@@ -106,10 +105,10 @@ public class ConditionsContainerTests {
 
     public static class TestConditionsContainer implements ConditionsContainer<TestConditionsContainer> {
 
-        public ILootCondition last;
+        public LootItemCondition last;
 
         @Override
-        public TestConditionsContainer addCondition(ILootCondition pCondition) {
+        public TestConditionsContainer addCondition(LootItemCondition pCondition) {
             this.last = pCondition;
             return this;
         }

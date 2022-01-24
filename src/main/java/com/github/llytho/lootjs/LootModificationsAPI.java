@@ -1,12 +1,9 @@
 package com.github.llytho.lootjs;
 
 import com.github.llytho.lootjs.core.*;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
-import net.minecraft.item.ItemStack;
-import net.minecraft.loot.LootContext;
-import net.minecraft.loot.LootParameters;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.storage.loot.LootContext;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
@@ -65,10 +62,5 @@ public class LootModificationsAPI {
 
     public static void addModification(ILootModification modification) {
         modifications.add(modification);
-    }
-
-    private boolean isFireBlock(LootContext context) {
-        BlockState b = context.getParamOrNull(LootParameters.BLOCK_STATE);
-        return b != null && b.getBlock().is(Blocks.FIRE);
     }
 }

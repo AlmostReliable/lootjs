@@ -4,18 +4,18 @@ import com.github.llytho.lootjs.LootModificationsAPI;
 import com.github.llytho.lootjs.core.*;
 import com.github.llytho.lootjs.kube.builder.LootActionsBuilderJS;
 import com.github.llytho.lootjs.util.Utils;
-import dev.latvian.kubejs.CommonProperties;
-import dev.latvian.kubejs.block.BlockStatePredicate;
-import dev.latvian.kubejs.event.EventJS;
-import dev.latvian.kubejs.script.ScriptType;
-import dev.latvian.kubejs.server.ServerJS;
-import dev.latvian.kubejs.util.ConsoleJS;
-import dev.latvian.kubejs.util.UtilsJS;
-import net.minecraft.block.Block;
-import net.minecraft.entity.EntityType;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.text.StringTextComponent;
-import net.minecraft.util.text.TextFormatting;
+import dev.latvian.mods.kubejs.CommonProperties;
+import dev.latvian.mods.kubejs.block.BlockStatePredicate;
+import dev.latvian.mods.kubejs.event.EventJS;
+import dev.latvian.mods.kubejs.script.ScriptType;
+import dev.latvian.mods.kubejs.server.ServerJS;
+import dev.latvian.mods.kubejs.util.ConsoleJS;
+import dev.latvian.mods.kubejs.util.UtilsJS;
+import net.minecraft.ChatFormatting;
+import net.minecraft.network.chat.TextComponent;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.level.block.Block;
 import net.minecraftforge.registries.ForgeRegistryEntry;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -169,16 +169,14 @@ public class LootModificationEventJS extends EventJS {
             if (CommonProperties.get().announceReload && ServerJS.instance != null &&
                 !CommonProperties.get().hideServerScriptErrors) {
                 if (!ScriptType.SERVER.errors.isEmpty()) {
-                    ServerJS.instance.tell(new StringTextComponent(
+                    ServerJS.instance.tell(new TextComponent(
                             "LootJS Errors found! [" + ScriptType.SERVER.errors.size() +
-                            "]! Run '/kubejs errors' for more info").withStyle(TextFormatting.DARK_RED));
+                            "]! Run '/kubejs errors' for more info").withStyle(ChatFormatting.DARK_RED));
                 }
             }
         }
 
         originalLocations.removeIf(locationsToRemove::contains);
-
-
     }
 
     public void splitLocationsOrPattern(String[] locationsOrPattern, List<Pattern> patterns, List<ResourceLocation> locations) {

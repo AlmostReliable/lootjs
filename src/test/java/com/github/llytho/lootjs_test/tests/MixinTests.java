@@ -4,8 +4,8 @@ import com.github.llytho.lootjs.core.Constants;
 import com.github.llytho.lootjs.core.ILootContextData;
 import com.github.llytho.lootjs.core.LootContextType;
 import com.github.llytho.lootjs_test.AllTests;
-import net.minecraft.entity.EntityType;
-import net.minecraft.loot.LootContext;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.level.storage.loot.LootContext;
 
 import java.util.Objects;
 

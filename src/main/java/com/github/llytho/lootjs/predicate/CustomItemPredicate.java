@@ -1,8 +1,8 @@
 package com.github.llytho.lootjs.predicate;
 
 import com.google.gson.JsonElement;
-import net.minecraft.advancements.criterion.ItemPredicate;
-import net.minecraft.item.ItemStack;
+import net.minecraft.advancements.critereon.ItemPredicate;
+import net.minecraft.world.item.ItemStack;
 
 import java.util.function.Predicate;
 

@@ -1,12 +1,11 @@
 package com.github.llytho.lootjs.loot.action;
 
 import com.github.llytho.lootjs.core.ILootAction;
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.effect.LightningBoltEntity;
-import net.minecraft.loot.LootContext;
-import net.minecraft.loot.LootParameters;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.vector.Vector3d;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.LightningBolt;
+import net.minecraft.world.level.storage.loot.LootContext;
+import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
+import net.minecraft.world.phys.Vec3;
 
 public class LightningStrikeAction implements ILootAction {
     private final boolean shouldDamageEntity;
@@ -17,10 +16,10 @@ public class LightningStrikeAction implements ILootAction {
 
     @Override
     public boolean accept(LootContext context) {
-        Vector3d origin = context.getParamOrNull(LootParameters.ORIGIN);
+        Vec3 origin = context.getParamOrNull(LootContextParams.ORIGIN);
         if (origin == null) return true;
 
-        LightningBoltEntity lightning = EntityType.LIGHTNING_BOLT.create(context.getLevel());
+        LightningBolt lightning = EntityType.LIGHTNING_BOLT.create(context.getLevel());
         if (lightning != null) {
             lightning.moveTo(origin.x, origin.y, origin.z);
             if (!shouldDamageEntity) lightning.setVisualOnly(true);

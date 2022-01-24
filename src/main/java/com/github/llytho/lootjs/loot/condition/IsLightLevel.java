@@ -1,9 +1,9 @@
 package com.github.llytho.lootjs.loot.condition;
 
-import net.minecraft.loot.LootContext;
-import net.minecraft.loot.LootParameters;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.vector.Vector3d;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.storage.loot.LootContext;
+import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
+import net.minecraft.world.phys.Vec3;
 
 public class IsLightLevel implements IExtendedLootCondition {
 
@@ -17,7 +17,7 @@ public class IsLightLevel implements IExtendedLootCondition {
 
     @Override
     public boolean test(LootContext context) {
-        Vector3d origin = context.getParamOrNull(LootParameters.ORIGIN);
+        Vec3 origin = context.getParamOrNull(LootContextParams.ORIGIN);
         if (origin == null) {
             return false;
         }

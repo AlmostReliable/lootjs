@@ -1,10 +1,10 @@
 package com.github.llytho.lootjs.loot.condition;
 
 import com.github.llytho.lootjs.util.LootContextUtils;
-import net.minecraft.enchantment.Enchantment;
-import net.minecraft.enchantment.EnchantmentHelper;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.loot.LootContext;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.item.enchantment.Enchantment;
+import net.minecraft.world.item.enchantment.EnchantmentHelper;
+import net.minecraft.world.level.storage.loot.LootContext;
 
 
 public class MainHandTableBonus implements IExtendedLootCondition {
@@ -18,7 +18,7 @@ public class MainHandTableBonus implements IExtendedLootCondition {
 
     @Override
     public boolean test(LootContext context) {
-        ServerPlayerEntity player = LootContextUtils.getPlayerOrNull(context);
+        ServerPlayer player = LootContextUtils.getPlayerOrNull(context);
         if (player == null) {
             return false;
         }

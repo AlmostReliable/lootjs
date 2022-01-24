@@ -4,25 +4,25 @@ import com.github.llytho.lootjs.core.Constants;
 import com.github.llytho.lootjs.core.ILootContextData;
 import com.github.llytho.lootjs.core.LootContextType;
 import com.github.llytho.lootjs.util.LootContextUtils;
-import dev.latvian.kubejs.entity.DamageSourceJS;
-import dev.latvian.kubejs.entity.EntityJS;
-import dev.latvian.kubejs.item.ItemStackJS;
-import dev.latvian.kubejs.item.ingredient.IngredientJS;
-import dev.latvian.kubejs.player.PlayerJS;
-import dev.latvian.kubejs.server.ServerJS;
-import dev.latvian.kubejs.util.ConsoleJS;
-import dev.latvian.kubejs.util.UtilsJS;
-import dev.latvian.kubejs.world.BlockContainerJS;
-import dev.latvian.kubejs.world.WorldJS;
-import net.minecraft.block.BlockState;
-import net.minecraft.entity.Entity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.loot.LootContext;
-import net.minecraft.loot.LootParameters;
-import net.minecraft.util.DamageSource;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.vector.Vector3d;
+import dev.latvian.mods.kubejs.entity.DamageSourceJS;
+import dev.latvian.mods.kubejs.entity.EntityJS;
+import dev.latvian.mods.kubejs.item.ItemStackJS;
+import dev.latvian.mods.kubejs.item.ingredient.IngredientJS;
+import dev.latvian.mods.kubejs.level.world.BlockContainerJS;
+import dev.latvian.mods.kubejs.level.world.LevelJS;
+import dev.latvian.mods.kubejs.player.PlayerJS;
+import dev.latvian.mods.kubejs.server.ServerJS;
+import dev.latvian.mods.kubejs.util.ConsoleJS;
+import dev.latvian.mods.kubejs.util.UtilsJS;
+import net.minecraft.core.BlockPos;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.storage.loot.LootContext;
+import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
+import net.minecraft.world.phys.Vec3;
 
 import javax.annotation.Nullable;
 import java.util.List;
@@ -62,34 +62,34 @@ public class LootContextJS {
         return data.getCustomData();
     }
 
-    public Vector3d getPosition() {
-        Vector3d vec = context.getParamOrNull(LootParameters.ORIGIN);
+    public Vec3 getPosition() {
+        Vec3 vec = context.getParamOrNull(LootContextParams.ORIGIN);
         if (vec != null) {
             return vec;
         }
 
-        Entity entity = context.getParamOrNull(LootParameters.THIS_ENTITY);
+        Entity entity = context.getParamOrNull(LootContextParams.THIS_ENTITY);
         if (entity != null) {
             return entity.position();
         }
 
         ConsoleJS.SERVER.warn("No position found. This should not happen");
-        return Vector3d.ZERO;
+        return Vec3.ZERO;
     }
 
     public BlockPos getBlockPos() {
-        Vector3d position = getPosition();
+        Vec3 position = getPosition();
         return new BlockPos(position.x, position.y, position.z);
     }
 
     @Nullable
     public EntityJS getEntity() {
-        return getLevel().getEntity(context.getParamOrNull(LootParameters.THIS_ENTITY));
+        return getLevel().getEntity(context.getParamOrNull(LootContextParams.THIS_ENTITY));
     }
 
     @Nullable
     public EntityJS getKillerEntity() {
-        return getLevel().getEntity(context.getParamOrNull(LootParameters.KILLER_ENTITY));
+        return getLevel().getEntity(context.getParamOrNull(LootContextParams.KILLER_ENTITY));
     }
 
     @Nullable
@@ -99,7 +99,7 @@ public class LootContextJS {
 
     @Nullable
     public DamageSourceJS getDamageSource() {
-        DamageSource damageSource = context.getParamOrNull(LootParameters.DAMAGE_SOURCE);
+        DamageSource damageSource = context.getParamOrNull(LootContextParams.DAMAGE_SOURCE);
         if (damageSource == null) {
             return null;
         }
@@ -108,7 +108,7 @@ public class LootContextJS {
     }
 
     public ItemStackJS getTool() {
-        ItemStack tool = context.getParamOrNull(LootParameters.TOOL);
+        ItemStack tool = context.getParamOrNull(LootContextParams.TOOL);
         if (tool == null) {
             return ItemStackJS.EMPTY;
         }
@@ -119,7 +119,7 @@ public class LootContextJS {
     @Nullable
     public BlockContainerJS getDestroyedBlock() {
         if (cachedBlockContainer == null) {
-            BlockState blockStateInContext = context.getParamOrNull(LootParameters.BLOCK_STATE);
+            BlockState blockStateInContext = context.getParamOrNull(LootContextParams.BLOCK_STATE);
             if (blockStateInContext == null) return null;
             BlockPos blockPos = getBlockPos();
             cachedBlockContainer = new BlockContainerJS(context.getLevel(), blockPos) {
@@ -134,16 +134,16 @@ public class LootContextJS {
     }
 
     public boolean isExploded() {
-        return context.hasParam(LootParameters.EXPLOSION_RADIUS);
+        return context.hasParam(LootContextParams.EXPLOSION_RADIUS);
     }
 
     public float getExplosionRadius() {
-        Float f = context.getParamOrNull(LootParameters.EXPLOSION_RADIUS);
+        Float f = context.getParamOrNull(LootContextParams.EXPLOSION_RADIUS);
         return f != null ? f : 0f;
     }
 
-    public WorldJS getLevel() {
-        return UtilsJS.getWorld(context.getLevel());
+    public LevelJS getLevel() {
+        return UtilsJS.getLevel(context.getLevel());
     }
 
     @Nullable

@@ -1,13 +1,13 @@
 package com.github.llytho.lootjs.util;
 
-import net.minecraft.tags.ITag;
+import net.minecraft.tags.Tag;
 import net.minecraftforge.registries.IForgeRegistryEntry;
 
 public class TagOrEntry<T extends IForgeRegistryEntry<T>> {
-    public final ITag<T> tag;
+    public final Tag<T> tag;
     public final T entry;
 
-    TagOrEntry(ITag<T> tag) {
+    TagOrEntry(Tag<T> tag) {
         this.tag = tag;
         this.entry = null;
     }
@@ -17,7 +17,7 @@ public class TagOrEntry<T extends IForgeRegistryEntry<T>> {
         this.entry = entry;
     }
 
-    public static <T extends IForgeRegistryEntry<T>> TagOrEntry<T> withTag(ITag<T> tag) {
+    public static <T extends IForgeRegistryEntry<T>> TagOrEntry<T> withTag(Tag<T> tag) {
         return new TagOrEntry<>(tag);
     }
 

@@ -1,25 +1,19 @@
 package com.github.llytho.lootjs_test.tests;
 
-import com.github.llytho.lootjs.core.Constants;
-import com.github.llytho.lootjs.core.ILootContextData;
 import com.github.llytho.lootjs.kube.LootContextJS;
 import com.github.llytho.lootjs_test.AllTests;
 import com.github.llytho.lootjs_test.TestHelper;
 import dev.latvian.kubejs.item.ItemStackJS;
 import dev.latvian.kubejs.item.ingredient.IngredientJS;
-import net.minecraft.block.BlockState;
-import net.minecraft.entity.EntityType;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.entity.monster.CreeperEntity;
 import net.minecraft.entity.monster.SkeletonEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
-import net.minecraft.loot.LootParameterSets;
+import net.minecraft.world.level.storage.loot.parameters.LootContextParamsets;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.math.BlockPos;
 
 import java.util.ArrayList;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 public class LootContextJSTest {
     public static void loadTests() {
@@ -130,7 +124,7 @@ public class LootContextJSTest {
         SkeletonEntity skeleton = helper.simpleEntity(EntityType.SKELETON, new BlockPos(helper.player.position()));
         LootContextJS ctxKilledBySkeleton = new LootContextJS(creeper
                 .createLootContext(true, DamageSource.mobAttack(skeleton))
-                .create(LootParameterSets.ENTITY));
+                .create(LootContextParamsets.ENTITY));
         helper.yeet(creeper);
         helper.yeet(skeleton);
         helper.shouldSucceed(ctxKilledBySkeleton.getPlayer() == null, "No player. Killed by skeleton");

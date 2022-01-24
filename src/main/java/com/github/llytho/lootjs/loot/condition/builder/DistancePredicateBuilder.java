@@ -1,36 +1,36 @@
 package com.github.llytho.lootjs.loot.condition.builder;
 
-import net.minecraft.advancements.criterion.DistancePredicate;
-import net.minecraft.advancements.criterion.MinMaxBounds;
+import net.minecraft.advancements.critereon.DistancePredicate;
+import net.minecraft.advancements.critereon.MinMaxBounds;
 
 public class DistancePredicateBuilder {
-    private MinMaxBounds.FloatBound x = MinMaxBounds.FloatBound.ANY;
-    private MinMaxBounds.FloatBound y = MinMaxBounds.FloatBound.ANY;
-    private MinMaxBounds.FloatBound z = MinMaxBounds.FloatBound.ANY;
-    private MinMaxBounds.FloatBound horizontal = MinMaxBounds.FloatBound.ANY;
-    private MinMaxBounds.FloatBound absolute = MinMaxBounds.FloatBound.ANY;
+    private MinMaxBounds.Doubles x = MinMaxBounds.Doubles.ANY;
+    private MinMaxBounds.Doubles y = MinMaxBounds.Doubles.ANY;
+    private MinMaxBounds.Doubles z = MinMaxBounds.Doubles.ANY;
+    private MinMaxBounds.Doubles horizontal = MinMaxBounds.Doubles.ANY;
+    private MinMaxBounds.Doubles absolute = MinMaxBounds.Doubles.ANY;
 
-    public DistancePredicateBuilder x(MinMaxBounds.FloatBound bounds) {
+    public DistancePredicateBuilder x(MinMaxBounds.Doubles bounds) {
         x = bounds;
         return this;
     }
 
-    public DistancePredicateBuilder y(MinMaxBounds.FloatBound bounds) {
+    public DistancePredicateBuilder y(MinMaxBounds.Doubles bounds) {
         y = bounds;
         return this;
     }
 
-    public DistancePredicateBuilder z(MinMaxBounds.FloatBound bounds) {
+    public DistancePredicateBuilder z(MinMaxBounds.Doubles bounds) {
         z = bounds;
         return this;
     }
 
-    public DistancePredicateBuilder horizontal(MinMaxBounds.FloatBound bounds) {
+    public DistancePredicateBuilder horizontal(MinMaxBounds.Doubles bounds) {
         horizontal = bounds;
         return this;
     }
 
-    public DistancePredicateBuilder absolute(MinMaxBounds.FloatBound bounds) {
+    public DistancePredicateBuilder absolute(MinMaxBounds.Doubles bounds) {
         absolute = bounds;
         return this;
     }
