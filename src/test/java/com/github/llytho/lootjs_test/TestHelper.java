@@ -3,6 +3,8 @@ package com.github.llytho.lootjs_test;
 import com.github.llytho.lootjs.core.Constants;
 import com.github.llytho.lootjs.core.DebugStack;
 import com.github.llytho.lootjs.core.ILootContextData;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
@@ -25,11 +27,9 @@ import net.minecraft.world.biome.Biome;
 import net.minecraft.world.server.ServerWorld;
 
 import javax.annotation.Nullable;
-import java.lang.reflect.Field;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
-import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -158,85 +158,31 @@ public class TestHelper {
         return this;
     }
 
-    public <T> TestHelper shouldSucceed(Object o, String f, Predicate<T> predicate) {
-        @SuppressWarnings("unchecked")
-        T value = (T) value(o, f);
-        shouldSucceed(predicate.test(value), "Predicate for '" + f + "' matches");
-        return this;
-    }
-
-    public <T> TestHelper shouldFail(Object o, String f, Predicate<T> predicate) {
-        @SuppressWarnings("unchecked")
-        T value = (T) value(o, f);
-        shouldFail(predicate.test(value), "Predicate for '" + f + "' failed");
-        return this;
-    }
-
     private void evaluate(boolean succeed) {
         sum++;
         if (!succeed) failed++;
     }
 
-    public void shouldBeNull(Object o, String f) {
-        shouldSucceed(nullValue(o, f), "Value should be NULL for " + f);
+    public void shouldBeNull(JsonElement o, String f) {
+        shouldSucceed(o.isJsonNull() || !o.getAsJsonObject().has(f), "Value should be NULL for " + f);
     }
 
-    public void shouldBeTrue(Object o, String f) {
-        shouldSucceed(trueValue(o, f), "Value should be TRUE for " + f);
+    public void shouldBeTrue(JsonElement o, String f) {
+        shouldSucceed(Objects.requireNonNull(value(o.getAsJsonObject(), f)).getAsBoolean(),
+                "Value should be TRUE for " + f);
     }
 
-    public void shouldBeFalse(Object o, String f) {
-        shouldSucceed(falseValue(o, f), "Value should be FALSE for " + f);
+    public void shouldBeFalse(JsonElement o, String f) {
+        shouldSucceed(!Objects.requireNonNull(value(o.getAsJsonObject(), f)).getAsBoolean(),
+                "Value should be FALSE for " + f);
     }
 
     @Nullable
-    public Object value(Object o, String f) {
-        List<String> collect = Arrays.stream(f.split("/", 1)).collect(Collectors.toList());
+    public JsonElement value(JsonObject o, String f) {
+        List<String> collect = Arrays.stream(f.split("/", 2)).collect(Collectors.toList());
         String f_ = collect.remove(0);
-
-        Class<?> c = o.getClass();
-        Field field = null;
-        do {
-            try {
-                field = c.getDeclaredField(f_);
-                break;
-            } catch (Exception ignore) {
-            }
-        } while ((c = c.getSuperclass()) != null);
-
-        if (field == null) {
-            return null;
-        }
-
-        try {
-            field.setAccessible(true);
-            return collect.isEmpty() ? field.get(o) : value(field.get(o), collect.get(0));
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-            return null;
-        }
-    }
-
-    public boolean nullValue(Object o, String f) {
-        return value(o, f) == null;
-    }
-
-    public boolean trueValue(Object o, String f) {
-        Object value = value(o, f);
-        if (value == null) {
-            return false;
-        }
-
-        return Boolean.TRUE.equals(value);
-    }
-
-    public boolean falseValue(Object o, String f) {
-        Object value = value(o, f);
-        if (value == null) {
-            return false;
-        }
-
-        return Boolean.FALSE.equals(value);
+        JsonElement element = o.get(f_);
+        return collect.isEmpty() ? element : value(element.getAsJsonObject(), collect.get(0));
     }
 
     public int getSum() {

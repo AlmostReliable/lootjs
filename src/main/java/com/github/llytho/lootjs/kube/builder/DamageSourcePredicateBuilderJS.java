@@ -1,15 +1,18 @@
 package com.github.llytho.lootjs.kube.builder;
 
+import com.github.llytho.lootjs.loot.condition.WrappedDamageSourceCondition;
 import com.github.llytho.lootjs.predicate.ExtendedDamageSourcePredicate;
 import dev.latvian.mods.rhino.util.HideFromJS;
+import net.minecraft.advancements.criterion.DamageSourcePredicate;
 
 import java.util.function.Consumer;
 
 public class DamageSourcePredicateBuilderJS {
-    private final ExtendedDamageSourcePredicate.Builder vanillaBuilder = new ExtendedDamageSourcePredicate.Builder();
+    private final DamageSourcePredicate.Builder vanillaBuilder = new DamageSourcePredicate.Builder();
+    private String[] sourceNames;
 
     public DamageSourcePredicateBuilderJS anyType(String... types) {
-        vanillaBuilder.anyType(types);
+        sourceNames = types;
         return this;
     }
 
@@ -68,7 +71,7 @@ public class DamageSourcePredicateBuilderJS {
     }
 
     @HideFromJS
-    public ExtendedDamageSourcePredicate build() {
-        return vanillaBuilder.build();
+    public WrappedDamageSourceCondition build() {
+        return new WrappedDamageSourceCondition(vanillaBuilder.build(), sourceNames);
     }
 }

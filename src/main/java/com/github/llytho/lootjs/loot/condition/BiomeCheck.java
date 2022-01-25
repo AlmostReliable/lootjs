@@ -9,6 +9,7 @@ import net.minecraft.util.registry.Registry;
 import net.minecraft.world.biome.Biome;
 import net.minecraftforge.common.BiomeDictionary;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
@@ -51,5 +52,13 @@ public class BiomeCheck implements IExtendedLootCondition {
         }
 
         return true;
+    }
+
+    public List<RegistryKey<Biome>> getBiomes() {
+        return Collections.unmodifiableList(biomes);
+    }
+
+    public List<BiomeDictionary.Type> getTypes() {
+        return Collections.unmodifiableList(types);
     }
 }

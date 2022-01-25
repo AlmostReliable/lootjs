@@ -1,10 +1,14 @@
 package com.github.llytho.lootjs_test.tests;
 
 import com.github.llytho.lootjs.kube.builder.DamageSourcePredicateBuilderJS;
+import com.github.llytho.lootjs.loot.condition.WrappedDamageSourceCondition;
 import com.github.llytho.lootjs.predicate.ExtendedDamageSourcePredicate;
 import com.github.llytho.lootjs.predicate.ExtendedEntityFlagsPredicate;
 import com.github.llytho.lootjs_test.AllTests;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 
+import java.util.function.Function;
 import java.util.function.Supplier;
 
 public class BuilderTests {
@@ -12,37 +16,42 @@ public class BuilderTests {
         AllTests.add("DamageSourcePredicateBuilderJS", helper -> {
             helper.debugStack.pushLayer();
             Supplier<DamageSourcePredicateBuilderJS> dsb = DamageSourcePredicateBuilderJS::new;
+            Function<DamageSourcePredicateBuilderJS, JsonElement> toJson = (builder) -> builder
+                    .build()
+                    .serializeToJson();
 
             helper.debugStack.h2("NULL checks for default values");
-            ExtendedDamageSourcePredicate defaultP = new DamageSourcePredicateBuilderJS().build();
-            helper.shouldBeNull(defaultP, "isProjectile");
-            helper.shouldBeNull(defaultP, "isExplosion");
-            helper.shouldBeNull(defaultP, "bypassesArmor");
-            helper.shouldBeNull(defaultP, "bypassesInvulnerability");
-            helper.shouldBeNull(defaultP, "bypassesMagic");
-            helper.shouldBeNull(defaultP, "isFire");
-            helper.shouldBeNull(defaultP, "isMagic");
-            helper.shouldBeNull(defaultP, "isLightning");
+            WrappedDamageSourceCondition defaultP = new DamageSourcePredicateBuilderJS().build();
+            JsonObject jsonObject = defaultP.serializeToJson();
+            JsonObject dsp = jsonObject.get("DamageSourcePredicate").getAsJsonObject();
+            helper.shouldBeNull(dsp, "is_projectile");
+            helper.shouldBeNull(dsp, "is_explosion");
+            helper.shouldBeNull(dsp, "bypasses_armor");
+            helper.shouldBeNull(dsp, "bypasses_invulnerability");
+            helper.shouldBeNull(dsp, "bypasses_magic");
+            helper.shouldBeNull(dsp, "is_fire");
+            helper.shouldBeNull(dsp, "is_magic");
+            helper.shouldBeNull(dsp, "is_lightning");
 
             helper.debugStack.h2("TRUE checks");
-            helper.shouldBeTrue(dsb.get().isProjectile(true).build(), "isProjectile");
-            helper.shouldBeTrue(dsb.get().isExplosion(true).build(), "isExplosion");
-            helper.shouldBeTrue(dsb.get().doesBypassArmor(true).build(), "bypassesArmor");
-            helper.shouldBeTrue(dsb.get().doesBypassInvulnerability(true).build(), "bypassesInvulnerability");
-            helper.shouldBeTrue(dsb.get().doesBypassMagic(true).build(), "bypassesMagic");
-            helper.shouldBeTrue(dsb.get().isFire(true).build(), "isFire");
-            helper.shouldBeTrue(dsb.get().isMagic(true).build(), "isMagic");
-            helper.shouldBeTrue(dsb.get().isLightning(true).build(), "isLightning");
+            helper.shouldBeTrue(toJson.apply(dsb.get().isProjectile(true)), "DamageSourcePredicate/is_projectile");
+            helper.shouldBeTrue(toJson.apply(dsb.get().isExplosion(true)), "DamageSourcePredicate/is_explosion");
+            helper.shouldBeTrue(toJson.apply(dsb.get().doesBypassArmor(true)), "DamageSourcePredicate/bypasses_armor");
+            helper.shouldBeTrue(toJson.apply(dsb.get().doesBypassInvulnerability(true)), "DamageSourcePredicate/bypasses_invulnerability");
+            helper.shouldBeTrue(toJson.apply(dsb.get().doesBypassMagic(true)), "DamageSourcePredicate/bypasses_magic");
+            helper.shouldBeTrue(toJson.apply(dsb.get().isFire(true)), "DamageSourcePredicate/is_fire");
+            helper.shouldBeTrue(toJson.apply(dsb.get().isMagic(true)), "DamageSourcePredicate/is_magic");
+            helper.shouldBeTrue(toJson.apply(dsb.get().isLightning(true)), "DamageSourcePredicate/is_lightning");
 
             helper.debugStack.h2("FALSE checks");
-            helper.shouldBeFalse(dsb.get().isProjectile(false).build(), "isProjectile");
-            helper.shouldBeFalse(dsb.get().isExplosion(false).build(), "isExplosion");
-            helper.shouldBeFalse(dsb.get().doesBypassArmor(false).build(), "bypassesArmor");
-            helper.shouldBeFalse(dsb.get().doesBypassInvulnerability(false).build(), "bypassesInvulnerability");
-            helper.shouldBeFalse(dsb.get().doesBypassMagic(false).build(), "bypassesMagic");
-            helper.shouldBeFalse(dsb.get().isFire(false).build(), "isFire");
-            helper.shouldBeFalse(dsb.get().isMagic(false).build(), "isMagic");
-            helper.shouldBeFalse(dsb.get().isLightning(false).build(), "isLightning");
+            helper.shouldBeFalse(toJson.apply(dsb.get().isProjectile(false)), "DamageSourcePredicate/is_projectile");
+            helper.shouldBeFalse(toJson.apply(dsb.get().isExplosion(false)), "DamageSourcePredicate/is_explosion");
+            helper.shouldBeFalse(toJson.apply(dsb.get().doesBypassArmor(false)), "DamageSourcePredicate/bypasses_armor");
+            helper.shouldBeFalse(toJson.apply(dsb.get().doesBypassInvulnerability(false)), "DamageSourcePredicate/bypasses_invulnerability");
+            helper.shouldBeFalse(toJson.apply(dsb.get().doesBypassMagic(false)), "DamageSourcePredicate/bypasses_magic");
+            helper.shouldBeFalse(toJson.apply(dsb.get().isFire(false)), "DamageSourcePredicate/is_fire");
+            helper.shouldBeFalse(toJson.apply(dsb.get().isMagic(false)), "DamageSourcePredicate/is_magic");
+            helper.shouldBeFalse(toJson.apply(dsb.get().isLightning(false)), "DamageSourcePredicate/is_lightning");
 
             helper.debugStack.popLayer();
         });
@@ -50,55 +59,59 @@ public class BuilderTests {
         AllTests.add("ExtendedEntityFlagsPredicate.Builder", helper -> {
             helper.debugStack.pushLayer();
             Supplier<ExtendedEntityFlagsPredicate.Builder> fb = ExtendedEntityFlagsPredicate.Builder::new;
+            Function<ExtendedEntityFlagsPredicate.Builder, JsonElement> toJson = (builder) -> builder
+                    .build()
+                    .serializeToJson();
 
             helper.debugStack.h2("NULL checks for default values");
             ExtendedEntityFlagsPredicate defFlags = new ExtendedEntityFlagsPredicate.Builder().build();
-            helper.shouldBeNull(defFlags, "isOnFire");
-            helper.shouldBeNull(defFlags, "isCrouching");
-            helper.shouldBeNull(defFlags, "isSprinting");
-            helper.shouldBeNull(defFlags, "isSwimming");
-            helper.shouldBeNull(defFlags, "isBaby");
-            helper.shouldBeNull(defFlags, "isInWater");
-            helper.shouldBeNull(defFlags, "isUnderWater");
-            helper.shouldBeNull(defFlags, "isMonster");
-            helper.shouldBeNull(defFlags, "isCreature");
-            helper.shouldBeNull(defFlags, "isOnGround");
-            helper.shouldBeNull(defFlags, "isUndeadMob");
-            helper.shouldBeNull(defFlags, "isArthropodMob");
-            helper.shouldBeNull(defFlags, "isIllegarMob");
-            helper.shouldBeNull(defFlags, "isWaterMob");
+            JsonElement jsonElement = defFlags.serializeToJson();
+            helper.shouldBeNull(jsonElement, "is_on_fire");
+            helper.shouldBeNull(jsonElement, "is_sneaking");
+            helper.shouldBeNull(jsonElement, "is_sprinting");
+            helper.shouldBeNull(jsonElement, "is_swimming");
+            helper.shouldBeNull(jsonElement, "is_baby");
+            helper.shouldBeNull(jsonElement, "isInWater");
+            helper.shouldBeNull(jsonElement, "isUnderWater");
+            helper.shouldBeNull(jsonElement, "isMonster");
+            helper.shouldBeNull(jsonElement, "isCreature");
+            helper.shouldBeNull(jsonElement, "isOnGround");
+            helper.shouldBeNull(jsonElement, "isUndeadMob");
+            helper.shouldBeNull(jsonElement, "isArthropodMob");
+            helper.shouldBeNull(jsonElement, "isIllegarMob");
+            helper.shouldBeNull(jsonElement, "isWaterMob");
 
             helper.debugStack.h2("TRUE checks");
-            helper.shouldBeTrue(fb.get().isOnFire(true).build(), "isOnFire");
-            helper.shouldBeTrue(fb.get().isCrouching(true).build(), "isCrouching");
-            helper.shouldBeTrue(fb.get().isSprinting(true).build(), "isSprinting");
-            helper.shouldBeTrue(fb.get().isSwimming(true).build(), "isSwimming");
-            helper.shouldBeTrue(fb.get().isBaby(true).build(), "isBaby");
-            helper.shouldBeTrue(fb.get().isInWater(true).build(), "isInWater");
-            helper.shouldBeTrue(fb.get().isUnderWater(true).build(), "isUnderWater");
-            helper.shouldBeTrue(fb.get().isMonster(true).build(), "isMonster");
-            helper.shouldBeTrue(fb.get().isCreature(true).build(), "isCreature");
-            helper.shouldBeTrue(fb.get().isOnGround(true).build(), "isOnGround");
-            helper.shouldBeTrue(fb.get().isUndeadMob(true).build(), "isUndeadMob");
-            helper.shouldBeTrue(fb.get().isArthropodMob(true).build(), "isArthropodMob");
-            helper.shouldBeTrue(fb.get().isIllegarMob(true).build(), "isIllegarMob");
-            helper.shouldBeTrue(fb.get().isWaterMob(true).build(), "isWaterMob");
+            helper.shouldBeTrue(toJson.apply(fb.get().isOnFire(true)), "is_on_fire");
+            helper.shouldBeTrue(toJson.apply(fb.get().isCrouching(true)), "is_sneaking");
+            helper.shouldBeTrue(toJson.apply(fb.get().isSprinting(true)), "is_sprinting");
+            helper.shouldBeTrue(toJson.apply(fb.get().isSwimming(true)), "is_swimming");
+            helper.shouldBeTrue(toJson.apply(fb.get().isBaby(true)), "is_baby");
+            helper.shouldBeTrue(toJson.apply(fb.get().isInWater(true)), "isInWater");
+            helper.shouldBeTrue(toJson.apply(fb.get().isUnderWater(true)), "isUnderWater");
+            helper.shouldBeTrue(toJson.apply(fb.get().isMonster(true)), "isMonster");
+            helper.shouldBeTrue(toJson.apply(fb.get().isCreature(true)), "isCreature");
+            helper.shouldBeTrue(toJson.apply(fb.get().isOnGround(true)), "isOnGround");
+            helper.shouldBeTrue(toJson.apply(fb.get().isUndeadMob(true)), "isUndeadMob");
+            helper.shouldBeTrue(toJson.apply(fb.get().isArthropodMob(true)), "isArthropodMob");
+            helper.shouldBeTrue(toJson.apply(fb.get().isIllegarMob(true)), "isIllegarMob");
+            helper.shouldBeTrue(toJson.apply(fb.get().isWaterMob(true)), "isWaterMob");
 
             helper.debugStack.h2("FALSE checks");
-            helper.shouldBeFalse(fb.get().isOnFire(false).build(), "isOnFire");
-            helper.shouldBeFalse(fb.get().isCrouching(false).build(), "isCrouching");
-            helper.shouldBeFalse(fb.get().isSprinting(false).build(), "isSprinting");
-            helper.shouldBeFalse(fb.get().isSwimming(false).build(), "isSwimming");
-            helper.shouldBeFalse(fb.get().isBaby(false).build(), "isBaby");
-            helper.shouldBeFalse(fb.get().isInWater(false).build(), "isInWater");
-            helper.shouldBeFalse(fb.get().isUnderWater(false).build(), "isUnderWater");
-            helper.shouldBeFalse(fb.get().isMonster(false).build(), "isMonster");
-            helper.shouldBeFalse(fb.get().isCreature(false).build(), "isCreature");
-            helper.shouldBeFalse(fb.get().isOnGround(false).build(), "isOnGround");
-            helper.shouldBeFalse(fb.get().isUndeadMob(false).build(), "isUndeadMob");
-            helper.shouldBeFalse(fb.get().isArthropodMob(false).build(), "isArthropodMob");
-            helper.shouldBeFalse(fb.get().isIllegarMob(false).build(), "isIllegarMob");
-            helper.shouldBeFalse(fb.get().isWaterMob(false).build(), "isWaterMob");
+            helper.shouldBeFalse(toJson.apply(fb.get().isOnFire(false)), "is_on_fire");
+            helper.shouldBeFalse(toJson.apply(fb.get().isCrouching(false)), "is_sneaking");
+            helper.shouldBeFalse(toJson.apply(fb.get().isSprinting(false)), "is_sprinting");
+            helper.shouldBeFalse(toJson.apply(fb.get().isSwimming(false)), "is_swimming");
+            helper.shouldBeFalse(toJson.apply(fb.get().isBaby(false)), "is_baby");
+            helper.shouldBeFalse(toJson.apply(fb.get().isInWater(false)), "isInWater");
+            helper.shouldBeFalse(toJson.apply(fb.get().isUnderWater(false)), "isUnderWater");
+            helper.shouldBeFalse(toJson.apply(fb.get().isMonster(false)), "isMonster");
+            helper.shouldBeFalse(toJson.apply(fb.get().isCreature(false)), "isCreature");
+            helper.shouldBeFalse(toJson.apply(fb.get().isOnGround(false)), "isOnGround");
+            helper.shouldBeFalse(toJson.apply(fb.get().isUndeadMob(false)), "isUndeadMob");
+            helper.shouldBeFalse(toJson.apply(fb.get().isArthropodMob(false)), "isArthropodMob");
+            helper.shouldBeFalse(toJson.apply(fb.get().isIllegarMob(false)), "isIllegarMob");
+            helper.shouldBeFalse(toJson.apply(fb.get().isWaterMob(false)), "isWaterMob");
 
             helper.debugStack.popLayer();
         });

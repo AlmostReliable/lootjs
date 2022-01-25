@@ -39,4 +39,12 @@ public class AnyStructure implements IExtendedLootCondition {
 
         return false;
     }
+
+    public boolean isExact() {
+        return exact;
+    }
+
+    public Structure<?>[] getStructures() {
+        return structures;
+    }
 }

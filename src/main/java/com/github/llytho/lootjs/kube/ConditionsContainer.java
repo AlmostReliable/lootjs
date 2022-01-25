@@ -184,7 +184,7 @@ public interface ConditionsContainer<B extends ConditionsContainer<?>> {
     default B matchDamageSource(Consumer<DamageSourcePredicateBuilderJS> action) {
         DamageSourcePredicateBuilderJS builder = new DamageSourcePredicateBuilderJS();
         action.accept(builder);
-        return addCondition(new DamageSourceProperties(builder.build()));
+        return addCondition(builder.build());
     }
 
     default B distanceToKiller(MinMaxBounds.FloatBound bounds) {
