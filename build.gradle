@@ -242,6 +242,25 @@ jar {
                     "Implementation-Vendor"   : mod_authors,
                     "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")])
     }
+
+    finalizedBy 'reobfJar'
 }
 
-jar.finalizedBy('reobfJar')
+task testJar(type: Jar) {
+    archiveClassifier.set('tests')
+    from sourceSets.test.output
+    afterEvaluate { finalizedBy reobfTestJar }
+}
+
+artifacts {
+    archives testJar
+}
+
+reobf {
+    testJar { classpath.from(sourceSets.test.compileClasspath) }
+}
+
+task reobf {
+    dependsOn reobfTestJar
+}
+
