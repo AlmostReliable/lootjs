@@ -1,5 +1,7 @@
 package com.github.llytho.lootjs.predicate;
 
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import net.minecraft.advancements.critereon.EntityFlagsPredicate;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
@@ -87,6 +89,27 @@ public class ExtendedEntityFlagsPredicate extends EntityFlagsPredicate {
         return isInWater == null || isInWater == entity.isInWater();
     }
 
+    @Override
+    public JsonElement serializeToJson() {
+        JsonElement jsonElement = super.serializeToJson();
+        JsonObject jsonobject = jsonElement.getAsJsonObject();
+        this.addOptionalBoolean(jsonobject, "isInWater", this.isInWater);
+        this.addOptionalBoolean(jsonobject, "isUnderWater", this.isUnderWater);
+        this.addOptionalBoolean(jsonobject, "isMonster", this.isMonster);
+        this.addOptionalBoolean(jsonobject, "isCreature", this.isCreature);
+        this.addOptionalBoolean(jsonobject, "isOnGround", this.isOnGround);
+        this.addOptionalBoolean(jsonobject, "isUndeadMob", this.isUndeadMob);
+        this.addOptionalBoolean(jsonobject, "isArthropodMob", this.isArthropodMob);
+        this.addOptionalBoolean(jsonobject, "isIllegarMob", this.isIllegarMob);
+        this.addOptionalBoolean(jsonobject, "isWaterMob", this.isWaterMob);
+        return jsonobject;
+    }
+
+    private void addOptionalBoolean(JsonObject pJson, String pName, @Nullable Boolean pValue) {
+        if (pValue != null) {
+            pJson.addProperty(pName, pValue);
+        }
+    }
 
     @SuppressWarnings("UnusedReturnValue")
     public interface IBuilder<T> {

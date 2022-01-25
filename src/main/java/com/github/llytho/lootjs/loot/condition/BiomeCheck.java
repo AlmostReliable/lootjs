@@ -9,6 +9,7 @@ import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.common.BiomeDictionary;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
@@ -51,5 +52,13 @@ public class BiomeCheck implements IExtendedLootCondition {
         }
 
         return true;
+    }
+
+    public List<ResourceKey<Biome>> getBiomes() {
+        return Collections.unmodifiableList(biomes);
+    }
+
+    public List<BiomeDictionary.Type> getTypes() {
+        return Collections.unmodifiableList(types);
     }
 }

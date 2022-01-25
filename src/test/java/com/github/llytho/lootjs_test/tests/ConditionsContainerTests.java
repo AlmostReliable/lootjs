@@ -6,15 +6,10 @@ import com.github.llytho.lootjs.loot.condition.AnyStructure;
 import com.github.llytho.lootjs.loot.condition.BiomeCheck;
 import com.github.llytho.lootjs_test.AllTests;
 import com.github.llytho.lootjs_test.TestHelper;
-import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.level.biome.Biome;
-import net.minecraft.world.level.levelgen.feature.StructureFeature;
 import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
-import net.minecraftforge.common.BiomeDictionary;
-
-import java.util.List;
+import net.minecraft.world.level.storage.loot.predicates.LootItemEntityPropertyCondition;
 
 public class ConditionsContainerTests {
     private static final TestConditionsContainer conditions = new TestConditionsContainer();
@@ -36,19 +31,19 @@ public class ConditionsContainerTests {
     private static void entityTargets(TestHelper helper) {
         helper.debugStack.h2("entity targets");
         conditions.matchEntity(e -> {});
-        helper.<LootContext.EntityTarget>shouldSucceed(conditions.last,
-                "entityTarget",
-                entityTarget -> entityTarget == LootContext.EntityTarget.THIS);
+        helper.shouldSucceed(
+                conditions.<LootItemEntityPropertyCondition>last().entityTarget == LootContext.EntityTarget.THIS,
+                "EntityTarget is = " + LootContext.EntityTarget.THIS.name());
 
         conditions.matchKiller(e -> {});
-        helper.<LootContext.EntityTarget>shouldSucceed(conditions.last,
-                "entityTarget",
-                entityTarget -> entityTarget == LootContext.EntityTarget.KILLER);
+        helper.shouldSucceed(
+                conditions.<LootItemEntityPropertyCondition>last().entityTarget == LootContext.EntityTarget.KILLER,
+                "EntityTarget is = " + LootContext.EntityTarget.KILLER.name());
 
         conditions.matchDirectKiller(e -> {});
-        helper.<LootContext.EntityTarget>shouldSucceed(conditions.last,
-                "entityTarget",
-                entityTarget -> entityTarget == LootContext.EntityTarget.DIRECT_KILLER);
+        helper.shouldSucceed(conditions.<LootItemEntityPropertyCondition>last().entityTarget ==
+                             LootContext.EntityTarget.DIRECT_KILLER,
+                "EntityTarget is = " + LootContext.EntityTarget.DIRECT_KILLER.name());
     }
 
     private static void anyStructure(TestHelper helper) {
@@ -57,9 +52,7 @@ public class ConditionsContainerTests {
                 new ResourceLocation("stronghold"), new ResourceLocation("village")
         }, true);
         helper.shouldSucceed(conditions.last instanceof AnyStructure, "AnyStructure instance");
-        helper.<StructureFeature<?>[]>shouldSucceed(conditions.last,
-                "structures",
-                structures -> structures.length == 2);
+        helper.shouldSucceed(conditions.<AnyStructure>last().getStructures().length == 2, "Should have 2 structures");
         helper.shouldThrow(() -> conditions.anyStructure(new ResourceLocation[]{
                 new ResourceLocation("wrong_structure")
         }, true), IllegalStateException.class, "'wrong_structure' does not exist");
@@ -69,8 +62,8 @@ public class ConditionsContainerTests {
         helper.debugStack.h2("anyBiome");
         conditions.anyBiome("minecraft:desert", "#nether", "minecraft:jungle");
         helper.shouldSucceed(conditions.last instanceof AnyBiomeCheck, "AnyBiomeCheck instance");
-        helper.<List<ResourceKey<Biome>>>shouldSucceed(conditions.last, "biomes", biomes -> biomes.size() == 2);
-        helper.<List<BiomeDictionary.Type>>shouldSucceed(conditions.last, "types", types -> types.size() == 1);
+        helper.shouldSucceed(conditions.<AnyBiomeCheck>last().getBiomes().size() == 2, "Should have 2 biomes");
+        helper.shouldSucceed(conditions.<AnyBiomeCheck>last().getTypes().size() == 1, "Should have 1 type");
         helper.shouldThrow(() -> conditions.anyBiome("not_existing_biome"),
                 IllegalStateException.class,
                 "'not_existing_biome' does not exist");
@@ -83,20 +76,29 @@ public class ConditionsContainerTests {
         helper.debugStack.h2("biome");
         conditions.biome("minecraft:desert", "#nether", "minecraft:jungle");
         helper.shouldSucceed(conditions.last instanceof BiomeCheck, "BiomeCheck instance");
-        helper.<List<ResourceKey<Biome>>>shouldSucceed(conditions.last, "biomes", biomes -> biomes.size() == 2);
-        helper.<List<BiomeDictionary.Type>>shouldSucceed(conditions.last, "types", types -> types.size() == 1);
-        helper.shouldThrow(() -> conditions.biome("not_existing_biome"), IllegalStateException.class, "'not_existing_biome' does not exist");
-        helper.shouldThrow(() -> conditions.biome("#wrong_type"), IllegalStateException.class, "'#wrong_type' does not exist");
+        helper.shouldSucceed(conditions.<BiomeCheck>last().getBiomes().size() == 2, "Should have 2 biomes");
+        helper.shouldSucceed(conditions.<BiomeCheck>last().getTypes().size() == 1, "Should have 1 type");
+        helper.shouldThrow(() -> conditions.biome("not_existing_biome"),
+                IllegalStateException.class,
+                "'not_existing_biome' does not exist");
+        helper.shouldThrow(() -> conditions.biome("#wrong_type"),
+                IllegalStateException.class,
+                "'#wrong_type' does not exist");
     }
 
     public static class TestConditionsContainer implements ConditionsContainer<TestConditionsContainer> {
 
-        public LootItemCondition last;
+        private LootItemCondition last;
 
         @Override
         public TestConditionsContainer addCondition(LootItemCondition pCondition) {
             this.last = pCondition;
             return this;
+        }
+
+        public <T extends LootItemCondition> T last() {
+            //noinspection unchecked
+            return (T) last;
         }
     }
 }
