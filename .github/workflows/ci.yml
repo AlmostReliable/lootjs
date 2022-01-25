@@ -14,8 +14,8 @@ on:
 env:
   JAVA_DIST: 'zulu'
   JAVA_VERSION: 11
-  JAR_NAME: 'lootjs'
-  FILE_NAME: 'LootJS'
+  MOD_ID: 'lootjs'
+  MOD_NAME: 'LootJS'
 
 jobs:
   build:
@@ -82,15 +82,24 @@ jobs:
           chmod +x ./gradlew
           ./gradlew jar --no-daemon
 
-      - name: JAR manipulation
+      - name: Collect version information
         run: |
-          echo "JAR_FILE=$(find build/libs/${{ env.JAR_NAME }}-*-*.jar)" >> $GITHUB_ENV
-          echo ${JAR_FILE%.*} | awk -F- '{ print "MINECRAFT_VERSION=" $2; print "MOD_VERSION=" $3; }' >> $GITHUB_ENV
+          shopt -s failglob # print a warning if a glob does not match anything
+          set_var() {
+            echo $1="$2"
+            echo $1="$2" >> $GITHUB_ENV
+            declare -g $1="$2"
+          }
+          set_var JAR_FILE $(eval echo build/libs/${{ env.MOD_ID }}-*-*.jar)
+          set_var MINECRAFT_VERSION $(echo ${JAR_FILE%.*} | cut -d- -f2)
+          set_var MOD_VERSION $(echo ${JAR_FILE%.*} | cut -d- -f3)
+          set_var RELEASE_TYPE "$(echo ${GITHUB_REF##*/} | cut -d- -f3)"
+          set_var PRE_RELEASE "$([[ -z $RELEASE_TYPE ]] && echo false || echo true)"
 
       - name: Upload Artifact
         uses: actions/upload-artifact@v2
         with:
-          name: ${{ env.FILE_NAME }}-${{ env.MINECRAFT_VERSION }}-${{ env.MOD_VERSION }}.jar
+          name: ${{ env.MOD_NAME }}-${{ env.MINECRAFT_VERSION }}-${{ env.MOD_VERSION }}.jar
           path: ${{ env.JAR_FILE }}
 
       - name: Release
@@ -99,9 +108,10 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           files: ${{ env.JAR_FILE }}
+          prerelease: ${{ env.PRE_RELEASE }}
 
       - name: Upload to CurseForge
         run: ./gradlew curseforge
         env:
           CF_API_KEY: ${{ secrets.CF_API_KEY }}
-          FILE_NAME: ${{ env.FILE_NAME }}
+          RELEASE_TYPE: ${{ env.RELEASE_TYPE }}
