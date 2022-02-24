@@ -8,5 +8,8 @@
     "LootContextBuilderMixin",
     "LootModifierManagerMixin"
   ],
-  "minVersion": "0.8.4"
+  "injectors": {
+    "defaultRequire": 1
+  },
+  "minVersion": "0.8"
 }

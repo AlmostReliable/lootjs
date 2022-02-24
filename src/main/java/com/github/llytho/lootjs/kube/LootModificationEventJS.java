@@ -5,7 +5,7 @@ import com.github.llytho.lootjs.core.*;
 import com.github.llytho.lootjs.kube.builder.LootActionsBuilderJS;
 import com.github.llytho.lootjs.util.Utils;
 import dev.latvian.mods.kubejs.CommonProperties;
-import dev.latvian.mods.kubejs.block.BlockStatePredicate;
+import dev.latvian.mods.kubejs.block.state.BlockStatePredicate;
 import dev.latvian.mods.kubejs.event.EventJS;
 import dev.latvian.mods.kubejs.script.ScriptType;
 import dev.latvian.mods.kubejs.server.ServerJS;
