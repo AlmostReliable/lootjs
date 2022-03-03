@@ -9,6 +9,8 @@ import com.github.llytho.lootjs.util.Utils;
 import dev.latvian.mods.kubejs.item.ItemStackJS;
 import dev.latvian.mods.kubejs.item.ingredient.IngredientJS;
 import dev.latvian.mods.rhino.util.HideFromJS;
+import net.minecraft.advancements.critereon.MinMaxBounds;
+import net.minecraft.util.random.SimpleWeightedRandomList;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Explosion;
 import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
@@ -34,10 +36,39 @@ public class LootActionsBuilderJS implements ConditionsContainer<LootActionsBuil
         return this;
     }
 
-    public LootActionsBuilderJS thenAdd(ItemStackJS... ingredient) {
-        ItemStack[] itemStacks = Arrays.stream(ingredient).map(ItemStackJS::getItemStack).toArray(ItemStack[]::new);
-        buildCurrentAction(new AddLootAction(itemStacks));
+    public LootActionsBuilderJS thenAdd(ItemStackJS... itemStacks) {
+        ItemStack[] vanillaItemStacks = Arrays
+                .stream(itemStacks)
+                .filter(is -> !is.isEmpty())
+                .map(ItemStackJS::getItemStack)
+                .toArray(ItemStack[]::new);
+        buildCurrentAction(new AddLootAction(vanillaItemStacks));
         return this;
+    }
+
+    public LootActionsBuilderJS thenAddWeighted(MinMaxBounds.Ints interval, boolean allowDuplicateLoot, ItemStackJS[] itemStacks) {
+        var weightedListBuilder = SimpleWeightedRandomList.<ItemStack>builder();
+        for (ItemStackJS itemStack : itemStacks) {
+            if (itemStack.isEmpty()) {
+                continue;
+            }
+
+            int weight = itemStack.hasChance() ? (int) itemStack.getChance() : 1;
+            if (weight == 0) {
+                throw new IllegalArgumentException("Chance/Weight cannot be 0 for an item");
+            }
+            weightedListBuilder.add(itemStack.getItemStack(), weight);
+        }
+        buildCurrentAction(new WeightedAddLootAction(interval, weightedListBuilder.build(), allowDuplicateLoot));
+        return this;
+    }
+
+    public LootActionsBuilderJS thenAddWeighted(MinMaxBounds.Ints interval, ItemStackJS[] itemStacks) {
+        return thenAddWeighted(interval, true, itemStacks);
+    }
+
+    public LootActionsBuilderJS thenAddWeighted(ItemStackJS[] itemStacks) {
+        return thenAddWeighted(MinMaxBounds.Ints.atMost(1), true, itemStacks);
     }
 
     public LootActionsBuilderJS thenRemove(IngredientJS ingredient) {

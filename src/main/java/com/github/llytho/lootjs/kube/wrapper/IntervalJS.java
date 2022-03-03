@@ -2,6 +2,8 @@ package com.github.llytho.lootjs.kube.wrapper;
 
 import net.minecraft.advancements.critereon.MinMaxBounds;
 
+import java.util.List;
+
 public class IntervalJS {
     private MinMaxBounds.Doubles bound = MinMaxBounds.Doubles.ANY;
 
@@ -12,12 +14,28 @@ public class IntervalJS {
     }
 
     public static MinMaxBounds.Doubles ofDoubles(Object o) {
+        if (o instanceof List<?> list) {
+            if (list.size() == 1) {
+                return ofDoubles(list.get(0));
+            }
+
+            if (list.size() == 2) {
+                Object min = list.get(0);
+                Object max = list.get(1);
+                if (min instanceof Number minN && max instanceof Number maxN) {
+                    return MinMaxBounds.Doubles.between(minN.doubleValue(), maxN.doubleValue());
+                }
+            }
+        }
+
         if (o instanceof Number) {
             return MinMaxBounds.Doubles.atLeast(((Number) o).doubleValue());
         }
 
-        if (o instanceof MinMaxBounds.Doubles) {
-            return (MinMaxBounds.Doubles) o;
+        if (o instanceof MinMaxBounds<? extends Number> minMaxBounds) {
+            Double min = minMaxBounds.getMin() != null ? minMaxBounds.getMin().doubleValue() : null;
+            Double max = minMaxBounds.getMax() != null ? minMaxBounds.getMax().doubleValue() : null;
+            return new MinMaxBounds.Doubles(min, max);
         }
 
         if (o instanceof IntervalJS) {
@@ -28,19 +46,14 @@ public class IntervalJS {
     }
 
     public static MinMaxBounds.Ints ofInt(Object o) {
-        if (o instanceof Number) {
-            return MinMaxBounds.Ints.atLeast(((Number) o).intValue());
-        }
-
         if (o instanceof MinMaxBounds.Ints) {
             return (MinMaxBounds.Ints) o;
         }
 
-        if (o instanceof IntervalJS) {
-            return ((IntervalJS) o).getVanillaInt();
-        }
-
-        throw new IllegalArgumentException("Argument is not a MinMaxBound");
+        MinMaxBounds.Doubles doubles = ofDoubles(o);
+        Integer min = doubles.getMin() != null ? doubles.getMin().intValue() : null;
+        Integer max = doubles.getMax() != null ? doubles.getMax().intValue() : null;
+        return new MinMaxBounds.Ints(min, max);
     }
 
     public boolean matches(double value) {
