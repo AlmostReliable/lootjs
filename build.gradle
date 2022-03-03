@@ -154,8 +154,8 @@ dependencies {
     // Mixin annotation processor - generates the refmap
     annotationProcessor "org.spongepowered:mixin:${mixin_version}:processor"
 
-//    compileOnly fg.deobf("mezz.jei:jei-${minecraft_version}:${jei_version}:api")
-//    runtimeOnly fg.deobf("mezz.jei:jei-${minecraft_version}:${jei_version}")
+    compileOnly fg.deobf("mezz.jei:jei-${minecraft_version}:${jei_version}:api")
+    runtimeOnly fg.deobf("mezz.jei:jei-${minecraft_version}:${jei_version}")
 
 //    implementation fg.deobf("curse.maven:kubejs-238086:${kubejs_fileid}")
     implementation fg.deobf("dev.latvian.mods:kubejs-forge:${kubejs_version}")
@@ -172,7 +172,7 @@ dependencies {
 //    runtimeOnly fg.deobf("curse.maven:byg-247560:3620164")
 
     // just ding so I can be brain afk while it's loading
-//    runtimeOnly fg.deobf("curse.maven:ding-231275:3548400")
+    runtimeOnly fg.deobf("curse.maven:ding-231275:3548400")
 }
 
 // This block of code expands all the gradle properties in the specified resource targets.
