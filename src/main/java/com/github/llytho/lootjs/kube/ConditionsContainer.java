@@ -7,7 +7,11 @@ import com.github.llytho.lootjs.util.BiomeUtils;
 import com.github.llytho.lootjs.util.TagOrEntry;
 import com.github.llytho.lootjs.util.Utils;
 import com.google.gson.JsonObject;
+import dev.latvian.mods.kubejs.entity.EntityJS;
 import dev.latvian.mods.kubejs.item.ingredient.IngredientJS;
+import dev.latvian.mods.kubejs.player.PlayerJS;
+import dev.latvian.mods.kubejs.stages.Stages;
+import dev.latvian.mods.kubejs.util.UtilsJS;
 import net.minecraft.advancements.critereon.FluidPredicate;
 import net.minecraft.advancements.critereon.MinMaxBounds;
 import net.minecraft.advancements.critereon.StatePropertiesPredicate;
@@ -22,6 +26,7 @@ import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.storage.loot.IntRange;
 import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.PredicateManager;
+import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.level.storage.loot.predicates.*;
 import net.minecraftforge.common.BiomeDictionary;
 import net.minecraftforge.registries.ForgeRegistries;
@@ -31,6 +36,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 public interface ConditionsContainer<B extends ConditionsContainer<?>> {
@@ -198,6 +204,51 @@ public interface ConditionsContainer<B extends ConditionsContainer<?>> {
         action.accept(builder);
         return addCondition(new MatchKillerDistance(builder.build()));
     }
+
+    default B hasAnyStage(String... stages) {
+        if (stages.length == 1) {
+            String stage = stages[0];
+            return addCondition(new PlayerParamPredicate((ctx, player) -> Stages.get(player).has(stage)));
+        }
+
+        return addCondition(new PlayerParamPredicate((ctx, player) -> {
+            for (String stage : stages) {
+                if (Stages.get(player).has(stage)) {
+                    return true;
+                }
+            }
+            return false;
+        }));
+    }
+
+    default B playerPredicate(Predicate<PlayerJS<?>> predicate) {
+        return addCondition(new PlayerParamPredicate((ctx, player) -> {
+            PlayerJS<?> p = UtilsJS.getLevel(ctx.getLevel()).getPlayer(player);
+            return p != null && predicate.test(p);
+        }));
+    }
+
+    default B entityPredicate(Predicate<EntityJS> predicate) {
+        return addCondition(new CustomParamPredicate<>(LootContextParams.THIS_ENTITY, (ctx, entity) -> {
+            EntityJS e = UtilsJS.getLevel(ctx.getLevel()).getEntity(entity);
+            return e != null && predicate.test(e);
+        }));
+    }
+
+    default B killerPredicate(Predicate<EntityJS> predicate) {
+        return addCondition(new CustomParamPredicate<>(LootContextParams.KILLER_ENTITY, (ctx, entity) -> {
+            EntityJS e = UtilsJS.getLevel(ctx.getLevel()).getEntity(entity);
+            return e != null && predicate.test(e);
+        }));
+    }
+
+    default B directKillerPredicate(Predicate<EntityJS> predicate) {
+        return addCondition(new CustomParamPredicate<>(LootContextParams.DIRECT_KILLER_ENTITY, (ctx, entity) -> {
+            EntityJS e = UtilsJS.getLevel(ctx.getLevel()).getEntity(entity);
+            return e != null && predicate.test(e);
+        }));
+    }
+
 
     default B not(Consumer<NotConditionBuilder> action) {
         NotConditionBuilder builder = new NotConditionBuilder();
