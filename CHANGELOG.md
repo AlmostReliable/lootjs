@@ -8,7 +8,7 @@ and this project adheres to [Semantic Versioning].
 ## [Unreleased]
 - /
 
-## [2.1.0] - TBA
+## [2.1.0] - 2022-03-04
 ### Added
 - Action `thenAddWeighted`
 - Conditions `hasAnyStage`, `playerPredicate`, `entityPredicate`, `directKillerPredicate`, `killerPredicate`
