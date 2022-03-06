@@ -35,8 +35,7 @@ public class ConditionalAction implements ILootAction {
             }
         }
 
-        boolean actionSucceed = action.accept(context);
         DebugStack.write(stack, ACTION_PREFIX_INVOKED, action);
-        return actionSucceed;
+        return action.accept(context);
     }
 }

@@ -100,6 +100,18 @@ public class LootActionsBuilderJS implements ConditionsContainer<LootActionsBuil
         return this;
     }
 
+    public LootActionsBuilderJS thenRollPool(Consumer<LootActionsBuilderJS> callback) {
+        return thenRollPool(MinMaxBounds.Ints.exactly(1), callback);
+    }
+
+    public LootActionsBuilderJS thenRollPool(MinMaxBounds.Ints interval, Consumer<LootActionsBuilderJS> callback) {
+        LootActionsBuilderJS poolBuilder = new LootActionsBuilderJS();
+        callback.accept(poolBuilder);
+        List<ILootAction> actions = poolBuilder.getActions();
+        buildCurrentAction(new RollPoolAction(interval, actions));
+        return this;
+    }
+
     public void buildCurrentAction(ILootAction action) {
         LootItemCondition[] conditionsArray = conditions.toArray(new LootItemCondition[0]);
         conditions.clear();
