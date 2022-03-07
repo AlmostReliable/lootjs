@@ -1,8 +1,11 @@
 package com.github.llytho.lootjs.loot.action;
 
 import com.github.llytho.lootjs.core.Constants;
-import com.github.llytho.lootjs.core.DebugStack;
 import com.github.llytho.lootjs.core.ILootAction;
+import com.github.llytho.lootjs.core.ILootHandler;
+import com.github.llytho.lootjs.loot.results.Icon;
+import com.github.llytho.lootjs.loot.results.Info;
+import com.github.llytho.lootjs.loot.results.LootInfoCollector;
 import net.minecraft.advancements.critereon.MinMaxBounds;
 import net.minecraft.world.level.storage.loot.LootContext;
 import org.apache.commons.lang3.ObjectUtils;
@@ -15,40 +18,35 @@ import java.util.Random;
 
 public class RollPoolAction implements ILootAction {
     protected final MinMaxBounds.Ints interval;
-    protected final List<ILootAction> actions;
+    protected final List<ILootHandler> handlers;
 
-    public RollPoolAction(MinMaxBounds.Ints interval, Collection<ILootAction> actions) {
+    public RollPoolAction(MinMaxBounds.Ints interval, Collection<ILootHandler> handlers) {
         this.interval = interval;
-        this.actions = new ArrayList<>(actions);
+        this.handlers = new ArrayList<>(handlers);
     }
 
     @Override
-    public boolean accept(LootContext context) {
-        // TODO just copied from AbstractLootModification. Refactor this later.
-        DebugStack stack = context.getParamOrNull(Constants.RESULT_LOGGER);
+    public boolean test(LootContext context) {
+        LootInfoCollector collector = context.getParamOrNull(Constants.RESULT_COLLECTOR);
         int rolls = getRolls(context.getRandom());
-        DebugStack.pushLayer(stack);
-        DebugStack.write(stack, "Rolling " + rolls + " times {");
         for (int i = 1; i <= rolls; i++) {
-            rollPool(context, stack, i);
+            Info info = LootInfoCollector.createInfo(collector,
+                    new Info.Composite(Icon.DICE, "Roll " + i + " out of " + rolls));
+            roll(context, collector);
+            LootInfoCollector.finalizeInfo(collector, info);
         }
-        DebugStack.write(stack, "}");
-        DebugStack.popLayer(stack);
         return true;
     }
 
-    private void rollPool(LootContext context, @Nullable DebugStack stack, int rollNumber) {
-        DebugStack.pushLayer(stack);
-        DebugStack.write(stack, "Roll " + rollNumber + " {");
-        DebugStack.pushLayer(stack);
-        for (ILootAction action : actions) {
-            if (!action.accept(context)) {
+    private void roll(LootContext context, @Nullable LootInfoCollector collector) {
+        for (ILootHandler handler : handlers) {
+            Info info = LootInfoCollector.create(collector, handler);
+            boolean result = handler.test(context);
+            LootInfoCollector.finalizeInfo(collector, info, result);
+            if (!result) {
                 break;
             }
         }
-        DebugStack.popLayer(stack);
-        DebugStack.write(stack, "}");
-        DebugStack.popLayer(stack);
     }
 
 

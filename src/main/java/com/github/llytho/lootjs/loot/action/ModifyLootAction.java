@@ -19,7 +19,7 @@ public class ModifyLootAction implements ILootAction {
     }
 
     @Override
-    public boolean accept(LootContext context) {
+    public boolean test(LootContext context) {
         ILootContextData data = context.getParamOrNull(Constants.DATA);
         if (data != null) {
             for (int i = 0; i < data.getGeneratedLoot().size(); i++) {

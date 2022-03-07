@@ -12,8 +12,8 @@ public class LootModificationByEntity extends AbstractLootModification {
 
     public final HashSet<EntityType<?>> entities;
 
-    public LootModificationByEntity(String name, HashSet<EntityType<?>> entities, List<ILootAction> actions) {
-        super(name, actions);
+    public LootModificationByEntity(String name, HashSet<EntityType<?>> entities, List<ILootHandler> handlers) {
+        super(name, handlers);
         this.entities = entities;
     }
 

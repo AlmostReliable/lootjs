@@ -1,5 +1,6 @@
 package com.github.llytho.lootjs.core;
 
+import com.github.llytho.lootjs.loot.results.LootInfoCollector;
 import com.google.common.collect.ImmutableMap;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParam;
@@ -16,6 +17,10 @@ public class Constants {
 
     public static final LootContextParam<DebugStack> RESULT_LOGGER = new LootContextParam<>(new ResourceLocation(MODID,
             "result_logger"));
+
+    public static final LootContextParam<LootInfoCollector> RESULT_COLLECTOR = new LootContextParam<>(new ResourceLocation(
+            MODID,
+            "result_collector"));
 
     public static final Map<LootContextParamSet, LootContextType> PSETS_TO_TYPE = ImmutableMap
             .<LootContextParamSet, LootContextType>builder()

@@ -6,6 +6,7 @@ import com.github.llytho.lootjs.kube.wrapper.IntervalJS;
 import dev.latvian.mods.kubejs.KubeJSPlugin;
 import dev.latvian.mods.kubejs.script.BindingsEvent;
 import dev.latvian.mods.kubejs.script.ScriptType;
+import dev.latvian.mods.kubejs.util.ConsoleJS;
 import dev.latvian.mods.rhino.util.wrap.TypeWrappers;
 import net.minecraft.advancements.critereon.MinMaxBounds;
 
@@ -13,7 +14,7 @@ public class LootJSPlugin extends KubeJSPlugin {
 
     @Override
     public void initStartup() {
-        LootModificationsAPI.DEBUG_ACTION = new ConsoleDebugAction();
+        LootModificationsAPI.DEBUG_ACTION = s -> ConsoleJS.SERVER.info(s);
     }
 
     @Override

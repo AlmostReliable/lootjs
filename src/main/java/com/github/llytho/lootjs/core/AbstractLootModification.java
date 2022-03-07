@@ -1,31 +1,35 @@
 package com.github.llytho.lootjs.core;
 
+import com.github.llytho.lootjs.loot.results.Icon;
+import com.github.llytho.lootjs.loot.results.Info;
+import com.github.llytho.lootjs.loot.results.LootInfoCollector;
 import net.minecraft.world.level.storage.loot.LootContext;
 
 import java.util.List;
 
 public abstract class AbstractLootModification implements ILootModification {
-    public static final String UNUSED_NAME = "NO_NAME_PROVIDED";
-    protected final List<ILootAction> actions;
+    protected final List<ILootHandler> handlers;
     private final String name;
 
-    public AbstractLootModification(String name, List<ILootAction> actions) {
+    public AbstractLootModification(String name, List<ILootHandler> handlers) {
         this.name = name;
-        this.actions = actions;
+        this.handlers = handlers;
     }
 
     @Override
     public boolean execute(LootContext context) {
-        DebugStack stack = context.getParamOrNull(Constants.RESULT_LOGGER);
-        DebugStack.pushLayer(stack);
-        for (ILootAction action : actions) {
-            if (!action.accept(context)) {
-                DebugStack.popLayer(stack);
+        LootInfoCollector collector = context.getParamOrNull(Constants.RESULT_COLLECTOR);
+        Info info = LootInfoCollector.createInfo(collector, new Info.Composite(Icon.WRENCH, getName()));
+        for (ILootHandler handler : handlers) {
+            Info actionInfo = LootInfoCollector.create(collector, handler);
+            boolean result = handler.test(context);
+            LootInfoCollector.finalizeInfo(collector, actionInfo, result);
+            if (!result) {
+                LootInfoCollector.finalizeInfo(collector, info);
                 return false;
             }
         }
-
-        DebugStack.popLayer(stack);
+        LootInfoCollector.finalizeInfo(collector, info);
         return true;
     }
 

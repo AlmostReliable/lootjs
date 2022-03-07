@@ -1,6 +1,6 @@
 package com.github.llytho.lootjs.kube.builder;
 
-import com.github.llytho.lootjs.core.ILootAction;
+import com.github.llytho.lootjs.core.ILootHandler;
 import com.github.llytho.lootjs.kube.ConditionsContainer;
 import com.github.llytho.lootjs.kube.LootContextJS;
 import com.github.llytho.lootjs.kube.action.CustomJSAction;
@@ -22,8 +22,7 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 
 public class LootActionsBuilderJS implements ConditionsContainer<LootActionsBuilderJS> {
-    private final List<ILootAction> actions = new ArrayList<>();
-    private final List<LootItemCondition> conditions = new ArrayList<>();
+    private final List<ILootHandler> handlers = new ArrayList<>();
     private String logName;
 
     public LootActionsBuilderJS logName(String name) {
@@ -32,7 +31,7 @@ public class LootActionsBuilderJS implements ConditionsContainer<LootActionsBuil
     }
 
     public LootActionsBuilderJS thenApply(Consumer<LootContextJS> action) {
-        buildCurrentAction(new CustomJSAction(action));
+        handlers.add(new CustomJSAction(action));
         return this;
     }
 
@@ -42,7 +41,7 @@ public class LootActionsBuilderJS implements ConditionsContainer<LootActionsBuil
                 .filter(is -> !is.isEmpty())
                 .map(ItemStackJS::getItemStack)
                 .toArray(ItemStack[]::new);
-        buildCurrentAction(new AddLootAction(vanillaItemStacks));
+        handlers.add(new AddLootAction(vanillaItemStacks));
         return this;
     }
 
@@ -59,7 +58,7 @@ public class LootActionsBuilderJS implements ConditionsContainer<LootActionsBuil
             }
             weightedListBuilder.add(itemStack.getItemStack(), weight);
         }
-        buildCurrentAction(new WeightedAddLootAction(interval, weightedListBuilder.build(), allowDuplicateLoot));
+        handlers.add(new WeightedAddLootAction(interval, weightedListBuilder.build(), allowDuplicateLoot));
         return this;
     }
 
@@ -72,17 +71,17 @@ public class LootActionsBuilderJS implements ConditionsContainer<LootActionsBuil
     }
 
     public LootActionsBuilderJS thenRemove(IngredientJS ingredient) {
-        buildCurrentAction(new RemoveLootAction(ingredient.getVanillaPredicate()));
+        handlers.add(new RemoveLootAction(ingredient.getVanillaPredicate()));
         return this;
     }
 
     public LootActionsBuilderJS thenReplace(IngredientJS ingredient, ItemStackJS itemStack) {
-        buildCurrentAction(new ReplaceLootAction(ingredient.getVanillaPredicate(), itemStack.getItemStack()));
+        handlers.add(new ReplaceLootAction(ingredient.getVanillaPredicate(), itemStack.getItemStack()));
         return this;
     }
 
     public LootActionsBuilderJS thenModify(IngredientJS ingredient, Function<ItemStackJS, ItemStackJS> function) {
-        buildCurrentAction(new ModifyLootAction(ingredient.getVanillaPredicate(),
+        handlers.add(new ModifyLootAction(ingredient.getVanillaPredicate(),
                 (itemStack) -> function.apply(new ItemStackJS(itemStack)).getItemStack()));
         return this;
     }
@@ -90,13 +89,12 @@ public class LootActionsBuilderJS implements ConditionsContainer<LootActionsBuil
     public LootActionsBuilderJS thenExplode(float radius, boolean destroy, boolean fire) {
         Explosion.BlockInteraction mode =
                 destroy ? Explosion.BlockInteraction.DESTROY : Explosion.BlockInteraction.NONE;
-        buildCurrentAction(new ExplodeAction(radius, mode, fire));
+        handlers.add(new ExplodeAction(radius, mode, fire));
         return this;
     }
 
-
     public LootActionsBuilderJS thenLightningStrike(boolean shouldDamage) {
-        buildCurrentAction(new LightningStrikeAction(shouldDamage));
+        handlers.add(new LightningStrikeAction(shouldDamage));
         return this;
     }
 
@@ -107,25 +105,18 @@ public class LootActionsBuilderJS implements ConditionsContainer<LootActionsBuil
     public LootActionsBuilderJS thenRollPool(MinMaxBounds.Ints interval, Consumer<LootActionsBuilderJS> callback) {
         LootActionsBuilderJS poolBuilder = new LootActionsBuilderJS();
         callback.accept(poolBuilder);
-        List<ILootAction> actions = poolBuilder.getActions();
-        buildCurrentAction(new RollPoolAction(interval, actions));
+        List<ILootHandler> poolHandlers = poolBuilder.getHandlers();
+        handlers.add(new RollPoolAction(interval, poolHandlers));
         return this;
     }
 
-    public void buildCurrentAction(ILootAction action) {
-        LootItemCondition[] conditionsArray = conditions.toArray(new LootItemCondition[0]);
-        conditions.clear();
-        ConditionalAction conditionalAction = new ConditionalAction(action, conditionsArray);
-        actions.add(conditionalAction);
-    }
-
     @HideFromJS
-    public List<ILootAction> getActions() {
-        if (actions.isEmpty()) {
+    public List<ILootHandler> getHandlers() {
+        if (handlers.isEmpty()) {
             throw new IllegalArgumentException("No actions were added to the modifier");
         }
 
-        return actions;
+        return handlers;
     }
 
     public String getLogName(String alternative) {
@@ -137,8 +128,8 @@ public class LootActionsBuilderJS implements ConditionsContainer<LootActionsBuil
     }
 
     @Override
-    public LootActionsBuilderJS addCondition(LootItemCondition pCondition) {
-        conditions.add(pCondition);
+    public LootActionsBuilderJS addCondition(LootItemCondition condition) {
+        handlers.add((ILootHandler) condition);
         return this;
     }
 }

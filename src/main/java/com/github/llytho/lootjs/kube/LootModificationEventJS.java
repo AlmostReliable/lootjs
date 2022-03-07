@@ -54,7 +54,7 @@ public class LootModificationEventJS extends EventJS {
     }
 
     public void enableLogging() {
-        LootModificationsAPI.DEBUG_STACK_ENABLED = true;
+        LootModificationsAPI.LOOT_MODIFICATION_LOGGING = true;
     }
 
     public void removeGlobalModifier(String... locationOrModIds) {
@@ -92,7 +92,7 @@ public class LootModificationEventJS extends EventJS {
 
         LootActionsBuilderJS builder = new LootActionsBuilderJS();
         modifierSuppliers.add(() -> {
-            List<ILootAction> actions = builder.getActions();
+            List<ILootHandler> actions = builder.getHandlers();
             String logName = builder.getLogName(Utils.quote("LootTables", Arrays.asList(idOrPattern)));
             return new LootModificationByTable(logName,
                     new ArrayList<>(locations),
@@ -109,7 +109,7 @@ public class LootModificationEventJS extends EventJS {
 
         LootActionsBuilderJS builder = new LootActionsBuilderJS();
         modifierSuppliers.add(() -> {
-            List<ILootAction> actions = builder.getActions();
+            List<ILootHandler> actions = builder.getHandlers();
             String logName = builder.getLogName(Utils.quote("Types", Arrays.asList(types)));
             return new LootModificationByType(logName, new ArrayList<>(Arrays.asList(types)), new ArrayList<>(actions));
         });
@@ -130,7 +130,7 @@ public class LootModificationEventJS extends EventJS {
 
         LootActionsBuilderJS builder = new LootActionsBuilderJS();
         modifierSuppliers.add(() -> {
-            List<ILootAction> actions = builder.getActions();
+            List<ILootHandler> actions = builder.getHandlers();
             String logName = builder.getLogName(Utils.quote("Blocks", set));
             return new LootModificationByBlock(logName, set, new ArrayList<>(actions));
         });
@@ -147,7 +147,7 @@ public class LootModificationEventJS extends EventJS {
 
         LootActionsBuilderJS builder = new LootActionsBuilderJS();
         modifierSuppliers.add(() -> {
-            List<ILootAction> actions = builder.getActions();
+            List<ILootHandler> actions = builder.getHandlers();
             String logName = builder.getLogName(Utils.quote("Entities",
                     set.stream().map(ForgeRegistryEntry::getRegistryName).collect(Collectors.toList())));
             return new LootModificationByEntity(logName, set, new ArrayList<>(actions));

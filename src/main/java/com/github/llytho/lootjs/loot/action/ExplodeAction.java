@@ -19,7 +19,7 @@ public class ExplodeAction implements ILootAction {
     }
 
     @Override
-    public boolean accept(LootContext context) {
+    public boolean test(LootContext context) {
         Vec3 origin = context.getParamOrNull(LootContextParams.ORIGIN);
         if (origin == null) return true;
         context.getLevel().explode(null, origin.x, origin.y, origin.z, radius, fire, mode);

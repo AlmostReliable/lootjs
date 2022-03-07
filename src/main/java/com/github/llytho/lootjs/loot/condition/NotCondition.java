@@ -1,12 +1,13 @@
 package com.github.llytho.lootjs.loot.condition;
 
 import com.github.llytho.lootjs.core.Constants;
-import com.github.llytho.lootjs.core.DebugStack;
+import com.github.llytho.lootjs.core.ILootHandler;
+import com.github.llytho.lootjs.loot.results.Info;
+import com.github.llytho.lootjs.loot.results.LootInfoCollector;
 import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
 
 public class NotCondition implements IExtendedLootCondition {
-    public static final String PREFIX = DebugStack.CONDITION_PREFIX + "NOT_";
     private final LootItemCondition condition;
 
     public NotCondition(LootItemCondition condition) {
@@ -15,9 +16,10 @@ public class NotCondition implements IExtendedLootCondition {
 
     @Override
     public boolean test(LootContext context) {
-        DebugStack stack = context.getParamOrNull(Constants.RESULT_LOGGER);
-        boolean succeed = !condition.test(context);
-        DebugStack.write(stack, PREFIX, condition, null, succeed);
-        return succeed;
+        LootInfoCollector collector = context.getParamOrNull(Constants.RESULT_COLLECTOR);
+        Info info = LootInfoCollector.create(collector, (ILootHandler) condition);
+        boolean result = !condition.test(context);
+        LootInfoCollector.finalizeInfo(collector, info, result);
+        return result;
     }
 }
