@@ -87,7 +87,7 @@ public class ConditionTests {
 
             if (featurePos != null) {
                 LootContext ctx = helper.unknownContext(new Vec3(featurePos.getX(),
-                        featurePos.getY(),
+                        -20, // TODO is weird, i don't like but map feature provides a different position ... 
                         featurePos.getZ()));
 
                 AnyStructure shStructure = new AnyStructure(new StructureFeature[]{ StructureFeature.STRONGHOLD },
