@@ -88,12 +88,7 @@ public class Utils {
         throw new IllegalArgumentException(registry.getRegistryName() + " does not provide tags");
     }
 
-    @Nullable
-    public static String formatEntity(@Nullable Entity entity) {
-        if (entity == null) {
-            return null;
-        }
-
+    public static String formatEntity(Entity entity) {
         return String.format("Type=%s, Id=%s, Dim=%s, x=%.2f, y=%.2f, z=%.2f",
                 quote(entity.getType().getRegistryName()),
                 entity.getId(),
@@ -103,21 +98,11 @@ public class Utils {
                 entity.getZ());
     }
 
-    @Nullable
-    public static String formatPosition(@Nullable Vec3 position) {
-        if (position == null) {
-            return null;
-        }
-
+    public static String formatPosition(Vec3 position) {
         return String.format("(%.2f, %.2f, %.2f)", position.x, position.y, position.z);
     }
 
-    @Nullable
     public static String formatItemStack(ItemStack itemStack) {
-        if (itemStack.isEmpty()) {
-            return null;
-        }
-
         String tag = "";
         if (itemStack.hasTag()) tag += " " + itemStack.getTag();
         return itemStack + tag;

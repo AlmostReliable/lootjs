@@ -1,7 +1,9 @@
 package com.github.llytho.lootjs.loot.condition;
 
 import com.github.llytho.lootjs.core.Constants;
-import com.github.llytho.lootjs.core.DebugStack;
+import com.github.llytho.lootjs.core.ILootHandler;
+import com.github.llytho.lootjs.loot.results.Info;
+import com.github.llytho.lootjs.loot.results.LootInfoCollector;
 import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
 
@@ -14,24 +16,15 @@ public class OrCondition implements IExtendedLootCondition {
 
     @Override
     public boolean test(LootContext context) {
-        DebugStack stack = context.getParamOrNull(Constants.RESULT_LOGGER);
-        DebugStack.TestedEntry entry = DebugStack.write(stack, null, this, " {", false);
-        DebugStack.pushLayer(stack);
-
-        boolean succeed = false;
+        LootInfoCollector collector = context.getParamOrNull(Constants.RESULT_COLLECTOR);
         for (LootItemCondition condition : conditions) {
-            succeed = condition.test(context);
-            if (!(condition instanceof OrCondition || condition instanceof AndCondition)) {
-                DebugStack.write(stack, DebugStack.CONDITION_PREFIX, condition, null, succeed);
-            }
-            if (succeed) {
-                break;
+            Info info = LootInfoCollector.create(collector, (ILootHandler) condition);
+            boolean result = condition.test(context);
+            LootInfoCollector.finalizeInfo(collector, info, result);
+            if (result) {
+                return true;
             }
         }
-
-        DebugStack.popLayer(stack);
-        DebugStack.write(stack, "}");
-        if (entry != null) entry.setSucceed(succeed);
-        return succeed;
+        return false;
     }
 }

@@ -12,8 +12,8 @@ public class LootModificationByBlock extends AbstractLootModification {
 
     public final HashSet<Block> blocks;
 
-    public LootModificationByBlock(String name, HashSet<Block> blocks, List<ILootAction> actions) {
-        super(name, actions);
+    public LootModificationByBlock(String name, HashSet<Block> blocks, List<ILootHandler> handlers) {
+        super(name, handlers);
         this.blocks = blocks;
     }
 

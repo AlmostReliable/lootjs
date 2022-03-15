@@ -8,6 +8,12 @@ and this project adheres to [Semantic Versioning].
 ## [Unreleased]
 - /
 
+## [2.2.0] - 2022-03-15
+### Added
+- Action `thenRollPool`
+### Changed
+- Refactor loot logging
+
 ## [2.1.0] - 2022-03-04
 ### Added
 - Action `thenAddWeighted`
@@ -24,5 +30,6 @@ and this project adheres to [Semantic Versioning].
 
 <!-- Versions -->
 [unreleased]: https://github.com/AlmostReliable/lootjs-forge/compare/1.18...HEAD
+[2.2.0]: https://github.com/AlmostReliable/lootjs-forge/releases/tag/v1.18-2.2.0
 [2.1.0]: https://github.com/AlmostReliable/lootjs-forge/releases/tag/v1.18-2.1.0
 [2.0.0]: https://github.com/AlmostReliable/lootjs-forge/releases/tag/v1.18-2.0.0

@@ -15,6 +15,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+
+@Deprecated(since = "1.18.1-2.2.0. Will be removed in the future as soon as tests are ported to GameTestFramework", forRemoval = true)
 public class DebugStack {
     public static final String CONDITION_PREFIX = "";
     public static final int BASE_LAYER = 1;

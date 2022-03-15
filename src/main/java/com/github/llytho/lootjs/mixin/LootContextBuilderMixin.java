@@ -3,8 +3,8 @@ package com.github.llytho.lootjs.mixin;
 import com.github.llytho.lootjs.LootContextData;
 import com.github.llytho.lootjs.LootModificationsAPI;
 import com.github.llytho.lootjs.core.Constants;
-import com.github.llytho.lootjs.core.DebugStack;
 import com.github.llytho.lootjs.core.LootContextType;
+import com.github.llytho.lootjs.loot.results.LootInfoCollector;
 import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParam;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParamSet;
@@ -24,8 +24,8 @@ public abstract class LootContextBuilderMixin {
         LootContextType type = Constants.PSETS_TO_TYPE.getOrDefault(paramSet, LootContextType.UNKNOWN);
         this.withParameter(Constants.DATA, new LootContextData(type));
 
-        if (LootModificationsAPI.DEBUG_STACK_ENABLED) {
-            this.withParameter(Constants.RESULT_LOGGER, new DebugStack());
+        if (LootModificationsAPI.LOOT_MODIFICATION_LOGGING) {
+            this.withParameter(Constants.RESULT_COLLECTOR, new LootInfoCollector());
         }
     }
 }

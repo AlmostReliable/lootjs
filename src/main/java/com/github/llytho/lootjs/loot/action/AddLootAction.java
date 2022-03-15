@@ -15,7 +15,7 @@ public class AddLootAction implements ILootAction {
     }
 
     @Override
-    public boolean accept(LootContext context) {
+    public boolean test(LootContext context) {
         ILootContextData data = context.getParamOrNull(Constants.DATA);
         if (data != null) {
             for (ItemStack itemStack : itemStacks) {

@@ -6,6 +6,7 @@
   "mixins": [
     "ForgeHooksMixin",
     "LootContextBuilderMixin",
+    "LootItemConditionMixin",
     "LootModifierManagerMixin"
   ],
   "injectors": {

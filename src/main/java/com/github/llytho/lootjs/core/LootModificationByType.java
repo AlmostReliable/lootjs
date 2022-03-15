@@ -7,8 +7,8 @@ import java.util.List;
 public class LootModificationByType extends AbstractLootModification {
     private final List<LootContextType> types;
 
-    public LootModificationByType(String name, List<LootContextType> types, List<ILootAction> actions) {
-        super(name, actions);
+    public LootModificationByType(String name, List<LootContextType> types, List<ILootHandler> handlers) {
+        super(name, handlers);
         this.types = types;
     }
 

@@ -16,7 +16,7 @@ public class RemoveLootAction implements ILootAction {
     }
 
     @Override
-    public boolean accept(LootContext context) {
+    public boolean test(LootContext context) {
         ILootContextData data = context.getParamOrNull(Constants.DATA);
         if (data != null) {
             data.getGeneratedLoot().removeIf(predicate);

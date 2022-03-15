@@ -2,7 +2,6 @@ package com.github.llytho.lootjs;
 
 import com.github.llytho.lootjs.core.ILootContextData;
 import com.github.llytho.lootjs.core.LootContextType;
-import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.ItemStack;
 
 import java.util.ArrayList;

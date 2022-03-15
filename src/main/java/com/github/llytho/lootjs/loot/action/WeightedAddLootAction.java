@@ -30,7 +30,7 @@ public class WeightedAddLootAction implements ILootAction {
     }
 
     @Override
-    public boolean accept(LootContext context) {
+    public boolean test(LootContext context) {
         ILootContextData data = context.getParamOrNull(Constants.DATA);
         Random random = context.getLevel().getRandom();
         if (data != null) {
