@@ -18,13 +18,17 @@ public class ContainsLootCondition implements IExtendedLootCondition {
     }
 
     @Override
+    public boolean applyLootHandler(LootContext context, List<ItemStack> loot) {
+        return exact ? matchExact(loot) : match(loot);
+    }
+
+    @Override
     public boolean test(LootContext context) {
         ILootContextData data = context.getParamOrNull(Constants.DATA);
         if (data == null) {
             return false;
         }
-
-        return exact ? matchExact(data.getGeneratedLoot()) : match(data.getGeneratedLoot());
+        return applyLootHandler(context, data.getGeneratedLoot());
     }
 
     private boolean match(List<ItemStack> generatedLoot) {

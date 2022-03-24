@@ -115,20 +115,25 @@ public class ConditionTests {
 
             data.setGeneratedLoot(Arrays.asList(new ItemStack(Items.DIAMOND), new ItemStack(Items.DIAMOND_HELMET)));
 
-            ContainsLootCondition nonExact = new ContainsLootCondition(itemStack -> itemStack.getItem() == Items.DIAMOND, false);
+            ContainsLootCondition nonExact = new ContainsLootCondition(itemStack -> itemStack.getItem() ==
+                                                                                    Items.DIAMOND, false);
             helper.shouldSucceed(nonExact.test(ctx), "Contains diamond");
 
-            ContainsLootCondition exact = new ContainsLootCondition(itemStack -> itemStack.getItem() == Items.DIAMOND || itemStack.getItem() == Items.DIAMOND_HELMET, true);
+            ContainsLootCondition exact = new ContainsLootCondition(itemStack -> itemStack.getItem() == Items.DIAMOND ||
+                                                                                 itemStack.getItem() ==
+                                                                                 Items.DIAMOND_HELMET, true);
             helper.shouldSucceed(exact.test(ctx), "Contains diamond & helmet");
 
-            ContainsLootCondition nonExactNotExist = new ContainsLootCondition(itemStack -> itemStack.getItem() == Items.NETHER_BRICK, false);
+            ContainsLootCondition nonExactNotExist = new ContainsLootCondition(itemStack -> itemStack.getItem() ==
+                                                                                            Items.NETHER_BRICK, false);
             helper.shouldFail(nonExactNotExist.test(ctx), "No nether brick");
 
             ContainsLootCondition exactFailNotExist = new ContainsLootCondition(itemStack ->
                     itemStack.getItem() == Items.DIAMOND || itemStack.getItem() == Items.NETHER_BRICK, true);
             helper.shouldFail(exactFailNotExist.test(ctx), "No nether brick");
 
-            ContainsLootCondition exactFail = new ContainsLootCondition(itemStack -> itemStack.getItem() == Items.DIAMOND, true);
+            ContainsLootCondition exactFail = new ContainsLootCondition(itemStack -> itemStack.getItem() ==
+                                                                                     Items.DIAMOND, true);
             helper.shouldFail(exactFail.test(ctx), "Contains only diamond");
         });
 
@@ -216,37 +221,38 @@ public class ConditionTests {
 
         AllTests.add("AndCondition", helper -> {
             LootContext ctx = helper.unknownContext(helper.player.position());
-            AndCondition ac = new AndCondition(new LootItemCondition[]{
-                    new AnyDimension(new ResourceLocation[]{ new ResourceLocation("overworld") }),
-                    new IsLightLevel(0, 15)
-            });
+            AndCondition ac = new AndCondition.Builder()
+                    .addCondition(new AnyDimension(new ResourceLocation[]{ new ResourceLocation("overworld") }))
+                    .addCondition(new IsLightLevel(0, 15))
+                    .build();
             helper.shouldSucceed(ac.test(ctx), "Matches all conditions");
 
-            ac = new AndCondition(new LootItemCondition[]{
-                    new AnyDimension(new ResourceLocation[]{ new ResourceLocation("overworld") }),
-                    new IsLightLevel(0, 7),
-                    new IsLightLevel(8, 15)
-            });
+            ac = new AndCondition.Builder()
+                    .addCondition(new AnyDimension(new ResourceLocation[]{ new ResourceLocation("overworld") }))
+                    .addCondition(new IsLightLevel(0, 7))
+                    .addCondition(new IsLightLevel(8, 15))
+                    .build();
             helper.shouldFail(ac.test(ctx), "Fails on light check");
         });
 
         AllTests.add("OrCondition", helper -> {
             LootContext ctx = helper.unknownContext(helper.player.position());
-            OrCondition or = new OrCondition(new LootItemCondition[]{
-                    new AnyDimension(new ResourceLocation[]{ new ResourceLocation("overworld") }),
-                    new IsLightLevel(0, 15)
-            });
+            OrCondition or = new OrCondition.Builder()
+                    .addCondition(new AnyDimension(new ResourceLocation[]{ new ResourceLocation("overworld") }))
+                    .addCondition(new IsLightLevel(0, 15))
+                    .build();
             helper.shouldSucceed(or.test(ctx), "Matches");
 
-            or = new OrCondition(new LootItemCondition[]{
-                    new IsLightLevel(0, 7), new IsLightLevel(8, 15)
-            });
+            or = new OrCondition.Builder()
+                    .addCondition(new IsLightLevel(0, 7))
+                    .addCondition(new IsLightLevel(8, 15))
+                    .build();
             helper.shouldSucceed(or.test(ctx), "Still match");
 
-            or = new OrCondition(new LootItemCondition[]{
-                    new AnyDimension(new ResourceLocation[]{ new ResourceLocation("nether") }),
-                    new AnyDimension(new ResourceLocation[]{ new ResourceLocation("end") })
-            });
+            or = new OrCondition.Builder()
+                    .addCondition(new AnyDimension(new ResourceLocation[]{ new ResourceLocation("nether") }))
+                    .addCondition(new AnyDimension(new ResourceLocation[]{ new ResourceLocation("end") }))
+                    .build();
             helper.shouldFail(or.test(ctx), "Not in nether or end");
         });
 

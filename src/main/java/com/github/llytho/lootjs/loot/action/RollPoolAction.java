@@ -7,6 +7,7 @@ import com.github.llytho.lootjs.loot.results.Icon;
 import com.github.llytho.lootjs.loot.results.Info;
 import com.github.llytho.lootjs.loot.results.LootInfoCollector;
 import net.minecraft.advancements.critereon.MinMaxBounds;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.storage.loot.LootContext;
 import org.apache.commons.lang3.ObjectUtils;
 
@@ -26,22 +27,24 @@ public class RollPoolAction implements ILootAction {
     }
 
     @Override
-    public boolean test(LootContext context) {
+    public boolean applyLootHandler(LootContext context, List<ItemStack> loot) {
         LootInfoCollector collector = context.getParamOrNull(Constants.RESULT_COLLECTOR);
         int rolls = getRolls(context.getRandom());
         for (int i = 1; i <= rolls; i++) {
             Info info = LootInfoCollector.createInfo(collector,
                     new Info.Composite(Icon.DICE, "Roll " + i + " out of " + rolls));
-            roll(context, collector);
+            List<ItemStack> poolLoot = new ArrayList<>();
+            roll(context, poolLoot, collector);
+            loot.addAll(poolLoot);
             LootInfoCollector.finalizeInfo(collector, info);
         }
         return true;
     }
 
-    private void roll(LootContext context, @Nullable LootInfoCollector collector) {
+    private void roll(LootContext context, List<ItemStack> loot, @Nullable LootInfoCollector collector) {
         for (ILootHandler handler : handlers) {
             Info info = LootInfoCollector.create(collector, handler);
-            boolean result = handler.test(context);
+            boolean result = handler.applyLootHandler(context, loot);
             LootInfoCollector.finalizeInfo(collector, info, result);
             if (!result) {
                 break;
@@ -49,10 +52,10 @@ public class RollPoolAction implements ILootAction {
         }
     }
 
-
     protected int getRolls(Random random) {
         int min = ObjectUtils.firstNonNull(interval.getMin(), 1);
         int max = ObjectUtils.firstNonNull(interval.getMax(), min);
         return random.nextInt(max + 1 - min) + min;
     }
 }
+

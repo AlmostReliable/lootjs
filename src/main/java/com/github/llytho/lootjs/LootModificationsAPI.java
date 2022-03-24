@@ -54,7 +54,7 @@ public class LootModificationsAPI {
 
         for (ILootModification modification : modifications) {
             if (modification.shouldExecute(context)) {
-                modification.execute(context);
+                modification.execute(context, loot);
             }
             contextData.reset();
         }

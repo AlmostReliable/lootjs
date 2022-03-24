@@ -1,6 +1,8 @@
 package com.github.llytho.lootjs.kube;
 
-import com.github.llytho.lootjs.kube.builder.*;
+import com.github.llytho.lootjs.core.ILootCondition;
+import com.github.llytho.lootjs.kube.builder.DamageSourcePredicateBuilderJS;
+import com.github.llytho.lootjs.kube.builder.EntityPredicateBuilderJS;
 import com.github.llytho.lootjs.loot.condition.*;
 import com.github.llytho.lootjs.loot.condition.builder.DistancePredicateBuilder;
 import com.github.llytho.lootjs.util.BiomeUtils;
@@ -39,6 +41,7 @@ import java.util.function.Consumer;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
+@SuppressWarnings({ "UnusedReturnValue", "unused" })
 public interface ConditionsContainer<B extends ConditionsContainer<?>> {
 
     default B matchLoot(IngredientJS ingredient) {
@@ -249,33 +252,32 @@ public interface ConditionsContainer<B extends ConditionsContainer<?>> {
         }));
     }
 
-
-    default B not(Consumer<NotConditionBuilder> action) {
-        NotConditionBuilder builder = new NotConditionBuilder();
+    default B not(Consumer<NotCondition.Builder> action) {
+        NotCondition.Builder builder = new NotCondition.Builder();
         action.accept(builder);
         return addCondition(builder.build());
     }
 
-    default B or(Consumer<OrConditionBuilder> action) {
-        OrConditionBuilder builder = new OrConditionBuilder();
+    default B or(Consumer<OrCondition.Builder> action) {
+        OrCondition.Builder builder = new OrCondition.Builder();
         action.accept(builder);
         return addCondition(builder.build());
     }
 
-    default B and(Consumer<AndConditionBuilder> action) {
-        AndConditionBuilder builder = new AndConditionBuilder();
+    default B and(Consumer<AndCondition.Builder> action) {
+        AndCondition.Builder builder = new AndCondition.Builder();
         action.accept(builder);
         return addCondition(builder.build());
     }
 
     default B customCondition(JsonObject json) {
         LootItemCondition condition = PredicateManager.GSON.fromJson(json, LootItemCondition.class);
-        return addCondition(condition);
+        return addCondition((ILootCondition)condition);
     }
 
     default B addCondition(LootItemCondition.Builder builder) {
-        return addCondition(builder.build());
+        return addCondition((ILootCondition) builder.build());
     }
 
-    B addCondition(LootItemCondition pCondition);
+    B addCondition(ILootCondition condition);
 }

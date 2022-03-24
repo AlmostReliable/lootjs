@@ -1,5 +1,6 @@
 package com.github.llytho.lootjs_test.tests;
 
+import com.github.llytho.lootjs.core.ILootCondition;
 import com.github.llytho.lootjs.kube.ConditionsContainer;
 import com.github.llytho.lootjs.loot.condition.AnyBiomeCheck;
 import com.github.llytho.lootjs.loot.condition.AnyStructure;
@@ -88,11 +89,11 @@ public class ConditionsContainerTests {
 
     public static class TestConditionsContainer implements ConditionsContainer<TestConditionsContainer> {
 
-        private LootItemCondition last;
+        private ILootCondition last;
 
         @Override
-        public TestConditionsContainer addCondition(LootItemCondition pCondition) {
-            this.last = pCondition;
+        public TestConditionsContainer addCondition(ILootCondition condition) {
+            this.last = condition;
             return this;
         }
 

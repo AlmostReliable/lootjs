@@ -1,18 +1,13 @@
 package com.github.llytho.lootjs.loot.action;
 
-import com.github.llytho.lootjs.core.Constants;
 import com.github.llytho.lootjs.core.ILootAction;
-import com.github.llytho.lootjs.core.ILootContextData;
 import net.minecraft.advancements.critereon.MinMaxBounds;
 import net.minecraft.util.random.SimpleWeightedRandomList;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.storage.loot.LootContext;
 import org.apache.commons.lang3.ObjectUtils;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Random;
+import java.util.*;
 
 public class WeightedAddLootAction implements ILootAction {
 
@@ -30,17 +25,14 @@ public class WeightedAddLootAction implements ILootAction {
     }
 
     @Override
-    public boolean test(LootContext context) {
-        ILootContextData data = context.getParamOrNull(Constants.DATA);
+    public boolean applyLootHandler(LootContext context, List<ItemStack> loot) {
         Random random = context.getLevel().getRandom();
-        if (data != null) {
-            Collection<ItemStack> rolledItems = allowDuplicateLoot ? new ArrayList<>() : new HashSet<>();
-            int lootRolls = getLootRolls(random);
-            for (int i = 0; i < lootRolls; i++) {
-                weightedRandomList.getRandomValue(random).ifPresent(rolledItems::add);
-            }
-            data.getGeneratedLoot().addAll(rolledItems.stream().map(ItemStack::copy).toList());
+        Collection<ItemStack> rolledItems = allowDuplicateLoot ? new ArrayList<>() : new HashSet<>();
+        int lootRolls = getLootRolls(random);
+        for (int i = 0; i < lootRolls; i++) {
+            weightedRandomList.getRandomValue(random).ifPresent(rolledItems::add);
         }
+        loot.addAll(rolledItems.stream().map(ItemStack::copy).toList());
         return true;
     }
 

@@ -3,6 +3,7 @@ package com.github.llytho.lootjs.core;
 import com.github.llytho.lootjs.loot.results.Icon;
 import com.github.llytho.lootjs.loot.results.Info;
 import com.github.llytho.lootjs.loot.results.LootInfoCollector;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.storage.loot.LootContext;
 
 import java.util.List;
@@ -17,12 +18,12 @@ public abstract class AbstractLootModification implements ILootModification {
     }
 
     @Override
-    public boolean execute(LootContext context) {
+    public boolean execute(LootContext context, List<ItemStack> loot) {
         LootInfoCollector collector = context.getParamOrNull(Constants.RESULT_COLLECTOR);
         Info info = LootInfoCollector.createInfo(collector, new Info.Composite(Icon.WRENCH, getName()));
         for (ILootHandler handler : handlers) {
             Info actionInfo = LootInfoCollector.create(collector, handler);
-            boolean result = handler.test(context);
+            boolean result = handler.applyLootHandler(context, loot);
             LootInfoCollector.finalizeInfo(collector, actionInfo, result);
             if (!result) {
                 LootInfoCollector.finalizeInfo(collector, info);

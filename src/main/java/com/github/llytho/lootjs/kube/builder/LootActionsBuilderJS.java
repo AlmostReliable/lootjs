@@ -1,5 +1,6 @@
 package com.github.llytho.lootjs.kube.builder;
 
+import com.github.llytho.lootjs.core.ILootCondition;
 import com.github.llytho.lootjs.core.ILootHandler;
 import com.github.llytho.lootjs.kube.ConditionsContainer;
 import com.github.llytho.lootjs.kube.LootContextJS;
@@ -13,7 +14,6 @@ import net.minecraft.advancements.critereon.MinMaxBounds;
 import net.minecraft.util.random.SimpleWeightedRandomList;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Explosion;
-import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -128,7 +128,7 @@ public class LootActionsBuilderJS implements ConditionsContainer<LootActionsBuil
     }
 
     @Override
-    public LootActionsBuilderJS addCondition(LootItemCondition condition) {
+    public LootActionsBuilderJS addCondition(ILootCondition condition) {
         handlers.add((ILootHandler) condition);
         return this;
     }

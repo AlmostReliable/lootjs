@@ -79,6 +79,20 @@ public class LootInfoCollector {
         return new Info.TitledInfo(Icon.ACTION, title);
     }
 
+    public static void append(Info info, int indentDepth, StringBuilder sb) {
+        String indent = StringUtils.repeat("    ", indentDepth);
+
+        sb.append(indent).append(info.transform());
+        if (info instanceof Info.Composite composite) {
+            sb.append(" {\n");
+            for (Info child : composite.getChildren()) {
+                append(child, indentDepth + 1, sb);
+            }
+            sb.append(indent).append("}");
+        }
+        sb.append("\n");
+    }
+
     public Collection<Info> getFirstLayer() {
         return Collections.unmodifiableCollection(firstLayer);
     }
@@ -108,19 +122,5 @@ public class LootInfoCollector {
         for (Info root : getFirstLayer()) {
             append(root, indentDepth, stringBuilder);
         }
-    }
-
-    public static void append(Info info, int indentDepth, StringBuilder sb) {
-        String indent = StringUtils.repeat("    ", indentDepth);
-
-        sb.append(indent).append(info.transform());
-        if (info instanceof Info.Composite composite) {
-            sb.append(" {\n");
-            for (Info child : composite.getChildren()) {
-                append(child, indentDepth + 1, sb);
-            }
-            sb.append(indent).append("}");
-        }
-        sb.append("\n");
     }
 }

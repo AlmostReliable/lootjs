@@ -3,9 +3,12 @@ package com.github.llytho.lootjs.loot.action;
 import com.github.llytho.lootjs.core.ILootAction;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LightningBolt;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.phys.Vec3;
+
+import java.util.List;
 
 public class LightningStrikeAction implements ILootAction {
     private final boolean shouldDamageEntity;
@@ -15,7 +18,7 @@ public class LightningStrikeAction implements ILootAction {
     }
 
     @Override
-    public boolean test(LootContext context) {
+    public boolean applyLootHandler(LootContext context, List<ItemStack> loot) {
         Vec3 origin = context.getParamOrNull(LootContextParams.ORIGIN);
         if (origin == null) return true;
 

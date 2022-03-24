@@ -1,10 +1,10 @@
 package com.github.llytho.lootjs.loot.action;
 
-import com.github.llytho.lootjs.core.Constants;
 import com.github.llytho.lootjs.core.ILootAction;
-import com.github.llytho.lootjs.core.ILootContextData;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.storage.loot.LootContext;
+
+import java.util.List;
 
 public class AddLootAction implements ILootAction {
 
@@ -15,12 +15,9 @@ public class AddLootAction implements ILootAction {
     }
 
     @Override
-    public boolean test(LootContext context) {
-        ILootContextData data = context.getParamOrNull(Constants.DATA);
-        if (data != null) {
-            for (ItemStack itemStack : itemStacks) {
-                data.getGeneratedLoot().add(itemStack.copy());
-            }
+    public boolean applyLootHandler(LootContext context, List<ItemStack> loot) {
+        for (ItemStack itemStack : itemStacks) {
+            loot.add(itemStack.copy());
         }
         return true;
     }
