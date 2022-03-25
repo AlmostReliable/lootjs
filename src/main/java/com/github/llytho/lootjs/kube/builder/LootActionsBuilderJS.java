@@ -1,10 +1,12 @@
 package com.github.llytho.lootjs.kube.builder;
 
+import com.github.llytho.lootjs.core.ILootAction;
 import com.github.llytho.lootjs.core.ILootCondition;
 import com.github.llytho.lootjs.core.ILootHandler;
 import com.github.llytho.lootjs.kube.ConditionsContainer;
 import com.github.llytho.lootjs.kube.LootContextJS;
 import com.github.llytho.lootjs.kube.action.CustomJSAction;
+import com.github.llytho.lootjs.loot.LootFunctionsContainer;
 import com.github.llytho.lootjs.loot.action.*;
 import com.github.llytho.lootjs.util.Utils;
 import com.github.llytho.lootjs.util.WeightedItemStack;
@@ -24,7 +26,8 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 
 @SuppressWarnings("unused")
-public class LootActionsBuilderJS implements ConditionsContainer<LootActionsBuilderJS> {
+public class LootActionsBuilderJS
+        implements ConditionsContainer<LootActionsBuilderJS>, LootFunctionsContainer<LootActionsBuilderJS> {
     public static final String DEPRECATED_MSG = "1.18.2-2.3.0 Will be removed in future versions. Please use ";
 
     private final List<ILootHandler> handlers = new ArrayList<>();
@@ -156,6 +159,12 @@ public class LootActionsBuilderJS implements ConditionsContainer<LootActionsBuil
     @Override
     public LootActionsBuilderJS addCondition(ILootCondition condition) {
         handlers.add(condition);
+        return this;
+    }
+
+    @Override
+    public LootActionsBuilderJS addAction(ILootAction action) {
+        handlers.add(action);
         return this;
     }
 }
