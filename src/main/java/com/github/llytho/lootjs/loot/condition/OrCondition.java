@@ -3,7 +3,6 @@ package com.github.llytho.lootjs.loot.condition;
 import com.github.llytho.lootjs.core.Constants;
 import com.github.llytho.lootjs.core.ILootCondition;
 import com.github.llytho.lootjs.core.ILootContextData;
-import com.github.llytho.lootjs.kube.ConditionsContainer;
 import com.github.llytho.lootjs.loot.results.Info;
 import com.github.llytho.lootjs.loot.results.LootInfoCollector;
 import net.minecraft.world.item.ItemStack;
@@ -15,7 +14,7 @@ import java.util.List;
 public class OrCondition implements IExtendedLootCondition {
     private final ILootCondition[] conditions;
 
-    public OrCondition(ILootCondition[] conditions) {
+    public OrCondition(ILootCondition... conditions) {
         this.conditions = conditions;
     }
 
@@ -37,24 +36,5 @@ public class OrCondition implements IExtendedLootCondition {
     public boolean test(LootContext context) {
         ILootContextData data = context.getParamOrNull(Constants.DATA);
         return applyLootHandler(context, data == null ? new ArrayList<>() : data.getGeneratedLoot());
-    }
-
-    public static class Builder implements ConditionsContainer<Builder> {
-
-        private final List<ILootCondition> conditions = new ArrayList<>();
-
-        public OrCondition build() {
-            if (conditions.isEmpty()) {
-                throw new IllegalArgumentException("No conditions set for `or`");
-            }
-
-            return new OrCondition(conditions.toArray(new ILootCondition[0]));
-        }
-
-        @Override
-        public Builder addCondition(ILootCondition condition) {
-            conditions.add(condition);
-            return this;
-        }
     }
 }

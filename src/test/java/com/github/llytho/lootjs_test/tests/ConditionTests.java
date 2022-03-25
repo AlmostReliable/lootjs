@@ -21,7 +21,6 @@ import net.minecraft.world.level.levelgen.feature.StructureFeature;
 import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
-import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.common.BiomeDictionary;
 
@@ -87,7 +86,8 @@ public class ConditionTests {
 
             if (featurePos != null) {
                 LootContext ctx = helper.unknownContext(new Vec3(featurePos.getX(),
-                        -20, // TODO is weird, i don't like but map feature provides a different position ... 
+                        -20,
+                        // TODO is weird, i don't like but map feature provides a different position ...
                         featurePos.getZ()));
 
                 AnyStructure shStructure = new AnyStructure(new StructureFeature[]{ StructureFeature.STRONGHOLD },
@@ -221,38 +221,27 @@ public class ConditionTests {
 
         AllTests.add("AndCondition", helper -> {
             LootContext ctx = helper.unknownContext(helper.player.position());
-            AndCondition ac = new AndCondition.Builder()
-                    .addCondition(new AnyDimension(new ResourceLocation[]{ new ResourceLocation("overworld") }))
-                    .addCondition(new IsLightLevel(0, 15))
-                    .build();
+            AndCondition ac = new AndCondition(new AnyDimension(new ResourceLocation[]{ new ResourceLocation("overworld") }),
+                    new IsLightLevel(0, 15));
             helper.shouldSucceed(ac.test(ctx), "Matches all conditions");
 
-            ac = new AndCondition.Builder()
-                    .addCondition(new AnyDimension(new ResourceLocation[]{ new ResourceLocation("overworld") }))
-                    .addCondition(new IsLightLevel(0, 7))
-                    .addCondition(new IsLightLevel(8, 15))
-                    .build();
+            ac = new AndCondition(new AnyDimension(new ResourceLocation[]{ new ResourceLocation("overworld") }),
+                    new IsLightLevel(0, 7),
+                    new IsLightLevel(8, 15));
             helper.shouldFail(ac.test(ctx), "Fails on light check");
         });
 
         AllTests.add("OrCondition", helper -> {
             LootContext ctx = helper.unknownContext(helper.player.position());
-            OrCondition or = new OrCondition.Builder()
-                    .addCondition(new AnyDimension(new ResourceLocation[]{ new ResourceLocation("overworld") }))
-                    .addCondition(new IsLightLevel(0, 15))
-                    .build();
+            OrCondition or = new OrCondition(new AnyDimension(new ResourceLocation[]{ new ResourceLocation("overworld") }),
+                    new IsLightLevel(0, 15));
             helper.shouldSucceed(or.test(ctx), "Matches");
 
-            or = new OrCondition.Builder()
-                    .addCondition(new IsLightLevel(0, 7))
-                    .addCondition(new IsLightLevel(8, 15))
-                    .build();
+            or = new OrCondition(new IsLightLevel(0, 7), new IsLightLevel(8, 15));
             helper.shouldSucceed(or.test(ctx), "Still match");
 
-            or = new OrCondition.Builder()
-                    .addCondition(new AnyDimension(new ResourceLocation[]{ new ResourceLocation("nether") }))
-                    .addCondition(new AnyDimension(new ResourceLocation[]{ new ResourceLocation("end") }))
-                    .build();
+            or = new OrCondition(new AnyDimension(new ResourceLocation[]{ new ResourceLocation("nether") }),
+                    new AnyDimension(new ResourceLocation[]{ new ResourceLocation("end") }));
             helper.shouldFail(or.test(ctx), "Not in nether or end");
         });
 

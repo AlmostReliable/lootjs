@@ -34,6 +34,7 @@ import net.minecraftforge.common.BiomeDictionary;
 import net.minecraftforge.registries.ForgeRegistries;
 
 import javax.annotation.Nullable;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -208,22 +209,6 @@ public interface ConditionsContainer<B extends ConditionsContainer<?>> {
         return addCondition(new MatchKillerDistance(builder.build()));
     }
 
-    default B hasAnyStage(String... stages) {
-        if (stages.length == 1) {
-            String stage = stages[0];
-            return addCondition(new PlayerParamPredicate((ctx, player) -> Stages.get(player).has(stage)));
-        }
-
-        return addCondition(new PlayerParamPredicate((ctx, player) -> {
-            for (String stage : stages) {
-                if (Stages.get(player).has(stage)) {
-                    return true;
-                }
-            }
-            return false;
-        }));
-    }
-
     default B playerPredicate(Predicate<PlayerJS<?>> predicate) {
         return addCondition(new PlayerParamPredicate((ctx, player) -> {
             PlayerJS<?> p = UtilsJS.getLevel(ctx.getLevel()).getPlayer(player);
@@ -252,27 +237,60 @@ public interface ConditionsContainer<B extends ConditionsContainer<?>> {
         }));
     }
 
-    default B not(Consumer<NotCondition.Builder> action) {
-        NotCondition.Builder builder = new NotCondition.Builder();
-        action.accept(builder);
-        return addCondition(builder.build());
+    default B hasAnyStage(String... stages) {
+        if (stages.length == 1) {
+            String stage = stages[0];
+            return addCondition(new PlayerParamPredicate((ctx, player) -> Stages.get(player).has(stage)));
+        }
+
+        return addCondition(new PlayerParamPredicate((ctx, player) -> {
+            for (String stage : stages) {
+                if (Stages.get(player).has(stage)) {
+                    return true;
+                }
+            }
+            return false;
+        }));
     }
 
-    default B or(Consumer<OrCondition.Builder> action) {
-        OrCondition.Builder builder = new OrCondition.Builder();
-        action.accept(builder);
-        return addCondition(builder.build());
+    default B not(Consumer<ConditionsContainer<B>> action) {
+        List<ILootCondition> conditions = createConditions(action);
+        if (conditions.size() != 1) {
+            throw new IllegalArgumentException("You only can have one condition for `not`");
+        }
+        NotCondition condition = new NotCondition(conditions.get(0));
+        return addCondition(condition);
     }
 
-    default B and(Consumer<AndCondition.Builder> action) {
-        AndCondition.Builder builder = new AndCondition.Builder();
-        action.accept(builder);
-        return addCondition(builder.build());
+    default B or(Consumer<ConditionsContainer<B>> action) {
+        List<ILootCondition> conditions = createConditions(action);
+        ILootCondition[] array = conditions.toArray(new ILootCondition[0]);
+        return addCondition(new OrCondition(array));
+    }
+
+    default B and(Consumer<ConditionsContainer<B>> action) {
+        List<ILootCondition> conditions = createConditions(action);
+        ILootCondition[] array = conditions.toArray(new ILootCondition[0]);
+        return addCondition(new AndCondition(array));
+    }
+
+    default List<ILootCondition> createConditions(Consumer<ConditionsContainer<B>> action) {
+        List<ILootCondition> conditions = new ArrayList<>();
+        ConditionsContainer<B> container = new ConditionsContainer<B>() {
+            @Override
+            public B addCondition(ILootCondition condition) {
+                conditions.add(condition);
+                //noinspection unchecked
+                return (B) this;
+            }
+        };
+        action.accept(container);
+        return conditions;
     }
 
     default B customCondition(JsonObject json) {
         LootItemCondition condition = PredicateManager.GSON.fromJson(json, LootItemCondition.class);
-        return addCondition((ILootCondition)condition);
+        return addCondition((ILootCondition) condition);
     }
 
     default B addCondition(LootItemCondition.Builder builder) {

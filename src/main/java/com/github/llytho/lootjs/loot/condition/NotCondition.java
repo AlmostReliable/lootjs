@@ -3,7 +3,6 @@ package com.github.llytho.lootjs.loot.condition;
 import com.github.llytho.lootjs.core.Constants;
 import com.github.llytho.lootjs.core.ILootCondition;
 import com.github.llytho.lootjs.core.ILootContextData;
-import com.github.llytho.lootjs.kube.ConditionsContainer;
 import com.github.llytho.lootjs.loot.results.Info;
 import com.github.llytho.lootjs.loot.results.LootInfoCollector;
 import net.minecraft.world.item.ItemStack;
@@ -32,28 +31,5 @@ public class NotCondition implements IExtendedLootCondition {
         boolean result = !condition.applyLootHandler(context, loot);
         LootInfoCollector.finalizeInfo(collector, info, result);
         return result;
-    }
-
-    public static class Builder implements ConditionsContainer<Builder> {
-
-        private ILootCondition condition = null;
-
-        public NotCondition build() {
-            if (condition == null) {
-                throw new IllegalArgumentException("No condition was set");
-            }
-
-            return new NotCondition(condition);
-        }
-
-        @Override
-        public Builder addCondition(ILootCondition condition) {
-            if (this.condition != null) {
-                throw new IllegalArgumentException("Already set a condition");
-            }
-
-            this.condition = condition;
-            return this;
-        }
     }
 }
