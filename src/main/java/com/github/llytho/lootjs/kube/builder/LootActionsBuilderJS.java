@@ -24,19 +24,24 @@ import java.util.function.Function;
 
 @SuppressWarnings("unused")
 public class LootActionsBuilderJS implements ConditionsContainer<LootActionsBuilderJS> {
+    public static final String DEPRECATED_MSG = "1.18.2-2.3.0 Will be removed in future versions. Please use ";
+
     private final List<ILootHandler> handlers = new ArrayList<>();
     private String logName;
 
+    @Deprecated(forRemoval = true, since = DEPRECATED_MSG + "name(name)")
     public LootActionsBuilderJS logName(String name) {
         logName = name;
         return this;
     }
 
+    @Deprecated(forRemoval = true, since = DEPRECATED_MSG + "apply((ctx) => {})")
     public LootActionsBuilderJS thenApply(Consumer<LootContextJS> action) {
         handlers.add(new CustomJSAction(action));
         return this;
     }
 
+    @Deprecated(forRemoval = true, since = DEPRECATED_MSG + "addLoot([items])")
     public LootActionsBuilderJS thenAdd(ItemStackJS... itemStacks) {
         ItemStack[] vanillaItemStacks = Arrays
                 .stream(itemStacks)
@@ -47,6 +52,8 @@ public class LootActionsBuilderJS implements ConditionsContainer<LootActionsBuil
         return this;
     }
 
+
+    @Deprecated(forRemoval = true, since = DEPRECATED_MSG + "addWeightedLoot(interval, allowDuplicateLoot, [items])")
     public LootActionsBuilderJS thenAddWeighted(MinMaxBounds.Ints interval, boolean allowDuplicateLoot, WeightedItemStack[] itemStacks) {
         var weightedListBuilder = SimpleWeightedRandomList.<ItemStack>builder();
         for (var wis : itemStacks) {
@@ -56,30 +63,38 @@ public class LootActionsBuilderJS implements ConditionsContainer<LootActionsBuil
         return this;
     }
 
+    @Deprecated(forRemoval = true, since = DEPRECATED_MSG + "addWeightedLoot(interval, [items])")
     public LootActionsBuilderJS thenAddWeighted(MinMaxBounds.Ints interval, WeightedItemStack[] itemStacks) {
         return thenAddWeighted(interval, true, itemStacks);
     }
 
+    @Deprecated(forRemoval = true, since = DEPRECATED_MSG + "addWeightedLoot([items])")
     public LootActionsBuilderJS thenAddWeighted(WeightedItemStack[] itemStacks) {
         return thenAddWeighted(MinMaxBounds.Ints.atMost(1), true, itemStacks);
     }
 
+
+    @Deprecated(forRemoval = true, since = DEPRECATED_MSG + "removeLoot(ingredient)")
     public LootActionsBuilderJS thenRemove(IngredientJS ingredient) {
         handlers.add(new RemoveLootAction(ingredient.getVanillaPredicate()));
         return this;
     }
 
+
+    @Deprecated(forRemoval = true, since = DEPRECATED_MSG + "replaceLoot(ingredient, item)")
     public LootActionsBuilderJS thenReplace(IngredientJS ingredient, ItemStackJS itemStack) {
         handlers.add(new ReplaceLootAction(ingredient.getVanillaPredicate(), itemStack.getItemStack()));
         return this;
     }
 
+    @Deprecated(forRemoval = true, since = DEPRECATED_MSG + "modifyLoot(ingredient, (item) => { return item; })")
     public LootActionsBuilderJS thenModify(IngredientJS ingredient, Function<ItemStackJS, ItemStackJS> function) {
         handlers.add(new ModifyLootAction(ingredient.getVanillaPredicate(),
                 (itemStack) -> function.apply(new ItemStackJS(itemStack)).getItemStack()));
         return this;
     }
 
+    @Deprecated(forRemoval = true, since = DEPRECATED_MSG + "triggerExplosion(radius, destroy, fire)")
     public LootActionsBuilderJS thenExplode(float radius, boolean destroy, boolean fire) {
         Explosion.BlockInteraction mode =
                 destroy ? Explosion.BlockInteraction.DESTROY : Explosion.BlockInteraction.NONE;
@@ -87,15 +102,18 @@ public class LootActionsBuilderJS implements ConditionsContainer<LootActionsBuil
         return this;
     }
 
+    @Deprecated(forRemoval = true, since = DEPRECATED_MSG + "triggerLightningStrike(shouldDamage)")
     public LootActionsBuilderJS thenLightningStrike(boolean shouldDamage) {
         handlers.add(new LightningStrikeAction(shouldDamage));
         return this;
     }
 
-    public LootActionsBuilderJS thenRollPool(Consumer<LootActionsBuilderJS> callback) {
+    @Deprecated(forRemoval = true, since = DEPRECATED_MSG + "pool((pool) => {})")
+    public LootActionsBuilderJS addPool(Consumer<LootActionsBuilderJS> callback) {
         return thenRollPool(MinMaxBounds.Ints.exactly(1), callback);
     }
 
+    @Deprecated(forRemoval = true, since = DEPRECATED_MSG + "pool(interval, (pool) => {})")
     public LootActionsBuilderJS thenRollPool(MinMaxBounds.Ints interval, Consumer<LootActionsBuilderJS> callback) {
         LootActionsBuilderJS poolBuilder = new LootActionsBuilderJS();
         callback.accept(poolBuilder);
