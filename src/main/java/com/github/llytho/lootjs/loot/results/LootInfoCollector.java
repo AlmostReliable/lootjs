@@ -2,8 +2,8 @@ package com.github.llytho.lootjs.loot.results;
 
 import com.github.llytho.lootjs.LootModificationsAPI;
 import com.github.llytho.lootjs.core.ILootHandler;
+import com.github.llytho.lootjs.loot.action.CompositeLootAction;
 import com.github.llytho.lootjs.loot.action.LootItemFunctionWrapperAction;
-import com.github.llytho.lootjs.loot.action.LootPoolAction;
 import com.github.llytho.lootjs.loot.condition.AndCondition;
 import com.github.llytho.lootjs.loot.condition.NotCondition;
 import com.github.llytho.lootjs.loot.condition.OrCondition;
@@ -15,16 +15,9 @@ import java.util.*;
 
 public class LootInfoCollector {
 
-    public static final Set<Class<? extends ILootHandler>> COMPOSITES;
-
-    static {
-        HashSet<Class<? extends ILootHandler>> set = new HashSet<>();
-        set.add(OrCondition.class);
-        set.add(AndCondition.class);
-        set.add(NotCondition.class);
-        set.add(LootPoolAction.class);
-        COMPOSITES = set;
-    }
+    public static final Class<?>[] COMPOSITES = new Class[]{
+            OrCondition.class, AndCondition.class, NotCondition.class, CompositeLootAction.class
+    };
 
     protected final List<Info> firstLayer = new ArrayList<>();
     protected final Stack<Info.Composite> cursorHistory = new Stack<>();
@@ -34,8 +27,10 @@ public class LootInfoCollector {
         if (!LootModificationsAPI.LOOT_MODIFICATION_LOGGING || collector == null) return null;
 
         Info info = createBaseInfo(lootHandler);
-        if (COMPOSITES.contains(lootHandler.getClass())) {
-            return createInfo(collector, new Info.Composite(info));
+        for (Class<?> composite : COMPOSITES) {
+            if (composite.isInstance(lootHandler)) {
+                return createInfo(collector, new Info.Composite(info));
+            }
         }
 
         return createInfo(collector, info);
