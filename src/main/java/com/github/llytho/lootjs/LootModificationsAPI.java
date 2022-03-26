@@ -1,8 +1,8 @@
 package com.github.llytho.lootjs;
 
 import com.github.llytho.lootjs.core.Constants;
+import com.github.llytho.lootjs.core.ILootAction;
 import com.github.llytho.lootjs.core.ILootContextData;
-import com.github.llytho.lootjs.core.ILootModification;
 import com.github.llytho.lootjs.core.ModificationFilter;
 import com.github.llytho.lootjs.loot.results.LootContextInfo;
 import com.github.llytho.lootjs.loot.results.LootInfoCollector;
@@ -21,7 +21,7 @@ public class LootModificationsAPI {
 
     public static final ModificationFilter FILTER = new ModificationFilter();
     private static final Logger LOGGER = LogManager.getLogger();
-    private static final List<ILootModification> modifications = new ArrayList<>();
+    private static final List<ILootAction> actions = new ArrayList<>();
     public static Consumer<String> DEBUG_ACTION = LOGGER::info;
     public static boolean LOOT_MODIFICATION_LOGGING = false;
 
@@ -29,7 +29,7 @@ public class LootModificationsAPI {
     }
 
     public static void reload() {
-        modifications.clear();
+        actions.clear();
         LOOT_MODIFICATION_LOGGING = false;
         FILTER.clear();
         FILTER.add(new ResourceLocation("minecraft:blocks/fire"));
@@ -52,10 +52,8 @@ public class LootModificationsAPI {
 
         LootContextInfo lootContextInfo = LootContextInfo.create(context);
 
-        for (ILootModification modification : modifications) {
-            if (modification.shouldExecute(context)) {
-                modification.execute(context, loot);
-            }
+        for (var modification : actions) {
+            modification.applyLootHandler(context, loot);
             contextData.reset();
         }
 
@@ -83,7 +81,7 @@ public class LootModificationsAPI {
     }
 
 
-    public static void addModification(ILootModification modification) {
-        modifications.add(modification);
+    public static void addModification(ILootAction action) {
+        actions.add(action);
     }
 }

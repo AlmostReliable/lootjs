@@ -28,7 +28,7 @@ import java.util.stream.Collectors;
 public class LootModificationEventJS extends EventJS {
     private static final Logger LOGGER = LogManager.getLogger();
 
-    private final List<Supplier<ILootModification>> modifierSuppliers = new ArrayList<>();
+    private final List<Supplier<ILootAction>> modifierSuppliers = new ArrayList<>();
     private final List<ResourceLocation> originalLocations;
     private final Set<ResourceLocation> locationsToRemove = new HashSet<>();
 
@@ -160,7 +160,7 @@ public class LootModificationEventJS extends EventJS {
         super.afterPosted(result);
 
         try {
-            for (Supplier<ILootModification> modifierSupplier : modifierSuppliers) {
+            for (Supplier<ILootAction> modifierSupplier : modifierSuppliers) {
                 LootModificationsAPI.addModification(modifierSupplier.get());
             }
         } catch (Exception exception) {

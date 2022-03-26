@@ -7,32 +7,28 @@ import com.github.llytho.lootjs.loot.results.LootInfoCollector;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.storage.loot.LootContext;
 
+import java.util.Collection;
 import java.util.List;
 
-public abstract class AbstractLootModification implements ILootModification {
-    protected final List<ILootHandler> handlers;
+public abstract class AbstractLootModification extends CompositeLootAction {
     private final String name;
-    private final CompositeLootAction composite;
 
-    public AbstractLootModification(String name, List<ILootHandler> handlers) {
+    public AbstractLootModification(String name, Collection<ILootHandler> handlers) {
+        super(handlers);
         this.name = name;
-        this.handlers = handlers;
-        this.composite = new CompositeLootAction(handlers);
     }
 
     @Override
-    public boolean execute(LootContext context, List<ItemStack> loot) {
-        LootInfoCollector collector = context.getParamOrNull(Constants.RESULT_COLLECTOR);
-        Info info = LootInfoCollector.createInfo(collector, new Info.Composite(Icon.WRENCH, getName()));
-        boolean result = composite.applyLootHandler(context, loot);
-        LootInfoCollector.finalizeInfo(collector, info);
-        return result;
+    public boolean applyLootHandler(LootContext context, List<ItemStack> loot) {
+        if (shouldExecute(context)) {
+            LootInfoCollector collector = context.getParamOrNull(Constants.RESULT_COLLECTOR);
+            Info info = LootInfoCollector.createInfo(collector, new Info.Composite(Icon.WRENCH, name));
+            run(context, loot, collector);
+            LootInfoCollector.finalizeInfo(collector, info);
+        }
+
+        return true;
     }
 
     public abstract boolean shouldExecute(LootContext context);
-
-    @Override
-    public String getName() {
-        return name;
-    }
 }
