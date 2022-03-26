@@ -2,6 +2,7 @@ package com.github.llytho.lootjs.loot.results;
 
 import com.github.llytho.lootjs.LootModificationsAPI;
 import com.github.llytho.lootjs.core.ILootHandler;
+import com.github.llytho.lootjs.loot.action.LootItemFunctionWrapperAction;
 import com.github.llytho.lootjs.loot.action.LootPoolAction;
 import com.github.llytho.lootjs.loot.condition.AndCondition;
 import com.github.llytho.lootjs.loot.condition.NotCondition;
@@ -70,13 +71,21 @@ public class LootInfoCollector {
     }
 
     private static Info createBaseInfo(ILootHandler lootHandler) {
-        String title = lootHandler.getClass().getSimpleName();
+        String title = createTitle(lootHandler);
 
         if (lootHandler instanceof LootItemCondition) {
             return new Info.ResultInfo(title);
         }
 
         return new Info.TitledInfo(Icon.ACTION, title);
+    }
+
+    private static String createTitle(ILootHandler lootHandler) {
+        if (lootHandler instanceof LootItemFunctionWrapperAction lif) {
+            return lif.getLootItemFunction().getClass().getSimpleName();
+        }
+
+        return lootHandler.getClass().getSimpleName();
     }
 
     public static void append(Info info, int indentDepth, StringBuilder sb) {
