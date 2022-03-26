@@ -1,7 +1,7 @@
 package com.github.llytho.lootjs.kube;
 
 import com.github.llytho.lootjs.LootModificationsAPI;
-import com.github.llytho.lootjs.core.ItemFilter;
+import com.github.llytho.lootjs.filters.ItemFilter;
 import com.github.llytho.lootjs.core.LootContextType;
 import com.github.llytho.lootjs.kube.wrapper.IntervalJS;
 import com.github.llytho.lootjs.util.WeightedItemStack;

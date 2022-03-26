@@ -1,7 +1,7 @@
 package com.github.llytho.lootjs.loot;
 
 import com.github.llytho.lootjs.core.ILootAction;
-import com.github.llytho.lootjs.core.ItemFilter;
+import com.github.llytho.lootjs.filters.ItemFilter;
 import com.github.llytho.lootjs.loot.action.*;
 import com.github.llytho.lootjs.util.WeightedItemStack;
 import net.minecraft.util.random.SimpleWeightedRandomList;

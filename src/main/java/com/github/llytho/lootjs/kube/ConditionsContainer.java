@@ -1,7 +1,7 @@
 package com.github.llytho.lootjs.kube;
 
 import com.github.llytho.lootjs.core.ILootCondition;
-import com.github.llytho.lootjs.core.ItemFilter;
+import com.github.llytho.lootjs.filters.ItemFilter;
 import com.github.llytho.lootjs.kube.builder.DamageSourcePredicateBuilderJS;
 import com.github.llytho.lootjs.kube.builder.EntityPredicateBuilderJS;
 import com.github.llytho.lootjs.loot.condition.*;

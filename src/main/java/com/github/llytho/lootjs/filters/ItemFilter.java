@@ -1,4 +1,4 @@
-package com.github.llytho.lootjs.core;
+package com.github.llytho.lootjs.filters;
 
 import net.minecraft.world.item.ItemStack;
 
