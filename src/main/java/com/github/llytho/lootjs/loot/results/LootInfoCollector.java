@@ -2,7 +2,7 @@ package com.github.llytho.lootjs.loot.results;
 
 import com.github.llytho.lootjs.LootModificationsAPI;
 import com.github.llytho.lootjs.core.ILootHandler;
-import com.github.llytho.lootjs.loot.action.RollPoolAction;
+import com.github.llytho.lootjs.loot.action.LootPoolAction;
 import com.github.llytho.lootjs.loot.condition.AndCondition;
 import com.github.llytho.lootjs.loot.condition.NotCondition;
 import com.github.llytho.lootjs.loot.condition.OrCondition;
@@ -21,7 +21,7 @@ public class LootInfoCollector {
         set.add(OrCondition.class);
         set.add(AndCondition.class);
         set.add(NotCondition.class);
-        set.add(RollPoolAction.class);
+        set.add(LootPoolAction.class);
         COMPOSITES = set;
     }
 

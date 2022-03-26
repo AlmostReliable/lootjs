@@ -6,7 +6,9 @@ import com.github.llytho.lootjs.core.ILootHandler;
 import com.github.llytho.lootjs.kube.ConditionsContainer;
 import com.github.llytho.lootjs.kube.LootContextJS;
 import com.github.llytho.lootjs.kube.action.CustomJSAction;
+import com.github.llytho.lootjs.loot.LootActionsContainer;
 import com.github.llytho.lootjs.loot.LootFunctionsContainer;
+import com.github.llytho.lootjs.loot.LootPoolBuilder;
 import com.github.llytho.lootjs.loot.action.*;
 import com.github.llytho.lootjs.util.Utils;
 import com.github.llytho.lootjs.util.WeightedItemStack;
@@ -18,6 +20,9 @@ import net.minecraft.advancements.critereon.MinMaxBounds;
 import net.minecraft.util.random.SimpleWeightedRandomList;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Explosion;
+import net.minecraft.world.level.storage.loot.providers.number.ConstantValue;
+import net.minecraft.world.level.storage.loot.providers.number.NumberProvider;
+import net.minecraft.world.level.storage.loot.providers.number.UniformGenerator;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -26,8 +31,9 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 
 @SuppressWarnings("unused")
-public class LootActionsBuilderJS
-        implements ConditionsContainer<LootActionsBuilderJS>, LootFunctionsContainer<LootActionsBuilderJS> {
+public class LootActionsBuilderJS implements ConditionsContainer<LootActionsBuilderJS>,
+                                             LootFunctionsContainer<LootActionsBuilderJS>,
+                                             LootActionsContainer<LootActionsBuilderJS> {
     public static final String DEPRECATED_MSG = "1.18.2-2.3.0 Will be removed in future versions. Please use ";
 
     private final List<ILootHandler> handlers = new ArrayList<>();
@@ -60,14 +66,25 @@ public class LootActionsBuilderJS
     }
 
 
-    @Deprecated(forRemoval = true, since = DEPRECATED_MSG + "addWeightedLoot(interval, allowDuplicateLoot, [items])")
+    @Deprecated(forRemoval = true, since = DEPRECATED_MSG +
+                                           "addWeightedLoot(numberProvider, allowDuplicateLoot, [items])")
     public LootActionsBuilderJS thenAddWeighted(MinMaxBounds.Ints interval, boolean allowDuplicateLoot, WeightedItemStack[] itemStacks) {
         ConsoleJS.SERVER.warn(DEPRECATED_MSG + "addWeightedLoot(interval, allowDuplicateLoot, [items])");
         var weightedListBuilder = SimpleWeightedRandomList.<ItemStack>builder();
         for (var wis : itemStacks) {
             weightedListBuilder.add(wis.getItemStack(), wis.getWeight());
         }
-        handlers.add(new WeightedAddLootAction(interval, weightedListBuilder.build(), allowDuplicateLoot));
+
+        NumberProvider provider;
+        if (interval.getMin() != null && interval.getMax() != null) {
+            provider = UniformGenerator.between(interval.getMin(), interval.getMax());
+        } else if (interval.getMin() != null) {
+            provider = ConstantValue.exactly(interval.getMin());
+        } else {
+            provider = ConstantValue.exactly(interval.getMin());
+        }
+
+        handlers.add(new WeightedAddLootAction(provider, weightedListBuilder.build(), allowDuplicateLoot));
         return this;
     }
 
@@ -124,7 +141,7 @@ public class LootActionsBuilderJS
     }
 
     @Deprecated(forRemoval = true, since = DEPRECATED_MSG + "pool((pool) => {})")
-    public LootActionsBuilderJS addPool(Consumer<LootActionsBuilderJS> callback) {
+    public LootActionsBuilderJS thenRollPool(Consumer<LootActionsBuilderJS> callback) {
         ConsoleJS.SERVER.warn(DEPRECATED_MSG + "pool((pool) => {})");
         return thenRollPool(MinMaxBounds.Ints.exactly(1), callback);
     }
@@ -135,7 +152,17 @@ public class LootActionsBuilderJS
         LootActionsBuilderJS poolBuilder = new LootActionsBuilderJS();
         callback.accept(poolBuilder);
         List<ILootHandler> poolHandlers = poolBuilder.getHandlers();
-        handlers.add(new RollPoolAction(interval, poolHandlers));
+
+        NumberProvider provider;
+        if (interval.getMin() != null && interval.getMax() != null) {
+            provider = UniformGenerator.between(interval.getMin(), interval.getMax());
+        } else if (interval.getMin() != null) {
+            provider = ConstantValue.exactly(interval.getMin());
+        } else {
+            provider = ConstantValue.exactly(interval.getMin());
+        }
+
+        handlers.add(new LootPoolAction(provider, poolHandlers));
         return this;
     }
 
@@ -165,6 +192,14 @@ public class LootActionsBuilderJS
     @Override
     public LootActionsBuilderJS addAction(ILootAction action) {
         handlers.add(action);
+        return this;
+    }
+
+    // TODO refactor them
+    public LootActionsBuilderJS pool(Consumer<LootPoolBuilder> callback) {
+        LootPoolBuilder poolBuilder = new LootPoolBuilder();
+        callback.accept(poolBuilder);
+        handlers.add(poolBuilder.build());
         return this;
     }
 }

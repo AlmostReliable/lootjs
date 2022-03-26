@@ -1,20 +1,24 @@
 package com.github.llytho.lootjs.kube;
 
 import com.github.llytho.lootjs.LootModificationsAPI;
+import com.github.llytho.lootjs.core.ItemFilter;
 import com.github.llytho.lootjs.core.LootContextType;
 import com.github.llytho.lootjs.kube.wrapper.IntervalJS;
 import com.github.llytho.lootjs.util.WeightedItemStack;
 import dev.latvian.mods.kubejs.KubeJSPlugin;
 import dev.latvian.mods.kubejs.item.ItemStackJS;
+import dev.latvian.mods.kubejs.item.ingredient.IngredientJS;
 import dev.latvian.mods.kubejs.script.BindingsEvent;
 import dev.latvian.mods.kubejs.script.ScriptType;
 import dev.latvian.mods.kubejs.util.ConsoleJS;
 import dev.latvian.mods.rhino.util.wrap.TypeWrappers;
 import net.minecraft.advancements.critereon.MinMaxBounds;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.saveddata.maps.MapDecoration;
 
 import javax.annotation.Nullable;
+import java.util.function.Predicate;
 
 public class LootJSPlugin extends KubeJSPlugin {
 
@@ -50,6 +54,18 @@ public class LootJSPlugin extends KubeJSPlugin {
             ItemStackJS itemStack = ItemStackJS.of(o);
             int weight = itemStack.hasChance() ? (int) itemStack.getChance() : 1;
             return new WeightedItemStack(itemStack.getItemStack(), weight);
+        });
+
+        typeWrappers.register(ItemFilter.class, o -> {
+            if(o instanceof ItemFilter i) return i;
+
+            IngredientJS ijs = IngredientJS.of(o);
+            if(ijs.isEmpty()) {
+                return ItemFilter.ALWAYS_TRUE;
+            }
+
+            Predicate<ItemStack> vanillaPredicate = ijs.getVanillaPredicate();
+            return vanillaPredicate::test;
         });
 
         typeWrappers.register(MapDecoration.Type.class, o -> valueOf(MapDecoration.Type.class, o));
