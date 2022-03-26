@@ -2,6 +2,7 @@ package com.github.llytho.lootjs.kube;
 
 import com.github.llytho.lootjs.LootModificationsAPI;
 import com.github.llytho.lootjs.core.*;
+import com.github.llytho.lootjs.filters.ResourceLocationFilter;
 import com.github.llytho.lootjs.kube.builder.LootActionsBuilderJS;
 import com.github.llytho.lootjs.util.Utils;
 import dev.latvian.mods.kubejs.CommonProperties;
@@ -10,7 +11,6 @@ import dev.latvian.mods.kubejs.event.EventJS;
 import dev.latvian.mods.kubejs.script.ScriptType;
 import dev.latvian.mods.kubejs.server.ServerJS;
 import dev.latvian.mods.kubejs.util.ConsoleJS;
-import dev.latvian.mods.kubejs.util.UtilsJS;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.resources.ResourceLocation;
@@ -22,7 +22,6 @@ import org.apache.logging.log4j.Logger;
 
 import java.util.*;
 import java.util.function.Supplier;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 public class LootModificationEventJS extends EventJS {
@@ -40,17 +39,12 @@ public class LootModificationEventJS extends EventJS {
         return originalLocations.stream().map(ResourceLocation::toString).collect(Collectors.toList());
     }
 
-    public void disableLootModification(String... idOrPattern) {
-        if (idOrPattern.length == 0) {
+    public void disableLootModification(ResourceLocationFilter... filters) {
+        if (filters.length == 0) {
             throw new IllegalArgumentException("No loot table were given.");
         }
 
-        List<Pattern> patterns = new ArrayList<>();
-        List<ResourceLocation> locations = new ArrayList<>();
-        splitLocationsOrPattern(idOrPattern, patterns, locations);
-
-        patterns.forEach(LootModificationsAPI.FILTER::add);
-        locations.forEach(LootModificationsAPI.FILTER::add);
+        LootModificationsAPI.FILTERS.addAll(Arrays.asList(filters));
     }
 
     public void enableLogging() {
@@ -81,23 +75,16 @@ public class LootModificationEventJS extends EventJS {
         locationsToRemove.addAll(collectedByLocations);
     }
 
-    public LootActionsBuilderJS addLootTableModifier(String... idOrPattern) {
-        if (idOrPattern.length == 0) {
+    public LootActionsBuilderJS addLootTableModifier(ResourceLocationFilter... filters) {
+        if (filters.length == 0) {
             throw new IllegalArgumentException("No loot table were given.");
         }
-
-        List<Pattern> patterns = new ArrayList<>();
-        List<ResourceLocation> locations = new ArrayList<>();
-        splitLocationsOrPattern(idOrPattern, patterns, locations);
 
         LootActionsBuilderJS builder = new LootActionsBuilderJS();
         modifierSuppliers.add(() -> {
             List<ILootHandler> actions = builder.getHandlers();
-            String logName = builder.getLogName(Utils.quote("LootTables", Arrays.asList(idOrPattern)));
-            return new LootModificationByTable(logName,
-                    new ArrayList<>(locations),
-                    new ArrayList<>(patterns),
-                    new ArrayList<>(actions));
+            String logName = builder.getLogName(Utils.quote("LootTables", Arrays.asList(filters)));
+            return new LootModificationByTable(logName, filters, new ArrayList<>(actions));
         });
         return builder;
     }
@@ -177,16 +164,5 @@ public class LootModificationEventJS extends EventJS {
         }
 
         originalLocations.removeIf(locationsToRemove::contains);
-    }
-
-    public void splitLocationsOrPattern(String[] locationsOrPattern, List<Pattern> patterns, List<ResourceLocation> locations) {
-        for (String str : locationsOrPattern) {
-            Pattern pattern = UtilsJS.parseRegex(str);
-            if (pattern == null) {
-                locations.add(new ResourceLocation(str));
-            } else {
-                patterns.add(pattern);
-            }
-        }
     }
 }
