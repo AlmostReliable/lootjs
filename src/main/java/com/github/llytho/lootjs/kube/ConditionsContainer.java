@@ -1,7 +1,7 @@
 package com.github.llytho.lootjs.kube;
 
 import com.github.llytho.lootjs.core.ILootCondition;
-import com.github.llytho.lootjs.core.ILootHandler;
+import com.github.llytho.lootjs.core.ItemFilter;
 import com.github.llytho.lootjs.kube.builder.DamageSourcePredicateBuilderJS;
 import com.github.llytho.lootjs.kube.builder.EntityPredicateBuilderJS;
 import com.github.llytho.lootjs.loot.condition.*;
@@ -11,7 +11,6 @@ import com.github.llytho.lootjs.util.TagOrEntry;
 import com.github.llytho.lootjs.util.Utils;
 import com.google.gson.JsonObject;
 import dev.latvian.mods.kubejs.entity.EntityJS;
-import dev.latvian.mods.kubejs.item.ingredient.IngredientJS;
 import dev.latvian.mods.kubejs.player.PlayerJS;
 import dev.latvian.mods.kubejs.stages.Stages;
 import dev.latvian.mods.kubejs.util.UtilsJS;
@@ -46,24 +45,24 @@ import java.util.stream.Collectors;
 @SuppressWarnings({ "UnusedReturnValue", "unused" })
 public interface ConditionsContainer<B extends ConditionsContainer<?>> {
 
-    default B matchLoot(IngredientJS ingredient) {
-        return matchLoot(ingredient, false);
+    default B matchLoot(ItemFilter filter) {
+        return matchLoot(filter, false);
     }
 
-    default B matchLoot(IngredientJS ingredient, boolean exact) {
-        return addCondition(new ContainsLootCondition(ingredient.getVanillaPredicate(), exact));
+    default B matchLoot(ItemFilter filter, boolean exact) {
+        return addCondition(new ContainsLootCondition(filter, exact));
     }
 
-    default B matchMainHand(IngredientJS ingredient) {
-        return addCondition(new MatchEquipmentSlot(EquipmentSlot.MAINHAND, ingredient.getVanillaPredicate()));
+    default B matchMainHand(ItemFilter filter) {
+        return addCondition(new MatchEquipmentSlot(EquipmentSlot.MAINHAND, filter));
     }
 
-    default B matchOffHand(IngredientJS ingredient) {
-        return addCondition(new MatchEquipmentSlot(EquipmentSlot.OFFHAND, ingredient.getVanillaPredicate()));
+    default B matchOffHand(ItemFilter filter) {
+        return addCondition(new MatchEquipmentSlot(EquipmentSlot.OFFHAND, filter));
     }
 
-    default B matchEquip(EquipmentSlot slot, IngredientJS ingredient) {
-        return addCondition(new MatchEquipmentSlot(slot, ingredient.getVanillaPredicate()));
+    default B matchEquip(EquipmentSlot slot, ItemFilter filter) {
+        return addCondition(new MatchEquipmentSlot(slot, filter));
     }
 
     default B survivesExplosion() {
