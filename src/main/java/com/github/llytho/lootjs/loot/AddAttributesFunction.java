@@ -143,7 +143,7 @@ public class AddAttributesFunction implements LootItemFunction {
     }
 
     @SuppressWarnings("UnusedReturnValue")
-    public static class Builder {
+    public static class Builder implements LootItemFunction.Builder {
         private final List<Modifier> modifiers = new ArrayList<>();
         private boolean preserveDefaults = true;
 

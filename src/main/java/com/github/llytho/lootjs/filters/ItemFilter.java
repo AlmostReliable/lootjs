@@ -7,4 +7,7 @@ import java.util.function.Predicate;
 public interface ItemFilter extends Predicate<ItemStack> {
     ItemFilter ALWAYS_FALSE = itemStack -> false;
     ItemFilter ALWAYS_TRUE = itemStack -> true;
+
+    @Override
+    boolean test(ItemStack itemStack);
 }

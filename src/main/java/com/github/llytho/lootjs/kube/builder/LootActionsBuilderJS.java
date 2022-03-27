@@ -80,8 +80,10 @@ public class LootActionsBuilderJS implements ConditionsContainer<LootActionsBuil
             provider = UniformGenerator.between(interval.getMin(), interval.getMax());
         } else if (interval.getMin() != null) {
             provider = ConstantValue.exactly(interval.getMin());
+        } else if (interval.getMax() != null) {
+            provider = ConstantValue.exactly(interval.getMax());
         } else {
-            provider = ConstantValue.exactly(interval.getMin());
+            provider = ConstantValue.exactly(1);
         }
 
         handlers.add(new WeightedAddLootAction(provider, weightedListBuilder.build(), allowDuplicateLoot));
@@ -158,8 +160,10 @@ public class LootActionsBuilderJS implements ConditionsContainer<LootActionsBuil
             provider = UniformGenerator.between(interval.getMin(), interval.getMax());
         } else if (interval.getMin() != null) {
             provider = ConstantValue.exactly(interval.getMin());
+        } else if (interval.getMax() != null) {
+            provider = ConstantValue.exactly(interval.getMax());
         } else {
-            provider = ConstantValue.exactly(interval.getMin());
+            provider = ConstantValue.exactly(1);
         }
 
         handlers.add(new LootPoolAction(provider, poolHandlers));
@@ -200,6 +204,11 @@ public class LootActionsBuilderJS implements ConditionsContainer<LootActionsBuil
         LootPoolBuilder poolBuilder = new LootPoolBuilder();
         callback.accept(poolBuilder);
         handlers.add(poolBuilder.build());
+        return this;
+    }
+
+    public LootActionsBuilderJS apply(Consumer<LootContextJS> action) {
+        handlers.add(new CustomJSAction(action));
         return this;
     }
 }

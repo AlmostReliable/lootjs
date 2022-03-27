@@ -104,8 +104,14 @@ public class Utils {
 
     public static String formatItemStack(ItemStack itemStack) {
         String tag = "";
-        if (itemStack.hasTag()) tag += " " + itemStack.getTag();
-        return itemStack + tag;
+        ItemStack copy = itemStack.copy();
+        if (copy.getTag() != null) {
+            if (copy.getTag().contains("AttributeModifiers")) {
+                copy.getTag().putString("AttributeModifiers", "...");
+            }
+            tag += " " + copy.getTag();
+        }
+        return copy + tag;
     }
 
     public static String quote(String s) {
