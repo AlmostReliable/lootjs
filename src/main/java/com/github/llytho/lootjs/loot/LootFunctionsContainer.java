@@ -1,12 +1,15 @@
 package com.github.llytho.lootjs.loot;
 
 import com.github.llytho.lootjs.core.ILootAction;
+import com.github.llytho.lootjs.filters.ItemFilter;
 import com.github.llytho.lootjs.loot.action.LootItemFunctionWrapperAction;
 import net.minecraft.world.item.alchemy.Potion;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.level.storage.loot.functions.*;
 import net.minecraft.world.level.storage.loot.providers.number.NumberProvider;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 import java.util.function.Consumer;
 
@@ -78,6 +81,31 @@ public interface LootFunctionsContainer<F extends LootFunctionsContainer<?>> {
         AddAttributesFunction.Builder builder = new AddAttributesFunction.Builder();
         action.accept(builder);
         return addFunction(builder);
+    }
+
+    default F functions(ItemFilter filter, Consumer<LootFunctionsContainer<F>> action) {
+        // TODO not sure if I like this
+        List<LootItemFunction> functions = new ArrayList<>();
+        LootFunctionsContainer<F> lfc = new LootFunctionsContainer<>() {
+            @Override
+            public F addFunction(LootItemFunction.Builder builder) {
+                functions.add(builder.build());
+                //noinspection unchecked
+                return (F) this;
+            }
+
+            @Override
+            public F addAction(ILootAction action) {
+                throw new UnsupportedOperationException("Not allowed here");
+            }
+
+            @Override
+            public F functions(ItemFilter filter, Consumer<LootFunctionsContainer<F>> action) {
+                throw new UnsupportedOperationException("Nested `filteredFunctions` are not supported.");
+            }
+        };
+        action.accept(lfc);
+        return addAction(new LootItemFunctionWrapperAction.FilteredFunctions(functions, filter));
     }
 
     default F addFunction(LootItemFunction.Builder builder) {

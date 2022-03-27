@@ -7,6 +7,7 @@ import com.github.llytho.lootjs.loot.action.LootItemFunctionWrapperAction;
 import com.github.llytho.lootjs.loot.condition.AndCondition;
 import com.github.llytho.lootjs.loot.condition.NotCondition;
 import com.github.llytho.lootjs.loot.condition.OrCondition;
+import net.minecraft.world.level.storage.loot.functions.LootItemFunction;
 import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
 import org.apache.commons.lang3.StringUtils;
 
@@ -16,7 +17,11 @@ import java.util.*;
 public class LootInfoCollector {
 
     public static final Class<?>[] COMPOSITES = new Class[]{
-            OrCondition.class, AndCondition.class, NotCondition.class, CompositeLootAction.class
+            OrCondition.class,
+            AndCondition.class,
+            NotCondition.class,
+            CompositeLootAction.class,
+            LootItemFunctionWrapperAction.FilteredFunctions.class
     };
 
     protected final List<Info> firstLayer = new ArrayList<>();
@@ -34,6 +39,12 @@ public class LootInfoCollector {
         }
 
         return createInfo(collector, info);
+    }
+
+    public static void createFunctionInfo(@Nullable LootInfoCollector collector, LootItemFunction function) {
+        if (!LootModificationsAPI.LOOT_MODIFICATION_LOGGING || collector == null) return;
+        Info info = new Info.TitledInfo(Icon.ACTION, function.getClass().getSimpleName());
+        collector.addOrPush(info);
     }
 
     @Nullable
