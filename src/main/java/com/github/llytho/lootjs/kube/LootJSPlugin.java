@@ -21,6 +21,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.saveddata.maps.MapDecoration;
 
 import javax.annotation.Nullable;
+import java.util.List;
 import java.util.function.Predicate;
 import java.util.regex.Pattern;
 
@@ -38,6 +39,18 @@ public class LootJSPlugin extends KubeJSPlugin {
         return null;
     }
 
+    private static ItemFilter ofItemFilter(@Nullable Object o) {
+        if (o instanceof ItemFilter i) return i;
+
+        IngredientJS ijs = IngredientJS.of(o);
+        if (ijs.isEmpty()) {
+            return ItemFilter.ALWAYS_TRUE;
+        }
+
+        Predicate<ItemStack> vanillaPredicate = ijs.getVanillaPredicate();
+        return vanillaPredicate::test;
+    }
+
     @Override
     public void initStartup() {
         LootModificationsAPI.DEBUG_ACTION = s -> ConsoleJS.SERVER.info(s);
@@ -47,6 +60,7 @@ public class LootJSPlugin extends KubeJSPlugin {
     public void addBindings(BindingsEvent event) {
         event.add("LootType", LootContextType.class);
         event.add("Interval", new IntervalJS());
+        event.add("ItemFilter", ItemFilter.class);
     }
 
     @Override
@@ -61,15 +75,11 @@ public class LootJSPlugin extends KubeJSPlugin {
         });
 
         typeWrappers.register(ItemFilter.class, o -> {
-            if (o instanceof ItemFilter i) return i;
-
-            IngredientJS ijs = IngredientJS.of(o);
-            if (ijs.isEmpty()) {
-                return ItemFilter.ALWAYS_TRUE;
+            if (o instanceof List<?> list) {
+                return ItemFilter.and(list.stream().map(LootJSPlugin::ofItemFilter).toArray(ItemFilter[]::new));
             }
 
-            Predicate<ItemStack> vanillaPredicate = ijs.getVanillaPredicate();
-            return vanillaPredicate::test;
+            return ofItemFilter(o);
         });
 
         typeWrappers.register(ResourceLocationFilter.class, o -> {
