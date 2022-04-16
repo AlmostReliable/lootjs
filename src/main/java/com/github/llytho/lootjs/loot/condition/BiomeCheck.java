@@ -2,18 +2,15 @@ package com.github.llytho.lootjs.loot.condition;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
-import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.common.BiomeDictionary;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.Set;
 
 public class BiomeCheck implements IExtendedLootCondition {
     protected final List<ResourceKey<Biome>> biomes;
@@ -41,7 +38,7 @@ public class BiomeCheck implements IExtendedLootCondition {
         }
 
         for (TagKey<Biome> tag : tags) {
-            if(!biomeHolder.is(tag)) {
+            if (!biomeHolder.is(tag)) {
                 return false;
             }
         }

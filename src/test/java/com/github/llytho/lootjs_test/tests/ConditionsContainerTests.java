@@ -54,7 +54,8 @@ public class ConditionsContainerTests {
                 new ResourceLocation("stronghold"), new ResourceLocation("village_plains")
         }, true);
         helper.shouldSucceed(conditions.last instanceof AnyStructure, "AnyStructure instance");
-        helper.shouldSucceed(conditions.<AnyStructure>last().getStructuresOld().size() == 2, "Should have 2 structures");
+        helper.shouldSucceed(conditions.<AnyStructure>last().getStructuresOld().size() == 2,
+                "Should have 2 structures");
         helper.shouldThrow(() -> conditions.anyStructure(new ResourceLocation[]{
                 new ResourceLocation("wrong_structure")
         }, true), IllegalArgumentException.class, "'wrong_structure' does not exist");

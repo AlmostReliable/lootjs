@@ -1,7 +1,6 @@
 package com.github.llytho.lootjs.loot.condition;
 
 import com.github.llytho.lootjs.core.ILootCondition;
-import com.github.llytho.lootjs.core.ILootHandler;
 import com.github.llytho.lootjs.core.LootConditionTypes;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.storage.loot.LootContext;

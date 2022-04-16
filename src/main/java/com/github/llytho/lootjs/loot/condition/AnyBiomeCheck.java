@@ -4,7 +4,6 @@ import net.minecraft.core.Holder;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.level.biome.Biome;
-import net.minecraftforge.common.BiomeDictionary;
 
 import java.util.List;
 
@@ -22,7 +21,7 @@ public class AnyBiomeCheck extends BiomeCheck {
         }
 
         for (TagKey<Biome> tag : tags) {
-            if(biomeHolder.is(tag)) {
+            if (biomeHolder.is(tag)) {
                 return true;
             }
         }
