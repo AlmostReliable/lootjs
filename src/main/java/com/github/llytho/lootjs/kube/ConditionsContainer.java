@@ -2,19 +2,18 @@ package com.github.llytho.lootjs.kube;
 
 import com.github.llytho.lootjs.core.ILootCondition;
 import com.github.llytho.lootjs.filters.ItemFilter;
+import com.github.llytho.lootjs.filters.TagKeyOrEntryResolver;
 import com.github.llytho.lootjs.kube.builder.DamageSourcePredicateBuilderJS;
 import com.github.llytho.lootjs.kube.builder.EntityPredicateBuilderJS;
 import com.github.llytho.lootjs.loot.condition.*;
 import com.github.llytho.lootjs.loot.condition.builder.DistancePredicateBuilder;
 import com.github.llytho.lootjs.util.BiomeUtils;
-import com.github.llytho.lootjs.util.TagOrEntry;
 import com.github.llytho.lootjs.util.Utils;
 import com.google.gson.JsonObject;
 import dev.latvian.mods.kubejs.entity.EntityJS;
 import dev.latvian.mods.kubejs.player.PlayerJS;
 import dev.latvian.mods.kubejs.stages.Stages;
 import dev.latvian.mods.kubejs.util.UtilsJS;
-import net.minecraft.advancements.critereon.FluidPredicate;
 import net.minecraft.advancements.critereon.MinMaxBounds;
 import net.minecraft.advancements.critereon.StatePropertiesPredicate;
 import net.minecraft.resources.ResourceKey;
@@ -24,14 +23,12 @@ import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.levelgen.feature.StructureFeature;
-import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.storage.loot.IntRange;
 import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.PredicateManager;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.level.storage.loot.predicates.*;
 import net.minecraftforge.common.BiomeDictionary;
-import net.minecraftforge.registries.ForgeRegistries;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
@@ -160,10 +157,8 @@ public interface ConditionsContainer<B extends ConditionsContainer<?>> {
         return addCondition(new LootItemBlockStatePropertyCondition.Builder(block).setProperties(properties));
     }
 
-    default B matchFluid(String idOrTag) {
-        TagOrEntry<Fluid> tagOrEntry = Utils.getTagOrEntry(ForgeRegistries.FLUIDS, idOrTag);
-        FluidPredicate predicate = new FluidPredicate(tagOrEntry.tag, tagOrEntry.entry, StatePropertiesPredicate.ANY);
-        return addCondition(new MatchFluid(predicate));
+    default B matchFluid(TagKeyOrEntryResolver resolver) {
+        throw new UnsupportedOperationException("Not implemented in 1.18.2 currently.");
     }
 
     default B matchEntity(Consumer<EntityPredicateBuilderJS> action) {

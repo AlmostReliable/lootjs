@@ -1,21 +1,21 @@
 package com.github.llytho.lootjs.kube.builder;
 
+import com.github.llytho.lootjs.filters.TagKeyOrEntryResolver;
 import com.github.llytho.lootjs.predicate.CustomItemPredicate;
 import com.github.llytho.lootjs.predicate.ExtendedEntityFlagsPredicate;
 import com.github.llytho.lootjs.predicate.MultiEntityTypePredicate;
-import com.github.llytho.lootjs.util.TagOrEntry;
 import com.github.llytho.lootjs.util.Utils;
 import dev.latvian.mods.kubejs.item.ingredient.IngredientJS;
 import net.minecraft.advancements.critereon.*;
+import net.minecraft.core.Registry;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.tags.Tag;
+import net.minecraft.tags.TagKey;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.material.Fluid;
-import net.minecraftforge.registries.ForgeRegistries;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
@@ -125,27 +125,33 @@ public class EntityPredicateBuilderJS implements ExtendedEntityFlagsPredicate.IB
         return this;
     }
 
-    public EntityPredicateBuilderJS matchBlock(String idOrTag, Map<String, String> propertyMap) {
-        TagOrEntry<Block> tagOrEntry = Utils.getTagOrEntry(ForgeRegistries.BLOCKS, idOrTag);
-        StatePropertiesPredicate.Builder properties = Utils.createProperties(tagOrEntry.getFirst(), propertyMap);
-        BlockPredicate.Builder builder = BlockPredicate.Builder.block().setProperties(properties.build());
-        if (tagOrEntry.tag != null) {
-            builder.of(tagOrEntry.tag);
-        }
-        if (tagOrEntry.entry != null) {
-            builder.of(tagOrEntry.entry);
+    public EntityPredicateBuilderJS matchBlock(TagKeyOrEntryResolver resolver, Map<String, String> propertyMap) {
+        BlockPredicate.Builder builder = BlockPredicate.Builder.block();
+        if (resolver instanceof TagKeyOrEntryResolver.ByEntry byEntry) {
+            Block block = byEntry.resolve(Registry.BLOCK);
+            StatePropertiesPredicate.Builder properties = Utils.createProperties(block, propertyMap);
+            builder.setProperties(properties.build());
+            builder.of(block);
+        } else if (resolver instanceof TagKeyOrEntryResolver.ByTagKey byTag) {
+            TagKey<Block> tagKey = byTag.resolve(Registry.BLOCK);
+            builder.of(tagKey);
         }
         blockPredicate = builder.build();
         return this;
     }
 
-    public EntityPredicateBuilderJS matchBlock(String idOrTag) {
-        return matchBlock(idOrTag, new HashMap<>());
+    public EntityPredicateBuilderJS matchBlock(TagKeyOrEntryResolver resolver) {
+        return matchBlock(resolver, new HashMap<>());
     }
 
-    public EntityPredicateBuilderJS matchFluid(String idOrTag) {
-        TagOrEntry<Fluid> tagOrEntry = Utils.getTagOrEntry(ForgeRegistries.FLUIDS, idOrTag);
-        fluidPredicate = new FluidPredicate(tagOrEntry.tag, tagOrEntry.entry, StatePropertiesPredicate.ANY);
+    public EntityPredicateBuilderJS matchFluid(TagKeyOrEntryResolver resolver) {
+        if (resolver instanceof TagKeyOrEntryResolver.ByEntry byEntry) {
+            Fluid fluid = byEntry.resolve(Registry.FLUID);
+            fluidPredicate = new FluidPredicate(null, fluid, StatePropertiesPredicate.ANY);
+        } else if (resolver instanceof TagKeyOrEntryResolver.ByTagKey byTag) {
+            TagKey<Fluid> tagKey = byTag.resolve(Registry.FLUID);
+            fluidPredicate = new FluidPredicate(tagKey, null, StatePropertiesPredicate.ANY);
+        }
         return this;
     }
 
@@ -200,16 +206,15 @@ public class EntityPredicateBuilderJS implements ExtendedEntityFlagsPredicate.IB
         return this;
     }
 
-    public EntityPredicateBuilderJS anyType(String... unknowns) {
+    public EntityPredicateBuilderJS anyType(TagKeyOrEntryResolver... resolvers) {
         List<EntityType<?>> types = new ArrayList<>();
-        List<Tag<EntityType<?>>> tags = new ArrayList<>();
+        List<TagKey<EntityType<?>>> tags = new ArrayList<>();
 
-        for (String unknown : unknowns) {
-            TagOrEntry<EntityType<?>> tagOrEntry = Utils.getTagOrEntry(ForgeRegistries.ENTITIES, unknown);
-            if (tagOrEntry.isTag()) {
-                tags.add(tagOrEntry.tag);
-            } else {
-                types.add(tagOrEntry.entry);
+        for (TagKeyOrEntryResolver resolver : resolvers) {
+            if (resolver instanceof TagKeyOrEntryResolver.ByEntry byEntry) {
+                types.add(byEntry.resolve(Registry.ENTITY_TYPE));
+            } else if (resolver instanceof TagKeyOrEntryResolver.ByTagKey byTag) {
+                tags.add(byTag.resolve(Registry.ENTITY_TYPE));
             }
         }
 

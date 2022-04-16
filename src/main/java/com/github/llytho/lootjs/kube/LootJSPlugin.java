@@ -4,6 +4,7 @@ import com.github.llytho.lootjs.LootModificationsAPI;
 import com.github.llytho.lootjs.core.LootContextType;
 import com.github.llytho.lootjs.filters.ItemFilter;
 import com.github.llytho.lootjs.filters.ResourceLocationFilter;
+import com.github.llytho.lootjs.filters.TagKeyOrEntryResolver;
 import com.github.llytho.lootjs.kube.wrapper.IntervalJS;
 import com.github.llytho.lootjs.util.WeightedItemStack;
 import dev.latvian.mods.kubejs.KubeJSPlugin;
@@ -93,5 +94,6 @@ public class LootJSPlugin extends KubeJSPlugin {
 
         typeWrappers.register(MapDecoration.Type.class, o -> valueOf(MapDecoration.Type.class, o));
         typeWrappers.register(AttributeModifier.Operation.class, o -> valueOf(AttributeModifier.Operation.class, o));
+        typeWrappers.register(TagKeyOrEntryResolver.class, o -> TagKeyOrEntryResolver.of(o.toString()));
     }
 }

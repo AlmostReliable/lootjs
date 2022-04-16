@@ -1,19 +1,12 @@
 package com.github.llytho.lootjs.util;
 
 import net.minecraft.advancements.critereon.StatePropertiesPredicate;
-import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.tags.SerializationTags;
-import net.minecraft.tags.Tag;
-import net.minecraft.tags.TagCollection;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.properties.Property;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.registries.ForgeRegistries;
-import net.minecraftforge.registries.IForgeRegistry;
-import net.minecraftforge.registries.IForgeRegistryEntry;
 
 import javax.annotation.Nullable;
 import java.util.Collection;
@@ -45,47 +38,6 @@ public class Utils {
             }
         }
         return propBuilder;
-    }
-
-    public static <T extends IForgeRegistryEntry<T>> TagOrEntry<T> getTagOrEntry(IForgeRegistry<T> registry, String idOrTag) {
-        @SuppressWarnings("unchecked")
-        TagCollection<T> tagCollection = (TagCollection<T>) getTagCollectionByRegistry(registry);
-        if (idOrTag.startsWith("#")) {
-            Tag<T> tag = tagCollection.getTag(new ResourceLocation(idOrTag.substring(1)));
-            if (tag == null) {
-                throw new IllegalArgumentException(
-                        "Tag " + idOrTag + " does not exists for " + registry.getRegistryName());
-            }
-            return TagOrEntry.withTag(tag);
-        } else {
-            T entry = registry.getValue(new ResourceLocation(idOrTag));
-            if (entry == null || entry.getRegistryName() == null ||
-                entry.getRegistryName().equals(registry.getDefaultKey())) {
-                throw new IllegalArgumentException(
-                        "Type " + idOrTag + " does not exists for " + registry.getRegistryName());
-            }
-            return TagOrEntry.withEntry(entry);
-        }
-    }
-
-    public static TagCollection<? extends IForgeRegistryEntry<?>> getTagCollectionByRegistry(IForgeRegistry<?> registry) {
-        if (registry == ForgeRegistries.BLOCKS) {
-            return SerializationTags.getInstance().getOrEmpty(Registry.BLOCK_REGISTRY);
-        }
-
-        if (registry == ForgeRegistries.FLUIDS) {
-            return SerializationTags.getInstance().getOrEmpty(Registry.FLUID_REGISTRY);
-        }
-
-        if (registry == ForgeRegistries.ITEMS) {
-            return SerializationTags.getInstance().getOrEmpty(Registry.ITEM_REGISTRY);
-        }
-
-        if (registry == ForgeRegistries.ENTITIES) {
-            return SerializationTags.getInstance().getOrEmpty(Registry.ENTITY_TYPE_REGISTRY);
-        }
-
-        throw new IllegalArgumentException(registry.getRegistryName() + " does not provide tags");
     }
 
     public static String formatEntity(Entity entity) {

@@ -17,7 +17,6 @@ public class AllTests {
         LootContextJSTest.loadTests();
         ActionTests.loadTests();
         ConditionsContainerTests.loadTests();
-        OtherTests.loadTests();
     }
 
     public static void add(String name, SimpleTest test) {
