@@ -7,7 +7,6 @@ import com.github.llytho.lootjs.kube.builder.DamageSourcePredicateBuilderJS;
 import com.github.llytho.lootjs.kube.builder.EntityPredicateBuilderJS;
 import com.github.llytho.lootjs.loot.condition.*;
 import com.github.llytho.lootjs.loot.condition.builder.DistancePredicateBuilder;
-import com.github.llytho.lootjs.util.BiomeUtils;
 import com.github.llytho.lootjs.util.Utils;
 import com.google.gson.JsonObject;
 import dev.latvian.mods.kubejs.entity.EntityJS;
@@ -16,28 +15,28 @@ import dev.latvian.mods.kubejs.stages.Stages;
 import dev.latvian.mods.kubejs.util.UtilsJS;
 import net.minecraft.advancements.critereon.MinMaxBounds;
 import net.minecraft.advancements.critereon.StatePropertiesPredicate;
+import net.minecraft.core.Registry;
+import net.minecraft.data.BuiltinRegistries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.levelgen.feature.StructureFeature;
+import net.minecraft.world.level.levelgen.feature.ConfiguredStructureFeature;
 import net.minecraft.world.level.storage.loot.IntRange;
 import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.PredicateManager;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.level.storage.loot.predicates.*;
-import net.minecraftforge.common.BiomeDictionary;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
-import java.util.stream.Collectors;
 
 @SuppressWarnings({ "UnusedReturnValue", "unused" })
 public interface ConditionsContainer<B extends ConditionsContainer<?>> {
@@ -97,42 +96,33 @@ public interface ConditionsContainer<B extends ConditionsContainer<?>> {
         return addCondition(new MainHandTableBonus(enchantment, chances));
     }
 
-    default B biome(String... biomesOrTags) {
-        Map<Boolean, List<String>> lists = Arrays
-                .stream(biomesOrTags)
-                .collect(Collectors.partitioningBy(s -> s.startsWith("#")));
+    default B biome(TagKeyOrEntryResolver... resolvers) {
+        List<ResourceKey<Biome>> biomes = new ArrayList<>();
+        List<TagKey<Biome>> tagKeys = new ArrayList<>();
 
-        List<ResourceKey<Biome>> biomeKeys = BiomeUtils.findBiomeKeys(lists
-                .get(false)
-                .stream()
-                .map(ResourceLocation::new)
-                .collect(Collectors.toList()));
-        List<BiomeDictionary.Type> types = BiomeUtils.findTypes(lists
-                .get(true)
-                .stream()
-                .map(s -> s.substring(1))
-                .collect(Collectors.toList()));
+        for (TagKeyOrEntryResolver resolver : resolvers) {
+            if (resolver instanceof TagKeyOrEntryResolver.ByEntry byEntry) {
+                biomes.add(byEntry.resolve(Registry.BIOME_REGISTRY));
+            } else if (resolver instanceof TagKeyOrEntryResolver.ByTagKey byTagKey) {
+                tagKeys.add(byTagKey.resolve(Registry.BIOME_REGISTRY));
+            }
+        }
 
-        return addCondition(new BiomeCheck(biomeKeys, types));
+        return addCondition(new BiomeCheck(biomes, tagKeys));
     }
 
-    default B anyBiome(String... biomesOrTags) {
-        Map<Boolean, List<String>> lists = Arrays
-                .stream(biomesOrTags)
-                .collect(Collectors.partitioningBy(s -> s.startsWith("#")));
+    default B anyBiome(TagKeyOrEntryResolver... resolvers) {
+        List<ResourceKey<Biome>> biomes = new ArrayList<>();
+        List<TagKey<Biome>> tagKeys = new ArrayList<>();
 
-        List<ResourceKey<Biome>> biomeKeys = BiomeUtils.findBiomeKeys(lists
-                .get(false)
-                .stream()
-                .map(ResourceLocation::new)
-                .collect(Collectors.toList()));
-        List<BiomeDictionary.Type> types = BiomeUtils.findTypes(lists
-                .get(true)
-                .stream()
-                .map(s -> s.substring(1))
-                .collect(Collectors.toList()));
-
-        return addCondition(new AnyBiomeCheck(biomeKeys, types));
+        for (TagKeyOrEntryResolver resolver : resolvers) {
+            if (resolver instanceof TagKeyOrEntryResolver.ByEntry byEntry) {
+                biomes.add(byEntry.resolve(Registry.BIOME_REGISTRY));
+            } else if (resolver instanceof TagKeyOrEntryResolver.ByTagKey byTagKey) {
+                tagKeys.add(byTagKey.resolve(Registry.BIOME_REGISTRY));
+            }
+        }
+        return addCondition(new AnyBiomeCheck(biomes, tagKeys));
     }
 
     default B anyDimension(ResourceLocation... dimensions) {
@@ -140,7 +130,17 @@ public interface ConditionsContainer<B extends ConditionsContainer<?>> {
     }
 
     default B anyStructure(ResourceLocation[] locations, boolean exact) {
-        StructureFeature<?>[] structures = BiomeUtils.findStructures(Arrays.asList(locations));
+        List<ResourceKey<ConfiguredStructureFeature<?, ?>>> structures = new ArrayList<>();
+        for (ResourceLocation location : locations) {
+            ResourceKey<ConfiguredStructureFeature<?, ?>> resourceKey = ResourceKey.create(
+                    Registry.CONFIGURED_STRUCTURE_FEATURE_REGISTRY,
+                    location);
+            ConfiguredStructureFeature<?, ?> feature = BuiltinRegistries.CONFIGURED_STRUCTURE_FEATURE.get(resourceKey);
+            if (feature == null) {
+                throw new IllegalArgumentException("Structure not found: " + location);
+            }
+            structures.add(resourceKey);
+        }
         return addCondition(new AnyStructure(structures, exact));
     }
 

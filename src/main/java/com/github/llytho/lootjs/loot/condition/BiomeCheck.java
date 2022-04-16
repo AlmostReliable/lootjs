@@ -1,8 +1,10 @@
 package com.github.llytho.lootjs.loot.condition;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;
+import net.minecraft.tags.TagKey;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
@@ -15,11 +17,11 @@ import java.util.Set;
 
 public class BiomeCheck implements IExtendedLootCondition {
     protected final List<ResourceKey<Biome>> biomes;
-    protected final List<BiomeDictionary.Type> types;
+    protected final List<TagKey<Biome>> tags;
 
-    public BiomeCheck(List<ResourceKey<Biome>> biomes, List<BiomeDictionary.Type> types) {
+    public BiomeCheck(List<ResourceKey<Biome>> biomes, List<TagKey<Biome>> tags) {
         this.biomes = biomes;
-        this.types = types;
+        this.tags = tags;
     }
 
     @Override
@@ -28,25 +30,18 @@ public class BiomeCheck implements IExtendedLootCondition {
         if (origin == null) return false;
 
         BlockPos blockPos = new BlockPos(origin.x, origin.y, origin.z);
-        Biome biome = context.getLevel().getBiome(blockPos);
-        if (biome.getRegistryName() == null) {
-            return false;
-        }
-
-        ResourceKey<Biome> ctxBiomeKey = ResourceKey.create(Registry.BIOME_REGISTRY, biome.getRegistryName());
-        Set<BiomeDictionary.Type> ctxBiomeTypes = BiomeDictionary.getTypes(ctxBiomeKey);
-        return match(ctxBiomeKey, ctxBiomeTypes);
+        return match(context.getLevel().getBiome(blockPos));
     }
 
-    protected boolean match(ResourceKey<Biome> biomeKey, Set<BiomeDictionary.Type> biomeTypes) {
+    protected boolean match(Holder<Biome> biomeHolder) {
         for (ResourceKey<Biome> biome : biomes) {
-            if (biome != biomeKey) {
+            if (!biomeHolder.is(biome)) {
                 return false;
             }
         }
 
-        for (BiomeDictionary.Type type : types) {
-            if (!biomeTypes.contains(type)) {
+        for (TagKey<Biome> tag : tags) {
+            if(!biomeHolder.is(tag)) {
                 return false;
             }
         }
@@ -58,7 +53,7 @@ public class BiomeCheck implements IExtendedLootCondition {
         return Collections.unmodifiableList(biomes);
     }
 
-    public List<BiomeDictionary.Type> getTypes() {
-        return Collections.unmodifiableList(types);
+    public List<TagKey<Biome>> getTags() {
+        return Collections.unmodifiableList(tags);
     }
 }

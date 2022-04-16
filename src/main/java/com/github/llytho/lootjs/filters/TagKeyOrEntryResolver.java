@@ -1,8 +1,11 @@
 package com.github.llytho.lootjs.filters;
 
+import com.mojang.datafixers.types.templates.Tag;
 import net.minecraft.core.Registry;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
+import net.minecraft.world.level.biome.Biome;
 
 public abstract class TagKeyOrEntryResolver {
     protected final ResourceLocation value;
@@ -30,6 +33,10 @@ public abstract class TagKeyOrEntryResolver {
             }
             return t;
         }
+
+        public <T> ResourceKey<T> resolve(ResourceKey<Registry<T>> resourceKey) {
+            return ResourceKey.create(resourceKey, value);
+        }
     }
 
     public static class ByTagKey extends TagKeyOrEntryResolver {
@@ -37,10 +44,14 @@ public abstract class TagKeyOrEntryResolver {
             super(value);
         }
 
-        public <T>TagKey<T> resolve(Registry<T> registry) {
+        public <T> TagKey<T> resolve(Registry<T> registry) {
             TagKey<T> tTagKey = TagKey.create(registry.key(), value);
             registry.getTag(tTagKey).orElseThrow(() -> new IllegalArgumentException("Tag not found: " + value));
             return tTagKey;
+        }
+
+        public <T> TagKey<T> resolve(ResourceKey<Registry<T>> resourceKey) {
+            return TagKey.create(resourceKey, value);
         }
     }
 }
