@@ -4,7 +4,6 @@ import com.github.llytho.lootjs.core.Constants;
 import com.github.llytho.lootjs.core.ILootContextData;
 import com.github.llytho.lootjs.core.LootContextType;
 import com.github.llytho.lootjs.util.LootContextUtils;
-import dev.latvian.mods.kubejs.entity.DamageSourceJS;
 import dev.latvian.mods.kubejs.entity.EntityJS;
 import dev.latvian.mods.kubejs.item.ItemStackJS;
 import dev.latvian.mods.kubejs.item.ingredient.IngredientJS;
@@ -98,13 +97,8 @@ public class LootContextJS {
     }
 
     @Nullable
-    public DamageSourceJS getDamageSource() {
-        DamageSource damageSource = context.getParamOrNull(LootContextParams.DAMAGE_SOURCE);
-        if (damageSource == null) {
-            return null;
-        }
-
-        return new DamageSourceJS(getLevel(), damageSource);
+    public DamageSource getDamageSource() {
+        return context.getParamOrNull(LootContextParams.DAMAGE_SOURCE);
     }
 
     public ItemStackJS getTool() {
