@@ -17,6 +17,7 @@ import dev.latvian.mods.kubejs.item.ingredient.IngredientJS;
 import dev.latvian.mods.kubejs.util.ConsoleJS;
 import dev.latvian.mods.rhino.util.HideFromJS;
 import net.minecraft.advancements.critereon.MinMaxBounds;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.random.SimpleWeightedRandomList;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Explosion;
@@ -209,6 +210,11 @@ public class LootActionsBuilderJS implements LootConditionsContainer<LootActions
 
     public LootActionsBuilderJS apply(Consumer<LootContextJS> action) {
         handlers.add(new CustomJSAction(action));
+        return this;
+    }
+
+    public LootActionsBuilderJS playerAction(Consumer<ServerPlayer> action) {
+        handlers.add(new CustomPlayerAction(action));
         return this;
     }
 }
