@@ -9,17 +9,16 @@ import com.github.llytho.lootjs.loot.condition.*;
 import com.github.llytho.lootjs.loot.condition.builder.DistancePredicateBuilder;
 import com.github.llytho.lootjs.util.Utils;
 import com.google.gson.JsonObject;
-import dev.latvian.mods.kubejs.entity.EntityJS;
-import dev.latvian.mods.kubejs.player.PlayerJS;
 import dev.latvian.mods.kubejs.stages.Stages;
-import dev.latvian.mods.kubejs.util.UtilsJS;
 import net.minecraft.advancements.critereon.MinMaxBounds;
 import net.minecraft.advancements.critereon.StatePropertiesPredicate;
 import net.minecraft.core.Registry;
 import net.minecraft.data.BuiltinRegistries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.tags.TagKey;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.level.biome.Biome;
@@ -39,7 +38,7 @@ import java.util.function.Consumer;
 import java.util.function.Predicate;
 
 @SuppressWarnings({ "UnusedReturnValue", "unused" })
-public interface ConditionsContainer<B extends ConditionsContainer<?>> {
+public interface LootConditionsContainer<B extends LootConditionsContainer<?>> {
 
     default B matchLoot(ItemFilter filter) {
         return matchLoot(filter, false);
@@ -204,41 +203,29 @@ public interface ConditionsContainer<B extends ConditionsContainer<?>> {
         return addCondition(new MatchKillerDistance(builder.build()));
     }
 
-    default B playerPredicate(Predicate<PlayerJS<?>> predicate) {
-        return addCondition(new PlayerParamPredicate((ctx, player) -> {
-            PlayerJS<?> p = UtilsJS.getLevel(ctx.getLevel()).getPlayer(player);
-            return p != null && predicate.test(p);
-        }));
+    default B playerPredicate(Predicate<ServerPlayer> predicate) {
+        return addCondition(new PlayerParamPredicate(predicate));
     }
 
-    default B entityPredicate(Predicate<EntityJS> predicate) {
-        return addCondition(new CustomParamPredicate<>(LootContextParams.THIS_ENTITY, (ctx, entity) -> {
-            EntityJS e = UtilsJS.getLevel(ctx.getLevel()).getEntity(entity);
-            return e != null && predicate.test(e);
-        }));
+    default B entityPredicate(Predicate<Entity> predicate) {
+        return addCondition(new CustomParamPredicate<>(LootContextParams.THIS_ENTITY, predicate));
     }
 
-    default B killerPredicate(Predicate<EntityJS> predicate) {
-        return addCondition(new CustomParamPredicate<>(LootContextParams.KILLER_ENTITY, (ctx, entity) -> {
-            EntityJS e = UtilsJS.getLevel(ctx.getLevel()).getEntity(entity);
-            return e != null && predicate.test(e);
-        }));
+    default B killerPredicate(Predicate<Entity> predicate) {
+        return addCondition(new CustomParamPredicate<>(LootContextParams.KILLER_ENTITY, predicate));
     }
 
-    default B directKillerPredicate(Predicate<EntityJS> predicate) {
-        return addCondition(new CustomParamPredicate<>(LootContextParams.DIRECT_KILLER_ENTITY, (ctx, entity) -> {
-            EntityJS e = UtilsJS.getLevel(ctx.getLevel()).getEntity(entity);
-            return e != null && predicate.test(e);
-        }));
+    default B directKillerPredicate(Predicate<Entity> predicate) {
+        return addCondition(new CustomParamPredicate<>(LootContextParams.DIRECT_KILLER_ENTITY, predicate));
     }
 
     default B hasAnyStage(String... stages) {
         if (stages.length == 1) {
             String stage = stages[0];
-            return addCondition(new PlayerParamPredicate((ctx, player) -> Stages.get(player).has(stage)));
+            return addCondition(new PlayerParamPredicate((player) -> Stages.get(player).has(stage)));
         }
 
-        return addCondition(new PlayerParamPredicate((ctx, player) -> {
+        return addCondition(new PlayerParamPredicate((player) -> {
             for (String stage : stages) {
                 if (Stages.get(player).has(stage)) {
                     return true;
@@ -248,7 +235,7 @@ public interface ConditionsContainer<B extends ConditionsContainer<?>> {
         }));
     }
 
-    default B not(Consumer<ConditionsContainer<B>> action) {
+    default B not(Consumer<LootConditionsContainer<B>> action) {
         List<ILootCondition> conditions = createConditions(action);
         if (conditions.size() != 1) {
             throw new IllegalArgumentException("You only can have one condition for `not`");
@@ -257,21 +244,21 @@ public interface ConditionsContainer<B extends ConditionsContainer<?>> {
         return addCondition(condition);
     }
 
-    default B or(Consumer<ConditionsContainer<B>> action) {
+    default B or(Consumer<LootConditionsContainer<B>> action) {
         List<ILootCondition> conditions = createConditions(action);
         ILootCondition[] array = conditions.toArray(new ILootCondition[0]);
         return addCondition(new OrCondition(array));
     }
 
-    default B and(Consumer<ConditionsContainer<B>> action) {
+    default B and(Consumer<LootConditionsContainer<B>> action) {
         List<ILootCondition> conditions = createConditions(action);
         ILootCondition[] array = conditions.toArray(new ILootCondition[0]);
         return addCondition(new AndCondition(array));
     }
 
-    default List<ILootCondition> createConditions(Consumer<ConditionsContainer<B>> action) {
+    default List<ILootCondition> createConditions(Consumer<LootConditionsContainer<B>> action) {
         List<ILootCondition> conditions = new ArrayList<>();
-        ConditionsContainer<B> container = new ConditionsContainer<B>() {
+        LootConditionsContainer<B> container = new LootConditionsContainer<B>() {
             @Override
             public B addCondition(ILootCondition condition) {
                 conditions.add(condition);

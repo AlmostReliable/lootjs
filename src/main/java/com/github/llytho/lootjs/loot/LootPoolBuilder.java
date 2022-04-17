@@ -3,7 +3,7 @@ package com.github.llytho.lootjs.loot;
 import com.github.llytho.lootjs.core.ILootAction;
 import com.github.llytho.lootjs.core.ILootCondition;
 import com.github.llytho.lootjs.core.ILootHandler;
-import com.github.llytho.lootjs.kube.ConditionsContainer;
+import com.github.llytho.lootjs.kube.LootConditionsContainer;
 import com.github.llytho.lootjs.loot.action.LootPoolAction;
 import net.minecraft.world.level.storage.loot.providers.number.ConstantValue;
 import net.minecraft.world.level.storage.loot.providers.number.NumberProvider;
@@ -11,7 +11,7 @@ import net.minecraft.world.level.storage.loot.providers.number.NumberProvider;
 import java.util.ArrayList;
 import java.util.List;
 
-public class LootPoolBuilder implements ConditionsContainer<LootPoolBuilder>,
+public class LootPoolBuilder implements LootConditionsContainer<LootPoolBuilder>,
                                         LootFunctionsContainer<LootPoolBuilder>,
                                         LootActionsContainer<LootPoolBuilder> {
 

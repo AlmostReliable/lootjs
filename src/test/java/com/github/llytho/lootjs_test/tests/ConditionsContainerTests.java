@@ -2,7 +2,7 @@ package com.github.llytho.lootjs_test.tests;
 
 import com.github.llytho.lootjs.core.ILootCondition;
 import com.github.llytho.lootjs.filters.Resolver;
-import com.github.llytho.lootjs.kube.ConditionsContainer;
+import com.github.llytho.lootjs.kube.LootConditionsContainer;
 import com.github.llytho.lootjs.loot.condition.AnyBiomeCheck;
 import com.github.llytho.lootjs.loot.condition.AnyStructure;
 import com.github.llytho.lootjs.loot.condition.BiomeCheck;
@@ -14,7 +14,7 @@ import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
 import net.minecraft.world.level.storage.loot.predicates.LootItemEntityPropertyCondition;
 
 public class ConditionsContainerTests {
-    private static final TestConditionsContainer conditions = new TestConditionsContainer();
+    private static final TestLootConditionsContainer conditions = new TestLootConditionsContainer();
 
     public static void loadTests() {
 
@@ -98,12 +98,12 @@ public class ConditionsContainerTests {
 //                "'#wrong_type' does not exist");
     }
 
-    public static class TestConditionsContainer implements ConditionsContainer<TestConditionsContainer> {
+    public static class TestLootConditionsContainer implements LootConditionsContainer<TestLootConditionsContainer> {
 
         private ILootCondition last;
 
         @Override
-        public TestConditionsContainer addCondition(ILootCondition condition) {
+        public TestLootConditionsContainer addCondition(ILootCondition condition) {
             this.last = condition;
             return this;
         }

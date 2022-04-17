@@ -5,12 +5,13 @@ import net.minecraft.world.level.storage.loot.parameters.LootContextParam;
 
 import java.util.Objects;
 import java.util.function.BiPredicate;
+import java.util.function.Predicate;
 
 public class CustomParamPredicate<T> implements IExtendedLootCondition {
-    private final BiPredicate<LootContext, T> predicate;
+    private final Predicate<T> predicate;
     private final LootContextParam<T> param;
 
-    public CustomParamPredicate(LootContextParam<T> param, BiPredicate<LootContext, T> predicate) {
+    public CustomParamPredicate(LootContextParam<T> param, Predicate<T> predicate) {
         Objects.requireNonNull(param);
         Objects.requireNonNull(predicate);
         this.param = param;
@@ -20,6 +21,6 @@ public class CustomParamPredicate<T> implements IExtendedLootCondition {
     @Override
     public boolean test(LootContext lootContext) {
         T paramOrNull = lootContext.getParamOrNull(param);
-        return paramOrNull != null && predicate.test(lootContext, paramOrNull);
+        return paramOrNull != null && predicate.test(paramOrNull);
     }
 }
