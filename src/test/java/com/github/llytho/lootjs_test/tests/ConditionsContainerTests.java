@@ -1,7 +1,7 @@
 package com.github.llytho.lootjs_test.tests;
 
 import com.github.llytho.lootjs.core.ILootCondition;
-import com.github.llytho.lootjs.filters.TagKeyOrEntryResolver;
+import com.github.llytho.lootjs.filters.Resolver;
 import com.github.llytho.lootjs.kube.ConditionsContainer;
 import com.github.llytho.lootjs.loot.condition.AnyBiomeCheck;
 import com.github.llytho.lootjs.loot.condition.AnyStructure;
@@ -64,9 +64,9 @@ public class ConditionsContainerTests {
     private static void anyBiome(TestHelper helper) {
         helper.debugStack.h2("anyBiome");
 
-        conditions.anyBiome(TagKeyOrEntryResolver.of("minecraft:desert"),
-                TagKeyOrEntryResolver.of("#nether"),
-                TagKeyOrEntryResolver.of("minecraft:jungle"));
+        conditions.anyBiome(Resolver.of("minecraft:desert"),
+                Resolver.of("#nether"),
+                Resolver.of("minecraft:jungle"));
         helper.shouldSucceed(conditions.last instanceof AnyBiomeCheck, "AnyBiomeCheck instance");
         helper.shouldSucceed(conditions.<AnyBiomeCheck>last().getBiomes().size() == 2, "Should have 2 biomes");
         helper.shouldSucceed(conditions.<AnyBiomeCheck>last().getTags().size() == 1, "Should have 1 type");
@@ -82,9 +82,9 @@ public class ConditionsContainerTests {
 
     private static void biome(TestHelper helper) {
         helper.debugStack.h2("biome");
-        conditions.biome(TagKeyOrEntryResolver.of("minecraft:desert"),
-                TagKeyOrEntryResolver.of("#nether"),
-                TagKeyOrEntryResolver.of("minecraft:jungle"));
+        conditions.biome(Resolver.of("minecraft:desert"),
+                Resolver.of("#nether"),
+                Resolver.of("minecraft:jungle"));
         helper.shouldSucceed(conditions.last instanceof BiomeCheck, "BiomeCheck instance");
         helper.shouldSucceed(conditions.<BiomeCheck>last().getBiomes().size() == 2, "Should have 2 biomes");
         helper.shouldSucceed(conditions.<BiomeCheck>last().getTags().size() == 1, "Should have 1 type");

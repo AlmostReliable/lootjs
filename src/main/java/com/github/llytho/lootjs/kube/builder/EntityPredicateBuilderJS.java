@@ -1,6 +1,6 @@
 package com.github.llytho.lootjs.kube.builder;
 
-import com.github.llytho.lootjs.filters.TagKeyOrEntryResolver;
+import com.github.llytho.lootjs.filters.Resolver;
 import com.github.llytho.lootjs.predicate.CustomItemPredicate;
 import com.github.llytho.lootjs.predicate.ExtendedEntityFlagsPredicate;
 import com.github.llytho.lootjs.predicate.MultiEntityTypePredicate;
@@ -125,14 +125,14 @@ public class EntityPredicateBuilderJS implements ExtendedEntityFlagsPredicate.IB
         return this;
     }
 
-    public EntityPredicateBuilderJS matchBlock(TagKeyOrEntryResolver resolver, Map<String, String> propertyMap) {
+    public EntityPredicateBuilderJS matchBlock(Resolver resolver, Map<String, String> propertyMap) {
         BlockPredicate.Builder builder = BlockPredicate.Builder.block();
-        if (resolver instanceof TagKeyOrEntryResolver.ByEntry byEntry) {
+        if (resolver instanceof Resolver.ByEntry byEntry) {
             Block block = byEntry.resolve(Registry.BLOCK);
             StatePropertiesPredicate.Builder properties = Utils.createProperties(block, propertyMap);
             builder.setProperties(properties.build());
             builder.of(block);
-        } else if (resolver instanceof TagKeyOrEntryResolver.ByTagKey byTag) {
+        } else if (resolver instanceof Resolver.ByTagKey byTag) {
             TagKey<Block> tagKey = byTag.resolve(Registry.BLOCK);
             builder.of(tagKey);
         }
@@ -140,15 +140,15 @@ public class EntityPredicateBuilderJS implements ExtendedEntityFlagsPredicate.IB
         return this;
     }
 
-    public EntityPredicateBuilderJS matchBlock(TagKeyOrEntryResolver resolver) {
+    public EntityPredicateBuilderJS matchBlock(Resolver resolver) {
         return matchBlock(resolver, new HashMap<>());
     }
 
-    public EntityPredicateBuilderJS matchFluid(TagKeyOrEntryResolver resolver) {
-        if (resolver instanceof TagKeyOrEntryResolver.ByEntry byEntry) {
+    public EntityPredicateBuilderJS matchFluid(Resolver resolver) {
+        if (resolver instanceof Resolver.ByEntry byEntry) {
             Fluid fluid = byEntry.resolve(Registry.FLUID);
             fluidPredicate = new FluidPredicate(null, fluid, StatePropertiesPredicate.ANY);
-        } else if (resolver instanceof TagKeyOrEntryResolver.ByTagKey byTag) {
+        } else if (resolver instanceof Resolver.ByTagKey byTag) {
             TagKey<Fluid> tagKey = byTag.resolve(Registry.FLUID);
             fluidPredicate = new FluidPredicate(tagKey, null, StatePropertiesPredicate.ANY);
         }
@@ -206,14 +206,14 @@ public class EntityPredicateBuilderJS implements ExtendedEntityFlagsPredicate.IB
         return this;
     }
 
-    public EntityPredicateBuilderJS anyType(TagKeyOrEntryResolver... resolvers) {
+    public EntityPredicateBuilderJS anyType(Resolver... resolvers) {
         List<EntityType<?>> types = new ArrayList<>();
         List<TagKey<EntityType<?>>> tags = new ArrayList<>();
 
-        for (TagKeyOrEntryResolver resolver : resolvers) {
-            if (resolver instanceof TagKeyOrEntryResolver.ByEntry byEntry) {
+        for (Resolver resolver : resolvers) {
+            if (resolver instanceof Resolver.ByEntry byEntry) {
                 types.add(byEntry.resolve(Registry.ENTITY_TYPE));
-            } else if (resolver instanceof TagKeyOrEntryResolver.ByTagKey byTag) {
+            } else if (resolver instanceof Resolver.ByTagKey byTag) {
                 tags.add(byTag.resolve(Registry.ENTITY_TYPE));
             }
         }

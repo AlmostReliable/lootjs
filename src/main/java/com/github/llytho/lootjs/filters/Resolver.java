@@ -5,21 +5,21 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 
-public abstract class TagKeyOrEntryResolver {
+public abstract class Resolver {
     protected final ResourceLocation value;
 
-    TagKeyOrEntryResolver(ResourceLocation value) {
+    Resolver(ResourceLocation value) {
         this.value = value;
     }
 
-    public static TagKeyOrEntryResolver of(String value) {
+    public static Resolver of(String value) {
         if (value.startsWith("#")) {
             return new ByTagKey(new ResourceLocation(value.substring(1)));
         }
         return new ByEntry(new ResourceLocation(value));
     }
 
-    public static class ByEntry extends TagKeyOrEntryResolver {
+    public static class ByEntry extends Resolver {
         ByEntry(ResourceLocation value) {
             super(value);
         }
@@ -37,7 +37,7 @@ public abstract class TagKeyOrEntryResolver {
         }
     }
 
-    public static class ByTagKey extends TagKeyOrEntryResolver {
+    public static class ByTagKey extends Resolver {
         ByTagKey(ResourceLocation value) {
             super(value);
         }

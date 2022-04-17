@@ -2,7 +2,7 @@ package com.github.llytho.lootjs.kube;
 
 import com.github.llytho.lootjs.core.ILootCondition;
 import com.github.llytho.lootjs.filters.ItemFilter;
-import com.github.llytho.lootjs.filters.TagKeyOrEntryResolver;
+import com.github.llytho.lootjs.filters.Resolver;
 import com.github.llytho.lootjs.kube.builder.DamageSourcePredicateBuilderJS;
 import com.github.llytho.lootjs.kube.builder.EntityPredicateBuilderJS;
 import com.github.llytho.lootjs.loot.condition.*;
@@ -96,14 +96,14 @@ public interface ConditionsContainer<B extends ConditionsContainer<?>> {
         return addCondition(new MainHandTableBonus(enchantment, chances));
     }
 
-    default B biome(TagKeyOrEntryResolver... resolvers) {
+    default B biome(Resolver... resolvers) {
         List<ResourceKey<Biome>> biomes = new ArrayList<>();
         List<TagKey<Biome>> tagKeys = new ArrayList<>();
 
-        for (TagKeyOrEntryResolver resolver : resolvers) {
-            if (resolver instanceof TagKeyOrEntryResolver.ByEntry byEntry) {
+        for (Resolver resolver : resolvers) {
+            if (resolver instanceof Resolver.ByEntry byEntry) {
                 biomes.add(byEntry.resolve(Registry.BIOME_REGISTRY));
-            } else if (resolver instanceof TagKeyOrEntryResolver.ByTagKey byTagKey) {
+            } else if (resolver instanceof Resolver.ByTagKey byTagKey) {
                 tagKeys.add(byTagKey.resolve(Registry.BIOME_REGISTRY));
             }
         }
@@ -111,14 +111,14 @@ public interface ConditionsContainer<B extends ConditionsContainer<?>> {
         return addCondition(new BiomeCheck(biomes, tagKeys));
     }
 
-    default B anyBiome(TagKeyOrEntryResolver... resolvers) {
+    default B anyBiome(Resolver... resolvers) {
         List<ResourceKey<Biome>> biomes = new ArrayList<>();
         List<TagKey<Biome>> tagKeys = new ArrayList<>();
 
-        for (TagKeyOrEntryResolver resolver : resolvers) {
-            if (resolver instanceof TagKeyOrEntryResolver.ByEntry byEntry) {
+        for (Resolver resolver : resolvers) {
+            if (resolver instanceof Resolver.ByEntry byEntry) {
                 biomes.add(byEntry.resolve(Registry.BIOME_REGISTRY));
-            } else if (resolver instanceof TagKeyOrEntryResolver.ByTagKey byTagKey) {
+            } else if (resolver instanceof Resolver.ByTagKey byTagKey) {
                 tagKeys.add(byTagKey.resolve(Registry.BIOME_REGISTRY));
             }
         }
@@ -157,7 +157,7 @@ public interface ConditionsContainer<B extends ConditionsContainer<?>> {
         return addCondition(new LootItemBlockStatePropertyCondition.Builder(block).setProperties(properties));
     }
 
-    default B matchFluid(TagKeyOrEntryResolver resolver) {
+    default B matchFluid(Resolver resolver) {
         throw new UnsupportedOperationException("Not implemented in 1.18.2 currently.");
     }
 
