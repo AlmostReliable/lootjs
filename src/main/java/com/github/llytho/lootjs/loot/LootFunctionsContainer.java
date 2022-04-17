@@ -3,9 +3,13 @@ package com.github.llytho.lootjs.loot;
 import com.github.llytho.lootjs.core.ILootAction;
 import com.github.llytho.lootjs.filters.ItemFilter;
 import com.github.llytho.lootjs.loot.action.LootItemFunctionWrapperAction;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.alchemy.Potion;
 import net.minecraft.world.item.enchantment.Enchantment;
+import net.minecraft.world.level.storage.loot.IntRange;
 import net.minecraft.world.level.storage.loot.functions.*;
+import net.minecraft.world.level.storage.loot.providers.number.ConstantValue;
 import net.minecraft.world.level.storage.loot.providers.number.NumberProvider;
 
 import java.util.ArrayList;
@@ -81,6 +85,42 @@ public interface LootFunctionsContainer<F extends LootFunctionsContainer<?>> {
         AddAttributesFunction.Builder builder = new AddAttributesFunction.Builder();
         action.accept(builder);
         return addFunction(builder);
+    }
+
+    default F limitCount(NumberProvider numberProviderMin, NumberProvider numberProviderMax) {
+        IntRange intRange = new IntRange(numberProviderMin, numberProviderMax);
+        return addFunction(LimitCount.limitCount(intRange));
+    }
+    
+    default F addLore(Component... components) {
+        SetLoreFunction.Builder builder = SetLoreFunction.setLore();
+        for (Component c : components) {
+            builder.addLine(c);
+        }
+        return addFunction(builder);
+    }
+
+    default F replaceLore(Component... components) {
+        SetLoreFunction.Builder builder = SetLoreFunction.setLore();
+        for (Component c : components) {
+            builder.addLine(c);
+        }
+        return addFunction(builder.setReplace(true));
+    }
+
+    default F setName(Component component) {
+        return addFunction(SetNameFunction.setName(component));
+    }
+
+    default F addNBT(CompoundTag tag) {
+        return addFunction(SetNbtFunction.setTag(tag));
+    }
+
+    /**
+     * For the people who always forget if "NBT" or "Nbt"
+     */
+    default F addNbt(CompoundTag tag) {
+        return addFunction(SetNbtFunction.setTag(tag));
     }
 
     default F functions(ItemFilter filter, Consumer<LootFunctionsContainer<F>> action) {
