@@ -3,6 +3,7 @@ package com.github.llytho.lootjs.kube;
 import com.github.llytho.lootjs.core.Constants;
 import com.github.llytho.lootjs.core.ILootContextData;
 import com.github.llytho.lootjs.core.LootContextType;
+import com.github.llytho.lootjs.filters.ItemFilter;
 import com.github.llytho.lootjs.util.LootContextUtils;
 import dev.latvian.mods.kubejs.entity.EntityJS;
 import dev.latvian.mods.kubejs.item.ItemStackJS;
@@ -169,20 +170,20 @@ public class LootContextJS {
         data.getGeneratedLoot().add(itemStack.getItemStack());
     }
 
-    public void removeLoot(IngredientJS ingredient) {
-        data.getGeneratedLoot().removeIf(ingredient::testVanilla);
+    public void removeLoot(ItemFilter itemFilter) {
+        data.getGeneratedLoot().removeIf(itemFilter);
     }
 
-    public List<ItemStackJS> findLoot(IngredientJS ingredient) {
+    public List<ItemStackJS> findLoot(ItemFilter itemFilter) {
         return data
                 .getGeneratedLoot()
                 .stream()
+                .filter(itemFilter)
                 .map(ItemStackJS::of)
-                .filter(ingredient::test)
                 .collect(Collectors.toList());
     }
 
-    public boolean hasLoot(IngredientJS ingredient) {
+    public boolean hasLoot(ItemFilter ingredient) {
         return !findLoot(ingredient).isEmpty();
     }
 

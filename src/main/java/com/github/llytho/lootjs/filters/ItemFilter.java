@@ -15,7 +15,7 @@ public interface ItemFilter extends Predicate<ItemStack> {
     ItemFilter AXE = itemStack -> itemStack.getItem() instanceof AxeItem;
     ItemFilter SHOVEL = itemStack -> itemStack.getItem() instanceof ShovelItem;
     ItemFilter HOE = itemStack -> itemStack.getItem() instanceof HoeItem;
-    ItemFilter DIGGER = itemStack -> itemStack.getItem() instanceof DiggerItem;
+    ItemFilter TOOL = itemStack -> itemStack.getItem() instanceof DiggerItem;
     ItemFilter POTION = itemStack -> itemStack.getItem() instanceof PotionItem;
     ItemFilter HAS_TIER = itemStack -> itemStack.getItem() instanceof TieredItem;
     ItemFilter PROJECTILE_WEAPON = itemStack -> itemStack.getItem() instanceof ProjectileWeaponItem;

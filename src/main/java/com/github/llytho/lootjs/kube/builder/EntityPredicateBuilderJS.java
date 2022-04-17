@@ -1,11 +1,11 @@
 package com.github.llytho.lootjs.kube.builder;
 
+import com.github.llytho.lootjs.filters.ItemFilter;
 import com.github.llytho.lootjs.filters.Resolver;
 import com.github.llytho.lootjs.predicate.CustomItemPredicate;
 import com.github.llytho.lootjs.predicate.ExtendedEntityFlagsPredicate;
 import com.github.llytho.lootjs.predicate.MultiEntityTypePredicate;
 import com.github.llytho.lootjs.util.Utils;
-import dev.latvian.mods.kubejs.item.ingredient.IngredientJS;
 import net.minecraft.advancements.critereon.*;
 import net.minecraft.core.Registry;
 import net.minecraft.nbt.CompoundTag;
@@ -189,12 +189,12 @@ public class EntityPredicateBuilderJS implements ExtendedEntityFlagsPredicate.IB
         return this;
     }
 
-    public EntityPredicateBuilderJS matchSlot(EquipmentSlot slot, IngredientJS ingredient) {
+    public EntityPredicateBuilderJS matchSlot(EquipmentSlot slot, ItemFilter itemFilter) {
         if (equipmentPredicateBuilder == null) {
             equipmentPredicateBuilder = new EntityEquipmentPredicate.Builder();
         }
 
-        CustomItemPredicate predicate = new CustomItemPredicate(ingredient.getVanillaPredicate());
+        CustomItemPredicate predicate = new CustomItemPredicate(itemFilter);
         switch (slot) {
             case MAINHAND -> equipmentPredicateBuilder.mainhand(predicate);
             case OFFHAND -> equipmentPredicateBuilder.offhand(predicate);
