@@ -8,6 +8,20 @@ and this project adheres to [Semantic Versioning].
 ## [Unreleased]
 - /
 
+## [2.3.0-beta] - 2022-04-18
+We are now on 1.18.2! 
+
+### Added
+- [ItemFilter](https://github.com/AlmostReliable/lootjs-forge/wiki/1.18.2-Types#itemfilters)
+- [Functions](https://github.com/AlmostReliable/lootjs-forge/wiki/1.18.2-Functions) to apply loot table functions
+- [CustomPlayerAction](https://github.com/AlmostReliable/lootjs-forge/wiki/1.18.2-Actions#playeractioncallback)
+
+### Changed
+- Refactoring the builders for loot modifications.
+- Removing usage of kubejs `DamageSourceJS` and use the vanilla damage source.
+- Rename actions. You can find the new names [here](https://github.com/AlmostReliable/lootjs-forge/wiki/1.18.2-Actions)
+- `biome()` & `anyBiome()` conditions now uses the new tag system
+
 ## [2.2.0] - 2022-03-15
 ### Added
 - Action `thenRollPool`
@@ -30,6 +44,7 @@ and this project adheres to [Semantic Versioning].
 
 <!-- Versions -->
 [unreleased]: https://github.com/AlmostReliable/lootjs-forge/compare/1.18...HEAD
+[2.3.0-beta]: https://github.com/AlmostReliable/lootjs-forge/releases/tag/v1.18-2.3.0-beta
 [2.2.0]: https://github.com/AlmostReliable/lootjs-forge/releases/tag/v1.18-2.2.0
 [2.1.0]: https://github.com/AlmostReliable/lootjs-forge/releases/tag/v1.18-2.1.0
 [2.0.0]: https://github.com/AlmostReliable/lootjs-forge/releases/tag/v1.18-2.0.0
