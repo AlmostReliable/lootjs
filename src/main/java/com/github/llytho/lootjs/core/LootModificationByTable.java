@@ -1,36 +1,26 @@
 package com.github.llytho.lootjs.core;
 
-import net.minecraft.resources.ResourceLocation;
+import com.github.llytho.lootjs.filters.ResourceLocationFilter;
 import net.minecraft.world.level.storage.loot.LootContext;
 
 import java.util.List;
-import java.util.regex.Pattern;
 
 public class LootModificationByTable extends AbstractLootModification {
 
-    public final List<ResourceLocation> locations;
-    public final List<Pattern> patterns;
+    public final ResourceLocationFilter[] filters;
 
-    public LootModificationByTable(String name, List<ResourceLocation> locations, List<Pattern> patterns, List<ILootHandler> handlers) {
+    public LootModificationByTable(String name, ResourceLocationFilter[] filters, List<ILootHandler> handlers) {
         super(name, handlers);
-        this.locations = locations;
-        this.patterns = patterns;
+        this.filters = filters;
     }
 
     @Override
     public boolean shouldExecute(LootContext context) {
-        for (ResourceLocation location : locations) {
-            if (location.equals(context.getQueriedLootTableId())) {
+        for (ResourceLocationFilter filter : filters) {
+            if (filter.test(context.getQueriedLootTableId())) {
                 return true;
             }
         }
-
-        for (Pattern pattern : patterns) {
-            if (pattern.matcher(context.getQueriedLootTableId().toString()).matches()) {
-                return true;
-            }
-        }
-
         return false;
     }
 }

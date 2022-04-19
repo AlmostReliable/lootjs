@@ -1,64 +1,63 @@
 package com.github.llytho.lootjs.kube;
 
-import com.github.llytho.lootjs.kube.builder.*;
+import com.github.llytho.lootjs.core.ILootCondition;
+import com.github.llytho.lootjs.filters.ItemFilter;
+import com.github.llytho.lootjs.filters.Resolver;
+import com.github.llytho.lootjs.kube.builder.DamageSourcePredicateBuilderJS;
+import com.github.llytho.lootjs.kube.builder.EntityPredicateBuilderJS;
 import com.github.llytho.lootjs.loot.condition.*;
 import com.github.llytho.lootjs.loot.condition.builder.DistancePredicateBuilder;
-import com.github.llytho.lootjs.util.BiomeUtils;
-import com.github.llytho.lootjs.util.TagOrEntry;
 import com.github.llytho.lootjs.util.Utils;
 import com.google.gson.JsonObject;
-import dev.latvian.mods.kubejs.entity.EntityJS;
-import dev.latvian.mods.kubejs.item.ingredient.IngredientJS;
-import dev.latvian.mods.kubejs.player.PlayerJS;
 import dev.latvian.mods.kubejs.stages.Stages;
-import dev.latvian.mods.kubejs.util.UtilsJS;
-import net.minecraft.advancements.critereon.FluidPredicate;
 import net.minecraft.advancements.critereon.MinMaxBounds;
 import net.minecraft.advancements.critereon.StatePropertiesPredicate;
+import net.minecraft.core.Registry;
+import net.minecraft.data.BuiltinRegistries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.tags.TagKey;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.levelgen.feature.StructureFeature;
-import net.minecraft.world.level.material.Fluid;
+import net.minecraft.world.level.levelgen.feature.ConfiguredStructureFeature;
 import net.minecraft.world.level.storage.loot.IntRange;
 import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.PredicateManager;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.level.storage.loot.predicates.*;
-import net.minecraftforge.common.BiomeDictionary;
-import net.minecraftforge.registries.ForgeRegistries;
 
 import javax.annotation.Nullable;
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
-import java.util.stream.Collectors;
 
-public interface ConditionsContainer<B extends ConditionsContainer<?>> {
+@SuppressWarnings({ "UnusedReturnValue", "unused" })
+public interface LootConditionsContainer<B extends LootConditionsContainer<?>> {
 
-    default B matchLoot(IngredientJS ingredient) {
-        return matchLoot(ingredient, false);
+    default B matchLoot(ItemFilter filter) {
+        return matchLoot(filter, false);
     }
 
-    default B matchLoot(IngredientJS ingredient, boolean exact) {
-        return addCondition(new ContainsLootCondition(ingredient.getVanillaPredicate(), exact));
+    default B matchLoot(ItemFilter filter, boolean exact) {
+        return addCondition(new ContainsLootCondition(filter, exact));
     }
 
-    default B matchMainHand(IngredientJS ingredient) {
-        return addCondition(new MatchEquipmentSlot(EquipmentSlot.MAINHAND, ingredient.getVanillaPredicate()));
+    default B matchMainHand(ItemFilter filter) {
+        return addCondition(new MatchEquipmentSlot(EquipmentSlot.MAINHAND, filter));
     }
 
-    default B matchOffHand(IngredientJS ingredient) {
-        return addCondition(new MatchEquipmentSlot(EquipmentSlot.OFFHAND, ingredient.getVanillaPredicate()));
+    default B matchOffHand(ItemFilter filter) {
+        return addCondition(new MatchEquipmentSlot(EquipmentSlot.OFFHAND, filter));
     }
 
-    default B matchEquip(EquipmentSlot slot, IngredientJS ingredient) {
-        return addCondition(new MatchEquipmentSlot(slot, ingredient.getVanillaPredicate()));
+    default B matchEquip(EquipmentSlot slot, ItemFilter filter) {
+        return addCondition(new MatchEquipmentSlot(slot, filter));
     }
 
     default B survivesExplosion() {
@@ -96,42 +95,33 @@ public interface ConditionsContainer<B extends ConditionsContainer<?>> {
         return addCondition(new MainHandTableBonus(enchantment, chances));
     }
 
-    default B biome(String... biomesOrTags) {
-        Map<Boolean, List<String>> lists = Arrays
-                .stream(biomesOrTags)
-                .collect(Collectors.partitioningBy(s -> s.startsWith("#")));
+    default B biome(Resolver... resolvers) {
+        List<ResourceKey<Biome>> biomes = new ArrayList<>();
+        List<TagKey<Biome>> tagKeys = new ArrayList<>();
 
-        List<ResourceKey<Biome>> biomeKeys = BiomeUtils.findBiomeKeys(lists
-                .get(false)
-                .stream()
-                .map(ResourceLocation::new)
-                .collect(Collectors.toList()));
-        List<BiomeDictionary.Type> types = BiomeUtils.findTypes(lists
-                .get(true)
-                .stream()
-                .map(s -> s.substring(1))
-                .collect(Collectors.toList()));
+        for (Resolver resolver : resolvers) {
+            if (resolver instanceof Resolver.ByEntry byEntry) {
+                biomes.add(byEntry.resolve(Registry.BIOME_REGISTRY));
+            } else if (resolver instanceof Resolver.ByTagKey byTagKey) {
+                tagKeys.add(byTagKey.resolve(Registry.BIOME_REGISTRY));
+            }
+        }
 
-        return addCondition(new BiomeCheck(biomeKeys, types));
+        return addCondition(new BiomeCheck(biomes, tagKeys));
     }
 
-    default B anyBiome(String... biomesOrTags) {
-        Map<Boolean, List<String>> lists = Arrays
-                .stream(biomesOrTags)
-                .collect(Collectors.partitioningBy(s -> s.startsWith("#")));
+    default B anyBiome(Resolver... resolvers) {
+        List<ResourceKey<Biome>> biomes = new ArrayList<>();
+        List<TagKey<Biome>> tagKeys = new ArrayList<>();
 
-        List<ResourceKey<Biome>> biomeKeys = BiomeUtils.findBiomeKeys(lists
-                .get(false)
-                .stream()
-                .map(ResourceLocation::new)
-                .collect(Collectors.toList()));
-        List<BiomeDictionary.Type> types = BiomeUtils.findTypes(lists
-                .get(true)
-                .stream()
-                .map(s -> s.substring(1))
-                .collect(Collectors.toList()));
-
-        return addCondition(new AnyBiomeCheck(biomeKeys, types));
+        for (Resolver resolver : resolvers) {
+            if (resolver instanceof Resolver.ByEntry byEntry) {
+                biomes.add(byEntry.resolve(Registry.BIOME_REGISTRY));
+            } else if (resolver instanceof Resolver.ByTagKey byTagKey) {
+                tagKeys.add(byTagKey.resolve(Registry.BIOME_REGISTRY));
+            }
+        }
+        return addCondition(new AnyBiomeCheck(biomes, tagKeys));
     }
 
     default B anyDimension(ResourceLocation... dimensions) {
@@ -139,7 +129,17 @@ public interface ConditionsContainer<B extends ConditionsContainer<?>> {
     }
 
     default B anyStructure(ResourceLocation[] locations, boolean exact) {
-        StructureFeature<?>[] structures = BiomeUtils.findStructures(Arrays.asList(locations));
+        List<ResourceKey<ConfiguredStructureFeature<?, ?>>> structures = new ArrayList<>();
+        for (ResourceLocation location : locations) {
+            ResourceKey<ConfiguredStructureFeature<?, ?>> resourceKey = ResourceKey.create(
+                    Registry.CONFIGURED_STRUCTURE_FEATURE_REGISTRY,
+                    location);
+            ConfiguredStructureFeature<?, ?> feature = BuiltinRegistries.CONFIGURED_STRUCTURE_FEATURE.get(resourceKey);
+            if (feature == null) {
+                throw new IllegalArgumentException("Structure not found: " + location);
+            }
+            structures.add(resourceKey);
+        }
         return addCondition(new AnyStructure(structures, exact));
     }
 
@@ -156,10 +156,8 @@ public interface ConditionsContainer<B extends ConditionsContainer<?>> {
         return addCondition(new LootItemBlockStatePropertyCondition.Builder(block).setProperties(properties));
     }
 
-    default B matchFluid(String idOrTag) {
-        TagOrEntry<Fluid> tagOrEntry = Utils.getTagOrEntry(ForgeRegistries.FLUIDS, idOrTag);
-        FluidPredicate predicate = new FluidPredicate(tagOrEntry.tag, tagOrEntry.entry, StatePropertiesPredicate.ANY);
-        return addCondition(new MatchFluid(predicate));
+    default B matchFluid(Resolver resolver) {
+        throw new UnsupportedOperationException("Not implemented in 1.18.2 currently.");
     }
 
     default B matchEntity(Consumer<EntityPredicateBuilderJS> action) {
@@ -205,13 +203,29 @@ public interface ConditionsContainer<B extends ConditionsContainer<?>> {
         return addCondition(new MatchKillerDistance(builder.build()));
     }
 
+    default B playerPredicate(Predicate<ServerPlayer> predicate) {
+        return addCondition(new PlayerParamPredicate(predicate));
+    }
+
+    default B entityPredicate(Predicate<Entity> predicate) {
+        return addCondition(new CustomParamPredicate<>(LootContextParams.THIS_ENTITY, predicate));
+    }
+
+    default B killerPredicate(Predicate<Entity> predicate) {
+        return addCondition(new CustomParamPredicate<>(LootContextParams.KILLER_ENTITY, predicate));
+    }
+
+    default B directKillerPredicate(Predicate<Entity> predicate) {
+        return addCondition(new CustomParamPredicate<>(LootContextParams.DIRECT_KILLER_ENTITY, predicate));
+    }
+
     default B hasAnyStage(String... stages) {
         if (stages.length == 1) {
             String stage = stages[0];
-            return addCondition(new PlayerParamPredicate((ctx, player) -> Stages.get(player).has(stage)));
+            return addCondition(new PlayerParamPredicate((player) -> Stages.get(player).has(stage)));
         }
 
-        return addCondition(new PlayerParamPredicate((ctx, player) -> {
+        return addCondition(new PlayerParamPredicate((player) -> {
             for (String stage : stages) {
                 if (Stages.get(player).has(stage)) {
                     return true;
@@ -221,61 +235,49 @@ public interface ConditionsContainer<B extends ConditionsContainer<?>> {
         }));
     }
 
-    default B playerPredicate(Predicate<PlayerJS<?>> predicate) {
-        return addCondition(new PlayerParamPredicate((ctx, player) -> {
-            PlayerJS<?> p = UtilsJS.getLevel(ctx.getLevel()).getPlayer(player);
-            return p != null && predicate.test(p);
-        }));
+    default B not(Consumer<LootConditionsContainer<B>> action) {
+        List<ILootCondition> conditions = createConditions(action);
+        if (conditions.size() != 1) {
+            throw new IllegalArgumentException("You only can have one condition for `not`");
+        }
+        NotCondition condition = new NotCondition(conditions.get(0));
+        return addCondition(condition);
     }
 
-    default B entityPredicate(Predicate<EntityJS> predicate) {
-        return addCondition(new CustomParamPredicate<>(LootContextParams.THIS_ENTITY, (ctx, entity) -> {
-            EntityJS e = UtilsJS.getLevel(ctx.getLevel()).getEntity(entity);
-            return e != null && predicate.test(e);
-        }));
+    default B or(Consumer<LootConditionsContainer<B>> action) {
+        List<ILootCondition> conditions = createConditions(action);
+        ILootCondition[] array = conditions.toArray(new ILootCondition[0]);
+        return addCondition(new OrCondition(array));
     }
 
-    default B killerPredicate(Predicate<EntityJS> predicate) {
-        return addCondition(new CustomParamPredicate<>(LootContextParams.KILLER_ENTITY, (ctx, entity) -> {
-            EntityJS e = UtilsJS.getLevel(ctx.getLevel()).getEntity(entity);
-            return e != null && predicate.test(e);
-        }));
+    default B and(Consumer<LootConditionsContainer<B>> action) {
+        List<ILootCondition> conditions = createConditions(action);
+        ILootCondition[] array = conditions.toArray(new ILootCondition[0]);
+        return addCondition(new AndCondition(array));
     }
 
-    default B directKillerPredicate(Predicate<EntityJS> predicate) {
-        return addCondition(new CustomParamPredicate<>(LootContextParams.DIRECT_KILLER_ENTITY, (ctx, entity) -> {
-            EntityJS e = UtilsJS.getLevel(ctx.getLevel()).getEntity(entity);
-            return e != null && predicate.test(e);
-        }));
-    }
-
-
-    default B not(Consumer<NotConditionBuilder> action) {
-        NotConditionBuilder builder = new NotConditionBuilder();
-        action.accept(builder);
-        return addCondition(builder.build());
-    }
-
-    default B or(Consumer<OrConditionBuilder> action) {
-        OrConditionBuilder builder = new OrConditionBuilder();
-        action.accept(builder);
-        return addCondition(builder.build());
-    }
-
-    default B and(Consumer<AndConditionBuilder> action) {
-        AndConditionBuilder builder = new AndConditionBuilder();
-        action.accept(builder);
-        return addCondition(builder.build());
+    default List<ILootCondition> createConditions(Consumer<LootConditionsContainer<B>> action) {
+        List<ILootCondition> conditions = new ArrayList<>();
+        LootConditionsContainer<B> container = new LootConditionsContainer<B>() {
+            @Override
+            public B addCondition(ILootCondition condition) {
+                conditions.add(condition);
+                //noinspection unchecked
+                return (B) this;
+            }
+        };
+        action.accept(container);
+        return conditions;
     }
 
     default B customCondition(JsonObject json) {
         LootItemCondition condition = PredicateManager.GSON.fromJson(json, LootItemCondition.class);
-        return addCondition(condition);
+        return addCondition((ILootCondition) condition);
     }
 
     default B addCondition(LootItemCondition.Builder builder) {
-        return addCondition(builder.build());
+        return addCondition((ILootCondition) builder.build());
     }
 
-    B addCondition(LootItemCondition pCondition);
+    B addCondition(ILootCondition condition);
 }

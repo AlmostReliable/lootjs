@@ -7,5 +7,5 @@ onEvent("lootjs", (event) => {
                 mount.anyType("minecraft:spider");
             });
         })
-        .thenAdd("minecraft:magma_cream");
+        .addLoot("minecraft:magma_cream");
 });

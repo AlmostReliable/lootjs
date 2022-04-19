@@ -36,7 +36,8 @@ public class BuilderTests {
             helper.shouldBeTrue(toJson.apply(dsb.get().isProjectile(true)), "DamageSourcePredicate/is_projectile");
             helper.shouldBeTrue(toJson.apply(dsb.get().isExplosion(true)), "DamageSourcePredicate/is_explosion");
             helper.shouldBeTrue(toJson.apply(dsb.get().doesBypassArmor(true)), "DamageSourcePredicate/bypasses_armor");
-            helper.shouldBeTrue(toJson.apply(dsb.get().doesBypassInvulnerability(true)), "DamageSourcePredicate/bypasses_invulnerability");
+            helper.shouldBeTrue(toJson.apply(dsb.get().doesBypassInvulnerability(true)),
+                    "DamageSourcePredicate/bypasses_invulnerability");
             helper.shouldBeTrue(toJson.apply(dsb.get().doesBypassMagic(true)), "DamageSourcePredicate/bypasses_magic");
             helper.shouldBeTrue(toJson.apply(dsb.get().isFire(true)), "DamageSourcePredicate/is_fire");
             helper.shouldBeTrue(toJson.apply(dsb.get().isMagic(true)), "DamageSourcePredicate/is_magic");
@@ -45,9 +46,12 @@ public class BuilderTests {
             helper.debugStack.h2("FALSE checks");
             helper.shouldBeFalse(toJson.apply(dsb.get().isProjectile(false)), "DamageSourcePredicate/is_projectile");
             helper.shouldBeFalse(toJson.apply(dsb.get().isExplosion(false)), "DamageSourcePredicate/is_explosion");
-            helper.shouldBeFalse(toJson.apply(dsb.get().doesBypassArmor(false)), "DamageSourcePredicate/bypasses_armor");
-            helper.shouldBeFalse(toJson.apply(dsb.get().doesBypassInvulnerability(false)), "DamageSourcePredicate/bypasses_invulnerability");
-            helper.shouldBeFalse(toJson.apply(dsb.get().doesBypassMagic(false)), "DamageSourcePredicate/bypasses_magic");
+            helper.shouldBeFalse(toJson.apply(dsb.get().doesBypassArmor(false)),
+                    "DamageSourcePredicate/bypasses_armor");
+            helper.shouldBeFalse(toJson.apply(dsb.get().doesBypassInvulnerability(false)),
+                    "DamageSourcePredicate/bypasses_invulnerability");
+            helper.shouldBeFalse(toJson.apply(dsb.get().doesBypassMagic(false)),
+                    "DamageSourcePredicate/bypasses_magic");
             helper.shouldBeFalse(toJson.apply(dsb.get().isFire(false)), "DamageSourcePredicate/is_fire");
             helper.shouldBeFalse(toJson.apply(dsb.get().isMagic(false)), "DamageSourcePredicate/is_magic");
             helper.shouldBeFalse(toJson.apply(dsb.get().isLightning(false)), "DamageSourcePredicate/is_lightning");

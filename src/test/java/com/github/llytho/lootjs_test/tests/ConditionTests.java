@@ -5,10 +5,13 @@ import com.github.llytho.lootjs.core.ILootContextData;
 import com.github.llytho.lootjs.loot.condition.*;
 import com.github.llytho.lootjs.loot.condition.builder.DistancePredicateBuilder;
 import com.github.llytho.lootjs_test.AllTests;
+import com.mojang.datafixers.util.Pair;
+import it.unimi.dsi.fastutil.longs.LongSet;
 import net.minecraft.advancements.critereon.MinMaxBounds;
-import net.minecraft.core.BlockPos;
+import net.minecraft.core.*;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.tags.BiomeTags;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.EquipmentSlot;
@@ -17,13 +20,14 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.biome.Biome;
-import net.minecraft.world.level.levelgen.feature.StructureFeature;
+import net.minecraft.world.level.levelgen.feature.ConfiguredStructureFeature;
+import net.minecraft.world.level.levelgen.structure.BuiltinStructures;
+import net.minecraft.world.level.levelgen.structure.StructurePiece;
+import net.minecraft.world.level.levelgen.structure.StructureStart;
 import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
-import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.common.BiomeDictionary;
 
 import java.util.*;
 import java.util.function.Function;
@@ -34,10 +38,10 @@ public class ConditionTests {
     public static void loadTests() {
         AllTests.add("AnyBiomeCheck & BiomeCheck", helper -> {
             BlockPos blockPos = helper.player.blockPosition().offset(1, 0, 1);
-            Biome biome = helper.level.getBiome(blockPos);
+            Holder<Biome> biomeHolder = helper.level.getBiome(blockPos);
             LootContext ctx = helper.unknownContext(helper.player.position());
 
-            ResourceKey<Biome> bKey = helper.biome(Objects.requireNonNull(biome.getRegistryName()));
+            ResourceKey<Biome> bKey = helper.biome(Objects.requireNonNull(biomeHolder.value().getRegistryName()));
             AnyBiomeCheck anyBiomeCheck = new AnyBiomeCheck(Collections.singletonList(bKey), new ArrayList<>());
             helper.shouldSucceed(anyBiomeCheck.test(ctx), "Biome " + bKey.location() + " should match");
 
@@ -45,7 +49,7 @@ public class ConditionTests {
             AnyBiomeCheck anyBiomeCheckFail = new AnyBiomeCheck(Collections.singletonList(oceanKey), new ArrayList<>());
             helper.shouldFail(anyBiomeCheckFail.test(ctx), "Biome " + oceanKey.location() + " should not match");
 
-            Set<BiomeDictionary.Type> types = BiomeDictionary.getTypes(bKey);
+            var types = biomeHolder.tags().toList();
             AnyBiomeCheck withAnyType = new AnyBiomeCheck(new ArrayList<>(), new ArrayList<>(types));
             helper.shouldSucceed(withAnyType.test(ctx),
                     "Biome " + bKey.location() + " should match any type: " + types);
@@ -53,16 +57,16 @@ public class ConditionTests {
             BiomeCheck withAllTypes = new BiomeCheck(new ArrayList<>(), new ArrayList<>(types));
             helper.shouldSucceed(withAllTypes.test(ctx), "Biome " + bKey.location() + " should match types: " + types);
 
-            List<BiomeDictionary.Type> invalidTypes = Collections.singletonList(BiomeDictionary.Type.NETHER);
-            AnyBiomeCheck withNoType = new AnyBiomeCheck(new ArrayList<>(), invalidTypes);
+            var invalidTags = Collections.singletonList(BiomeTags.IS_NETHER);
+            AnyBiomeCheck withNoType = new AnyBiomeCheck(new ArrayList<>(), invalidTags);
             helper.shouldFail(withNoType.test(ctx),
-                    "Biome " + bKey.location() + " should not match any type: " + invalidTypes);
+                    "Biome " + bKey.location() + " should not match any type: " + invalidTags);
 
-            invalidTypes = new ArrayList<>(types);
-            invalidTypes.add(BiomeDictionary.Type.VOID);
-            BiomeCheck withNoType2 = new BiomeCheck(new ArrayList<>(), invalidTypes);
+            var invalidVoidTags = new ArrayList<>(types);
+            invalidVoidTags.add(BiomeTags.HAS_END_CITY);
+            BiomeCheck withNoType2 = new BiomeCheck(new ArrayList<>(), invalidVoidTags);
             helper.shouldFail(withNoType2.test(ctx),
-                    "Biome " + bKey.location() + " should not match types: " + invalidTypes);
+                    "Biome " + bKey.location() + " should not match types: " + invalidVoidTags);
         });
 
         AllTests.add("AnyDimension", helper -> {
@@ -80,17 +84,42 @@ public class ConditionTests {
         });
 
         AllTests.add("AnyStructure", helper -> {
-            BlockPos featurePos = helper.level.findNearestMapFeature(StructureFeature.STRONGHOLD,
-                    helper.player.blockPosition(),
-                    100,
-                    false);
+            // ConfiguredStructureTags.EYE_OF_ENDER_LOCATED -> looks like this is for finding strongholds ._.'
+            Registry<ConfiguredStructureFeature<?, ?>> registry = helper.level
+                    .registryAccess()
+                    .registryOrThrow(Registry.CONFIGURED_STRUCTURE_FEATURE_REGISTRY);
+            HolderSet.Direct<ConfiguredStructureFeature<?, ?>> holders = registry
+                    .getHolder(BuiltinStructures.OCEAN_MONUMENT).map(HolderSet::direct).orElseThrow();
 
-            if (featurePos != null) {
-                LootContext ctx = helper.unknownContext(new Vec3(featurePos.getX(),
-                        -20, // TODO is weird, i don't like but map feature provides a different position ... 
-                        featurePos.getZ()));
+            Pair<BlockPos, Holder<ConfiguredStructureFeature<?, ?>>> nearestMapFeature = helper.level
+                    .getChunkSource()
+                    .getGenerator()
+                    .findNearestMapFeature(helper.level, holders,
+                            helper.player.blockPosition(),
+                            100,
+                            false);
 
-                AnyStructure shStructure = new AnyStructure(new StructureFeature[]{ StructureFeature.STRONGHOLD },
+            if (nearestMapFeature != null) {
+                Map<ConfiguredStructureFeature<?, ?>, LongSet> allStructuresAt = helper.level
+                        .structureFeatureManager()
+                        .getAllStructuresAt(nearestMapFeature.getFirst());
+                List<StructureStart> structureStarts = helper.level
+                        .structureFeatureManager()
+                        .startsForFeature(SectionPos.of(nearestMapFeature.getFirst()),
+                                nearestMapFeature.getSecond().value());
+                StructurePiece structurePiece = structureStarts
+                        .stream()
+                        .map(StructureStart::getPieces)
+                        .flatMap(Collection::stream)
+                        .findFirst()
+                        .orElseThrow();
+
+                LootContext ctx = helper.unknownContext(new Vec3(structurePiece.getBoundingBox().minX(),
+                        structurePiece.getBoundingBox().minY(),
+                        // TODO is weird, i don't like but map feature provides a different position ...
+                        structurePiece.getBoundingBox().minZ()));
+
+                AnyStructure shStructure = new AnyStructure(List.of(BuiltinStructures.OCEAN_MONUMENT),
                         false);
                 helper.shouldSucceed(shStructure.test(ctx), "StructureFeature is a stronghold");
             } else {
@@ -98,11 +127,11 @@ public class ConditionTests {
             }
 
             LootContext ctx = helper.unknownContext(helper.player.position());
-            AnyStructure shStructure = new AnyStructure(new StructureFeature[]{ StructureFeature.BASTION_REMNANT },
+            AnyStructure shStructure = new AnyStructure(List.of(BuiltinStructures.BASTION_REMNANT),
                     false);
             helper.shouldFail(shStructure.test(ctx), "StructureFeature is not a nether bastion [exact = false]");
 
-            shStructure = new AnyStructure(new StructureFeature[]{ StructureFeature.BASTION_REMNANT }, true);
+            shStructure = new AnyStructure(List.of(BuiltinStructures.BASTION_REMNANT), true);
             helper.shouldFail(shStructure.test(ctx), "StructureFeature is not a nether bastion [exact = true]");
         });
 
@@ -115,20 +144,25 @@ public class ConditionTests {
 
             data.setGeneratedLoot(Arrays.asList(new ItemStack(Items.DIAMOND), new ItemStack(Items.DIAMOND_HELMET)));
 
-            ContainsLootCondition nonExact = new ContainsLootCondition(itemStack -> itemStack.getItem() == Items.DIAMOND, false);
+            ContainsLootCondition nonExact = new ContainsLootCondition(itemStack -> itemStack.getItem() ==
+                                                                                    Items.DIAMOND, false);
             helper.shouldSucceed(nonExact.test(ctx), "Contains diamond");
 
-            ContainsLootCondition exact = new ContainsLootCondition(itemStack -> itemStack.getItem() == Items.DIAMOND || itemStack.getItem() == Items.DIAMOND_HELMET, true);
+            ContainsLootCondition exact = new ContainsLootCondition(itemStack -> itemStack.getItem() == Items.DIAMOND ||
+                                                                                 itemStack.getItem() ==
+                                                                                 Items.DIAMOND_HELMET, true);
             helper.shouldSucceed(exact.test(ctx), "Contains diamond & helmet");
 
-            ContainsLootCondition nonExactNotExist = new ContainsLootCondition(itemStack -> itemStack.getItem() == Items.NETHER_BRICK, false);
+            ContainsLootCondition nonExactNotExist = new ContainsLootCondition(itemStack -> itemStack.getItem() ==
+                                                                                            Items.NETHER_BRICK, false);
             helper.shouldFail(nonExactNotExist.test(ctx), "No nether brick");
 
             ContainsLootCondition exactFailNotExist = new ContainsLootCondition(itemStack ->
                     itemStack.getItem() == Items.DIAMOND || itemStack.getItem() == Items.NETHER_BRICK, true);
             helper.shouldFail(exactFailNotExist.test(ctx), "No nether brick");
 
-            ContainsLootCondition exactFail = new ContainsLootCondition(itemStack -> itemStack.getItem() == Items.DIAMOND, true);
+            ContainsLootCondition exactFail = new ContainsLootCondition(itemStack -> itemStack.getItem() ==
+                                                                                     Items.DIAMOND, true);
             helper.shouldFail(exactFail.test(ctx), "Contains only diamond");
         });
 
@@ -216,37 +250,27 @@ public class ConditionTests {
 
         AllTests.add("AndCondition", helper -> {
             LootContext ctx = helper.unknownContext(helper.player.position());
-            AndCondition ac = new AndCondition(new LootItemCondition[]{
-                    new AnyDimension(new ResourceLocation[]{ new ResourceLocation("overworld") }),
-                    new IsLightLevel(0, 15)
-            });
+            AndCondition ac = new AndCondition(new AnyDimension(new ResourceLocation[]{ new ResourceLocation("overworld") }),
+                    new IsLightLevel(0, 15));
             helper.shouldSucceed(ac.test(ctx), "Matches all conditions");
 
-            ac = new AndCondition(new LootItemCondition[]{
-                    new AnyDimension(new ResourceLocation[]{ new ResourceLocation("overworld") }),
+            ac = new AndCondition(new AnyDimension(new ResourceLocation[]{ new ResourceLocation("overworld") }),
                     new IsLightLevel(0, 7),
-                    new IsLightLevel(8, 15)
-            });
+                    new IsLightLevel(8, 15));
             helper.shouldFail(ac.test(ctx), "Fails on light check");
         });
 
         AllTests.add("OrCondition", helper -> {
             LootContext ctx = helper.unknownContext(helper.player.position());
-            OrCondition or = new OrCondition(new LootItemCondition[]{
-                    new AnyDimension(new ResourceLocation[]{ new ResourceLocation("overworld") }),
-                    new IsLightLevel(0, 15)
-            });
+            OrCondition or = new OrCondition(new AnyDimension(new ResourceLocation[]{ new ResourceLocation("overworld") }),
+                    new IsLightLevel(0, 15));
             helper.shouldSucceed(or.test(ctx), "Matches");
 
-            or = new OrCondition(new LootItemCondition[]{
-                    new IsLightLevel(0, 7), new IsLightLevel(8, 15)
-            });
+            or = new OrCondition(new IsLightLevel(0, 7), new IsLightLevel(8, 15));
             helper.shouldSucceed(or.test(ctx), "Still match");
 
-            or = new OrCondition(new LootItemCondition[]{
-                    new AnyDimension(new ResourceLocation[]{ new ResourceLocation("nether") }),
-                    new AnyDimension(new ResourceLocation[]{ new ResourceLocation("end") })
-            });
+            or = new OrCondition(new AnyDimension(new ResourceLocation[]{ new ResourceLocation("nether") }),
+                    new AnyDimension(new ResourceLocation[]{ new ResourceLocation("end") }));
             helper.shouldFail(or.test(ctx), "Not in nether or end");
         });
 

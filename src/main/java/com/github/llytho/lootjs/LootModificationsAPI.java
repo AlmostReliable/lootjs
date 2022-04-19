@@ -1,9 +1,9 @@
 package com.github.llytho.lootjs;
 
 import com.github.llytho.lootjs.core.Constants;
+import com.github.llytho.lootjs.core.ILootAction;
 import com.github.llytho.lootjs.core.ILootContextData;
-import com.github.llytho.lootjs.core.ILootModification;
-import com.github.llytho.lootjs.core.ModificationFilter;
+import com.github.llytho.lootjs.filters.ResourceLocationFilter;
 import com.github.llytho.lootjs.loot.results.LootContextInfo;
 import com.github.llytho.lootjs.loot.results.LootInfoCollector;
 import net.minecraft.resources.ResourceLocation;
@@ -19,9 +19,9 @@ import java.util.function.Consumer;
 
 public class LootModificationsAPI {
 
-    public static final ModificationFilter FILTER = new ModificationFilter();
+    public static final List<ResourceLocationFilter> FILTERS = new ArrayList<>();
     private static final Logger LOGGER = LogManager.getLogger();
-    private static final List<ILootModification> modifications = new ArrayList<>();
+    private static final List<ILootAction> actions = new ArrayList<>();
     public static Consumer<String> DEBUG_ACTION = LOGGER::info;
     public static boolean LOOT_MODIFICATION_LOGGING = false;
 
@@ -29,18 +29,20 @@ public class LootModificationsAPI {
     }
 
     public static void reload() {
-        modifications.clear();
+        actions.clear();
         LOOT_MODIFICATION_LOGGING = false;
-        FILTER.clear();
-        FILTER.add(new ResourceLocation("minecraft:blocks/fire"));
+        FILTERS.clear();
+        FILTERS.add(new ResourceLocationFilter.Equals(new ResourceLocation("minecraft:blocks/fire")));
     }
 
     public static void invokeActions(List<ItemStack> loot, LootContext context) {
         ILootContextData contextData = context.getParamOrNull(Constants.DATA);
         assert contextData != null;
 
-        if (FILTER.matches(context)) {
-            return;
+        for (ResourceLocationFilter filter : FILTERS) {
+            if (filter.test(context.getQueriedLootTableId())) {
+                return;
+            }
         }
 
         context.getLevel().getProfiler().push("LootModificationsAPI::invokeActions");
@@ -52,10 +54,8 @@ public class LootModificationsAPI {
 
         LootContextInfo lootContextInfo = LootContextInfo.create(context);
 
-        for (ILootModification modification : modifications) {
-            if (modification.shouldExecute(context)) {
-                modification.execute(context);
-            }
+        for (var modification : actions) {
+            modification.applyLootHandler(context, loot);
             contextData.reset();
         }
 
@@ -83,7 +83,7 @@ public class LootModificationsAPI {
     }
 
 
-    public static void addModification(ILootModification modification) {
-        modifications.add(modification);
+    public static void addModification(ILootAction action) {
+        actions.add(action);
     }
 }

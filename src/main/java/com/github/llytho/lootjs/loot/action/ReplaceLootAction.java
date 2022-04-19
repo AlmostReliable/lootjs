@@ -1,11 +1,10 @@
 package com.github.llytho.lootjs.loot.action;
 
-import com.github.llytho.lootjs.core.Constants;
 import com.github.llytho.lootjs.core.ILootAction;
-import com.github.llytho.lootjs.core.ILootContextData;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.storage.loot.LootContext;
 
+import java.util.List;
 import java.util.function.Predicate;
 
 public class ReplaceLootAction implements ILootAction {
@@ -18,13 +17,10 @@ public class ReplaceLootAction implements ILootAction {
     }
 
     @Override
-    public boolean test(LootContext context) {
-        ILootContextData data = context.getParamOrNull(Constants.DATA);
-        if (data != null) {
-            for (int i = 0; i < data.getGeneratedLoot().size(); i++) {
-                if (predicate.test(data.getGeneratedLoot().get(i))) {
-                    data.getGeneratedLoot().set(i, itemStack.copy());
-                }
+    public boolean applyLootHandler(LootContext context, List<ItemStack> loot) {
+        for (int i = 0; i < loot.size(); i++) {
+            if (predicate.test(loot.get(i))) {
+                loot.set(i, itemStack.copy());
             }
         }
 

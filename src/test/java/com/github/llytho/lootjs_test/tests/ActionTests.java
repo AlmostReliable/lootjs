@@ -16,6 +16,7 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
 import javax.annotation.Nullable;
+import java.util.ArrayList;
 import java.util.function.Consumer;
 
 @Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.FORGE)
@@ -38,7 +39,7 @@ public class ActionTests {
             AddLootAction action = new AddLootAction(new ItemStack[]{
                     new ItemStack(Items.APPLE), new ItemStack(Items.LANTERN)
             });
-            action.test(ctx);
+            action.applyLootHandler(ctx, data.getGeneratedLoot());
             helper.shouldSucceed(data.getGeneratedLoot().stream().anyMatch(i -> i.getItem().equals(Items.APPLE)),
                     "Apple exist after adding");
             helper.shouldSucceed(data.getGeneratedLoot().stream().anyMatch(i -> i.getItem().equals(Items.LANTERN)),
@@ -53,7 +54,7 @@ public class ActionTests {
                     "Diamond exist");
             helper.shouldSucceed(data.getGeneratedLoot().size() == 3, "3 items in loot pool");
             RemoveLootAction action = new RemoveLootAction(i -> i.getItem().equals(Items.DIAMOND));
-            action.test(ctx);
+            action.applyLootHandler(ctx, data.getGeneratedLoot());
             helper.shouldFail(data.getGeneratedLoot().stream().anyMatch(i -> i.getItem().equals(Items.DIAMOND)),
                     "Diamond does not exist anymore");
             helper.shouldSucceed(data.getGeneratedLoot().size() == 2, "2 items in loot pool after removing diamond");
@@ -70,7 +71,7 @@ public class ActionTests {
             helper.shouldSucceed(data.getGeneratedLoot().size() == 3, "3 items in loot pool");
             ReplaceLootAction action = new ReplaceLootAction(i -> i.getItem().equals(Items.DIAMOND),
                     new ItemStack(Items.MAGMA_CREAM));
-            action.test(ctx);
+            action.applyLootHandler(ctx, data.getGeneratedLoot());
             helper.shouldFail(data.getGeneratedLoot().stream().anyMatch(i -> i.getItem().equals(Items.DIAMOND)),
                     "Diamond does not exist anymore");
             helper.shouldSucceed(data.getGeneratedLoot().stream().anyMatch(i -> i.getItem().equals(Items.MAGMA_CREAM)),
@@ -89,7 +90,7 @@ public class ActionTests {
                 helper.shouldSucceed(entity.visualOnly, "Is only visual");
                 helper.shouldSucceed(entity.position().equals(helper.player.position()), "Correct position");
             };
-            action.test(ctx);
+            action.applyLootHandler(ctx, new ArrayList<>());
 
             helper.debugStack.h2("shouldDamageEntity: true");
             action = new LightningStrikeAction(true);
@@ -98,7 +99,7 @@ public class ActionTests {
                 helper.shouldFail(entity.visualOnly, "Will damage entity");
                 helper.shouldSucceed(entity.position().equals(helper.player.position()), "Correct position");
             };
-            action.test(ctx);
+            action.applyLootHandler(ctx, new ArrayList<>());
             helper.debugStack.popLayer();
         });
 
@@ -116,7 +117,7 @@ public class ActionTests {
                 helper.shouldSucceed(explosion.blockInteraction == Explosion.BlockInteraction.NONE, "Mode is NONE");
                 helper.shouldSucceed(explosion.radius == 5f, "Radius is 5");
             };
-            action.test(ctx);
+            action.applyLootHandler(ctx, new ArrayList<>());
 
             helper.debugStack.h2("Explosion with radius 3, mode DESTROY, fire true");
             action = new ExplodeAction(3, Explosion.BlockInteraction.DESTROY, true);
@@ -128,7 +129,7 @@ public class ActionTests {
                         "Mode is DESTROY");
                 helper.shouldSucceed(explosion.radius == 3f, "Radius is 3");
             };
-            action.test(ctx);
+            action.applyLootHandler(ctx, new ArrayList<>());
             helper.debugStack.popLayer();
         });
     }

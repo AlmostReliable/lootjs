@@ -1,27 +1,27 @@
 package com.github.llytho.lootjs.loot.condition;
 
+import net.minecraft.core.Holder;
 import net.minecraft.resources.ResourceKey;
+import net.minecraft.tags.TagKey;
 import net.minecraft.world.level.biome.Biome;
-import net.minecraftforge.common.BiomeDictionary;
 
 import java.util.List;
-import java.util.Set;
 
 public class AnyBiomeCheck extends BiomeCheck {
 
-    public AnyBiomeCheck(List<ResourceKey<Biome>> biomes, List<BiomeDictionary.Type> types) {
-        super(biomes, types);
+    public AnyBiomeCheck(List<ResourceKey<Biome>> biomes, List<TagKey<Biome>> tags) {
+        super(biomes, tags);
     }
 
-    protected boolean match(ResourceKey<Biome> biomeKey, Set<BiomeDictionary.Type> biomeTypes) {
+    protected boolean match(Holder<Biome> biomeHolder) {
         for (ResourceKey<Biome> biome : biomes) {
-            if (biome == biomeKey) {
+            if (biomeHolder.is(biome)) {
                 return true;
             }
         }
 
-        for (BiomeDictionary.Type type : types) {
-            if (biomeTypes.contains(type)) {
+        for (TagKey<Biome> tag : tags) {
+            if (biomeHolder.is(tag)) {
                 return true;
             }
         }

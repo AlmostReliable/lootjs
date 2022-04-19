@@ -2,10 +2,12 @@ package com.github.llytho.lootjs.loot.results;
 
 import com.github.llytho.lootjs.LootModificationsAPI;
 import com.github.llytho.lootjs.core.ILootHandler;
-import com.github.llytho.lootjs.loot.action.RollPoolAction;
+import com.github.llytho.lootjs.loot.action.CompositeLootAction;
+import com.github.llytho.lootjs.loot.action.LootItemFunctionWrapperAction;
 import com.github.llytho.lootjs.loot.condition.AndCondition;
 import com.github.llytho.lootjs.loot.condition.NotCondition;
 import com.github.llytho.lootjs.loot.condition.OrCondition;
+import net.minecraft.world.level.storage.loot.functions.LootItemFunction;
 import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
 import org.apache.commons.lang3.StringUtils;
 
@@ -14,16 +16,13 @@ import java.util.*;
 
 public class LootInfoCollector {
 
-    public static final Set<Class<? extends ILootHandler>> COMPOSITES;
-
-    static {
-        HashSet<Class<? extends ILootHandler>> set = new HashSet<>();
-        set.add(OrCondition.class);
-        set.add(AndCondition.class);
-        set.add(NotCondition.class);
-        set.add(RollPoolAction.class);
-        COMPOSITES = set;
-    }
+    public static final Class<?>[] COMPOSITES = new Class[]{
+            OrCondition.class,
+            AndCondition.class,
+            NotCondition.class,
+            CompositeLootAction.class,
+            LootItemFunctionWrapperAction.FilteredFunctions.class
+    };
 
     protected final List<Info> firstLayer = new ArrayList<>();
     protected final Stack<Info.Composite> cursorHistory = new Stack<>();
@@ -33,11 +32,19 @@ public class LootInfoCollector {
         if (!LootModificationsAPI.LOOT_MODIFICATION_LOGGING || collector == null) return null;
 
         Info info = createBaseInfo(lootHandler);
-        if (COMPOSITES.contains(lootHandler.getClass())) {
-            return createInfo(collector, new Info.Composite(info));
+        for (Class<?> composite : COMPOSITES) {
+            if (composite.isInstance(lootHandler)) {
+                return createInfo(collector, new Info.Composite(info));
+            }
         }
 
         return createInfo(collector, info);
+    }
+
+    public static void createFunctionInfo(@Nullable LootInfoCollector collector, LootItemFunction function) {
+        if (!LootModificationsAPI.LOOT_MODIFICATION_LOGGING || collector == null) return;
+        Info info = new Info.TitledInfo(Icon.ACTION, function.getClass().getSimpleName());
+        collector.addOrPush(info);
     }
 
     @Nullable
@@ -70,13 +77,35 @@ public class LootInfoCollector {
     }
 
     private static Info createBaseInfo(ILootHandler lootHandler) {
-        String title = lootHandler.getClass().getSimpleName();
+        String title = createTitle(lootHandler);
 
         if (lootHandler instanceof LootItemCondition) {
             return new Info.ResultInfo(title);
         }
 
         return new Info.TitledInfo(Icon.ACTION, title);
+    }
+
+    private static String createTitle(ILootHandler lootHandler) {
+        if (lootHandler instanceof LootItemFunctionWrapperAction lif) {
+            return lif.getLootItemFunction().getClass().getSimpleName();
+        }
+
+        return lootHandler.getClass().getSimpleName();
+    }
+
+    public static void append(Info info, int indentDepth, StringBuilder sb) {
+        String indent = StringUtils.repeat("    ", indentDepth);
+
+        sb.append(indent).append(info.transform());
+        if (info instanceof Info.Composite composite) {
+            sb.append(" {\n");
+            for (Info child : composite.getChildren()) {
+                append(child, indentDepth + 1, sb);
+            }
+            sb.append(indent).append("}");
+        }
+        sb.append("\n");
     }
 
     public Collection<Info> getFirstLayer() {
@@ -108,19 +137,5 @@ public class LootInfoCollector {
         for (Info root : getFirstLayer()) {
             append(root, indentDepth, stringBuilder);
         }
-    }
-
-    public static void append(Info info, int indentDepth, StringBuilder sb) {
-        String indent = StringUtils.repeat("    ", indentDepth);
-
-        sb.append(indent).append(info.transform());
-        if (info instanceof Info.Composite composite) {
-            sb.append(" {\n");
-            for (Info child : composite.getChildren()) {
-                append(child, indentDepth + 1, sb);
-            }
-            sb.append(indent).append("}");
-        }
-        sb.append("\n");
     }
 }

@@ -5,7 +5,7 @@ onEvent("lootjs", (event) => {
         .weatherCheck({
             raining: true,
         })
-        .thenModify(Ingredient.getAll(), (itemStack) => {
+        .modifyLoot(Ingredient.getAll(), (itemStack) => {
             // you have to return an item!
             return itemStack.withCount(itemStack.getCount() * 2);
         });

@@ -45,19 +45,19 @@ public class LootContextJSTest {
         helper.fillExampleLoot(entityCtx.getVanillaContext());
 
         helper.shouldSucceed(entityCtx.lootSize() == 3, "Item size -> 3");
-        helper.shouldSucceed(entityCtx.hasLoot(IngredientJS.of("minecraft:diamond")), "Diamond exist in loot");
+        helper.shouldSucceed(entityCtx.hasLoot(itemStack -> IngredientJS.of("minecraft:diamond").testVanilla(itemStack)), "Diamond exist in loot");
 
-        helper.shouldFail(entityCtx.hasLoot(IngredientJS.of("minecraft:stick")), "No sticks");
+        helper.shouldFail(entityCtx.hasLoot(itemStack -> IngredientJS.of("minecraft:stick").testVanilla(itemStack)), "No sticks");
         entityCtx.addLoot(ItemStackJS.of("minecraft:stick"));
-        helper.shouldSucceed(entityCtx.hasLoot(IngredientJS.of("minecraft:stick")), "Sticks now exists after adding");
+        helper.shouldSucceed(entityCtx.hasLoot(itemStack -> IngredientJS.of("minecraft:stick").testVanilla(itemStack)), "Sticks now exists after adding");
         helper.shouldSucceed(entityCtx.lootSize() == 4, "Item size now 4 after adding stick");
-        entityCtx.removeLoot(ItemStackJS.of("minecraft:stick"));
-        helper.shouldFail(entityCtx.hasLoot(IngredientJS.of("minecraft:stick")), "Sticks removed");
+        entityCtx.removeLoot(itemStack -> ItemStackJS.of("minecraft:stick").testVanilla(itemStack));
+        helper.shouldFail(entityCtx.hasLoot(itemStack -> IngredientJS.of("minecraft:stick").testVanilla(itemStack)), "Sticks removed");
         helper.shouldSucceed(entityCtx.lootSize() == 3, "Item size now 3 again after removing stick");
 
         ArrayList<ItemStackJS> loopedItems = new ArrayList<>();
         entityCtx.forEachLoot(loopedItems::add);
-        helper.shouldSucceed(loopedItems.stream().allMatch(entityCtx::hasLoot), "forEach works");
+        helper.shouldSucceed(loopedItems.stream().allMatch(itemStackJS -> true), "forEach works");
     }
 
     private static void killerEntityDetection(TestHelper helper, LootContextJS entityCtx, LootContextJS blockCtx, LootContextJS chestCtx, LootContextJS fishingCtx, LootContextJS unknownCtx) {

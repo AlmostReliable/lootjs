@@ -19,7 +19,8 @@ public class LootModificationByBlock extends AbstractLootModification {
 
     @Override
     public boolean shouldExecute(LootContext context) {
+        ILootContextData data = context.getParamOrNull(Constants.DATA);
         BlockState blockState = context.getParamOrNull(LootContextParams.BLOCK_STATE);
-        return blockState != null && blocks.contains(blockState.getBlock());
+        return blockState != null && data != null && blocks.contains(blockState.getBlock()) && data.getLootContextType() == LootContextType.BLOCK;
     }
 }
