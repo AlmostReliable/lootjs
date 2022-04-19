@@ -2,6 +2,8 @@ package com.github.llytho.lootjs.filters;
 
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.*;
+import net.minecraft.world.item.enchantment.Enchantment;
+import net.minecraft.world.item.enchantment.EnchantmentHelper;
 
 import java.util.Objects;
 import java.util.function.Predicate;
@@ -37,6 +39,21 @@ public interface ItemFilter extends Predicate<ItemStack> {
     ItemFilter ENCHANTABLE = ItemStack::isEnchantable;
     ItemFilter ENCHANTED = ItemStack::isEnchanted;
     ItemFilter BLOCK = itemStack -> itemStack.getItem() instanceof BlockItem;
+
+    static ItemFilter hasEnchantment(Enchantment enchantment, int min, int max) {
+        return itemStack -> {
+            int level = EnchantmentHelper.getItemEnchantmentLevel(enchantment, itemStack);
+            return min <= level && level <= max;
+        };
+    }
+
+    static ItemFilter hasEnchantment(Enchantment enchantment) {
+        return itemStack -> {
+            int level = EnchantmentHelper.getItemEnchantmentLevel(enchantment, itemStack);
+            return level > 0;
+        };
+    }
+
 
     static ItemFilter equipmentSlot(EquipmentSlot slot) {
         return itemStack -> itemStack.getItem().getEquipmentSlot(itemStack) == slot;
