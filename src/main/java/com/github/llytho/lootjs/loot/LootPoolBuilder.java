@@ -4,7 +4,9 @@ import com.github.llytho.lootjs.core.ILootAction;
 import com.github.llytho.lootjs.core.ILootCondition;
 import com.github.llytho.lootjs.core.ILootHandler;
 import com.github.llytho.lootjs.kube.LootConditionsContainer;
+import com.github.llytho.lootjs.loot.action.LootItemFunctionWrapperAction;
 import com.github.llytho.lootjs.loot.action.LootPoolAction;
+import net.minecraft.world.level.storage.loot.functions.LootItemFunction;
 import net.minecraft.world.level.storage.loot.providers.number.ConstantValue;
 import net.minecraft.world.level.storage.loot.providers.number.NumberProvider;
 
@@ -37,5 +39,10 @@ public class LootPoolBuilder implements LootConditionsContainer<LootPoolBuilder>
 
     public LootPoolAction build() {
         return new LootPoolAction(numberProvider, handlers);
+    }
+
+    @Override
+    public LootPoolBuilder addFunction(LootItemFunction lootItemFunction) {
+        return addAction(new LootItemFunctionWrapperAction(lootItemFunction));
     }
 }
