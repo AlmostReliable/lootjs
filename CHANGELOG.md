@@ -12,6 +12,9 @@ and this project adheres to [Semantic Versioning].
 - Added `LootEntry` to directly call loot functions on items.
 - Added `limitCount` function with single argument.
 
+### Changed
+- `.pool()` action is now `.group()`. There was some misunderstanding for the user as LootJS pools work differently than vanilla pools.
+
 ### Removed
 - Remove deprecated actions from 2.3.0
 
