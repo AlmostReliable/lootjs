@@ -14,10 +14,10 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-public class LootPoolAction extends CompositeLootAction {
+public class GroupedLootAction extends CompositeLootAction {
     protected final NumberProvider numberProvider;
 
-    public LootPoolAction(NumberProvider numberProvider, Collection<ILootHandler> handlers) {
+    public GroupedLootAction(NumberProvider numberProvider, Collection<ILootHandler> handlers) {
         super(handlers);
         this.numberProvider = numberProvider;
     }

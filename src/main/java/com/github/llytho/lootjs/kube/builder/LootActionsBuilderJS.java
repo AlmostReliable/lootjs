@@ -6,37 +6,26 @@ import com.github.llytho.lootjs.core.ILootHandler;
 import com.github.llytho.lootjs.kube.LootConditionsContainer;
 import com.github.llytho.lootjs.kube.LootContextJS;
 import com.github.llytho.lootjs.kube.action.CustomJSAction;
+import com.github.llytho.lootjs.loot.GroupedLootBuilder;
 import com.github.llytho.lootjs.loot.LootActionsContainer;
 import com.github.llytho.lootjs.loot.LootFunctionsContainer;
-import com.github.llytho.lootjs.loot.LootPoolBuilder;
-import com.github.llytho.lootjs.loot.action.*;
+import com.github.llytho.lootjs.loot.action.CustomPlayerAction;
+import com.github.llytho.lootjs.loot.action.LootItemFunctionWrapperAction;
 import com.github.llytho.lootjs.util.Utils;
-import com.github.llytho.lootjs.util.WeightedItemStack;
-import dev.latvian.mods.kubejs.item.ItemStackJS;
-import dev.latvian.mods.kubejs.item.ingredient.IngredientJS;
 import dev.latvian.mods.kubejs.util.ConsoleJS;
 import dev.latvian.mods.rhino.util.HideFromJS;
-import net.minecraft.advancements.critereon.MinMaxBounds;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.util.random.SimpleWeightedRandomList;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.Explosion;
 import net.minecraft.world.level.storage.loot.functions.LootItemFunction;
-import net.minecraft.world.level.storage.loot.providers.number.ConstantValue;
-import net.minecraft.world.level.storage.loot.providers.number.NumberProvider;
-import net.minecraft.world.level.storage.loot.providers.number.UniformGenerator;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.function.Consumer;
-import java.util.function.Function;
 
 @SuppressWarnings("unused")
 public class LootActionsBuilderJS implements LootConditionsContainer<LootActionsBuilderJS>,
                                              LootFunctionsContainer<LootActionsBuilderJS>,
                                              LootActionsContainer<LootActionsBuilderJS> {
-    public static final String DEPRECATED_MSG = "1.18.2-2.3.0 Will be removed in future versions. Please use ";
+    public static final String DEPRECATED_MSG = "[Deprecated in 1.18.2-2.4.0] Will be removed in future versions. Please use ";
 
     private final List<ILootHandler> handlers = new ArrayList<>();
     private String logName;
@@ -69,10 +58,17 @@ public class LootActionsBuilderJS implements LootConditionsContainer<LootActions
         handlers.add(action);
         return this;
     }
+    
+    @Deprecated(forRemoval = true, since = DEPRECATED_MSG + "group((g) => {}) instead of pool((pool) => {})")
+    public LootActionsBuilderJS pool(Consumer<GroupedLootBuilder> callback) {
+        ConsoleJS.SERVER.warn(
+                DEPRECATED_MSG + "group((g) => {}) instead of pool((pool) => {}). Callback behavior remains the same.");
+        return group(callback);
+    }
 
     // TODO refactor them
-    public LootActionsBuilderJS pool(Consumer<LootPoolBuilder> callback) {
-        LootPoolBuilder poolBuilder = new LootPoolBuilder();
+    public LootActionsBuilderJS group(Consumer<GroupedLootBuilder> callback) {
+        GroupedLootBuilder poolBuilder = new GroupedLootBuilder();
         callback.accept(poolBuilder);
         handlers.add(poolBuilder.build());
         return this;
