@@ -9,7 +9,9 @@ import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.level.storage.loot.IntRange;
 import net.minecraft.world.level.storage.loot.functions.*;
 import net.minecraft.world.level.storage.loot.providers.number.NumberProvider;
+import net.minecraft.world.level.storage.loot.providers.number.UniformGenerator;
 
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -85,9 +87,13 @@ public interface LootFunctionsContainer<F extends LootFunctionsContainer<?>> {
         return addFunction(builder);
     }
 
-    default F limitCount(NumberProvider numberProviderMin, NumberProvider numberProviderMax) {
+    default F limitCount(@Nullable NumberProvider numberProviderMin, @Nullable NumberProvider numberProviderMax) {
         IntRange intRange = new IntRange(numberProviderMin, numberProviderMax);
         return addFunction(LimitCount.limitCount(intRange));
+    }
+
+    default F limitCount(NumberProvider numberProvider) {
+        return addFunction(SetItemCountFunction.setCount(numberProvider));
     }
 
     default F addLore(Component... components) {
