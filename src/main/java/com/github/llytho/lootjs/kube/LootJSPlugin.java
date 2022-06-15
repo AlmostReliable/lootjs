@@ -2,9 +2,10 @@ package com.github.llytho.lootjs.kube;
 
 import com.github.llytho.lootjs.LootModificationsAPI;
 import com.github.llytho.lootjs.core.LootContextType;
+import com.github.llytho.lootjs.core.LootEntry;
 import com.github.llytho.lootjs.filters.ItemFilter;
-import com.github.llytho.lootjs.filters.ResourceLocationFilter;
 import com.github.llytho.lootjs.filters.Resolver;
+import com.github.llytho.lootjs.filters.ResourceLocationFilter;
 import com.github.llytho.lootjs.kube.wrapper.IntervalJS;
 import com.github.llytho.lootjs.util.WeightedItemStack;
 import dev.latvian.mods.kubejs.KubeJSPlugin;
@@ -62,10 +63,12 @@ public class LootJSPlugin extends KubeJSPlugin {
         event.add("LootType", LootContextType.class);
         event.add("Interval", new IntervalJS());
         event.add("ItemFilter", ItemFilter.class);
+        event.add("LootEntry", LootEntryWrapper.class);
     }
 
     @Override
     public void addTypeWrappers(ScriptType type, TypeWrappers typeWrappers) {
+        typeWrappers.register(LootEntry.class, LootEntryWrapper::of);
         typeWrappers.register(MinMaxBounds.Doubles.class, IntervalJS::ofDoubles);
         typeWrappers.register(MinMaxBounds.Ints.class, IntervalJS::ofInt);
 

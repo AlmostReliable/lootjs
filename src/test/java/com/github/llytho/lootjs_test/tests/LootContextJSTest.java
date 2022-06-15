@@ -1,6 +1,8 @@
 package com.github.llytho.lootjs_test.tests;
 
+import com.github.llytho.lootjs.core.LootEntry;
 import com.github.llytho.lootjs.kube.LootContextJS;
+import com.github.llytho.lootjs.kube.LootEntryWrapper;
 import com.github.llytho.lootjs_test.AllTests;
 import com.github.llytho.lootjs_test.TestHelper;
 import dev.latvian.mods.kubejs.item.ItemStackJS;
@@ -48,7 +50,7 @@ public class LootContextJSTest {
         helper.shouldSucceed(entityCtx.hasLoot(itemStack -> IngredientJS.of("minecraft:diamond").testVanilla(itemStack)), "Diamond exist in loot");
 
         helper.shouldFail(entityCtx.hasLoot(itemStack -> IngredientJS.of("minecraft:stick").testVanilla(itemStack)), "No sticks");
-        entityCtx.addLoot(ItemStackJS.of("minecraft:stick"));
+        entityCtx.addLoot(LootEntryWrapper.of("minecraft:stick"));
         helper.shouldSucceed(entityCtx.hasLoot(itemStack -> IngredientJS.of("minecraft:stick").testVanilla(itemStack)), "Sticks now exists after adding");
         helper.shouldSucceed(entityCtx.lootSize() == 4, "Item size now 4 after adding stick");
         entityCtx.removeLoot(itemStack -> ItemStackJS.of("minecraft:stick").testVanilla(itemStack));

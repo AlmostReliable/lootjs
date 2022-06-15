@@ -1,6 +1,7 @@
 package com.github.llytho.lootjs_test.tests;
 
 import com.github.llytho.lootjs.core.ILootContextData;
+import com.github.llytho.lootjs.core.LootEntry;
 import com.github.llytho.lootjs.loot.action.*;
 import com.github.llytho.lootjs_test.AllTests;
 import net.minecraft.world.entity.EntityType;
@@ -36,8 +37,8 @@ public class ActionTests {
                     "No apple before adding");
             helper.shouldFail(data.getGeneratedLoot().stream().anyMatch(i -> i.getItem().equals(Items.LANTERN)),
                     "No lantern before adding");
-            AddLootAction action = new AddLootAction(new ItemStack[]{
-                    new ItemStack(Items.APPLE), new ItemStack(Items.LANTERN)
+            AddLootAction action = new AddLootAction(new LootEntry[]{
+                    new LootEntry(Items.APPLE), new LootEntry(Items.LANTERN)
             });
             action.applyLootHandler(ctx, data.getGeneratedLoot());
             helper.shouldSucceed(data.getGeneratedLoot().stream().anyMatch(i -> i.getItem().equals(Items.APPLE)),

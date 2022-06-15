@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning].
 
 ## [Unreleased]
 - /
+## [2.4.0] - 2022-06-15
+### Added
+- Added `LootEntry` to directly call loot functions on items.
+- Added `limitCount` function with single argument.
+
+### Changed
+- `.pool()` action is now `.group()`. There was some misunderstanding for the user as LootJS pools work differently than vanilla pools.
+
+### Removed
+- Remove deprecated actions from 2.3.0
 
 ## [2.3.0-beta] - 2022-04-18
 We are now on 1.18.2! 
@@ -44,6 +54,7 @@ We are now on 1.18.2!
 
 <!-- Versions -->
 [unreleased]: https://github.com/AlmostReliable/lootjs-forge/compare/1.18...HEAD
+[2.4.0]: https://github.com/AlmostReliable/lootjs-forge/releases/tag/v1.18-2.4.0
 [2.3.0-beta]: https://github.com/AlmostReliable/lootjs-forge/releases/tag/v1.18-2.3.0-beta
 [2.2.0]: https://github.com/AlmostReliable/lootjs-forge/releases/tag/v1.18-2.2.0
 [2.1.0]: https://github.com/AlmostReliable/lootjs-forge/releases/tag/v1.18-2.1.0

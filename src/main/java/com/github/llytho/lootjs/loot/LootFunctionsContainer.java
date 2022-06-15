@@ -1,6 +1,5 @@
 package com.github.llytho.lootjs.loot;
 
-import com.github.llytho.lootjs.core.ILootAction;
 import com.github.llytho.lootjs.filters.ItemFilter;
 import com.github.llytho.lootjs.loot.action.LootItemFunctionWrapperAction;
 import net.minecraft.nbt.CompoundTag;
@@ -9,9 +8,10 @@ import net.minecraft.world.item.alchemy.Potion;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.level.storage.loot.IntRange;
 import net.minecraft.world.level.storage.loot.functions.*;
-import net.minecraft.world.level.storage.loot.providers.number.ConstantValue;
 import net.minecraft.world.level.storage.loot.providers.number.NumberProvider;
+import net.minecraft.world.level.storage.loot.providers.number.UniformGenerator;
 
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -87,11 +87,15 @@ public interface LootFunctionsContainer<F extends LootFunctionsContainer<?>> {
         return addFunction(builder);
     }
 
-    default F limitCount(NumberProvider numberProviderMin, NumberProvider numberProviderMax) {
+    default F limitCount(@Nullable NumberProvider numberProviderMin, @Nullable NumberProvider numberProviderMax) {
         IntRange intRange = new IntRange(numberProviderMin, numberProviderMax);
         return addFunction(LimitCount.limitCount(intRange));
     }
-    
+
+    default F limitCount(NumberProvider numberProvider) {
+        return addFunction(SetItemCountFunction.setCount(numberProvider));
+    }
+
     default F addLore(Component... components) {
         SetLoreFunction.Builder builder = SetLoreFunction.setLore();
         for (Component c : components) {
@@ -128,15 +132,10 @@ public interface LootFunctionsContainer<F extends LootFunctionsContainer<?>> {
         List<LootItemFunction> functions = new ArrayList<>();
         LootFunctionsContainer<F> lfc = new LootFunctionsContainer<>() {
             @Override
-            public F addFunction(LootItemFunction.Builder builder) {
-                functions.add(builder.build());
+            public F addFunction(LootItemFunction lootItemFunction) {
+                functions.add(lootItemFunction);
                 //noinspection unchecked
                 return (F) this;
-            }
-
-            @Override
-            public F addAction(ILootAction action) {
-                throw new UnsupportedOperationException("Not allowed here");
             }
 
             @Override
@@ -145,12 +144,15 @@ public interface LootFunctionsContainer<F extends LootFunctionsContainer<?>> {
             }
         };
         action.accept(lfc);
-        return addAction(new LootItemFunctionWrapperAction.FilteredFunctions(functions, filter));
+        return addFunction(new LootItemFunctionWrapperAction.CompositeLootItemFunction(functions, filter));
     }
 
     default F addFunction(LootItemFunction.Builder builder) {
-        return addAction(new LootItemFunctionWrapperAction(builder.build()));
+        return addFunction(builder.build());
+//        return addAction(new LootItemFunctionWrapperAction(builder.build()));
     }
 
-    F addAction(ILootAction action);
+    F addFunction(LootItemFunction lootItemFunction);
+
+//    F addAction(ILootAction action);
 }

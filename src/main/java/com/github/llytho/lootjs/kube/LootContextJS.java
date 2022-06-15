@@ -3,6 +3,7 @@ package com.github.llytho.lootjs.kube;
 import com.github.llytho.lootjs.core.Constants;
 import com.github.llytho.lootjs.core.ILootContextData;
 import com.github.llytho.lootjs.core.LootContextType;
+import com.github.llytho.lootjs.core.LootEntry;
 import com.github.llytho.lootjs.filters.ItemFilter;
 import com.github.llytho.lootjs.util.LootContextUtils;
 import dev.latvian.mods.kubejs.entity.EntityJS;
@@ -166,8 +167,9 @@ public class LootContextJS {
         return data.getGeneratedLoot().size();
     }
 
-    public void addLoot(ItemStackJS itemStack) {
-        data.getGeneratedLoot().add(itemStack.getItemStack());
+    public void addLoot(LootEntry lootEntry) {
+        ItemStack item = lootEntry.apply(context);
+        data.getGeneratedLoot().add(item);
     }
 
     public void removeLoot(ItemFilter itemFilter) {

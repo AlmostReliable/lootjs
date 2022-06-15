@@ -21,7 +21,6 @@ public class LootInfoCollector {
             AndCondition.class,
             NotCondition.class,
             CompositeLootAction.class,
-            LootItemFunctionWrapperAction.FilteredFunctions.class
     };
 
     protected final List<Info> firstLayer = new ArrayList<>();
