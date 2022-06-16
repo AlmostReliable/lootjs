@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning].
 
 ## [Unreleased]
 - /
+
+## [2.5.0] - 2022-06-16
+### Added
+- Added `dropExperience(amount)` action to drop experience orbs
+
 ## [2.4.0] - 2022-06-15
 ### Added
 - Added `LootEntry` to directly call loot functions on items.

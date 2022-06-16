@@ -55,5 +55,9 @@ public interface LootActionsContainer<A extends LootActionsContainer<?>> {
         return addAction(new LightningStrikeAction(shouldDamage));
     }
 
+    default A dropExperience(int amount) {
+        return addAction(new DropExperienceAction(amount));
+    }
+
     A addAction(ILootAction action);
 }
