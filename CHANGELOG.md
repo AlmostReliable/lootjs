@@ -65,6 +65,8 @@ We are now on 1.18.2!
 
 <!-- Versions -->
 [unreleased]: https://github.com/AlmostReliable/lootjs-forge/compare/1.18...HEAD
+[2.6.0]: https://github.com/AlmostReliable/lootjs-forge/releases/tag/v1.18-2.6.0
+[2.5.0]: https://github.com/AlmostReliable/lootjs-forge/releases/tag/v1.18-2.5.0
 [2.4.0]: https://github.com/AlmostReliable/lootjs-forge/releases/tag/v1.18-2.4.0
 [2.3.0-beta]: https://github.com/AlmostReliable/lootjs-forge/releases/tag/v1.18-2.3.0-beta
 [2.2.0]: https://github.com/AlmostReliable/lootjs-forge/releases/tag/v1.18-2.2.0
