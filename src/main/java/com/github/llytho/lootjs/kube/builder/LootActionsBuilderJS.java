@@ -58,15 +58,12 @@ public class LootActionsBuilderJS implements LootConditionsContainer<LootActions
         handlers.add(action);
         return this;
     }
-    
-    @Deprecated(forRemoval = true, since = DEPRECATED_MSG + "group((g) => {}) instead of pool((pool) => {})")
+
     public LootActionsBuilderJS pool(Consumer<GroupedLootBuilder> callback) {
-        ConsoleJS.SERVER.warn(
-                DEPRECATED_MSG + "group((g) => {}) instead of pool((pool) => {}). Callback behavior remains the same.");
         return group(callback);
     }
 
-    // TODO refactor them
+    // TODO stay with pool >.<
     public LootActionsBuilderJS group(Consumer<GroupedLootBuilder> callback) {
         GroupedLootBuilder poolBuilder = new GroupedLootBuilder();
         callback.accept(poolBuilder);
