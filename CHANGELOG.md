@@ -8,6 +8,12 @@ and this project adheres to [Semantic Versioning].
 ## [Unreleased]
 - /
 
+## [2.6.0] - 2022-06-23
+### Added
+- `replaceLoot(filter, entry, preserveCount)` now exists with the third argument to preserve item count (use true or false)
+### Changed
+- `replaceLoot` now also takes an `LootEntry` as the second argument 
+
 ## [2.5.0] - 2022-06-16
 ### Added
 - Added `dropExperience(amount)` action to drop experience orbs

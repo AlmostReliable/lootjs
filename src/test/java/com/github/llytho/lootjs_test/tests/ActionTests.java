@@ -71,7 +71,7 @@ public class ActionTests {
                     "Magma cream does not exist currently");
             helper.shouldSucceed(data.getGeneratedLoot().size() == 3, "3 items in loot pool");
             ReplaceLootAction action = new ReplaceLootAction(i -> i.getItem().equals(Items.DIAMOND),
-                    new ItemStack(Items.MAGMA_CREAM));
+                    new LootEntry(Items.MAGMA_CREAM), false);
             action.applyLootHandler(ctx, data.getGeneratedLoot());
             helper.shouldFail(data.getGeneratedLoot().stream().anyMatch(i -> i.getItem().equals(Items.DIAMOND)),
                     "Diamond does not exist anymore");

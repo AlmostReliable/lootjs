@@ -36,8 +36,12 @@ public interface LootActionsContainer<A extends LootActionsContainer<?>> {
         return addAction(new RemoveLootAction(filter));
     }
 
-    default A replaceLoot(ItemFilter filter, ItemStack itemStack) {
-        return addAction(new ReplaceLootAction(filter, itemStack));
+    default A replaceLoot(ItemFilter filter, LootEntry lootEntry) {
+        return replaceLoot(filter, lootEntry, false);
+    }
+
+    default A replaceLoot(ItemFilter filter, LootEntry lootEntry, boolean preserveCount) {
+        return addAction(new ReplaceLootAction(filter, lootEntry, preserveCount));
     }
 
     default A modifyLoot(ItemFilter filter, ModifyLootAction.Callback callback) {
