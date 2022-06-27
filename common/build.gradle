@@ -1,0 +1,29 @@
+dependencies {
+	modImplementation "net.fabricmc:fabric-loader:${rootProject.fabric_loader_version}"
+
+    modApi("dev.latvian.mods:kubejs:${rootProject.kubejs_version}")
+
+	modCompileOnly("me.shedaniel:RoughlyEnoughItems-api:${rootProject.rei_version}")
+	modCompileOnly("me.shedaniel:RoughlyEnoughItems-default-plugin:${rootProject.rei_version}")
+}
+
+architectury {
+	common("forge", "fabric")
+}
+
+loom {
+	accessWidenerPath = file("src/main/resources/${mod_id}.accesswidener")
+}
+
+publishing {
+	publications {
+		mavenCommon(MavenPublication) {
+			artifactId = rootProject.archivesBaseName
+			from components.java
+		}
+	}
+
+	repositories {
+
+	}
+}

@@ -1,0 +1,11 @@
+pluginManagement {
+	repositories {
+		maven { url "https://maven.creeperhost.net/" }
+		maven { url "https://maven.architectury.dev/" }
+		gradlePluginPortal()
+	}
+}
+
+include "common", "fabric", "forge"
+
+rootProject.name = 'LootJS'

@@ -1,275 +1,121 @@
-buildscript {
-    repositories {
-        maven { url = 'https://maven.minecraftforge.net' }
-        maven { url = 'https://maven.parchmentmc.org' }
-        mavenCentral()
-    }
-    dependencies {
-        classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '5.1.+', changing: true
-        classpath group: 'org.spongepowered', name: 'mixingradle', version: '0.7.+'
-        classpath 'org.parchmentmc:librarian:1.+'
-    }
-}
-
 plugins {
-    id "com.matthewprenger.cursegradle" version "1.4.0"
+	id 'base'
+	id 'architectury-plugin' version '3.4-SNAPSHOT'
+	id "dev.architectury.loom" version "0.12.0-SNAPSHOT" apply false
+	id "io.github.juuxel.loom-quiltflower" version "1.7.2" apply false
+	id "com.github.johnrengelman.shadow" version "7.0.0" apply false
+	id "me.shedaniel.unified-publishing" version "0.1.+" apply false
 }
 
-apply plugin: 'net.minecraftforge.gradle'
-apply plugin: 'org.parchmentmc.librarian.forgegradle'
-apply plugin: 'org.spongepowered.mixin'
-apply plugin: 'eclipse'
-apply plugin: 'maven-publish'
+architectury {
+	minecraft = project.minecraft_version
+	injectInjectables = false
+}
 
-version = "${minecraft_version}-${mod_version}"
-group = "${mod_base_package}.${mod_id}"
-archivesBaseName = mod_id
+allprojects {
+	ext.ENV = System.getenv()
 
-java.toolchain.languageVersion = JavaLanguageVersion.of(17)
-
-minecraft {
-    mappings channel: mappings_channel, version: mappings_version
-
-    accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg')
-
-    // Please read: https://stackoverflow.com/questions/2031163/when-to-use-the-different-log-levels
-    runs {
-        client {
-            workingDirectory project.file('run')
-            property 'forge.logging.markers', 'REGISTRIES'
-            property 'forge.logging.console.level', 'debug'
-            property 'mixin.env.remapRefMap', 'true'
-            property 'mixin.env.refMapRemappingFile', "${projectDir}/build/createSrgToMcp/output.srg"
-            args '-mixin.config=lootjs.mixins.json', '-Dmixin.debug=true'
-
-            mods {
-                "${mod_id}" {
-                    source sourceSets.main
-                }
+	repositories {
+        maven {
+            url = "https://maven.architectury.dev"
+            content {
+                includeGroup "dev.architectury"
             }
         }
 
-        server {
-            workingDirectory project.file('run')
-            property 'forge.logging.markers', 'REGISTRIES'
-            property 'forge.logging.console.level', 'debug'
-            property 'mixin.env.remapRefMap', 'true'
-            property 'mixin.env.refMapRemappingFile', "${projectDir}/build/createSrgToMcp/output.srg"
-            args '-mixin.config=lootjs.mixins.json'
+		maven {
+			url "https://maven.saps.dev/minecraft"
+			content {
+				includeGroup "dev.latvian.mods"
+				includeGroup "dev.ftb.mods"
+			}
+		}
 
-            mods {
-                "${mod_id}" {
-                    source sourceSets.main
-                }
-            }
-        }
-
-        data {
-            workingDirectory project.file('run')
-            property 'forge.logging.markers', 'REGISTRIES'
-            property 'forge.logging.console.level', 'debug'
-            // Specify the modid for data generation, where to output the resulting resource, and where to look for existing resources.
-            args '--mod', 'lootjs', '--all', '--output', file('src/generated/resources/'), '--existing',
-                    file('src/main/resources/')
-
-            mods {
-                "${mod_id}" {
-                    source sourceSets.main
-                }
-            }
-        }
-
-        clientTest {
-            parent runs.client
-            environment 'MOD_CLASSES', 'dummy' // From Forge: FG will replace this but it's needed to run
-            mods {
-                "${mod_id}" {
-                    source sourceSets.main
-                }
-                "${mod_id}_test" {
-                    source sourceSets.test
-                }
-            }
-        }
-
-        serverTest {
-            parent runs.server
-            environment 'MOD_CLASSES', 'dummy' // From Forge: FG will replace this but it's needed to run
-            mods {
-                "${mod_id}" {
-                    source sourceSets.main
-                }
-                "${mod_id}_test" {
-                    source sourceSets.test
-                }
-            }
-        }
-    }
+		mavenLocal()
+	}
 }
 
-// resources from data generation
-sourceSets.main.resources { srcDir 'src/generated/resources' }
+base.archivesBaseName = project.mod_id
 
-repositories {
-    maven {
-        url "https://www.cursemaven.com"
-        content {
-            includeGroup "curse.maven"
-        }
-    }
+subprojects {
+	apply plugin: "java"
+	apply plugin: "dev.architectury.loom"
+	apply plugin: 'architectury-plugin'
+	apply plugin: "io.github.juuxel.loom-quiltflower"
+	apply plugin: "maven-publish"
+	apply from: "https://files.latmod.com/public/markdown-git-changelog.gradle"
 
-    maven {
-        name = "Progwml6 (Just Enough Items)"
-        url = "https://dvs1.progwml6.com/files/maven/"
-    }
+	version = rootProject.version
+	group = rootProject.group
+	base.archivesBaseName = "${rootProject.mod_id}-${project.name}"
 
-    maven {
-        url = "https://maven.architectury.dev"
-        content {
-            includeGroup "dev.architectury"
-        }
-    }
+	loom {
+		silentMojangMappingsLicense()
+	}
 
-    maven {
-        url = "https://maven.saps.dev/minecraft"
-        content {
-            includeGroup "dev.latvian.mods"
-        }
-    }
+	compileJava {
+		options.encoding = "UTF-8"
+		options.release.set(17)
+	}
+
+	java {
+		sourceCompatibility = targetCompatibility = '17'
+		withSourcesJar()
+	}
+
+	dependencies {
+		minecraft "com.mojang:minecraft:${rootProject.minecraft_version}"
+		mappings loom.officialMojangMappings()
+	}
 }
 
-mixin {
-    add sourceSets.main, "${mod_id}.refmap.json"
+subprojects {
+	if (project.path != ':common') {
+		apply plugin: "com.github.johnrengelman.shadow"
 
-    // sets up the mixin config; this gets added to run configurations and the manifest in the final jar
-    config "${mod_id}.mixins.json"
+		configurations {
+			bundle {
+				canBeResolved(true)
+				canBeConsumed(false)
+			}
 
-    // enables exporting mixin-changed classes to .mixin.out in the run folder
-    debug.export = true
+			common
+			compileClasspath.extendsFrom common
+			runtimeClasspath.extendsFrom common
+		}
+
+		jar {
+			archiveClassifier.set "dev"
+		}
+
+		shadowJar {
+			archiveClassifier.set "dev-shadow"
+			configurations = [
+					project.configurations.bundle
+			]
+		}
+
+		remapJar {
+			dependsOn shadowJar
+			inputFile.set shadowJar.archiveFile
+			archiveBaseName.set "${rootProject.mod_id}-${project.name}"
+			archiveClassifier.set null
+		}
+	}
 }
 
-dependencies {
-    minecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
+task collectJars(type: Copy) {
+	subprojects {
+		if (project.path != ":common") {
+			def remapJar = project.tasks.named('remapJar')
+			dependsOn remapJar
+			from remapJar
+		}
+	}
 
-    // Mixin annotation processor - generates the refmap
-    annotationProcessor "org.spongepowered:mixin:${mixin_version}:processor"
-
-    compileOnly fg.deobf("mezz.jei:jei-${minecraft_version}:${jei_version}:api")
-    runtimeOnly fg.deobf("mezz.jei:jei-${minecraft_version}:${jei_version}")
-
-//    implementation fg.deobf("curse.maven:kubejs-238086:${kubejs_fileid}")
-    implementation fg.deobf("dev.latvian.mods:kubejs-forge:${kubejs_version}")
-    implementation fg.deobf("dev.architectury:architectury-forge:${architectury_version}")
-    implementation fg.deobf("dev.latvian.mods:rhino-forge:${rhino_version}")
-
-    // mods with some global loot
-//    runtimeOnly fg.deobf("curse.maven:simplefarming-327554:3400041") // TODO not for 1.16 currently
-//    runtimeOnly fg.deobf("curse.maven:silentlib-3235738:3543045")
-//    runtimeOnly fg.deobf("curse.maven:scalinghealth-248027:3580899")
-//    runtimeOnly fg.deobf("curse.maven:patchouli-306770:3594394")
-//    runtimeOnly fg.deobf("curse.maven:mysticalworld-282940:3377210") // TODO not for 1.16 currently
-//    runtimeOnly fg.deobf("curse.maven:terrablender-563928:3619749")
-//    runtimeOnly fg.deobf("curse.maven:byg-247560:3620164")
-
-    // just ding so I can be brain afk while it's loading
-    runtimeOnly fg.deobf("curse.maven:ding-231275:3548400")
+	into(buildDir.toPath().resolve("libs"))
 }
 
-// This block of code expands all the gradle properties in the specified resource targets.
-// It copies them into the targets and expands all the defined properties.
-def resourceTargets = ['META-INF/mods.toml', 'pack.mcmeta']
-def intoTargets = ["$rootDir/out/production/resources/", "$rootDir/out/production/${project.name}.main/", "$rootDir/bin/main/"]
-def replaceProperties = [mod_id                 : mod_id,
-                         mod_name               : mod_name,
-                         mod_version            : mod_version,
-                         mod_authors            : mod_authors,
-                         mod_description        : mod_description,
-                         minecraft_version_range: minecraft_version_range,
-                         forge_version_range    : forge_version_range,
-                         loader_version_range   : loader_version_range,
-                         github_user            : github_user,
-                         github_repo            : github_repo,
-                         kubejs_version_range   : kubejs_version_range]
-processResources {
-    inputs.properties replaceProperties
-    replaceProperties.put 'project', project
-
-    filesMatching(resourceTargets) {
-        expand replaceProperties
-    }
-
-    intoTargets.each { target ->
-        if (file(target).exists()) {
-            copy {
-                from(sourceSets.main.resources) {
-                    include resourceTargets
-                    expand replaceProperties
-                }
-                into target
-            }
-        }
-    }
-}
-
-curseforge {
-    if (System.getenv('CF_API_KEY') != null) {
-        // GitHub actions
-        apiKey = System.getenv('CF_API_KEY')
-    } else {
-        // error prevention
-        apiKey = "none"
-    }
-    def RELEASE_TYPE
-    if (System.getenv('RELEASE_TYPE') == null || System.getenv('RELEASE_TYPE') == '') {
-        RELEASE_TYPE = "release"
-    } else {
-        RELEASE_TYPE = System.getenv('RELEASE_TYPE')
-    }
-    project {
-        id = project_id
-        changelogType = 'markdown'
-        changelog = "The whole changelog can be found [here](https://github.com/${github_user}/${github_repo}/blob/${github_branch}/CHANGELOG.md)."
-        releaseType = RELEASE_TYPE
-        addGameVersion minecraft_version
-
-        mainArtifact(jar) {
-            if (RELEASE_TYPE == 'release') {
-                displayName = "${mod_name}-${minecraft_version}-${mod_version}"
-            } else {
-                displayName = "${mod_name}-${minecraft_version}-${mod_version}-${RELEASE_TYPE}"
-            }
-        }
-    }
-}
-
-jar {
-    manifest {
-        attributes(["Specification-Title"     : mod_id,
-                    "Specification-Vendor"    : mod_authors,
-                    "Specification-Version"   : "1", // We are version 1 of ourselves
-                    "Implementation-Title"    : project.name,
-                    "Implementation-Version"  : mod_version,
-                    "Implementation-Vendor"   : mod_authors,
-                    "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")])
-    }
-
-    finalizedBy 'reobfJar'
-}
-
-task testJar(type: Jar) {
-    archiveClassifier.set('tests')
-    from sourceSets.test.output
-    afterEvaluate { finalizedBy reobfTestJar }
-}
-
-artifacts {
-    archives testJar
-}
-
-reobf {
-    testJar { classpath.from(sourceSets.test.compileClasspath) }
-}
-
-task reobf {
-    dependsOn reobfTestJar
+assemble {
+	dependsOn(collectJars)
 }

@@ -1,0 +1,15 @@
+accessWidener   v2      named
+accessible method net/minecraft/advancements/critereon/MinMaxBounds$Ints <init> (Ljava/lang/Integer;Ljava/lang/Integer;)V # IntBound
+accessible method net/minecraft/advancements/critereon/MinMaxBounds$Doubles <init> (Ljava/lang/Double;Ljava/lang/Double;)V # FloatBound
+
+accessible field net/minecraft/advancements/critereon/EntityFlagsPredicate$Builder isBaby Ljava/lang/Boolean;# isBaby
+accessible field net/minecraft/advancements/critereon/EntityFlagsPredicate$Builder isCrouching Ljava/lang/Boolean;# isCrouching
+accessible field net/minecraft/advancements/critereon/EntityFlagsPredicate$Builder isOnFire Ljava/lang/Boolean;# isOnFire
+accessible field net/minecraft/advancements/critereon/EntityFlagsPredicate$Builder isSprinting Ljava/lang/Boolean;# isSprinting
+accessible field net/minecraft/advancements/critereon/EntityFlagsPredicate$Builder isSwimming Ljava/lang/Boolean;# isSwimming
+
+accessible method net/minecraft/world/level/storage/loot/IntRange <init> (Lnet/minecraft/world/level/storage/loot/providers/number/NumberProvider;Lnet/minecraft/world/level/storage/loot/providers/number/NumberProvider;)V # IntRange
+accessible class net/minecraft/world/level/storage/loot/functions/SetAttributesFunction$Modifier
+
+accessible method net/minecraft/world/entity/LivingEntity createLootContext (ZLnet/minecraft/world/damagesource/DamageSource;)Lnet/minecraft/world/level/storage/loot/LootContext$Builder; # createLootContext
+accessible method net/minecraft/world/entity/Mob createLootContext (ZLnet/minecraft/world/damagesource/DamageSource;)Lnet/minecraft/world/level/storage/loot/LootContext$Builder; # createLootContext

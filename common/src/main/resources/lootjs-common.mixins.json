@@ -1,0 +1,15 @@
+{
+    "required": true,
+    "minVersion": "0.8",
+    "package": "com.almostreliable.lootjs.mixin",
+    "compatibilityLevel": "JAVA_17",
+    "mixins": [
+      "LootContextBuilderMixin",
+      "LootItemConditionMixin"
+    ],
+    "client": [
+    ],
+    "injectors": {
+      "defaultRequire": 1
+    }
+  }
