@@ -1,5 +1,6 @@
 package com.almostreliable.lootjs.core;
 
+import com.almostreliable.lootjs.BuildConfig;
 import com.almostreliable.lootjs.loot.results.LootInfoCollector;
 import com.google.common.collect.ImmutableMap;
 import net.minecraft.resources.ResourceLocation;
@@ -10,16 +11,16 @@ import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
 import java.util.Map;
 
 public class Constants {
-    public static final String MODID = "lootjs";
-
-    public static final LootContextParam<ILootContextData> DATA = new LootContextParam<>(new ResourceLocation(MODID,
+    public static final LootContextParam<ILootContextData> DATA = new LootContextParam<>(new ResourceLocation(
+            BuildConfig.MOD_ID,
             "param_data"));
 
-    public static final LootContextParam<DebugStack> RESULT_LOGGER = new LootContextParam<>(new ResourceLocation(MODID,
+    public static final LootContextParam<DebugStack> RESULT_LOGGER = new LootContextParam<>(new ResourceLocation(
+            BuildConfig.MOD_ID,
             "result_logger"));
 
     public static final LootContextParam<LootInfoCollector> RESULT_COLLECTOR = new LootContextParam<>(new ResourceLocation(
-            MODID,
+            BuildConfig.MOD_ID,
             "result_collector"));
 
     public static final Map<LootContextParamSet, LootContextType> PSETS_TO_TYPE = ImmutableMap

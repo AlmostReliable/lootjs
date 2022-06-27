@@ -1,3 +1,7 @@
+plugins {
+    id "com.github.gmazzo.buildconfig" version "3.0.3"
+}
+
 dependencies {
     modImplementation "net.fabricmc:fabric-loader:${rootProject.fabric_loader_version}"
 
@@ -26,4 +30,12 @@ publishing {
     repositories {
 
     }
+}
+
+buildConfig {
+    buildConfigField "String", "MOD_ID", "\"${mod_id}\""
+    buildConfigField "String", "MOD_VERSION", "\"${project.version}\""
+    buildConfigField "String", "MOD_NAME", "\"${mod_name}\""
+
+    packageName = project.group
 }
