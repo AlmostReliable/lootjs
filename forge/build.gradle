@@ -42,27 +42,6 @@ dependencies {
     bundle(project(path: ":common", configuration: "transformProductionForge")) { transitive false }
 }
 
-processResources {
-    def toReplace = [
-            version          : project.version,
-            license          : license,
-            minecraft_version: minecraft_version,
-            mod_id           : mod_id,
-            mod_name         : mod_name,
-            mod_author       : mod_author,
-            mod_description  : mod_description,
-            kubejs_version   : kubejs_version,
-            forge_min_version: forge_min_version,
-            github_user      : github_user,
-            github_repo      : github_repo
-    ]
-
-    inputs.properties toReplace
-    filesMatching("META-INF/mods.toml") {
-        expand toReplace
-    }
-}
-
 jar {
     manifest {
         attributes([

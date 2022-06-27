@@ -4,7 +4,6 @@ plugins {
     id "dev.architectury.loom" version "0.12.0-SNAPSHOT" apply false
     id "io.github.juuxel.loom-quiltflower" version "1.7.2" apply false
     id "com.github.johnrengelman.shadow" version "7.0.0" apply false
-    id "me.shedaniel.unified-publishing" version "0.1.+" apply false
 }
 
 architectury {
@@ -43,7 +42,6 @@ subprojects {
     apply plugin: 'architectury-plugin'
     apply plugin: "io.github.juuxel.loom-quiltflower"
     apply plugin: "maven-publish"
-    apply from: "https://files.latmod.com/public/markdown-git-changelog.gradle"
 
     version = rootProject.version
     group = rootProject.group
@@ -99,6 +97,28 @@ subprojects {
             dependsOn shadowJar
             inputFile.set shadowJar.archiveFile
             archiveClassifier.set null
+        }
+
+        processResources {
+            def resourceTargets = ["META-INF/mods.toml", "pack.mcmeta", "fabric.mod.json"]
+            def toReplace = [
+                    version          : project.version,
+                    license          : license,
+                    minecraft_version: minecraft_version,
+                    mod_id           : mod_id,
+                    mod_name         : mod_name,
+                    mod_author       : mod_author,
+                    mod_description  : mod_description,
+                    kubejs_version   : kubejs_version,
+                    forge_min_version: forge_min_version,
+                    github_user      : github_user,
+                    github_repo      : github_repo
+            ]
+
+            inputs.properties toReplace
+            filesMatching(resourceTargets) {
+                expand toReplace
+            }
         }
     }
 }
