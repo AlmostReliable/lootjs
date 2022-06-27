@@ -47,7 +47,7 @@ subprojects {
 
     version = rootProject.version
     group = rootProject.group
-    base.archivesBaseName = "${rootProject.mod_id}-${project.name}"
+    base.archivesBaseName = "${rootProject.mod_id}-${project.name}-${rootProject.minecraft_version}"
 
     loom {
         silentMojangMappingsLicense()
@@ -98,7 +98,6 @@ subprojects {
         remapJar {
             dependsOn shadowJar
             inputFile.set shadowJar.archiveFile
-            archiveBaseName.set "${rootProject.mod_id}-${project.name}"
             archiveClassifier.set null
         }
     }
