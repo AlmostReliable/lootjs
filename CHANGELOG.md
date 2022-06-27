@@ -8,6 +8,10 @@ and this project adheres to [Semantic Versioning].
 ## [Unreleased]
 - /
 
+## [2.7.0] - 2022-06-27
+### Added
+- Hello Fabric! LootJS is now for Fabric
+
 ## [2.6.0] - 2022-06-23
 ### Added
 - `replaceLoot(filter, entry, preserveCount)` now exists with the third argument to preserve item count (use true or false)
@@ -65,6 +69,7 @@ We are now on 1.18.2!
 
 <!-- Versions -->
 [unreleased]: https://github.com/AlmostReliable/lootjs-forge/compare/1.18...HEAD
+[2.7.0]: https://github.com/AlmostReliable/lootjs-forge/releases/tag/v1.18-2.7.0
 [2.6.0]: https://github.com/AlmostReliable/lootjs-forge/releases/tag/v1.18-2.6.0
 [2.5.0]: https://github.com/AlmostReliable/lootjs-forge/releases/tag/v1.18-2.5.0
 [2.4.0]: https://github.com/AlmostReliable/lootjs-forge/releases/tag/v1.18-2.4.0
