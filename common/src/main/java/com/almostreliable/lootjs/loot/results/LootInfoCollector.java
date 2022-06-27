@@ -1,9 +1,9 @@
 package com.almostreliable.lootjs.loot.results;
 
-import com.almostreliable.lootjs.loot.action.LootItemFunctionWrapperAction;
 import com.almostreliable.lootjs.LootModificationsAPI;
 import com.almostreliable.lootjs.core.ILootHandler;
 import com.almostreliable.lootjs.loot.action.CompositeLootAction;
+import com.almostreliable.lootjs.loot.action.LootItemFunctionWrapperAction;
 import com.almostreliable.lootjs.loot.condition.AndCondition;
 import com.almostreliable.lootjs.loot.condition.NotCondition;
 import com.almostreliable.lootjs.loot.condition.OrCondition;
@@ -21,7 +21,7 @@ public class LootInfoCollector {
             AndCondition.class,
             NotCondition.class,
             CompositeLootAction.class,
-    };
+            };
 
     protected final List<Info> firstLayer = new ArrayList<>();
     protected final Stack<Info.Composite> cursorHistory = new Stack<>();

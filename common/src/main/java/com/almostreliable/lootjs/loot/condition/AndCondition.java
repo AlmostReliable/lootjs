@@ -1,10 +1,10 @@
 package com.almostreliable.lootjs.loot.condition;
 
-import com.almostreliable.lootjs.loot.results.LootInfoCollector;
 import com.almostreliable.lootjs.core.Constants;
 import com.almostreliable.lootjs.core.ILootCondition;
 import com.almostreliable.lootjs.core.ILootContextData;
 import com.almostreliable.lootjs.loot.results.Info;
+import com.almostreliable.lootjs.loot.results.LootInfoCollector;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.storage.loot.LootContext;
 

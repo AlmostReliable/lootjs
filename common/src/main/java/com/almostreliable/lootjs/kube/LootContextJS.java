@@ -1,7 +1,10 @@
 package com.almostreliable.lootjs.kube;
 
 import com.almostreliable.lootjs.LootJSPlatform;
-import com.almostreliable.lootjs.core.*;
+import com.almostreliable.lootjs.core.Constants;
+import com.almostreliable.lootjs.core.ILootContextData;
+import com.almostreliable.lootjs.core.LootContextType;
+import com.almostreliable.lootjs.core.LootEntry;
 import com.almostreliable.lootjs.filters.ItemFilter;
 import com.almostreliable.lootjs.util.LootContextUtils;
 import dev.latvian.mods.kubejs.entity.EntityJS;

@@ -33,7 +33,8 @@ public class Utils {
                 Optional<?> value = property.getValue(o.toString());
                 if (value.isEmpty()) {
                     throw new IllegalArgumentException(
-                            "Property " + o + " does not exists for block " + LootJSPlatform.INSTANCE.getRegistryName(block));
+                            "Property " + o + " does not exists for block " +
+                            LootJSPlatform.INSTANCE.getRegistryName(block));
                 }
                 propBuilder.hasProperty(property, value.get().toString());
             }

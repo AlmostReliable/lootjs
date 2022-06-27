@@ -1,8 +1,8 @@
 package com.almostreliable.lootjs.fabric.mixin;
 
+import com.almostreliable.lootjs.LootModificationsAPI;
 import com.almostreliable.lootjs.fabric.LootTableExtension;
 import com.almostreliable.lootjs.fabric.kubejs.LootModificationFabricEventJS;
-import com.almostreliable.lootjs.LootModificationsAPI;
 import com.google.gson.JsonElement;
 import dev.latvian.mods.kubejs.script.ScriptType;
 import net.minecraft.resources.ResourceLocation;

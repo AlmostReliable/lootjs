@@ -1,7 +1,7 @@
 package com.almostreliable.lootjs.loot;
 
-import com.almostreliable.lootjs.loot.action.LootItemFunctionWrapperAction;
 import com.almostreliable.lootjs.filters.ItemFilter;
+import com.almostreliable.lootjs.loot.action.LootItemFunctionWrapperAction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.alchemy.Potion;

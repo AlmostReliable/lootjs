@@ -25,7 +25,7 @@ public class ReplaceLootAction implements ILootAction {
             ItemStack currentItemStack = loot.get(i);
             if (predicate.test(currentItemStack)) {
                 ItemStack copy = this.lootEntry.apply(context);
-                if(preserveCount){
+                if (preserveCount) {
                     copy.setCount(Math.min(currentItemStack.getCount(), copy.getMaxStackSize()));
                 }
                 loot.set(i, copy);

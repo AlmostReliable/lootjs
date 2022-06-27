@@ -1,10 +1,10 @@
 package com.almostreliable.lootjs.mixin;
 
-import com.almostreliable.lootjs.loot.results.LootInfoCollector;
 import com.almostreliable.lootjs.LootContextData;
 import com.almostreliable.lootjs.LootModificationsAPI;
 import com.almostreliable.lootjs.core.Constants;
 import com.almostreliable.lootjs.core.LootContextType;
+import com.almostreliable.lootjs.loot.results.LootInfoCollector;
 import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParam;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParamSet;

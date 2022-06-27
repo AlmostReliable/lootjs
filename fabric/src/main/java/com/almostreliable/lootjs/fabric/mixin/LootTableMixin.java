@@ -1,10 +1,10 @@
 package com.almostreliable.lootjs.fabric.mixin;
 
-import com.almostreliable.lootjs.fabric.LootTableExtension;
 import com.almostreliable.lootjs.LootModificationsAPI;
 import com.almostreliable.lootjs.core.Constants;
-import com.almostreliable.lootjs.fabric.core.FabricLootContextExtension;
 import com.almostreliable.lootjs.core.ILootContextData;
+import com.almostreliable.lootjs.fabric.LootTableExtension;
+import com.almostreliable.lootjs.fabric.core.FabricLootContextExtension;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.storage.loot.LootContext;
