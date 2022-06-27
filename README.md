@@ -13,13 +13,12 @@ A [Minecraft] mod for packdevs to easily modify the loot system with [KubeJS].
 </div>
 
 ## **📑 Overview**
-This is a mod for [Minecraft] [Forge] and needs [KubeJS].<br>
-The mod uses the [Global Loot System][forgeloot] from Forge together with KubeJS to add functionality to modify loot based on given conditions and actions. 
+This is a mod for [Minecraft] [Forge] or [Fabric] and needs [KubeJS].<br>
 
 ## **🔧 Installation**
 1. Download the latest **mod jar** from [CurseForge] or the latest [releases].
 2. Download the latest **mod jar** from [KubeJS].
-3. Install Minecraft [Forge].
+3. Install Minecraft [Forge] or [Fabric].
 4. Drop both **jar files** into your mods folder.
 
 ## **✏️ Your first loot modification**
@@ -69,7 +68,7 @@ onEvent("lootjs", (event) => {
 For more information about the usage and the functionality of the mod, please
 visit our [wiki] or explore the [examples].
 
-## **❌ Disable loot tables for loot modifications**
+## **❌ Disable loot tables for loot modifications** (**[Forge] only**)
 Some blocks like leaves are getting randomly destroyed. If you don't want them to trigger your loot modifications, you can disable their loot tables. The default loot tables will still be triggered.
 ```js
 onEvent("lootjs", (event) => {
@@ -131,10 +130,11 @@ This project is licensed under the [GNU Lesser General Public License v3.0][lice
 [minecraft]: https://www.minecraft.net/
 [kubejs]: https://www.curseforge.com/minecraft/mc-mods/kubejs-forge
 [discord]: https://discord.com/invite/ThFnwZCyYY
-[releases]: https://github.com/AlmostReliable/lootjs-forge/releases
+[releases]: https://github.com/AlmostReliable/lootjs/releases
 [curseforge]: https://www.curseforge.com/minecraft/mc-mods/lootjs-forge
 [forge]: http://files.minecraftforge.net/
-[wiki]: https://github.com/AlmostReliable/lootjs-forge/wiki
+[fabric]: https://fabricmc.net/
+[wiki]: https://github.com/AlmostReliable/lootjs/wiki
 [changelog]: CHANGELOG.md
 [license]: LICENSE
 [examples]: examples/server_scripts
