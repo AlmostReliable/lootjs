@@ -4,20 +4,21 @@
 A [Minecraft] mod for packdevs to easily modify the loot system with [KubeJS].
 
 [![Version][version_badge]][version_link]
-[![Total Downloads][total_downloads_badge]][curseforge]
+[![Total Downloads CF][total_downloads_cf_badge]][curseforge]
+[![Total Downloads MR][total_downloads_mr_badge]][modrinth]
 [![Workflow Status][workflow_status_badge]][workflow_status_link]
 [![License][license_badge]][license]
 
-[Discord] | [CurseForge]
+[Discord] | [CurseForge] | [Modrinth]
 
 </div>
 
 ## **📑 Overview**
-This is a mod for [Minecraft] [Forge] or [Fabric] and needs [KubeJS].<br>
+This is a mod for [Minecraft]-[Forge] and [Fabric] and needs [KubeJS].<br>
 
 ## **🔧 Installation**
-1. Download the latest **mod jar** from [CurseForge] or the latest [releases].
-2. Download the latest **mod jar** from [KubeJS].
+1. Download the latest **mod jar** from the [releases], from [CurseForge] or from [Modrinth].
+2. Download the latest **mod jar** of [KubeJS].
 3. Install Minecraft [Forge] or [Fabric].
 4. Drop both **jar files** into your mods folder.
 
@@ -74,7 +75,7 @@ Some blocks like leaves are getting randomly destroyed. If you don't want them t
 onEvent("lootjs", (event) => {
     // all leaves disabled via regex
     event.disableLootModification(/.*:blocks\/.*_leaves/);
-    
+
     // disable bats
     event.disableLootModification("minecraft:entities/bat");
 });
@@ -91,7 +92,7 @@ onEvent("lootjs", (event) => {
 
 Here's the output for the `additional gunpowder` and `raining loot` examples:
 ```lua
-[ Loot information ] 
+[ Loot information ]
     LootTable    : "minecraft:entities/creeper"
     Loot Type    : ENTITY
     Current loot :
@@ -103,7 +104,7 @@ Here's the output for the `additional gunpowder` and `raining loot` examples:
     Player Pos   : (152.52, 80.00, -262.85)
     Distance     : 1.53
     MainHand     : 1 netherite_sword {Damage:0}
-[ Modifications ] 
+[ Modifications ]
     🔧 LootTables["minecraft:entities/creeper"] {
         ❌ RandomChance
         ➥ conditions are false. Stopping at AddLootAction
@@ -118,20 +119,22 @@ Here's the output for the `additional gunpowder` and `raining loot` examples:
 This project is licensed under the [GNU Lesser General Public License v3.0][license].
 
 <!-- Badges -->
-[version_badge]: https://img.shields.io/github/v/release/AlmostReliable/lootjs-forge?style=flat-square
-[version_link]: https://github.com/AlmostReliable/lootjs-forge/releases/latest
-[total_downloads_badge]: http://cf.way2muchnoise.eu/full_570630.svg?badge_style=flat
-[workflow_status_badge]: https://img.shields.io/github/workflow/status/AlmostReliable/lootjs-forge/CI?style=flat-square
-[workflow_status_link]: https://github.com/AlmostReliable/lootjs-forge/actions
-[license_badge]: https://img.shields.io/github/license/AlmostReliable/lootjs-forge?style=flat-square
+[version_badge]: https://img.shields.io/github/v/release/AlmostReliable/lootjs?include_prereleases&style=flat-square
+[version_link]: https://github.com/AlmostReliable/lootjs/releases/latest
+[total_downloads_cf_badge]: http://cf.way2muchnoise.eu/full_570630.svg?badge_style=flat
+[total_downloads_mr_badge]: https://img.shields.io/badge/dynamic/json?style=flat-square&color=5da545&label=modrinth&query=downloads&url=https://api.modrinth.com/api/v1/mod/fJFETWDN
+[workflow_status_badge]: https://img.shields.io/github/workflow/status/AlmostReliable/lootjs/CI?style=flat-square
+[workflow_status_link]: https://github.com/AlmostReliable/lootjs/actions
+[license_badge]: https://img.shields.io/github/license/AlmostReliable/lootjs?style=flat-square
 
 <!-- Links -->
 [forgeloot]: https://mcforge.readthedocs.io/en/latest/items/globallootmodifiers/
 [minecraft]: https://www.minecraft.net/
-[kubejs]: https://www.curseforge.com/minecraft/mc-mods/kubejs-forge
+[kubejs]: https://www.curseforge.com/minecraft/mc-mods/kubejs
 [discord]: https://discord.com/invite/ThFnwZCyYY
 [releases]: https://github.com/AlmostReliable/lootjs/releases
-[curseforge]: https://www.curseforge.com/minecraft/mc-mods/lootjs-forge
+[curseforge]: https://www.curseforge.com/minecraft/mc-mods/lootjs
+[modrinth]: https://modrinth.com/mod/lootjs
 [forge]: http://files.minecraftforge.net/
 [fabric]: https://fabricmc.net/
 [wiki]: https://github.com/AlmostReliable/lootjs/wiki

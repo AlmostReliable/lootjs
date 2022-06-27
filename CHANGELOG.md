@@ -16,7 +16,7 @@ and this project adheres to [Semantic Versioning].
 ### Added
 - `replaceLoot(filter, entry, preserveCount)` now exists with the third argument to preserve item count (use true or false)
 ### Changed
-- `replaceLoot` now also takes an `LootEntry` as the second argument 
+- `replaceLoot` now also takes an `LootEntry` as the second argument
 
 ## [2.5.0] - 2022-06-16
 ### Added
@@ -34,17 +34,17 @@ and this project adheres to [Semantic Versioning].
 - Remove deprecated actions from 2.3.0
 
 ## [2.3.0-beta] - 2022-04-18
-We are now on 1.18.2! 
+We are now on 1.18.2!
 
 ### Added
-- [ItemFilter](https://github.com/AlmostReliable/lootjs-forge/wiki/1.18.2-Types#itemfilters)
-- [Functions](https://github.com/AlmostReliable/lootjs-forge/wiki/1.18.2-Functions) to apply loot table functions
-- [CustomPlayerAction](https://github.com/AlmostReliable/lootjs-forge/wiki/1.18.2-Actions#playeractioncallback)
+- [ItemFilter](https://github.com/AlmostReliable/lootjs/wiki/1.18.2-Types#itemfilters)
+- [Functions](https://github.com/AlmostReliable/lootjs/wiki/1.18.2-Functions) to apply loot table functions
+- [CustomPlayerAction](https://github.com/AlmostReliable/lootjs/wiki/1.18.2-Actions#playeractioncallback)
 
 ### Changed
 - Refactoring the builders for loot modifications.
 - Removing usage of kubejs `DamageSourceJS` and use the vanilla damage source.
-- Rename actions. You can find the new names [here](https://github.com/AlmostReliable/lootjs-forge/wiki/1.18.2-Actions)
+- Rename actions. You can find the new names [here](https://github.com/AlmostReliable/lootjs/wiki/1.18.2-Actions)
 - `biome()` & `anyBiome()` conditions now uses the new tag system
 
 ## [2.2.0] - 2022-03-15
@@ -68,12 +68,12 @@ We are now on 1.18.2!
 [semantic versioning]: https://semver.org/spec/v2.0.0.html
 
 <!-- Versions -->
-[unreleased]: https://github.com/AlmostReliable/lootjs-forge/compare/1.18...HEAD
-[2.7.0]: https://github.com/AlmostReliable/lootjs-forge/releases/tag/v1.18-2.7.0
-[2.6.0]: https://github.com/AlmostReliable/lootjs-forge/releases/tag/v1.18-2.6.0
-[2.5.0]: https://github.com/AlmostReliable/lootjs-forge/releases/tag/v1.18-2.5.0
-[2.4.0]: https://github.com/AlmostReliable/lootjs-forge/releases/tag/v1.18-2.4.0
-[2.3.0-beta]: https://github.com/AlmostReliable/lootjs-forge/releases/tag/v1.18-2.3.0-beta
-[2.2.0]: https://github.com/AlmostReliable/lootjs-forge/releases/tag/v1.18-2.2.0
-[2.1.0]: https://github.com/AlmostReliable/lootjs-forge/releases/tag/v1.18-2.1.0
-[2.0.0]: https://github.com/AlmostReliable/lootjs-forge/releases/tag/v1.18-2.0.0
+[unreleased]: https://github.com/AlmostReliable/lootjs/compare/1.18...HEAD
+[2.7.0]: https://github.com/AlmostReliable/lootjs/releases/tag/v1.18-2.7.0
+[2.6.0]: https://github.com/AlmostReliable/lootjs/releases/tag/v1.18-2.6.0
+[2.5.0]: https://github.com/AlmostReliable/lootjs/releases/tag/v1.18-2.5.0
+[2.4.0]: https://github.com/AlmostReliable/lootjs/releases/tag/v1.18-2.4.0
+[2.3.0-beta]: https://github.com/AlmostReliable/lootjs/releases/tag/v1.18-2.3.0-beta
+[2.2.0]: https://github.com/AlmostReliable/lootjs/releases/tag/v1.18-2.2.0
+[2.1.0]: https://github.com/AlmostReliable/lootjs/releases/tag/v1.18-2.1.0
+[2.0.0]: https://github.com/AlmostReliable/lootjs/releases/tag/v1.18-2.0.0
