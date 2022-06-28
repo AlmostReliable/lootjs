@@ -1,0 +1,16 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "com.almostreliable.lootjs.fabric.mixin",
+  "compatibilityLevel": "JAVA_17",
+  "mixins": [
+    "LootContextMixin",
+    "LootTableMixin",
+    "LootTablesMixin"
+  ],
+  "client": [
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

@@ -1,0 +1,32 @@
+{
+  "schemaVersion": 1,
+  "id": "${mod_id}",
+  "version": "${version}",
+  "name": "${mod_name}",
+  "description": "${mod_description}",
+  "authors": [
+    "${mod_author}"
+  ],
+  "contact": {
+    "homepage": "https://almostreliable.com/",
+    "sources": "https://github.com/${github_user}/${github_repo}/issues"
+  },
+  "license": "${license}",
+  "icon": "assets/${mod_id}/icon.png",
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      "com.almostreliable.lootjs.fabric.LootJSFabric"
+    ]
+  },
+  "mixins": [
+    "lootjs-common.mixins.json",
+    "lootjs-fabric.mixins.json"
+  ],
+  "accessWidener" : "lootjs.accesswidener",
+  "depends": {
+    "fabric": "*",
+    "minecraft": ">=${minecraft_version}",
+    "java": ">=17"
+  }
+}
