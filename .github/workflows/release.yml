@@ -110,9 +110,7 @@ jobs:
         uses: Kir-Antipov/mc-publish@v3.0
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
-          files: |
-              build/libs/${{ env.MOD_ID }}-forge-${{ env.MINECRAFT_VERSION }}-${{ env.MOD_VERSION }}.jar
-              build/libs/${{ env.MOD_ID }}-fabric-${{ env.MINECRAFT_VERSION }}-${{ env.MOD_VERSION }}.jar
+          files: build/libs/${{ env.MOD_ID }}-*-${{ env.MINECRAFT_VERSION }}-${{ env.MOD_VERSION }}.jar
           version: ${{ env.MINECRAFT_VERSION }}-${{ env.MOD_VERSION }}
           version-type: ${{ env.RELEASE_TYPE }}
           changelog-file: changes.md
