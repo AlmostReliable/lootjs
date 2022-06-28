@@ -29,6 +29,10 @@ import java.util.regex.Pattern;
 
 public class LootJSPlugin extends KubeJSPlugin {
 
+    public static boolean eventsAreDisabled() {
+        return Boolean.getBoolean("lootjs.disable_events");
+    }
+
     @Nullable
     public static <T extends Enum<T>> T valueOf(Class<T> clazz, Object o) {
         String s = o.toString();

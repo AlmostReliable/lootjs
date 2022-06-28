@@ -17,6 +17,15 @@ loom {
                 "${mod_id}-common.mixins.json"
         ]
     }
+
+    runs {
+        gameTestServer {
+            server()
+            property "forge.enabledGameTestNamespaces", "${mod_id}"
+            property "forge.gameTestServer", "true"
+            property "lootjs.disable_events", "true"
+        }
+    }
 }
 
 repositories {

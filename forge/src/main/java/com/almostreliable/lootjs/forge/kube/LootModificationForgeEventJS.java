@@ -2,6 +2,7 @@ package com.almostreliable.lootjs.forge.kube;
 
 import com.almostreliable.lootjs.LootModificationsAPI;
 import com.almostreliable.lootjs.filters.ResourceLocationFilter;
+import com.almostreliable.lootjs.kube.LootJSPlugin;
 import com.almostreliable.lootjs.kube.LootModificationEventJS;
 import net.minecraft.resources.ResourceLocation;
 
@@ -55,6 +56,11 @@ public class LootModificationForgeEventJS extends LootModificationEventJS {
     @Override
     protected void afterPosted(boolean result) {
         super.afterPosted(result);
+
+        if (LootJSPlugin.eventsAreDisabled()) {
+            return;
+        }
+
         originalLocations.removeIf(locationsToRemove::contains);
     }
 }

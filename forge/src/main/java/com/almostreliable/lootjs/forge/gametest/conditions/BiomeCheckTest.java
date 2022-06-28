@@ -1,0 +1,135 @@
+package com.almostreliable.lootjs.forge.gametest.conditions;
+
+import com.almostreliable.lootjs.BuildConfig;
+import com.almostreliable.lootjs.forge.gametest.GameTestTemplates;
+import com.almostreliable.lootjs.forge.gametest.GameTestUtils;
+import com.almostreliable.lootjs.loot.condition.AnyBiomeCheck;
+import com.almostreliable.lootjs.loot.condition.BiomeCheck;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Holder;
+import net.minecraft.core.Registry;
+import net.minecraft.gametest.framework.GameTest;
+import net.minecraft.gametest.framework.GameTestHelper;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.tags.BiomeTags;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.biome.Biome;
+import net.minecraft.world.level.storage.loot.LootContext;
+import net.minecraftforge.gametest.GameTestHolder;
+import net.minecraftforge.gametest.PrefixGameTestTemplate;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Objects;
+
+@GameTestHolder(value = BuildConfig.MOD_ID)
+@PrefixGameTestTemplate(false)
+public class BiomeCheckTest {
+
+    private static final BlockPos TEST_POS = new BlockPos(1, 0, 1);
+
+    @GameTest(template = GameTestTemplates.EMPTY)
+    public void AnyBiomeCheck_match(GameTestHelper helper) {
+        Player player = helper.makeMockPlayer();
+        Holder<Biome> biomeHolder = helper.getLevel().getBiome(TEST_POS);
+        LootContext ctx = GameTestUtils.unknownContext(helper.getLevel(), player.position());
+
+        ResourceKey<Biome> bKey = biome(Objects.requireNonNull(biomeHolder.value().getRegistryName()));
+        AnyBiomeCheck check = new AnyBiomeCheck(Collections.singletonList(bKey), new ArrayList<>());
+        helper.succeedIf(() -> GameTestUtils.assertTrue(helper,
+                check.test(ctx),
+                "Biome " + bKey.location() + " check should pass"));
+    }
+
+    @GameTest(template = GameTestTemplates.EMPTY)
+    public void BiomeCheck_match(GameTestHelper helper) {
+        Player player = helper.makeMockPlayer();
+        Holder<Biome> biomeHolder = helper.getLevel().getBiome(TEST_POS);
+        LootContext ctx = GameTestUtils.unknownContext(helper.getLevel(), player.position());
+
+        ResourceKey<Biome> bKey = biome(Objects.requireNonNull(biomeHolder.value().getRegistryName()));
+        BiomeCheck check = new BiomeCheck(Collections.singletonList(bKey), new ArrayList<>());
+        helper.succeedIf(() -> GameTestUtils.assertTrue(helper,
+                check.test(ctx),
+                "Biome " + bKey.location() + " check should pass"));
+    }
+
+    @GameTest(template = GameTestTemplates.EMPTY)
+    public void AnyBiomeCheck_fail(GameTestHelper helper) {
+        Player player = helper.makeMockPlayer();
+        LootContext ctx = GameTestUtils.unknownContext(helper.getLevel(), player.position());
+
+        ResourceKey<Biome> bKey = biome(new ResourceLocation("minecraft:deep_ocean"));
+        AnyBiomeCheck check = new AnyBiomeCheck(Collections.singletonList(bKey), new ArrayList<>());
+        helper.succeedIf(() -> GameTestUtils.assertFalse(helper,
+                check.test(ctx),
+                "Biome " + bKey.location() + " check should not pass"));
+    }
+
+    @GameTest(template = GameTestTemplates.EMPTY)
+    public void BiomeCheck_fail(GameTestHelper helper) {
+        Player player = helper.makeMockPlayer();
+        LootContext ctx = GameTestUtils.unknownContext(helper.getLevel(), player.position());
+
+        ResourceKey<Biome> bKey = biome(new ResourceLocation("minecraft:deep_ocean"));
+        BiomeCheck check = new BiomeCheck(Collections.singletonList(bKey), new ArrayList<>());
+        helper.succeedIf(() -> GameTestUtils.assertFalse(helper,
+                check.test(ctx),
+                "Biome " + bKey.location() + " check should not pass"));
+    }
+
+    @GameTest(template = GameTestTemplates.EMPTY)
+    public void AnyBiomeCheck_matchTags(GameTestHelper helper) {
+        Player player = helper.makeMockPlayer();
+        Holder<Biome> biomeHolder = helper.getLevel().getBiome(TEST_POS);
+        LootContext ctx = GameTestUtils.unknownContext(helper.getLevel(), player.position());
+
+        var types = biomeHolder.tags().toList();
+        AnyBiomeCheck check = new AnyBiomeCheck(new ArrayList<>(), new ArrayList<>(types));
+        helper.succeedIf(() -> GameTestUtils.assertTrue(helper,
+                check.test(ctx),
+                "Biome " + biomeHolder.value().getRegistryName() + " tag check should pass"));
+    }
+
+    @GameTest(template = GameTestTemplates.EMPTY)
+    public void BiomeCheck_matchAllTags(GameTestHelper helper) {
+        Player player = helper.makeMockPlayer();
+        Holder<Biome> biomeHolder = helper.getLevel().getBiome(TEST_POS);
+        LootContext ctx = GameTestUtils.unknownContext(helper.getLevel(), player.position());
+
+        var types = biomeHolder.tags().toList();
+        BiomeCheck check = new BiomeCheck(new ArrayList<>(), new ArrayList<>(types));
+        helper.succeedIf(() -> GameTestUtils.assertTrue(helper,
+                check.test(ctx),
+                "Biome " + biomeHolder.value().getRegistryName() + " tag check should pass"));
+    }
+
+    @GameTest(template = GameTestTemplates.EMPTY)
+    public void AnyBiomeCheck_failAllTags(GameTestHelper helper) {
+        Player player = helper.makeMockPlayer();
+        Holder<Biome> biomeHolder = helper.getLevel().getBiome(TEST_POS);
+        LootContext ctx = GameTestUtils.unknownContext(helper.getLevel(), player.position());
+
+        AnyBiomeCheck check = new AnyBiomeCheck(new ArrayList<>(), Collections.singletonList(BiomeTags.IS_NETHER));
+        helper.succeedIf(() -> GameTestUtils.assertFalse(helper,
+                check.test(ctx),
+                "Biome " + biomeHolder.value().getRegistryName() + " tag check should not pass"));
+    }
+
+    @GameTest(template = GameTestTemplates.EMPTY)
+    public void BiomeCheck_failAllTags(GameTestHelper helper) {
+        Player player = helper.makeMockPlayer();
+        Holder<Biome> biomeHolder = helper.getLevel().getBiome(TEST_POS);
+        LootContext ctx = GameTestUtils.unknownContext(helper.getLevel(), player.position());
+
+        BiomeCheck check = new BiomeCheck(new ArrayList<>(), Collections.singletonList(BiomeTags.IS_NETHER));
+        helper.succeedIf(() -> GameTestUtils.assertFalse(helper,
+                check.test(ctx),
+                "Biome " + biomeHolder.value().getRegistryName() + " tag check should not pass"));
+    }
+
+    public ResourceKey<Biome> biome(ResourceLocation biome) {
+        return ResourceKey.create(Registry.BIOME_REGISTRY, Objects.requireNonNull(biome));
+    }
+}

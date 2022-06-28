@@ -100,6 +100,10 @@ public abstract class LootModificationEventJS extends EventJS {
     protected void afterPosted(boolean result) {
         super.afterPosted(result);
 
+        if(LootJSPlugin.eventsAreDisabled()) {
+            return;
+        }
+
         try {
             for (Supplier<ILootAction> modifierSupplier : modifierSuppliers) {
                 LootModificationsAPI.addModification(modifierSupplier.get());

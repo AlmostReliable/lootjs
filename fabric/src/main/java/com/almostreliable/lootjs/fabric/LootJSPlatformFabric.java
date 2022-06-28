@@ -2,6 +2,7 @@ package com.almostreliable.lootjs.fabric;
 
 import com.almostreliable.lootjs.LootJSPlatform;
 import com.almostreliable.lootjs.fabric.core.FabricLootContextExtension;
+import net.fabricmc.fabric.impl.gametest.FabricGameTestHelper;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceLocation;
