@@ -67,6 +67,7 @@ jobs:
           curseforge-token: ${{ secrets.CURSEFORGE_TOKEN }}
           modrinth-id: fJFETWDN
           modrinth-token: ${{ secrets.MODRINTH_TOKEN }}
+          modrinth-featured: false
 
           files: build/libs/${{ env.MOD_ID }}-forge-${{ env.MINECRAFT_VERSION }}-${{ env.MOD_VERSION }}.jar
           name: ${{ env.MOD_NAME }}-Forge-${{ env.MINECRAFT_VERSION }}-${{ env.MOD_VERSION }}
@@ -90,6 +91,7 @@ jobs:
           curseforge-token: ${{ secrets.CURSEFORGE_TOKEN }}
           modrinth-id: fJFETWDN
           modrinth-token: ${{ secrets.MODRINTH_TOKEN }}
+          modrinth-featured: false
 
           files: build/libs/${{ env.MOD_ID }}-fabric-${{ env.MINECRAFT_VERSION }}-${{ env.MOD_VERSION }}.jar
           name: ${{ env.MOD_NAME }}-Fabric-${{ env.MINECRAFT_VERSION }}-${{ env.MOD_VERSION }}
