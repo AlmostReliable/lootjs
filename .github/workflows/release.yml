@@ -60,29 +60,6 @@ jobs:
       - name: Parse changelog
         run: parse-changelog CHANGELOG.md ${{ env.MOD_VERSION }} > changes.md
 
-      - name: Release Forge to CF and MR
-        uses: Kir-Antipov/mc-publish@v3.0
-        with:
-          curseforge-id: 570630
-          curseforge-token: ${{ secrets.CURSEFORGE_TOKEN }}
-          modrinth-id: fJFETWDN
-          modrinth-token: ${{ secrets.MODRINTH_TOKEN }}
-
-          files: build/libs/${{ env.MOD_ID }}-forge-${{ env.MINECRAFT_VERSION }}-${{ env.MOD_VERSION }}.jar
-          name: ${{ env.MOD_NAME }}-Forge-${{ env.MINECRAFT_VERSION }}-${{ env.MOD_VERSION }}
-          version: ${{ env.MINECRAFT_VERSION }}-${{ env.MOD_VERSION }}+forge
-          version-type: ${{ env.RELEASE_TYPE }}
-          changelog-file: changes.md
-
-          loaders: forge
-          game-versions: ${{ env.MINECRAFT_VERSION }}
-          version-resolver: exact
-          dependencies: |
-            kubejs | depends | *
-          java: ${{ env.JAVA_VERSION }}
-          retry-attempts: 2
-          retry-delay: 10000
-
       - name: Release Fabric to CF and MR
         uses: Kir-Antipov/mc-publish@v3.0
         with:
@@ -98,6 +75,29 @@ jobs:
           changelog-file: changes.md
 
           loaders: fabric
+          game-versions: ${{ env.MINECRAFT_VERSION }}
+          version-resolver: exact
+          dependencies: |
+            kubejs | depends | *
+          java: ${{ env.JAVA_VERSION }}
+          retry-attempts: 2
+          retry-delay: 10000
+
+      - name: Release Forge to CF and MR
+        uses: Kir-Antipov/mc-publish@v3.0
+        with:
+          curseforge-id: 570630
+          curseforge-token: ${{ secrets.CURSEFORGE_TOKEN }}
+          modrinth-id: fJFETWDN
+          modrinth-token: ${{ secrets.MODRINTH_TOKEN }}
+
+          files: build/libs/${{ env.MOD_ID }}-forge-${{ env.MINECRAFT_VERSION }}-${{ env.MOD_VERSION }}.jar
+          name: ${{ env.MOD_NAME }}-Forge-${{ env.MINECRAFT_VERSION }}-${{ env.MOD_VERSION }}
+          version: ${{ env.MINECRAFT_VERSION }}-${{ env.MOD_VERSION }}+forge
+          version-type: ${{ env.RELEASE_TYPE }}
+          changelog-file: changes.md
+
+          loaders: forge
           game-versions: ${{ env.MINECRAFT_VERSION }}
           version-resolver: exact
           dependencies: |
