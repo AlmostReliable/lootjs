@@ -13,3 +13,12 @@ accessible class net/minecraft/world/level/storage/loot/functions/SetAttributesF
 
 accessible method net/minecraft/world/entity/LivingEntity createLootContext (ZLnet/minecraft/world/damagesource/DamageSource;)Lnet/minecraft/world/level/storage/loot/LootContext$Builder; # createLootContext
 accessible method net/minecraft/world/entity/Mob createLootContext (ZLnet/minecraft/world/damagesource/DamageSource;)Lnet/minecraft/world/level/storage/loot/LootContext$Builder; # createLootContext
+
+accessible field net/minecraft/world/entity/LightningBolt visualOnly Z# visualOnly
+accessible field net/minecraft/world/level/Explosion fire Z# fire
+accessible field net/minecraft/world/level/Explosion blockInteraction Lnet/minecraft/world/level/Explosion$BlockInteraction;# blockInteraction
+accessible field net/minecraft/world/level/Explosion radius F# radius
+accessible field net/minecraft/world/entity/Entity  wasEyeInWater Z# wasEyeInWater
+accessible field net/minecraft/world/entity/Entity  wasTouchingWater Z# wasTouchingWater
+accessible field net/minecraft/world/entity/Entity blockPosition Lnet/minecraft/core/BlockPos;# blockPosition
+accessible field net/minecraft/world/level/storage/loot/predicates/LootItemEntityPropertyCondition entityTarget Lnet/minecraft/world/level/storage/loot/LootContext$EntityTarget;# entityTarget
