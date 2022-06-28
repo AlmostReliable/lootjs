@@ -38,7 +38,7 @@ jobs:
         uses: gradle/wrapper-validation-action@v1
 
       - name: Assemble the JARs
-        run: ./gradlew jar --no-daemon
+        run: ./gradlew assemble
 
       - name: Collect version information
         run: |
