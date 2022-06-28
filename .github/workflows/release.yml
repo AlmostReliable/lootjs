@@ -52,7 +52,6 @@ jobs:
           set_var MINECRAFT_VERSION $(echo ${JAR_FILE%.*} | cut -d- -f3)
           set_var MOD_VERSION $(echo ${JAR_FILE%.*} | cut -d- -f4)
           set_var RELEASE_TYPE "$(echo ${GITHUB_REF##*/} | cut -d- -f5)"
-          set_var PRE_RELEASE "$([[ -z $RELEASE_TYPE ]] && echo false || echo true)"
           set_var RELEASE_TYPE "$([[ -z $RELEASE_TYPE ]] && echo release || echo $RELEASE_TYPE)"
 
       - name: Install changelog parser
@@ -61,14 +60,13 @@ jobs:
       - name: Parse changelog
         run: parse-changelog CHANGELOG.md ${{ env.MOD_VERSION }} > changes.md
 
-      - name: Release Forge
+      - name: Release Forge to CF and MR
         uses: Kir-Antipov/mc-publish@v3.0
         with:
           curseforge-id: 570630
           curseforge-token: ${{ secrets.CURSEFORGE_TOKEN }}
           modrinth-id: fJFETWDN
           modrinth-token: ${{ secrets.MODRINTH_TOKEN }}
-          github-token: ${{ secrets.GITHUB_TOKEN }}
 
           files: build/libs/${{ env.MOD_ID }}-forge-${{ env.MINECRAFT_VERSION }}-${{ env.MOD_VERSION }}.jar
           name: ${{ env.MOD_NAME }}-Forge-${{ env.MINECRAFT_VERSION }}-${{ env.MOD_VERSION }}
@@ -85,14 +83,13 @@ jobs:
           retry-attempts: 2
           retry-delay: 10000
 
-      - name: Release Fabric
+      - name: Release Fabric to CF and MR
         uses: Kir-Antipov/mc-publish@v3.0
         with:
           curseforge-id: 570630
           curseforge-token: ${{ secrets.CURSEFORGE_TOKEN }}
           modrinth-id: fJFETWDN
           modrinth-token: ${{ secrets.MODRINTH_TOKEN }}
-          github-token: ${{ secrets.GITHUB_TOKEN }}
 
           files: build/libs/${{ env.MOD_ID }}-fabric-${{ env.MINECRAFT_VERSION }}-${{ env.MOD_VERSION }}.jar
           name: ${{ env.MOD_NAME }}-Fabric-${{ env.MINECRAFT_VERSION }}-${{ env.MOD_VERSION }}
@@ -106,5 +103,18 @@ jobs:
           dependencies: |
             kubejs | depends | *
           java: ${{ env.JAVA_VERSION }}
+          retry-attempts: 2
+          retry-delay: 10000
+
+      - name: Release to GitHub
+        uses: Kir-Antipov/mc-publish@v3.0
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          files: |
+              build/libs/${{ env.MOD_ID }}-forge-${{ env.MINECRAFT_VERSION }}-${{ env.MOD_VERSION }}.jar
+              build/libs/${{ env.MOD_ID }}-fabric-${{ env.MINECRAFT_VERSION }}-${{ env.MOD_VERSION }}.jar
+          version: ${{ env.MINECRAFT_VERSION }}-${{ env.MOD_VERSION }}
+          version-type: ${{ env.RELEASE_TYPE }}
+          changelog-file: changes.md
           retry-attempts: 2
           retry-delay: 10000
