@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning].
 
 ## [Unreleased]
 - /
+## [2.7.1] - 2022-07-04
+### Changed
+- Fabric Fix: Modifications did not trigger for entities.
 
 ## [2.7.0] - 2022-06-27
 ### Added
@@ -69,6 +72,7 @@ We are now on 1.18.2!
 
 <!-- Versions -->
 [unreleased]: https://github.com/AlmostReliable/lootjs/compare/1.18...HEAD
+[2.7.1]: https://github.com/AlmostReliable/lootjs/releases/tag/v1.18-2.7.1
 [2.7.0]: https://github.com/AlmostReliable/lootjs/releases/tag/v1.18-2.7.0
 [2.6.0]: https://github.com/AlmostReliable/lootjs/releases/tag/v1.18-2.6.0
 [2.5.0]: https://github.com/AlmostReliable/lootjs/releases/tag/v1.18-2.5.0
