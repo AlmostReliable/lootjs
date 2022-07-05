@@ -30,7 +30,7 @@ public abstract class LootTableMixin implements LootTableExtension {
     @Unique
     protected ResourceLocation lootjs$lootTableId;
 
-    @Inject(method = "getRandomItems(Lnet/minecraft/world/level/storage/loot/LootContext;Ljava/util/function/Consumer;)V", at = @At("RETURN"), cancellable = true)
+    @Inject(method = "getRandomItems(Lnet/minecraft/world/level/storage/loot/LootContext;Ljava/util/function/Consumer;)V", at = @At("HEAD"), cancellable = true)
     private void invokeLootModifiers(LootContext context, Consumer<ItemStack> consumer, CallbackInfo ci) {
         List<ItemStack> loot = new ArrayList<>();
         Consumer<ItemStack> stackSplitter = LootTable.createStackSplitter(loot::add);
