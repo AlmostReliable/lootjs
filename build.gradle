@@ -48,6 +48,10 @@ subprojects {
     group = rootProject.group
     base.archivesBaseName = "${rootProject.mod_id}-${project.name}-${rootProject.minecraft_version}"
 
+    architectury {
+        compileOnly()
+    }
+
     loom {
         silentMojangMappingsLicense()
     }
@@ -71,6 +75,15 @@ subprojects {
 subprojects {
     if (project.path != ':common') {
         apply plugin: "com.github.johnrengelman.shadow"
+
+        loom {
+            mods {
+                main { // to match the default mod generated for Forge
+                    sourceSet project.sourceSets.main
+                    sourceSet project(':common').sourceSets.main
+                }
+            }
+        }
 
         configurations {
             bundle {

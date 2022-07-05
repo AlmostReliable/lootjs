@@ -6,9 +6,9 @@ architectury {
     fabric()
 }
 
-configurations {
-    developmentFabric.extendsFrom common
-}
+//configurations {
+//    developmentFabric.extendsFrom common
+//}
 
 loom {
     accessWidenerPath = accessWidenerFile

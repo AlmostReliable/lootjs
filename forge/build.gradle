@@ -3,9 +3,9 @@ architectury {
     forge()
 }
 
-configurations {
-    developmentForge.extendsFrom common
-}
+//configurations {
+//    developmentForge.extendsFrom common
+//}
 
 loom {
     accessWidenerPath = project(":common").file("src/main/resources/${mod_id}.accesswidener")
