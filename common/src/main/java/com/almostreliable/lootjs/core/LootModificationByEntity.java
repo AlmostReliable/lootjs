@@ -19,7 +19,7 @@ public class LootModificationByEntity extends AbstractLootModification {
 
     @Override
     public boolean shouldExecute(LootContext context) {
-        ILootContextData data = context.getParamOrNull(Constants.DATA);
+        ILootContextData data = context.getParamOrNull(LootJSParamSets.DATA);
         Entity entity = context.getParamOrNull(LootContextParams.THIS_ENTITY);
         return entity != null && data != null && entities.contains(entity.getType()) &&
                data.getLootContextType() == LootContextType.ENTITY;

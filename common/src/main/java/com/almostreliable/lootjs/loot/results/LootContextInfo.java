@@ -2,7 +2,7 @@ package com.almostreliable.lootjs.loot.results;
 
 import com.almostreliable.lootjs.LootJSPlatform;
 import com.almostreliable.lootjs.LootModificationsAPI;
-import com.almostreliable.lootjs.core.Constants;
+import com.almostreliable.lootjs.core.LootJSParamSets;
 import com.almostreliable.lootjs.core.ILootContextData;
 import com.almostreliable.lootjs.util.LootContextUtils;
 import com.almostreliable.lootjs.util.Utils;
@@ -32,7 +32,7 @@ public class LootContextInfo {
 
         lci.add("LootTable", Utils.quote(LootJSPlatform.INSTANCE.getQueriedLootTableId(context)));
 
-        ILootContextData data = context.getParamOrNull(Constants.DATA);
+        ILootContextData data = context.getParamOrNull(LootJSParamSets.DATA);
         if (data != null) {
             lci.add("LootType", data.getLootContextType().name());
             lci.updateLoot(data.getGeneratedLoot());

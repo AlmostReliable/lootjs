@@ -1,6 +1,6 @@
 package com.almostreliable.lootjs.forge.gametest;
 
-import com.almostreliable.lootjs.core.Constants;
+import com.almostreliable.lootjs.core.LootJSParamSets;
 import com.almostreliable.lootjs.core.ILootContextData;
 import net.minecraft.core.BlockPos;
 import net.minecraft.gametest.framework.GameTestHelper;
@@ -39,7 +39,7 @@ public class GameTestUtils {
     }
 
     public static ILootContextData fillExampleLoot(LootContext context) {
-        ILootContextData data = context.getParamOrNull(Constants.DATA);
+        ILootContextData data = context.getParamOrNull(LootJSParamSets.DATA);
         assert data != null;
         data.setGeneratedLoot(Stream
                 .of(new ItemStack(Items.DIAMOND),
@@ -50,14 +50,14 @@ public class GameTestUtils {
     }
 
     public static ILootContextData fillExampleLoot(LootContext context, ItemStack... items) {
-        ILootContextData data = context.getParamOrNull(Constants.DATA);
+        ILootContextData data = context.getParamOrNull(LootJSParamSets.DATA);
         assert data != null;
         data.setGeneratedLoot(Stream.of(items).collect(Collectors.toList()));
         return data;
     }
 
     public static ILootContextData fillExampleLoot(LootContext context, Item... items) {
-        ILootContextData data = context.getParamOrNull(Constants.DATA);
+        ILootContextData data = context.getParamOrNull(LootJSParamSets.DATA);
         assert data != null;
         data.setGeneratedLoot(Stream.of(items).map(ItemStack::new).collect(Collectors.toList()));
         return data;

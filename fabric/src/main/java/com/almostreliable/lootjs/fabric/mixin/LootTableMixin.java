@@ -1,7 +1,7 @@
 package com.almostreliable.lootjs.fabric.mixin;
 
 import com.almostreliable.lootjs.LootModificationsAPI;
-import com.almostreliable.lootjs.core.Constants;
+import com.almostreliable.lootjs.core.LootJSParamSets;
 import com.almostreliable.lootjs.core.ILootContextData;
 import com.almostreliable.lootjs.fabric.LootTableExtension;
 import com.almostreliable.lootjs.fabric.core.FabricLootContextExtension;
@@ -15,7 +15,6 @@ import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,7 +35,7 @@ public abstract class LootTableMixin implements LootTableExtension {
         Consumer<ItemStack> stackSplitter = LootTable.createStackSplitter(loot::add);
         getRandomItemsRaw(context, stackSplitter);
 
-        ILootContextData data = context.getParamOrNull(Constants.DATA);
+        ILootContextData data = context.getParamOrNull(LootJSParamSets.DATA);
         if (data == null) {
             throw new IllegalStateException(
                     "Something went wrong - LootContext has no data. Please report this for the mod LootJS");

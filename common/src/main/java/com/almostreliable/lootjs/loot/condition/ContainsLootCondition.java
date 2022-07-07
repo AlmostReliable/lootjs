@@ -1,6 +1,6 @@
 package com.almostreliable.lootjs.loot.condition;
 
-import com.almostreliable.lootjs.core.Constants;
+import com.almostreliable.lootjs.core.LootJSParamSets;
 import com.almostreliable.lootjs.core.ILootContextData;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.storage.loot.LootContext;
@@ -24,7 +24,7 @@ public class ContainsLootCondition implements IExtendedLootCondition {
 
     @Override
     public boolean test(LootContext context) {
-        ILootContextData data = context.getParamOrNull(Constants.DATA);
+        ILootContextData data = context.getParamOrNull(LootJSParamSets.DATA);
         if (data == null) {
             return false;
         }

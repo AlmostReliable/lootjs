@@ -1,6 +1,6 @@
 package com.almostreliable.lootjs.loot.action;
 
-import com.almostreliable.lootjs.core.Constants;
+import com.almostreliable.lootjs.core.LootJSParamSets;
 import com.almostreliable.lootjs.core.ILootAction;
 import com.almostreliable.lootjs.core.ILootHandler;
 import com.almostreliable.lootjs.loot.results.Info;
@@ -21,7 +21,7 @@ public class CompositeLootAction implements ILootAction {
 
     @Override
     public boolean applyLootHandler(LootContext context, List<ItemStack> loot) {
-        LootInfoCollector collector = context.getParamOrNull(Constants.RESULT_COLLECTOR);
+        LootInfoCollector collector = context.getParamOrNull(LootJSParamSets.RESULT_COLLECTOR);
         return run(context, loot, collector);
     }
 

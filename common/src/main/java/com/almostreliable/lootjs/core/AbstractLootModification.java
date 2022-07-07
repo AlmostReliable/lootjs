@@ -21,7 +21,7 @@ public abstract class AbstractLootModification extends CompositeLootAction {
     @Override
     public boolean applyLootHandler(LootContext context, List<ItemStack> loot) {
         if (shouldExecute(context)) {
-            LootInfoCollector collector = context.getParamOrNull(Constants.RESULT_COLLECTOR);
+            LootInfoCollector collector = context.getParamOrNull(LootJSParamSets.RESULT_COLLECTOR);
             Info info = LootInfoCollector.createInfo(collector, new Info.Composite(Icon.WRENCH, name));
             run(context, loot, collector);
             LootInfoCollector.finalizeInfo(collector, info);

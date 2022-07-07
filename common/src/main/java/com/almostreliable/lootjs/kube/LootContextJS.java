@@ -1,7 +1,7 @@
 package com.almostreliable.lootjs.kube;
 
 import com.almostreliable.lootjs.LootJSPlatform;
-import com.almostreliable.lootjs.core.Constants;
+import com.almostreliable.lootjs.core.LootJSParamSets;
 import com.almostreliable.lootjs.core.ILootContextData;
 import com.almostreliable.lootjs.core.LootContextType;
 import com.almostreliable.lootjs.core.LootEntry;
@@ -41,7 +41,7 @@ public class LootContextJS {
 
     public LootContextJS(LootContext context) {
         this.context = context;
-        this.data = context.getParamOrNull(Constants.DATA);
+        this.data = context.getParamOrNull(LootJSParamSets.DATA);
         assert data != null;
     }
 

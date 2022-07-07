@@ -1,7 +1,7 @@
 package com.almostreliable.lootjs.forge.mixin;
 
 import com.almostreliable.lootjs.LootModificationsAPI;
-import com.almostreliable.lootjs.core.Constants;
+import com.almostreliable.lootjs.core.LootJSParamSets;
 import com.almostreliable.lootjs.core.ILootContextData;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
@@ -19,7 +19,7 @@ public class ForgeHooksMixin {
 
     @Inject(method = "modifyLoot(Lnet/minecraft/resources/ResourceLocation;Ljava/util/List;Lnet/minecraft/world/level/storage/loot/LootContext;)Ljava/util/List;", at = @At("RETURN"), remap = false)
     private static void invokeActions(ResourceLocation lootTableID, List<ItemStack> loot, LootContext context, CallbackInfoReturnable<List<ItemStack>> cir) {
-        ILootContextData data = context.getParamOrNull(Constants.DATA);
+        ILootContextData data = context.getParamOrNull(LootJSParamSets.DATA);
         if (data == null) {
             throw new IllegalStateException(
                     "Something went wrong - LootContext has no data. Please report this for the mod LootJS");

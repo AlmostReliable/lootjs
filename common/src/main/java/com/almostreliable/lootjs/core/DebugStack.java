@@ -63,7 +63,7 @@ public class DebugStack {
 
 //        debugStack.write("LootTable", Utils.quote(context.getQueriedLootTableId()));
 
-        ILootContextData data = context.getParamOrNull(Constants.DATA);
+        ILootContextData data = context.getParamOrNull(LootJSParamSets.DATA);
         if (data != null) {
             debugStack.write("Loot type", data.getLootContextType());
             debugStack.write("Current loot :");

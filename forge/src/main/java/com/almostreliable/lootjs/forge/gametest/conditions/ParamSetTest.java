@@ -1,7 +1,7 @@
 package com.almostreliable.lootjs.forge.gametest.conditions;
 
 import com.almostreliable.lootjs.BuildConfig;
-import com.almostreliable.lootjs.core.Constants;
+import com.almostreliable.lootjs.core.LootJSParamSets;
 import com.almostreliable.lootjs.core.LootContextType;
 import com.almostreliable.lootjs.forge.gametest.GameTestTemplates;
 import com.almostreliable.lootjs.forge.gametest.GameTestUtils;
@@ -32,7 +32,7 @@ public class ParamSetTest {
         LootContext ctx = GameTestUtils.chestContext(helper.getLevel(), TEST_POS, null);
 
         helper.succeedIf(() -> GameTestUtils.assertEquals(helper,
-                ctx.getParam(Constants.DATA).getLootContextType(),
+                ctx.getParam(LootJSParamSets.DATA).getLootContextType(),
                 LootContextType.CHEST));
     }
 
@@ -44,7 +44,7 @@ public class ParamSetTest {
                 .create(LootContextParamSets.ENTITY);
 
         helper.succeedIf(() -> GameTestUtils.assertEquals(helper,
-                ctx.getParam(Constants.DATA).getLootContextType(),
+                ctx.getParam(LootJSParamSets.DATA).getLootContextType(),
                 LootContextType.ENTITY));
     }
 
@@ -58,7 +58,7 @@ public class ParamSetTest {
                 .create(LootContextParamSets.CHEST);
 
         helper.succeedIf(() -> GameTestUtils.assertEquals(helper,
-                ctx.getParam(Constants.DATA).getLootContextType(),
+                ctx.getParam(LootJSParamSets.DATA).getLootContextType(),
                 LootContextType.CHEST));
     }
 
@@ -76,7 +76,7 @@ public class ParamSetTest {
 
         LootContext ctx = builder.create(LootContextParamSets.FISHING);
         helper.succeedIf(() -> GameTestUtils.assertEquals(helper,
-                ctx.getParam(Constants.DATA).getLootContextType(),
+                ctx.getParam(LootJSParamSets.DATA).getLootContextType(),
                 LootContextType.FISHING));
     }
 
@@ -84,7 +84,7 @@ public class ParamSetTest {
     public void unknown(GameTestHelper helper) {
         LootContext ctx = GameTestUtils.unknownContext(helper.getLevel(), TEST_POS);
         helper.succeedIf(() -> GameTestUtils.assertEquals(helper,
-                ctx.getParam(Constants.DATA).getLootContextType(),
+                ctx.getParam(LootJSParamSets.DATA).getLootContextType(),
                 LootContextType.UNKNOWN));
     }
 }

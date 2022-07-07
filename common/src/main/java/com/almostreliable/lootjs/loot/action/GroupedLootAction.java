@@ -1,6 +1,6 @@
 package com.almostreliable.lootjs.loot.action;
 
-import com.almostreliable.lootjs.core.Constants;
+import com.almostreliable.lootjs.core.LootJSParamSets;
 import com.almostreliable.lootjs.core.ILootHandler;
 import com.almostreliable.lootjs.loot.results.Icon;
 import com.almostreliable.lootjs.loot.results.Info;
@@ -24,7 +24,7 @@ public class GroupedLootAction extends CompositeLootAction {
 
     @Override
     public boolean applyLootHandler(LootContext context, List<ItemStack> loot) {
-        LootInfoCollector collector = context.getParamOrNull(Constants.RESULT_COLLECTOR);
+        LootInfoCollector collector = context.getParamOrNull(LootJSParamSets.RESULT_COLLECTOR);
         int rolls = numberProvider.getInt(context);
         for (int i = 1; i <= rolls; i++) {
             Info info = createInfoIfMultipleRolls(rolls, i, collector);

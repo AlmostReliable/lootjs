@@ -2,7 +2,8 @@ package com.almostreliable.lootjs.mixin;
 
 import com.almostreliable.lootjs.LootContextData;
 import com.almostreliable.lootjs.LootModificationsAPI;
-import com.almostreliable.lootjs.core.Constants;
+import com.almostreliable.lootjs.core.LootJSParamSets;
+import com.almostreliable.lootjs.core.LootContextParamSetsMapping;
 import com.almostreliable.lootjs.core.LootContextType;
 import com.almostreliable.lootjs.loot.results.LootInfoCollector;
 import net.minecraft.world.level.storage.loot.LootContext;
@@ -19,13 +20,13 @@ public abstract class LootContextBuilderMixin {
     @Shadow
     public abstract <T> LootContext.Builder withParameter(LootContextParam<T> param, T value);
 
-    @Inject(method = "create", at = @At(value = "INVOKE_ASSIGN", target = "Lnet/minecraft/server/level/ServerLevel;getServer()Lnet/minecraft/server/MinecraftServer;"))
+    @Inject(method = "create", at = @At("HEAD"))
     public void addTypeOnCreate(LootContextParamSet paramSet, CallbackInfoReturnable<LootContext> cir) {
-        LootContextType type = Constants.PSETS_TO_TYPE.getOrDefault(paramSet, LootContextType.UNKNOWN);
-        this.withParameter(Constants.DATA, new LootContextData(type));
+        LootContextType type = LootContextParamSetsMapping.PSETS_TO_TYPE.getOrDefault(paramSet, LootContextType.UNKNOWN);
+        this.withParameter(LootJSParamSets.DATA, new LootContextData(type));
 
         if (LootModificationsAPI.LOOT_MODIFICATION_LOGGING) {
-            this.withParameter(Constants.RESULT_COLLECTOR, new LootInfoCollector());
+            this.withParameter(LootJSParamSets.RESULT_COLLECTOR, new LootInfoCollector());
         }
     }
 }

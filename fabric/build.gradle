@@ -28,10 +28,14 @@ dependencies {
 
     modApi("dev.latvian.mods:kubejs-fabric:${rootProject.kubejs_version}")
 
+    modApi("dev.latvian.mods:kubejs-fabric:${rootProject.kubejs_version}")
     modCompileOnly("me.shedaniel:RoughlyEnoughItems-api-fabric:${rootProject.rei_version}")
     modCompileOnly("me.shedaniel:RoughlyEnoughItems-default-plugin-fabric:${rootProject.rei_version}")
 
     modLocalRuntime("me.shedaniel:RoughlyEnoughItems-fabric:${rootProject.rei_version}")
+
+    modApi("curse.maven:rpgdifficulty-480786:3813549")
+    modApi("curse.maven:nameplate-551914:3683644")
 
     common(project(path: ":common", configuration: "namedElements")) { transitive false }
     bundle(project(path: ":common", configuration: "transformProductionFabric")) { transitive false }

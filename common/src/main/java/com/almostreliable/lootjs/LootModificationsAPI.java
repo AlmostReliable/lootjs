@@ -1,6 +1,6 @@
 package com.almostreliable.lootjs;
 
-import com.almostreliable.lootjs.core.Constants;
+import com.almostreliable.lootjs.core.LootJSParamSets;
 import com.almostreliable.lootjs.core.ILootAction;
 import com.almostreliable.lootjs.core.ILootContextData;
 import com.almostreliable.lootjs.filters.ResourceLocationFilter;
@@ -36,7 +36,7 @@ public class LootModificationsAPI {
     }
 
     public static void invokeActions(List<ItemStack> loot, LootContext context) {
-        ILootContextData contextData = context.getParamOrNull(Constants.DATA);
+        ILootContextData contextData = context.getParamOrNull(LootJSParamSets.DATA);
         assert contextData != null;
 
         for (ResourceLocationFilter filter : FILTERS) {
@@ -66,8 +66,8 @@ public class LootModificationsAPI {
     private static void handleCollector(LootContext context, @Nullable LootContextInfo lootContextInfo) {
         if (DEBUG_ACTION == null || !LOOT_MODIFICATION_LOGGING || lootContextInfo == null) return;
 
-        LootInfoCollector collector = context.getParamOrNull(Constants.RESULT_COLLECTOR);
-        ILootContextData data = context.getParamOrNull(Constants.DATA);
+        LootInfoCollector collector = context.getParamOrNull(LootJSParamSets.RESULT_COLLECTOR);
+        ILootContextData data = context.getParamOrNull(LootJSParamSets.DATA);
         if (collector == null || data == null || collector.getFirstLayer().isEmpty()) return;
 
         lootContextInfo.updateLoot(data.getGeneratedLoot());

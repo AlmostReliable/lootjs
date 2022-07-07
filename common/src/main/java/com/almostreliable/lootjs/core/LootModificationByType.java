@@ -14,7 +14,7 @@ public class LootModificationByType extends AbstractLootModification {
 
     @Override
     public boolean shouldExecute(LootContext context) {
-        ILootContextData data = context.getParamOrNull(Constants.DATA);
+        ILootContextData data = context.getParamOrNull(LootJSParamSets.DATA);
         return data != null && matchesType(data);
     }
 
