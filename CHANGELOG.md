@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning].
 
 ## [Unreleased]
 - /
+
+## [2.7.3] - 2022-07-05
+### Changed
+- Fix loot context check for params when loot is rolled multiple times.
+
 ## [2.7.2] - 2022-07-05
 ### Changed
 - Fabric Fix: Old drop still dropped.
@@ -76,6 +81,7 @@ We are now on 1.18.2!
 
 <!-- Versions -->
 [unreleased]: https://github.com/AlmostReliable/lootjs/compare/1.18...HEAD
+[2.7.3]: https://github.com/AlmostReliable/lootjs/releases/tag/v1.18-2.7.3
 [2.7.2]: https://github.com/AlmostReliable/lootjs/releases/tag/v1.18-2.7.2
 [2.7.1]: https://github.com/AlmostReliable/lootjs/releases/tag/v1.18-2.7.1
 [2.7.0]: https://github.com/AlmostReliable/lootjs/releases/tag/v1.18-2.7.0
