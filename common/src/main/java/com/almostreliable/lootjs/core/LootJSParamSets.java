@@ -10,10 +10,6 @@ public class LootJSParamSets {
             BuildConfig.MOD_ID,
             "param_data"));
 
-    public static final LootContextParam<DebugStack> RESULT_LOGGER = new LootContextParam<>(new ResourceLocation(
-            BuildConfig.MOD_ID,
-            "result_logger"));
-
     public static final LootContextParam<LootInfoCollector> RESULT_COLLECTOR = new LootContextParam<>(new ResourceLocation(
             BuildConfig.MOD_ID,
             "result_collector"));
