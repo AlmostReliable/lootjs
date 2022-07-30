@@ -23,9 +23,12 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.saveddata.maps.MapDecoration;
 
 import javax.annotation.Nullable;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Predicate;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 public class LootJSPlugin extends KubeJSPlugin {
 
@@ -50,7 +53,8 @@ public class LootJSPlugin extends KubeJSPlugin {
 
         IngredientJS ijs = IngredientJS.of(o);
         if (ijs.isEmpty()) {
-            return ItemFilter.ALWAYS_TRUE;
+            ConsoleJS.SERVER.warn("LootJS: Invalid ingredient for filter: " + o);
+            return ItemFilter.ALWAYS_FALSE;
         }
 
         Predicate<ItemStack> vanillaPredicate = ijs.getVanillaPredicate();
@@ -84,7 +88,19 @@ public class LootJSPlugin extends KubeJSPlugin {
 
         typeWrappers.register(ItemFilter.class, o -> {
             if (o instanceof List<?> list) {
-                return ItemFilter.and(list.stream().map(LootJSPlugin::ofItemFilter).toArray(ItemFilter[]::new));
+                Map<Boolean, ? extends List<?>> split = list
+                        .stream()
+                        .collect(Collectors.partitioningBy(unknown -> unknown instanceof ItemFilter));
+                List<ItemFilter> itemFilters = new ArrayList<>(split
+                        .get(true)
+                        .stream()
+                        .map(LootJSPlugin::ofItemFilter)
+                        .toList());
+                if(!split.get(false).isEmpty()) {
+                    IngredientJS ingredientFilter = IngredientJS.of(split.get(false));
+                    itemFilters.add(ofItemFilter(ingredientFilter));
+                }
+                return ItemFilter.or(itemFilters.toArray(ItemFilter[]::new));
             }
 
             return ofItemFilter(o);

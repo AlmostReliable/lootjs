@@ -38,6 +38,12 @@ repositories {
             includeGroup "net.darkhax.gamestages"
         }
     }
+    maven {
+        url "https://www.cursemaven.com"
+        content {
+            includeGroup "curse.maven"
+        }
+    }
 }
 
 dependencies {

@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning].
 
 ## [Unreleased]
 - /
+- 
+## [2.7.4] - 2022-07-30
+### Changed
+- Fix invalid items result into an always true filter.
 
 ## [2.7.3] - 2022-07-05
 ### Changed
