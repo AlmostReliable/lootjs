@@ -2,11 +2,12 @@ package com.almostreliable.lootjs.filters;
 
 import net.minecraft.resources.ResourceLocation;
 
+import java.util.List;
 import java.util.function.Predicate;
 import java.util.regex.Pattern;
 
 public interface ResourceLocationFilter extends Predicate<ResourceLocation> {
-    record Equals(ResourceLocation location) implements ResourceLocationFilter {
+    record ByLocation(ResourceLocation location) implements ResourceLocationFilter {
         @Override
         public boolean test(ResourceLocation resourceLocation) {
             return location.equals(resourceLocation);
@@ -17,6 +18,13 @@ public interface ResourceLocationFilter extends Predicate<ResourceLocation> {
         @Override
         public boolean test(ResourceLocation resourceLocation) {
             return pattern.matcher(resourceLocation.toString()).matches();
+        }
+    }
+
+    record Or(List<ResourceLocationFilter> filters) implements ResourceLocationFilter {
+        @Override
+        public boolean test(ResourceLocation resourceLocation) {
+            return filters.stream().anyMatch(filter -> filter.test(resourceLocation));
         }
     }
 }

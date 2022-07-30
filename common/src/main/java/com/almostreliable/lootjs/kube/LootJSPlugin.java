@@ -96,7 +96,7 @@ public class LootJSPlugin extends KubeJSPlugin {
                         .stream()
                         .map(LootJSPlugin::ofItemFilter)
                         .toList());
-                if(!split.get(false).isEmpty()) {
+                if (!split.get(false).isEmpty()) {
                     IngredientJS ingredientFilter = IngredientJS.of(split.get(false));
                     itemFilters.add(ofItemFilter(ingredientFilter));
                 }
@@ -106,17 +106,22 @@ public class LootJSPlugin extends KubeJSPlugin {
             return ofItemFilter(o);
         });
 
-        typeWrappers.register(ResourceLocationFilter.class, o -> {
-            Pattern pattern = UtilsJS.parseRegex(o);
-            if (pattern == null) {
-                return new ResourceLocationFilter.Equals(new ResourceLocation(o.toString()));
-            } else {
-                return new ResourceLocationFilter.ByPattern(pattern);
-            }
-        });
-
+        typeWrappers.register(ResourceLocationFilter.class, this::ofResourceLocationFilter);
         typeWrappers.register(MapDecoration.Type.class, o -> valueOf(MapDecoration.Type.class, o));
         typeWrappers.register(AttributeModifier.Operation.class, o -> valueOf(AttributeModifier.Operation.class, o));
         typeWrappers.register(Resolver.class, o -> Resolver.of(o.toString()));
+    }
+
+    private ResourceLocationFilter ofResourceLocationFilter(Object o) {
+        if (o instanceof List<?> list) {
+            return new ResourceLocationFilter.Or(list.stream().map(this::ofResourceLocationFilter).toList());
+        }
+
+        Pattern pattern = UtilsJS.parseRegex(o);
+        if (pattern == null) {
+            return new ResourceLocationFilter.ByLocation(new ResourceLocation(o.toString()));
+        } else {
+            return new ResourceLocationFilter.ByPattern(pattern);
+        }
     }
 }

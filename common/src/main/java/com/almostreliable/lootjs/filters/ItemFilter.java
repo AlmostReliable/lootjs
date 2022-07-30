@@ -1,9 +1,11 @@
 package com.almostreliable.lootjs.filters;
 
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.*;
-import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 
 import java.util.Objects;
@@ -41,20 +43,25 @@ public interface ItemFilter extends Predicate<ItemStack> {
     ItemFilter ENCHANTED = ItemStack::isEnchanted;
     ItemFilter BLOCK = itemStack -> itemStack.getItem() instanceof BlockItem;
 
-    static ItemFilter hasEnchantment(Enchantment enchantment, int min, int max) {
-        return itemStack -> {
-            int level = EnchantmentHelper.getItemEnchantmentLevel(enchantment, itemStack);
-            return min <= level && level <= max;
-        };
+    static ItemFilter hasEnchantment(ResourceLocationFilter filter) {
+        return hasEnchantment(filter, 1, 255);
     }
 
-    static ItemFilter hasEnchantment(Enchantment enchantment) {
+    static ItemFilter hasEnchantment(ResourceLocationFilter filter, int min, int max) {
         return itemStack -> {
-            int level = EnchantmentHelper.getItemEnchantmentLevel(enchantment, itemStack);
-            return level > 0;
+            ListTag listTag = itemStack.is(Items.ENCHANTED_BOOK) ? EnchantedBookItem.getEnchantments(itemStack)
+                                                                 : itemStack.getEnchantmentTags();
+            for (int i = 0; i < listTag.size(); i++) {
+                CompoundTag tag = listTag.getCompound(i);
+                ResourceLocation id = EnchantmentHelper.getEnchantmentId(tag);
+                int level = EnchantmentHelper.getEnchantmentLevel(tag);
+                if (id != null && filter.test(id) && min <= level && level <= max) {
+                    return true;
+                }
+            }
+            return false;
         };
     }
-
 
     static ItemFilter equipmentSlot(EquipmentSlot slot) {
         return itemStack -> LivingEntity.getEquipmentSlotForItem(itemStack) == slot;
@@ -98,6 +105,10 @@ public interface ItemFilter extends Predicate<ItemStack> {
                 return false;
             };
         };
+    }
+
+    static ItemFilter custom(Predicate<ItemStack> predicate) {
+        return predicate::test;
     }
 
     @Override

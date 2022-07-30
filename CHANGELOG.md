@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning].
 ## [2.7.4] - 2022-07-30
 ### Changed
 - Fix invalid items result into an always true filter.
+- Change `ItemFilter.hasEnchantment()` so it works with regex and enchanted books.
 
 ## [2.7.3] - 2022-07-05
 ### Changed

@@ -1,7 +1,7 @@
 package com.almostreliable.lootjs.forge.gametest;
 
-import com.almostreliable.lootjs.core.LootJSParamSets;
 import com.almostreliable.lootjs.core.ILootContextData;
+import com.almostreliable.lootjs.core.LootJSParamSets;
 import net.minecraft.core.BlockPos;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.server.level.ServerLevel;

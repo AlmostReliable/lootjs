@@ -32,7 +32,7 @@ public class LootModificationsAPI {
         actions.clear();
         LOOT_MODIFICATION_LOGGING = false;
         FILTERS.clear();
-        FILTERS.add(new ResourceLocationFilter.Equals(new ResourceLocation("minecraft:blocks/fire")));
+        FILTERS.add(new ResourceLocationFilter.ByLocation(new ResourceLocation("minecraft:blocks/fire")));
     }
 
     public static void invokeActions(List<ItemStack> loot, LootContext context) {
