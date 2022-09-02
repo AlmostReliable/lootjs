@@ -5,6 +5,7 @@ import com.almostreliable.lootjs.core.*;
 import com.almostreliable.lootjs.filters.ResourceLocationFilter;
 import com.almostreliable.lootjs.kube.builder.LootActionsBuilderJS;
 import com.almostreliable.lootjs.util.Utils;
+import com.google.common.base.Preconditions;
 import dev.latvian.mods.kubejs.CommonProperties;
 import dev.latvian.mods.kubejs.block.state.BlockStatePredicate;
 import dev.latvian.mods.kubejs.event.EventJS;
@@ -15,7 +16,7 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.core.Registry;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.level.block.Block;
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.*;
 import java.util.function.Supplier;
@@ -57,23 +58,14 @@ public abstract class LootModificationEventJS extends EventJS {
         return builder;
     }
 
-    public LootActionsBuilderJS addBlockLootModifier(BlockStatePredicate blocks) {
-        HashSet<Block> set = new HashSet<>();
-        blocks
-                .getBlocks()
-                .stream()
-                .filter(block -> !BlockStatePredicate.AIR_ID.equals(Registry.BLOCK.getKey(block)))
-                .forEach(set::add);
-
-        if (set.isEmpty()) {
-            throw new IllegalArgumentException("No valid block given.");
-        }
-
+    public LootActionsBuilderJS addBlockLootModifier(Object o) {
+        Preconditions.checkNotNull(o);
+        BlockStatePredicate blockStatePredicate = BlockStatePredicate.of(o);
         LootActionsBuilderJS builder = new LootActionsBuilderJS();
         modifierSuppliers.add(() -> {
             List<ILootHandler> actions = builder.getHandlers();
-            String logName = builder.getLogName(Utils.quote("Blocks", set));
-            return new LootModificationByBlock(logName, set, new ArrayList<>(actions));
+            String logName = builder.getLogName("BlocksPredicate for: " + StringUtils.abbreviate(o.toString(), 50));
+            return new LootModificationByBlock(logName, blockStatePredicate::test, new ArrayList<>(actions));
         });
         return builder;
     }
@@ -100,7 +92,7 @@ public abstract class LootModificationEventJS extends EventJS {
     protected void afterPosted(boolean result) {
         super.afterPosted(result);
 
-        if(LootJSPlugin.eventsAreDisabled()) {
+        if (LootJSPlugin.eventsAreDisabled()) {
             return;
         }
 
