@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning].
 
 ## [Unreleased]
 - /
+## [2.7.5] - 2022-09-02
+### Changed
+- Fix `addBlockLootModifier` when using tags
 - 
 ## [2.7.4] - 2022-07-30
 ### Changed
@@ -86,6 +89,8 @@ We are now on 1.18.2!
 
 <!-- Versions -->
 [unreleased]: https://github.com/AlmostReliable/lootjs/compare/1.18...HEAD
+[2.7.3]: https://github.com/AlmostReliable/lootjs/releases/tag/v1.18-2.7.5
+[2.7.3]: https://github.com/AlmostReliable/lootjs/releases/tag/v1.18-2.7.4
 [2.7.3]: https://github.com/AlmostReliable/lootjs/releases/tag/v1.18-2.7.3
 [2.7.2]: https://github.com/AlmostReliable/lootjs/releases/tag/v1.18-2.7.2
 [2.7.1]: https://github.com/AlmostReliable/lootjs/releases/tag/v1.18-2.7.1
