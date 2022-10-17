@@ -3,6 +3,7 @@ package com.almostreliable.lootjs.forge.mixin;
 import com.almostreliable.lootjs.LootModificationsAPI;
 import com.almostreliable.lootjs.core.LootJSParamSets;
 import com.almostreliable.lootjs.core.ILootContextData;
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.storage.loot.LootContext;
@@ -17,8 +18,8 @@ import java.util.List;
 @Mixin(ForgeHooks.class)
 public class ForgeHooksMixin {
 
-    @Inject(method = "modifyLoot(Lnet/minecraft/resources/ResourceLocation;Ljava/util/List;Lnet/minecraft/world/level/storage/loot/LootContext;)Ljava/util/List;", at = @At("RETURN"), remap = false)
-    private static void invokeActions(ResourceLocation lootTableID, List<ItemStack> loot, LootContext context, CallbackInfoReturnable<List<ItemStack>> cir) {
+    @Inject(method = "modifyLoot(Lnet/minecraft/resources/ResourceLocation;Lit/unimi/dsi/fastutil/objects/ObjectArrayList;Lnet/minecraft/world/level/storage/loot/LootContext;)Lit/unimi/dsi/fastutil/objects/ObjectArrayList;", at = @At("RETURN"), remap = false)
+    private static void invokeActions(ResourceLocation lootTableID, ObjectArrayList<ItemStack> loot, LootContext context, CallbackInfoReturnable<ObjectArrayList<ItemStack>> cir) {
         ILootContextData data = context.getParamOrNull(LootJSParamSets.DATA);
         if (data == null) {
             throw new IllegalStateException(

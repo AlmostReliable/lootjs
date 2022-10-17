@@ -3,8 +3,8 @@ package com.almostreliable.lootjs.loot.condition;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.world.level.StructureFeatureManager;
-import net.minecraft.world.level.levelgen.feature.ConfiguredStructureFeature;
+import net.minecraft.world.level.StructureManager;
+import net.minecraft.world.level.levelgen.structure.Structure;
 import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.phys.Vec3;
@@ -14,10 +14,10 @@ import java.util.List;
 
 public class AnyStructure implements IExtendedLootCondition {
 
-    private final List<ResourceKey<ConfiguredStructureFeature<?, ?>>> structures;
+    private final List<ResourceKey<Structure>> structures;
     private final boolean exact;
 
-    public AnyStructure(List<ResourceKey<ConfiguredStructureFeature<?, ?>>> structures, boolean exact) {
+    public AnyStructure(List<ResourceKey<Structure>> structures, boolean exact) {
         this.structures = structures;
         this.exact = exact;
     }
@@ -28,17 +28,17 @@ public class AnyStructure implements IExtendedLootCondition {
 
         if (origin != null) {
             BlockPos blockPos = new BlockPos(origin.x, origin.y, origin.z);
-            StructureFeatureManager sfm = context.getLevel().structureFeatureManager();
-            Registry<ConfiguredStructureFeature<?, ?>> registry = context
+            StructureManager structureManager = context.getLevel().structureManager();
+            Registry<Structure> registry = context
                     .getLevel()
                     .registryAccess()
-                    .registryOrThrow(Registry.CONFIGURED_STRUCTURE_FEATURE_REGISTRY);
+                    .registryOrThrow(Registry.STRUCTURE_REGISTRY);
             for (var resourceKey : structures) {
-                ConfiguredStructureFeature<?, ?> feature = registry.get(resourceKey);
+                Structure feature = registry.get(resourceKey);
                 if (feature != null) {
                     var structureAt = exact
-                                      ? sfm.getStructureWithPieceAt(blockPos, feature)
-                                      : sfm.getStructureAt(blockPos, feature);
+                                      ? structureManager.getStructureWithPieceAt(blockPos, feature)
+                                      : structureManager.getStructureAt(blockPos, feature);
                     if (structureAt.isValid()) {
                         return true;
                     }
@@ -53,7 +53,7 @@ public class AnyStructure implements IExtendedLootCondition {
         return exact;
     }
 
-    public List<ResourceKey<ConfiguredStructureFeature<?, ?>>> getStructuresOld() {
+    public List<ResourceKey<Structure>> getStructuresOld() {
         return Collections.unmodifiableList(structures);
     }
 }

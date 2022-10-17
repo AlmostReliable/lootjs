@@ -66,7 +66,7 @@ public class MatchEquipmentSlotTest {
     public LootContext basicSetup(GameTestHelper helper) {
         ServerPlayer player = new ServerPlayer(helper.getLevel().getServer(),
                 helper.getLevel(),
-                new GameProfile(UUID.randomUUID(), "test-mock-server-player")) {
+                new GameProfile(UUID.randomUUID(), "test-mock-server-player"), null) {
 
             @Override
             public boolean isSpectator() {

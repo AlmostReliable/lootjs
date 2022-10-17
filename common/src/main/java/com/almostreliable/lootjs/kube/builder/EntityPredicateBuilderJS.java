@@ -36,11 +36,6 @@ public class EntityPredicateBuilderJS implements ExtendedEntityFlagsPredicate.IB
     @Nullable
     private BlockPredicate blockPredicate;
 
-    public EntityPredicateBuilderJS catType(ResourceLocation type) {
-        vanillaBuilder.catType(type);
-        return this;
-    }
-
     @Override
     public EntityPredicateBuilderJS isOnFire(boolean flag) {
         flagsBuilder.isOnFire(flag);

@@ -20,6 +20,7 @@ import net.minecraft.advancements.critereon.MinMaxBounds;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.saveddata.maps.MapDecoration;
 
 import javax.annotation.Nullable;
@@ -51,14 +52,13 @@ public class LootJSPlugin extends KubeJSPlugin {
     private static ItemFilter ofItemFilter(@Nullable Object o) {
         if (o instanceof ItemFilter i) return i;
 
-        IngredientJS ijs = IngredientJS.of(o);
-        if (ijs.isEmpty()) {
+        Ingredient ingredient = IngredientJS.of(o);
+        if (ingredient.isEmpty()) {
             ConsoleJS.SERVER.warn("LootJS: Invalid ingredient for filter: " + o);
             return ItemFilter.ALWAYS_FALSE;
         }
 
-        Predicate<ItemStack> vanillaPredicate = ijs.getVanillaPredicate();
-        return vanillaPredicate::test;
+        return ItemFilter.custom(ingredient);
     }
 
     @Override
@@ -67,7 +67,12 @@ public class LootJSPlugin extends KubeJSPlugin {
     }
 
     @Override
-    public void addBindings(BindingsEvent event) {
+    public void registerEvents() {
+        LootJSEvent.GROUP.register();
+    }
+
+    @Override
+    public void registerBindings(BindingsEvent event) {
         event.add("LootType", LootContextType.class);
         event.add("Interval", new IntervalJS());
         event.add("ItemFilter", ItemFilter.class);
@@ -75,15 +80,15 @@ public class LootJSPlugin extends KubeJSPlugin {
     }
 
     @Override
-    public void addTypeWrappers(ScriptType type, TypeWrappers typeWrappers) {
+    public void registerTypeWrappers(ScriptType type, TypeWrappers typeWrappers) {
         typeWrappers.register(LootEntry.class, LootEntryWrapper::of);
         typeWrappers.register(MinMaxBounds.Doubles.class, IntervalJS::ofDoubles);
         typeWrappers.register(MinMaxBounds.Ints.class, IntervalJS::ofInt);
 
         typeWrappers.register(WeightedItemStack.class, o -> {
-            ItemStackJS itemStack = ItemStackJS.of(o);
-            int weight = itemStack.hasChance() ? (int) itemStack.getChance() : 1;
-            return new WeightedItemStack(itemStack.getItemStack(), weight);
+            ItemStack itemStack = ItemStackJS.of(o);
+            int weight = Double.isNaN(itemStack.kjs$getChance()) ?  1 : (int) itemStack.kjs$getChance();
+            return new WeightedItemStack(itemStack, weight);
         });
 
         typeWrappers.register(ItemFilter.class, o -> {
@@ -97,8 +102,8 @@ public class LootJSPlugin extends KubeJSPlugin {
                         .map(LootJSPlugin::ofItemFilter)
                         .toList());
                 if (!split.get(false).isEmpty()) {
-                    IngredientJS ingredientFilter = IngredientJS.of(split.get(false));
-                    itemFilters.add(ofItemFilter(ingredientFilter));
+                    Ingredient ingredientFilter = IngredientJS.of(split.get(false));
+                    itemFilters.add(ItemFilter.custom(ingredientFilter));
                 }
                 return ItemFilter.or(itemFilters.toArray(ItemFilter[]::new));
             }

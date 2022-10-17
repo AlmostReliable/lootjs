@@ -10,11 +10,11 @@ import dev.latvian.mods.kubejs.CommonProperties;
 import dev.latvian.mods.kubejs.block.state.BlockStatePredicate;
 import dev.latvian.mods.kubejs.event.EventJS;
 import dev.latvian.mods.kubejs.script.ScriptType;
-import dev.latvian.mods.kubejs.server.ServerJS;
 import dev.latvian.mods.kubejs.util.ConsoleJS;
+import dev.latvian.mods.kubejs.util.UtilsJS;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.Registry;
-import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.EntityType;
 import org.apache.commons.lang3.StringUtils;
 
@@ -103,10 +103,10 @@ public abstract class LootModificationEventJS extends EventJS {
         } catch (Exception exception) {
             ConsoleJS.SERVER.error(exception);
         } finally {
-            if (CommonProperties.get().announceReload && ServerJS.instance != null &&
+            if (CommonProperties.get().announceReload && UtilsJS.staticServer != null &&
                 !CommonProperties.get().hideServerScriptErrors) {
                 if (!ScriptType.SERVER.errors.isEmpty()) {
-                    ServerJS.instance.tell(new TextComponent(
+                    UtilsJS.staticServer.kjs$tell(Component.literal(
                             "LootJS Errors found! [" + ScriptType.SERVER.errors.size() +
                             "]! Run '/kubejs errors' for more info").withStyle(ChatFormatting.DARK_RED));
                 }

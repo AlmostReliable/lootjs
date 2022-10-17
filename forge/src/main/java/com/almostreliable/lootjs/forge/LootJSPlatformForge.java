@@ -8,6 +8,9 @@ import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.loading.FMLLoader;
 import net.minecraftforge.gametest.ForgeGameTestHooks;
+import net.minecraftforge.registries.ForgeRegistries;
+
+import java.util.Objects;
 
 public class LootJSPlatformForge implements LootJSPlatform {
     @Override
@@ -27,12 +30,12 @@ public class LootJSPlatformForge implements LootJSPlatform {
 
     @Override
     public ResourceLocation getRegistryName(Block block) {
-        return block.getRegistryName();
+        return Objects.requireNonNull(ForgeRegistries.BLOCKS.getKey(block));
     }
 
     @Override
     public ResourceLocation getRegistryName(EntityType<?> entityType) {
-        return entityType.getRegistryName();
+        return Objects.requireNonNull(ForgeRegistries.ENTITY_TYPES.getKey(entityType));
     }
 
     @Override

@@ -2,6 +2,7 @@ package com.almostreliable.lootjs.loot.action;
 
 import com.almostreliable.lootjs.core.ILootAction;
 import com.almostreliable.lootjs.core.LootEntry;
+import net.minecraft.util.RandomSource;
 import net.minecraft.util.random.SimpleWeightedRandomList;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.storage.loot.LootContext;
@@ -26,7 +27,7 @@ public class WeightedAddLootAction implements ILootAction {
 
     @Override
     public boolean applyLootHandler(LootContext context, List<ItemStack> loot) {
-        Random random = context.getLevel().getRandom();
+        RandomSource random = context.getLevel().getRandom();
         Collection<ItemStack> rolledItems = allowDuplicateLoot ? new ArrayList<>() : new HashSet<>();
         int lootRolls = numberProvider.getInt(context);
         for (int i = 0; i < lootRolls; i++) {

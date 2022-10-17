@@ -3,6 +3,7 @@ package com.almostreliable.lootjs.forge.gametest;
 import com.almostreliable.lootjs.core.ILootContextData;
 import com.almostreliable.lootjs.core.LootJSParamSets;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Registry;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
@@ -67,7 +68,7 @@ public class GameTestUtils {
         @SuppressWarnings("unchecked")
         E entity = (E) entityType.spawn(level, null, null, pos, MobSpawnType.COMMAND, false, false);
         if (entity == null) {
-            throw new RuntimeException("Entity type + '" + entityType.getRegistryName() +
+            throw new RuntimeException("Entity type + '" + Registry.ENTITY_TYPE.getKey(entityType) +
                                        "' cannot be created through 'GameTestUtils::simpleEntity'");
         }
         return entity;

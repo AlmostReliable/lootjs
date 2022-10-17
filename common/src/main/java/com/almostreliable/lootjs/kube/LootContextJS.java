@@ -1,22 +1,21 @@
 package com.almostreliable.lootjs.kube;
 
 import com.almostreliable.lootjs.LootJSPlatform;
-import com.almostreliable.lootjs.core.LootJSParamSets;
 import com.almostreliable.lootjs.core.ILootContextData;
 import com.almostreliable.lootjs.core.LootContextType;
 import com.almostreliable.lootjs.core.LootEntry;
+import com.almostreliable.lootjs.core.LootJSParamSets;
 import com.almostreliable.lootjs.filters.ItemFilter;
 import com.almostreliable.lootjs.util.LootContextUtils;
-import dev.latvian.mods.kubejs.entity.EntityJS;
 import dev.latvian.mods.kubejs.item.ItemStackJS;
 import dev.latvian.mods.kubejs.level.BlockContainerJS;
-import dev.latvian.mods.kubejs.level.LevelJS;
-import dev.latvian.mods.kubejs.player.PlayerJS;
-import dev.latvian.mods.kubejs.server.ServerJS;
 import dev.latvian.mods.kubejs.util.ConsoleJS;
-import dev.latvian.mods.kubejs.util.UtilsJS;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
@@ -30,10 +29,10 @@ import net.minecraft.world.phys.Vec3;
 import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
+// TODO use Native class
 public class LootContextJS {
     protected final LootContext context;
     private final ILootContextData data;
@@ -86,18 +85,18 @@ public class LootContextJS {
     }
 
     @Nullable
-    public EntityJS getEntity() {
-        return getLevel().getEntity(context.getParamOrNull(LootContextParams.THIS_ENTITY));
+    public Entity getEntity() {
+        return context.getParamOrNull(LootContextParams.THIS_ENTITY);
     }
 
     @Nullable
-    public EntityJS getKillerEntity() {
-        return getLevel().getEntity(context.getParamOrNull(LootContextParams.KILLER_ENTITY));
+    public Entity getKillerEntity() {
+        return context.getParamOrNull(LootContextParams.KILLER_ENTITY);
     }
 
     @Nullable
-    public PlayerJS<?> getPlayer() {
-        return getLevel().getPlayer(LootContextUtils.getPlayerOrNull(context));
+    public ServerPlayer getPlayer() {
+        return LootContextUtils.getPlayerOrNull(context);
     }
 
     @Nullable
@@ -105,13 +104,13 @@ public class LootContextJS {
         return context.getParamOrNull(LootContextParams.DAMAGE_SOURCE);
     }
 
-    public ItemStackJS getTool() {
+    public ItemStack getTool() {
         ItemStack tool = context.getParamOrNull(LootContextParams.TOOL);
         if (tool == null) {
-            return ItemStackJS.EMPTY;
+            return ItemStack.EMPTY;
         }
 
-        return new ItemStackJS(tool);
+        return tool;
     }
 
     @Nullable
@@ -140,12 +139,12 @@ public class LootContextJS {
         return f != null ? f : 0f;
     }
 
-    public LevelJS getLevel() {
-        return UtilsJS.getLevel(context.getLevel());
+    public ServerLevel getLevel() {
+        return context.getLevel();
     }
 
     @Nullable
-    public ServerJS getServer() {
+    public MinecraftServer getServer() {
         return getLevel().getServer();
     }
 
@@ -161,7 +160,7 @@ public class LootContextJS {
         return 0;
     }
 
-    public Random getRandom() {
+    public RandomSource getRandom() {
         return context.getRandom();
     }
 
@@ -182,7 +181,7 @@ public class LootContextJS {
         data.getGeneratedLoot().removeIf(itemFilter);
     }
 
-    public List<ItemStackJS> findLoot(ItemFilter itemFilter) {
+    public List<ItemStack> findLoot(ItemFilter itemFilter) {
         return data
                 .getGeneratedLoot()
                 .stream()
@@ -195,7 +194,7 @@ public class LootContextJS {
         return !findLoot(ingredient).isEmpty();
     }
 
-    public void forEachLoot(Consumer<ItemStackJS> action) {
+    public void forEachLoot(Consumer<ItemStack> action) {
         data.getGeneratedLoot().forEach(itemStack -> action.accept(ItemStackJS.of(itemStack)));
     }
 }

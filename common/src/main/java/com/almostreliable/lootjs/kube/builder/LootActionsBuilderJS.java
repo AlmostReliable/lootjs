@@ -46,6 +46,11 @@ public class LootActionsBuilderJS implements LootConditionsContainer<LootActions
         return Utils.quote(logName);
     }
 
+    public LootActionsBuilderJS logName(String logName) {
+        this.logName = logName;
+        return this;
+    }
+
     @Override
     public LootActionsBuilderJS addCondition(ILootCondition condition) {
         handlers.add(condition);

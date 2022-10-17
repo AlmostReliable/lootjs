@@ -24,7 +24,7 @@ import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.levelgen.feature.ConfiguredStructureFeature;
+import net.minecraft.world.level.levelgen.structure.Structure;
 import net.minecraft.world.level.storage.loot.IntRange;
 import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
@@ -129,12 +129,12 @@ public interface LootConditionsContainer<B extends LootConditionsContainer<?>> {
     }
 
     default B anyStructure(ResourceLocation[] locations, boolean exact) {
-        List<ResourceKey<ConfiguredStructureFeature<?, ?>>> structures = new ArrayList<>();
+        List<ResourceKey<Structure>> structures = new ArrayList<>();
         for (ResourceLocation location : locations) {
-            ResourceKey<ConfiguredStructureFeature<?, ?>> resourceKey = ResourceKey.create(
-                    Registry.CONFIGURED_STRUCTURE_FEATURE_REGISTRY,
+            ResourceKey<Structure> resourceKey = ResourceKey.create(
+                    Registry.STRUCTURE_REGISTRY,
                     location);
-            ConfiguredStructureFeature<?, ?> feature = BuiltinRegistries.CONFIGURED_STRUCTURE_FEATURE.get(resourceKey);
+            Structure feature = BuiltinRegistries.STRUCTURES.get(resourceKey);
             if (feature == null) {
                 throw new IllegalArgumentException("Structure not found: " + location);
             }

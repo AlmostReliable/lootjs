@@ -7,14 +7,17 @@ import com.almostreliable.lootjs.kube.LootModificationEventJS;
 import net.minecraft.resources.ResourceLocation;
 
 import java.util.*;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 public class LootModificationForgeEventJS extends LootModificationEventJS {
-    private final List<ResourceLocation> originalLocations;
+    private final Set<ResourceLocation> originalLocations;
     private final Set<ResourceLocation> locationsToRemove = new HashSet<>();
+    private final Consumer<ResourceLocation> onRemove;
 
-    public LootModificationForgeEventJS(ArrayList<ResourceLocation> originalLocations) {
+    public LootModificationForgeEventJS(Set<ResourceLocation> originalLocations, Consumer<ResourceLocation> onRemove) {
         this.originalLocations = originalLocations;
+        this.onRemove = onRemove;
     }
 
     public List<String> getGlobalModifiers() {
@@ -61,6 +64,6 @@ public class LootModificationForgeEventJS extends LootModificationEventJS {
             return;
         }
 
-        originalLocations.removeIf(locationsToRemove::contains);
+        locationsToRemove.forEach(onRemove);
     }
 }

@@ -3,6 +3,7 @@ package com.almostreliable.lootjs.fabric.mixin;
 import com.almostreliable.lootjs.LootModificationsAPI;
 import com.almostreliable.lootjs.fabric.LootTableExtension;
 import com.almostreliable.lootjs.fabric.kubejs.LootModificationFabricEventJS;
+import com.almostreliable.lootjs.kube.LootJSEvent;
 import com.google.gson.JsonElement;
 import dev.latvian.mods.kubejs.script.ScriptType;
 import net.minecraft.resources.ResourceLocation;
@@ -26,7 +27,7 @@ public class LootTablesMixin {
     @Inject(method = "apply(Ljava/util/Map;Lnet/minecraft/server/packs/resources/ResourceManager;Lnet/minecraft/util/profiling/ProfilerFiller;)V", at = @At("RETURN"))
     private void invokeLootModifiers(Map<ResourceLocation, JsonElement> object, ResourceManager resourceManager, ProfilerFiller profiler, CallbackInfo ci) {
         LootModificationsAPI.reload();
-        new LootModificationFabricEventJS().post(ScriptType.SERVER, "lootjs");
+        LootJSEvent.MODIFIERS.post(new LootModificationFabricEventJS());
 
         tables.forEach((id, table) -> {
             ((LootTableExtension) table).lootjs$setLootTableId(id);

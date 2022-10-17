@@ -8,6 +8,7 @@ import com.almostreliable.lootjs.loot.condition.BiomeCheck;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
+import net.minecraft.data.BuiltinRegistries;
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.resources.ResourceKey;
@@ -35,7 +36,12 @@ public class BiomeCheckTest {
         Holder<Biome> biomeHolder = helper.getLevel().getBiome(TEST_POS);
         LootContext ctx = GameTestUtils.unknownContext(helper.getLevel(), player.position());
 
-        ResourceKey<Biome> bKey = biome(Objects.requireNonNull(biomeHolder.value().getRegistryName()));
+        ResourceLocation biome = helper
+                .getLevel()
+                .registryAccess()
+                .registryOrThrow(Registry.BIOME_REGISTRY)
+                .getKey(biomeHolder.value());
+        ResourceKey<Biome> bKey = biome(biome);
         AnyBiomeCheck check = new AnyBiomeCheck(Collections.singletonList(bKey), new ArrayList<>());
         helper.succeedIf(() -> GameTestUtils.assertTrue(helper,
                 check.test(ctx),
@@ -48,7 +54,12 @@ public class BiomeCheckTest {
         Holder<Biome> biomeHolder = helper.getLevel().getBiome(TEST_POS);
         LootContext ctx = GameTestUtils.unknownContext(helper.getLevel(), player.position());
 
-        ResourceKey<Biome> bKey = biome(Objects.requireNonNull(biomeHolder.value().getRegistryName()));
+        ResourceLocation biome = helper
+                .getLevel()
+                .registryAccess()
+                .registryOrThrow(Registry.BIOME_REGISTRY)
+                .getKey(biomeHolder.value());
+        ResourceKey<Biome> bKey = biome(biome);
         BiomeCheck check = new BiomeCheck(Collections.singletonList(bKey), new ArrayList<>());
         helper.succeedIf(() -> GameTestUtils.assertTrue(helper,
                 check.test(ctx),
@@ -89,7 +100,7 @@ public class BiomeCheckTest {
         AnyBiomeCheck check = new AnyBiomeCheck(new ArrayList<>(), new ArrayList<>(types));
         helper.succeedIf(() -> GameTestUtils.assertTrue(helper,
                 check.test(ctx),
-                "Biome " + biomeHolder.value().getRegistryName() + " tag check should pass"));
+                "Biome " + BuiltinRegistries.BIOME.getKey(biomeHolder.value()) + " tag check should pass"));
     }
 
     @GameTest(template = GameTestTemplates.EMPTY)
@@ -102,7 +113,7 @@ public class BiomeCheckTest {
         BiomeCheck check = new BiomeCheck(new ArrayList<>(), new ArrayList<>(types));
         helper.succeedIf(() -> GameTestUtils.assertTrue(helper,
                 check.test(ctx),
-                "Biome " + biomeHolder.value().getRegistryName() + " tag check should pass"));
+                "Biome " + BuiltinRegistries.BIOME.getKey(biomeHolder.value()) + " tag check should pass"));
     }
 
     @GameTest(template = GameTestTemplates.EMPTY)
@@ -114,7 +125,7 @@ public class BiomeCheckTest {
         AnyBiomeCheck check = new AnyBiomeCheck(new ArrayList<>(), Collections.singletonList(BiomeTags.IS_NETHER));
         helper.succeedIf(() -> GameTestUtils.assertFalse(helper,
                 check.test(ctx),
-                "Biome " + biomeHolder.value().getRegistryName() + " tag check should not pass"));
+                "Biome " + BuiltinRegistries.BIOME.getKey(biomeHolder.value()) + " tag check should not pass"));
     }
 
     @GameTest(template = GameTestTemplates.EMPTY)
@@ -126,7 +137,7 @@ public class BiomeCheckTest {
         BiomeCheck check = new BiomeCheck(new ArrayList<>(), Collections.singletonList(BiomeTags.IS_NETHER));
         helper.succeedIf(() -> GameTestUtils.assertFalse(helper,
                 check.test(ctx),
-                "Biome " + biomeHolder.value().getRegistryName() + " tag check should not pass"));
+                "Biome " + BuiltinRegistries.BIOME.getKey(biomeHolder.value()) + " tag check should not pass"));
     }
 
     public ResourceKey<Biome> biome(ResourceLocation biome) {
