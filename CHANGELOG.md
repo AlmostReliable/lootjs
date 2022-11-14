@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning].
 
 ## [Unreleased]
 - /
+
+## [2.7.6] - 2022-11-14
+### Changed
+- Bump KubeJS Version ([#9](https://github.com/AlmostReliable/lootjs/issues/9))
+
 ## [2.7.5] - 2022-09-02
 ### Changed
 - Fix `addBlockLootModifier` when using tags
@@ -89,6 +94,7 @@ We are now on 1.18.2!
 
 <!-- Versions -->
 [unreleased]: https://github.com/AlmostReliable/lootjs/compare/1.18...HEAD
+[2.7.6]: https://github.com/AlmostReliable/lootjs/releases/tag/v1.18-2.7.6
 [2.7.5]: https://github.com/AlmostReliable/lootjs/releases/tag/v1.18-2.7.5
 [2.7.4]: https://github.com/AlmostReliable/lootjs/releases/tag/v1.18-2.7.4
 [2.7.3]: https://github.com/AlmostReliable/lootjs/releases/tag/v1.18-2.7.3
