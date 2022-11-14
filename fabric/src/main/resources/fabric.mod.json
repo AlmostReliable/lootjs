@@ -27,6 +27,7 @@
   "depends": {
     "fabric": "*",
     "minecraft": ">=${minecraft_version}",
+    "kubejs": ">=${kubejs_version}",
     "java": ">=17"
   }
 }

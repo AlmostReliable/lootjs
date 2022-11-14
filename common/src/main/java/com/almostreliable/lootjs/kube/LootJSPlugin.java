@@ -81,17 +81,17 @@ public class LootJSPlugin extends KubeJSPlugin {
 
     @Override
     public void registerTypeWrappers(ScriptType type, TypeWrappers typeWrappers) {
-        typeWrappers.register(LootEntry.class, LootEntryWrapper::of);
-        typeWrappers.register(MinMaxBounds.Doubles.class, IntervalJS::ofDoubles);
-        typeWrappers.register(MinMaxBounds.Ints.class, IntervalJS::ofInt);
+        typeWrappers.registerSimple(LootEntry.class, LootEntryWrapper::of);
+        typeWrappers.registerSimple(MinMaxBounds.Doubles.class, IntervalJS::ofDoubles);
+        typeWrappers.registerSimple(MinMaxBounds.Ints.class, IntervalJS::ofInt);
 
-        typeWrappers.register(WeightedItemStack.class, o -> {
+        typeWrappers.registerSimple(WeightedItemStack.class, o -> {
             ItemStack itemStack = ItemStackJS.of(o);
             int weight = Double.isNaN(itemStack.kjs$getChance()) ?  1 : (int) itemStack.kjs$getChance();
             return new WeightedItemStack(itemStack, weight);
         });
 
-        typeWrappers.register(ItemFilter.class, o -> {
+        typeWrappers.registerSimple(ItemFilter.class, o -> {
             if (o instanceof List<?> list) {
                 Map<Boolean, ? extends List<?>> split = list
                         .stream()
@@ -111,10 +111,10 @@ public class LootJSPlugin extends KubeJSPlugin {
             return ofItemFilter(o);
         });
 
-        typeWrappers.register(ResourceLocationFilter.class, this::ofResourceLocationFilter);
-        typeWrappers.register(MapDecoration.Type.class, o -> valueOf(MapDecoration.Type.class, o));
-        typeWrappers.register(AttributeModifier.Operation.class, o -> valueOf(AttributeModifier.Operation.class, o));
-        typeWrappers.register(Resolver.class, o -> Resolver.of(o.toString()));
+        typeWrappers.registerSimple(ResourceLocationFilter.class, this::ofResourceLocationFilter);
+        typeWrappers.registerSimple(MapDecoration.Type.class, o -> valueOf(MapDecoration.Type.class, o));
+        typeWrappers.registerSimple(AttributeModifier.Operation.class, o -> valueOf(AttributeModifier.Operation.class, o));
+        typeWrappers.registerSimple(Resolver.class, o -> Resolver.of(o.toString()));
     }
 
     private ResourceLocationFilter ofResourceLocationFilter(Object o) {
