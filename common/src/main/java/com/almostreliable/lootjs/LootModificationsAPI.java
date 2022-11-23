@@ -20,10 +20,14 @@ import java.util.function.Consumer;
 public class LootModificationsAPI {
 
     public static final List<ResourceLocationFilter> FILTERS = new ArrayList<>();
-    private static final Logger LOGGER = LogManager.getLogger();
+	private static final Logger LOGGER = LogManager.getLogger();
     private static final List<ILootAction> actions = new ArrayList<>();
     public static Consumer<String> DEBUG_ACTION = LOGGER::info;
     public static boolean LOOT_MODIFICATION_LOGGING = false;
+    public static boolean DISABLE_WITHER_DROPPING_NETHER_STAR = false;
+    public static boolean DISABLE_ZOMBIE_DROPPING_HEAD = false;
+    public static boolean DISABLE_SKELETON_DROPPING_HEAD = false;
+    public static boolean DISABLE_CREEPER_DROPPING_HEAD = false;
 
     private LootModificationsAPI() {
     }
