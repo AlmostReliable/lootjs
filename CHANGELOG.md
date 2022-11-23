@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning].
 
 ## [Unreleased]
 - /
+
+## [2.7.7] - 2022-11-23
+### Added
+- `disableWitherStarDrop()`, `disableCreeperHeadDrop()`, `disableSkeletonHeadDrop()`, `disableZombieHeadDrop()`
+- Skip 2.7.6 as it's a 1.19 fix version
+
 ## [2.7.5] - 2022-09-02
 ### Changed
 - Fix `addBlockLootModifier` when using tags
@@ -89,6 +95,7 @@ We are now on 1.18.2!
 
 <!-- Versions -->
 [unreleased]: https://github.com/AlmostReliable/lootjs/compare/1.18...HEAD
+[2.7.7]: https://github.com/AlmostReliable/lootjs/releases/tag/v1.18-2.7.7
 [2.7.5]: https://github.com/AlmostReliable/lootjs/releases/tag/v1.18-2.7.5
 [2.7.4]: https://github.com/AlmostReliable/lootjs/releases/tag/v1.18-2.7.4
 [2.7.3]: https://github.com/AlmostReliable/lootjs/releases/tag/v1.18-2.7.3
