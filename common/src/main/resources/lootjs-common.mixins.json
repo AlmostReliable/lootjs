@@ -6,11 +6,14 @@
   "mixins": [
     "LootContextBuilderMixin",
     "LootContextParamSetMixin",
-    "LootItemConditionMixin"
+    "LootItemConditionMixin",
+    "SkeletonMixin",
+    "WitherBossMixin",
+    "ZombieMixin"
   ],
   "client": [
   ],
   "injectors": {
     "defaultRequire": 1
   }
-  }
+}

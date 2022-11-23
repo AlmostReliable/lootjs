@@ -88,6 +88,22 @@ public abstract class LootModificationEventJS extends EventJS {
         return builder;
     }
 
+    public void disableWitherStarDrop() {
+        LootModificationsAPI.DISABLE_WITHER_DROPPING_NETHER_STAR = true;
+    }
+
+    public void disableCreeperHeadDrop() {
+        LootModificationsAPI.DISABLE_CREEPER_DROPPING_HEAD = true;
+    }
+
+    public void disableSkeletonHeadDrop() {
+        LootModificationsAPI.DISABLE_SKELETON_DROPPING_HEAD = true;
+    }
+
+    public void disableZombieHeadDrop() {
+        LootModificationsAPI.DISABLE_ZOMBIE_DROPPING_HEAD = true;
+    }
+
     @Override
     protected void afterPosted(boolean result) {
         super.afterPosted(result);
