@@ -122,8 +122,8 @@ This project is licensed under the [GNU Lesser General Public License v3.0][lice
 [version_badge]: https://img.shields.io/github/v/release/AlmostReliable/lootjs?include_prereleases&style=flat-square
 [version_link]: https://github.com/AlmostReliable/lootjs/releases/latest
 [total_downloads_cf_badge]: http://cf.way2muchnoise.eu/full_570630.svg?badge_style=flat
-[total_downloads_mr_badge]: https://img.shields.io/badge/dynamic/json?style=flat-square&color=5da545&label=modrinth&query=downloads&url=https://api.modrinth.com/api/v1/mod/fJFETWDN
-[workflow_status_badge]: https://img.shields.io/github/workflow/status/AlmostReliable/lootjs/CI?style=flat-square
+[total_downloads_mr_badge]: https://img.shields.io/modrinth/dt/fJFETWDN?color=5da545&label=Modrinth&style=flat-square
+[workflow_status_badge]: https://img.shields.io/github/actions/workflow/status/AlmostReliable/lootjs/build.yml?branch=1.18&style=flat-square
 [workflow_status_link]: https://github.com/AlmostReliable/lootjs/actions
 [license_badge]: https://img.shields.io/github/license/AlmostReliable/lootjs?style=flat-square
 
