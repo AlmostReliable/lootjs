@@ -1,5 +1,6 @@
 package com.almostreliable.lootjs.fabric.mixin;
 
+import com.almostreliable.lootjs.LootJS;
 import com.almostreliable.lootjs.LootModificationsAPI;
 import com.almostreliable.lootjs.core.LootJSParamSets;
 import com.almostreliable.lootjs.core.ILootContextData;
@@ -31,14 +32,19 @@ public abstract class LootTableMixin implements LootTableExtension {
 
     @Inject(method = "getRandomItems(Lnet/minecraft/world/level/storage/loot/LootContext;Ljava/util/function/Consumer;)V", at = @At("HEAD"), cancellable = true)
     private void invokeLootModifiers(LootContext context, Consumer<ItemStack> consumer, CallbackInfo ci) {
+        if(lootjs$getLootTableId() == null) {
+            LootJS.LOG.warn("Loot table id is null, something went wrong."); // TODO find a way to print better error
+            return;
+        }
+
         List<ItemStack> loot = new ArrayList<>();
         Consumer<ItemStack> stackSplitter = LootTable.createStackSplitter(loot::add);
         getRandomItemsRaw(context, stackSplitter);
 
         ILootContextData data = context.getParamOrNull(LootJSParamSets.DATA);
         if (data == null) {
-            throw new IllegalStateException(
-                    "Something went wrong - LootContext has no data. Please report this for the mod LootJS");
+            LootJS.LOG.debug("LootJS: No data found in context, skipping loot modifiers. Reason is probably that context was not created through LootContext$Builder");
+            return;
         }
 
         ((FabricLootContextExtension) context).lootjs$setQueriedLootTableId(lootjs$lootTableId);

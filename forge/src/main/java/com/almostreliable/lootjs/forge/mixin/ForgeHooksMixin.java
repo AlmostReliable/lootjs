@@ -1,5 +1,6 @@
 package com.almostreliable.lootjs.forge.mixin;
 
+import com.almostreliable.lootjs.LootJS;
 import com.almostreliable.lootjs.LootModificationsAPI;
 import com.almostreliable.lootjs.core.LootJSParamSets;
 import com.almostreliable.lootjs.core.ILootContextData;
@@ -22,8 +23,8 @@ public class ForgeHooksMixin {
     private static void invokeActions(ResourceLocation lootTableID, ObjectArrayList<ItemStack> loot, LootContext context, CallbackInfoReturnable<ObjectArrayList<ItemStack>> cir) {
         ILootContextData data = context.getParamOrNull(LootJSParamSets.DATA);
         if (data == null) {
-            throw new IllegalStateException(
-                    "Something went wrong - LootContext has no data. Please report this for the mod LootJS");
+            LootJS.LOG.debug("LootJS: No data found in context, skipping loot modifiers. Reason is probably that context was not created through LootContext$Builder");
+            return;
         }
 
         LootModificationsAPI.invokeActions(loot, context);
