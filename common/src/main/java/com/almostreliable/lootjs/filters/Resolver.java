@@ -43,9 +43,7 @@ public abstract class Resolver {
         }
 
         public <T> TagKey<T> resolve(Registry<T> registry) {
-            TagKey<T> tTagKey = TagKey.create(registry.key(), value);
-            registry.getTag(tTagKey).orElseThrow(() -> new IllegalArgumentException("Tag not found: " + value));
-            return tTagKey;
+            return TagKey.create(registry.key(), value);
         }
 
         public <T> TagKey<T> resolve(ResourceKey<Registry<T>> resourceKey) {
