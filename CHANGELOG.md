@@ -8,9 +8,10 @@ and this project adheres to [Semantic Versioning].
 ## [Unreleased]
 - /
 
-## [2.7.7] - 2023-01-08
+## [2.7.8] - 2023-01-08
 ### Changed
 - Fix ([#10](https://github.com/AlmostReliable/lootjs/issues/10))
+- Remove tag validation because of timing issues
 
 ## [2.7.7] - 2022-11-23
 ### Added
