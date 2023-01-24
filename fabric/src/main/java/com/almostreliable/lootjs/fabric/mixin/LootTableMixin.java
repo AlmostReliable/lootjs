@@ -33,7 +33,7 @@ public abstract class LootTableMixin implements LootTableExtension {
     @Inject(method = "getRandomItems(Lnet/minecraft/world/level/storage/loot/LootContext;Ljava/util/function/Consumer;)V", at = @At("HEAD"), cancellable = true)
     private void invokeLootModifiers(LootContext context, Consumer<ItemStack> consumer, CallbackInfo ci) {
         if(lootjs$getLootTableId() == null) {
-            LootJS.LOG.warn("Loot table id is null, something went wrong."); // TODO find a way to print better error
+//            LootJS.LOG.warn("Loot table id is null, something went wrong."); // TODO find a way to print better error
             return;
         }
 
