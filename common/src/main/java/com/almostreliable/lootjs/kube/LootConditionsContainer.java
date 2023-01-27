@@ -134,10 +134,6 @@ public interface LootConditionsContainer<B extends LootConditionsContainer<?>> {
             ResourceKey<Structure> resourceKey = ResourceKey.create(
                     Registry.STRUCTURE_REGISTRY,
                     location);
-            Structure feature = BuiltinRegistries.STRUCTURES.get(resourceKey);
-            if (feature == null) {
-                throw new IllegalArgumentException("Structure not found: " + location);
-            }
             structures.add(resourceKey);
         }
         return addCondition(new AnyStructure(structures, exact));

@@ -19,7 +19,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.util.Map;
 
-@Mixin(LootTables.class)
+@Mixin(value = LootTables.class, priority = 9999)
 public class LootTablesMixin {
 
     @Shadow private Map<ResourceLocation, LootTable> tables;
