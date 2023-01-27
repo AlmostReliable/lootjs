@@ -14,7 +14,6 @@ import dev.latvian.mods.kubejs.stages.Stages;
 import net.minecraft.advancements.critereon.MinMaxBounds;
 import net.minecraft.advancements.critereon.StatePropertiesPredicate;
 import net.minecraft.core.Registry;
-import net.minecraft.data.BuiltinRegistries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
@@ -24,7 +23,6 @@ import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.levelgen.structure.Structure;
 import net.minecraft.world.level.storage.loot.IntRange;
 import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
@@ -128,15 +126,12 @@ public interface LootConditionsContainer<B extends LootConditionsContainer<?>> {
         return addCondition(new AnyDimension(dimensions));
     }
 
-    default B anyStructure(ResourceLocation[] locations, boolean exact) {
-        List<ResourceKey<Structure>> structures = new ArrayList<>();
-        for (ResourceLocation location : locations) {
-            ResourceKey<Structure> resourceKey = ResourceKey.create(
-                    Registry.STRUCTURE_REGISTRY,
-                    location);
-            structures.add(resourceKey);
+    default B anyStructure(String[] idOrTags, boolean exact) {
+        AnyStructure.Builder builder = new AnyStructure.Builder();
+        for (String s : idOrTags) {
+            builder.add(s);
         }
-        return addCondition(new AnyStructure(structures, exact));
+        return addCondition(builder.build(exact));
     }
 
     default B lightLevel(int min, int max) {
