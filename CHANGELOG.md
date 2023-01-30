@@ -8,6 +8,12 @@ and this project adheres to [Semantic Versioning].
 ## [Unreleased]
 - /
 
+## [2.7.9] - 2023-01-08
+### Changed
+- Add structure tags `#tag` support in `anyStructure()` condition
+- Remove structure id validation in `anyStructure()` because of timing issues ... :')
+- Fix load issue on fabric (Should fix weird null pointer exception on fabric)
+
 ## [2.7.8] - 2023-01-08
 ### Changed
 - Fix ([#10](https://github.com/AlmostReliable/lootjs/issues/10))
@@ -103,6 +109,7 @@ We are now on 1.18.2!
 
 <!-- Versions -->
 [unreleased]: https://github.com/AlmostReliable/lootjs/compare/1.18...HEAD
+[2.7.9]: https://github.com/AlmostReliable/lootjs/releases/tag/v1.18-2.7.9
 [2.7.8]: https://github.com/AlmostReliable/lootjs/releases/tag/v1.18-2.7.8
 [2.7.7]: https://github.com/AlmostReliable/lootjs/releases/tag/v1.18-2.7.7
 [2.7.6]: https://github.com/AlmostReliable/lootjs/releases/tag/v1.18-2.7.6
