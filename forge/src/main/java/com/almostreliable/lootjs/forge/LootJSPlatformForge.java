@@ -1,13 +1,14 @@
 package com.almostreliable.lootjs.forge;
 
 import com.almostreliable.lootjs.LootJSPlatform;
+import com.almostreliable.lootjs.filters.ItemFilter;
+import com.almostreliable.lootjs.forge.filters.ForgeItemFilter;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.loading.FMLLoader;
-import net.minecraftforge.gametest.ForgeGameTestHooks;
 import net.minecraftforge.registries.ForgeRegistries;
 
 import java.util.Objects;
@@ -46,5 +47,10 @@ public class LootJSPlatformForge implements LootJSPlatform {
     @Override
     public void setQueriedLootTableId(LootContext context, ResourceLocation id) {
         context.setQueriedLootTableId(id);
+    }
+
+    @Override
+    public Class<? extends ItemFilter> getItemFilterForLoader() {
+        return ForgeItemFilter.class;
     }
 }

@@ -1,5 +1,6 @@
 package com.almostreliable.lootjs.kube;
 
+import com.almostreliable.lootjs.LootJSPlatform;
 import com.almostreliable.lootjs.LootModificationsAPI;
 import com.almostreliable.lootjs.core.LootContextType;
 import com.almostreliable.lootjs.core.LootEntry;
@@ -75,7 +76,7 @@ public class LootJSPlugin extends KubeJSPlugin {
     public void registerBindings(BindingsEvent event) {
         event.add("LootType", LootContextType.class);
         event.add("Interval", new IntervalJS());
-        event.add("ItemFilter", ItemFilter.class);
+        event.add("ItemFilter", LootJSPlatform.INSTANCE.getItemFilterForLoader());
         event.add("LootEntry", LootEntryWrapper.class);
     }
 

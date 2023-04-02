@@ -2,7 +2,7 @@ package com.almostreliable.lootjs.fabric;
 
 import com.almostreliable.lootjs.LootJSPlatform;
 import com.almostreliable.lootjs.fabric.core.FabricLootContextExtension;
-import net.fabricmc.fabric.impl.gametest.FabricGameTestHelper;
+import com.almostreliable.lootjs.filters.ItemFilter;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceLocation;
@@ -45,4 +45,9 @@ public class LootJSPlatformFabric implements LootJSPlatform {
     public void setQueriedLootTableId(LootContext context, ResourceLocation id) {
         ((FabricLootContextExtension) context).lootjs$setQueriedLootTableId(id);
     }
+
+	@Override
+	public Class<? extends ItemFilter> getItemFilterForLoader() {
+		return ItemFilter.class;
+	}
 }
