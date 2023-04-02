@@ -8,6 +8,13 @@ and this project adheres to [Semantic Versioning].
 ## [Unreleased]
 - /
 
+## [2.7.10] - 2023-04-02
+### Added
+- Added `ItemFilter.canPerformAnyAction()` and `ItemFilter.canPerformAction()` for Forge to check if an item can perform a tool action.
+
+### Fix
+- Fix crash when trying to remove global modifiers from forge
+
 ## [2.7.9] - 2023-01-08
 ### Changed
 - Add structure tags `#tag` support in `anyStructure()` condition
@@ -109,6 +116,7 @@ We are now on 1.18.2!
 
 <!-- Versions -->
 [unreleased]: https://github.com/AlmostReliable/lootjs/compare/1.18...HEAD
+[2.7.10]: https://github.com/AlmostReliable/lootjs/releases/tag/v1.18-2.7.10
 [2.7.9]: https://github.com/AlmostReliable/lootjs/releases/tag/v1.18-2.7.9
 [2.7.8]: https://github.com/AlmostReliable/lootjs/releases/tag/v1.18-2.7.8
 [2.7.7]: https://github.com/AlmostReliable/lootjs/releases/tag/v1.18-2.7.7
