@@ -1,35 +1,24 @@
 package com.almostreliable.lootjs.forge.kube;
 
-import com.almostreliable.lootjs.LootModificationsAPI;
-import com.almostreliable.lootjs.filters.ResourceLocationFilter;
 import com.almostreliable.lootjs.kube.LootJSPlugin;
 import com.almostreliable.lootjs.kube.LootModificationEventJS;
+import dev.latvian.mods.kubejs.util.ConsoleJS;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraftforge.common.loot.IGlobalLootModifier;
 
 import java.util.*;
-import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 public class LootModificationForgeEventJS extends LootModificationEventJS {
-    private final Set<ResourceLocation> originalLocations;
-    private final Set<ResourceLocation> locationsToRemove = new HashSet<>();
-    private final Consumer<ResourceLocation> onRemove;
+    private final Map<ResourceLocation, IGlobalLootModifier> modifiers;
+    private final List<ResourceLocation> removed = new ArrayList<>();
 
-    public LootModificationForgeEventJS(Set<ResourceLocation> originalLocations, Consumer<ResourceLocation> onRemove) {
-        this.originalLocations = originalLocations;
-        this.onRemove = onRemove;
+    public LootModificationForgeEventJS(Map<ResourceLocation, IGlobalLootModifier> modifiers) {
+        this.modifiers = modifiers;
     }
 
     public List<String> getGlobalModifiers() {
-        return originalLocations.stream().map(ResourceLocation::toString).collect(Collectors.toList());
-    }
-
-    public void disableLootModification(ResourceLocationFilter... filters) {
-        if (filters.length == 0) {
-            throw new IllegalArgumentException("No loot table were given.");
-        }
-
-        LootModificationsAPI.FILTERS.addAll(Arrays.asList(filters));
+        return modifiers.keySet().stream().map(ResourceLocation::toString).collect(Collectors.toList());
     }
 
     public void removeGlobalModifier(String... locationOrModIds) {
@@ -43,17 +32,22 @@ public class LootModificationForgeEventJS extends LootModificationEventJS {
             }
         }
 
-        Set<ResourceLocation> collectedByModIds = originalLocations
+        Set<ResourceLocation> collectedByModIds = modifiers.keySet()
                 .stream()
                 .filter(rl -> modIds.contains(rl.getNamespace()))
                 .collect(Collectors.toSet());
-        Set<ResourceLocation> collectedByLocations = originalLocations
+        Set<ResourceLocation> collectedByLocations = modifiers.keySet()
                 .stream()
                 .filter(locations::contains)
                 .collect(Collectors.toSet());
 
-        locationsToRemove.addAll(collectedByModIds);
-        locationsToRemove.addAll(collectedByLocations);
+        remove(collectedByModIds);
+        remove(collectedByLocations);
+    }
+
+    private void remove(Set<ResourceLocation> locations) {
+        locations.forEach(modifiers::remove);
+        removed.addAll(locations);
     }
 
     @Override
@@ -64,6 +58,9 @@ public class LootModificationForgeEventJS extends LootModificationEventJS {
             return;
         }
 
-        locationsToRemove.forEach(onRemove);
+        if (!removed.isEmpty()) {
+            ConsoleJS.SERVER.info("[LootJS] Removed " + removed.size() + " global loot modifiers: " +
+                                  removed.stream().map(ResourceLocation::toString).collect(Collectors.joining(", ")));
+        }
     }
 }

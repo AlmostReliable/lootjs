@@ -30,6 +30,14 @@ public abstract class LootModificationEventJS extends EventJS {
         LootModificationsAPI.LOOT_MODIFICATION_LOGGING = true;
     }
 
+    public void disableLootModification(ResourceLocationFilter... filters) {
+        if (filters.length == 0) {
+            throw new IllegalArgumentException("No loot table were given.");
+        }
+
+        LootModificationsAPI.FILTERS.addAll(Arrays.asList(filters));
+    }
+
     public LootActionsBuilderJS addLootTableModifier(ResourceLocationFilter... filters) {
         if (filters.length == 0) {
             throw new IllegalArgumentException("No loot table were given.");
