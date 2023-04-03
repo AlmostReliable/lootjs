@@ -2,7 +2,7 @@ package com.almostreliable.lootjs.fabric;
 
 import com.almostreliable.lootjs.LootJSPlatform;
 import com.almostreliable.lootjs.fabric.core.FabricLootContextExtension;
-import com.almostreliable.lootjs.filters.ItemFilter;
+import dev.latvian.mods.kubejs.script.BindingsEvent;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceLocation;
@@ -46,8 +46,8 @@ public class LootJSPlatformFabric implements LootJSPlatform {
         ((FabricLootContextExtension) context).lootjs$setQueriedLootTableId(id);
     }
 
-	@Override
-	public Class<? extends ItemFilter> getItemFilterForLoader() {
-		return ItemFilter.class;
-	}
+    @Override
+    public void registerBindings(BindingsEvent event) {
+
+    }
 }

@@ -76,8 +76,9 @@ public class LootJSPlugin extends KubeJSPlugin {
     public void registerBindings(BindingsEvent event) {
         event.add("LootType", LootContextType.class);
         event.add("Interval", new IntervalJS());
-        event.add("ItemFilter", LootJSPlatform.INSTANCE.getItemFilterForLoader());
+        event.add("ItemFilter", ItemFilter.class);
         event.add("LootEntry", LootEntryWrapper.class);
+        LootJSPlatform.INSTANCE.registerBindings(event);
     }
 
     @Override

@@ -1,6 +1,7 @@
 package com.almostreliable.lootjs;
 
 import com.almostreliable.lootjs.filters.ItemFilter;
+import dev.latvian.mods.kubejs.script.BindingsEvent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.level.block.Block;
@@ -24,5 +25,5 @@ public interface LootJSPlatform {
 
     void setQueriedLootTableId(LootContext context, ResourceLocation id);
 
-    Class<? extends ItemFilter> getItemFilterForLoader();
+    void registerBindings(BindingsEvent event);
 }
