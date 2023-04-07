@@ -23,6 +23,7 @@ import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.storage.loot.IntRange;
 import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
@@ -208,6 +209,10 @@ public interface LootConditionsContainer<B extends LootConditionsContainer<?>> {
 
     default B directKillerPredicate(Predicate<Entity> predicate) {
         return addCondition(new CustomParamPredicate<>(LootContextParams.DIRECT_KILLER_ENTITY, predicate));
+    }
+
+    default B blockEntityPredicate(Predicate<BlockEntity> predicate) {
+        return addCondition(new CustomParamPredicate<>(LootContextParams.BLOCK_ENTITY, predicate));
     }
 
     default B hasAnyStage(String... stages) {

@@ -8,7 +8,10 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.providers.number.NumberProvider;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.List;
 
 public class WeightedAddLootAction implements ILootAction {
 
@@ -32,7 +35,10 @@ public class WeightedAddLootAction implements ILootAction {
         int lootRolls = numberProvider.getInt(context);
         for (int i = 0; i < lootRolls; i++) {
             weightedRandomList.getRandomValue(random).ifPresent(poolEntry -> {
-                rolledItems.add(poolEntry.apply(context));
+                ItemStack item = poolEntry.createItem(context);
+                if (item != null) {
+                    rolledItems.add(item);
+                }
             });
         }
         loot.addAll(rolledItems.stream().map(ItemStack::copy).toList());

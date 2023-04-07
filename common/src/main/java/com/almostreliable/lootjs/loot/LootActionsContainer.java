@@ -11,8 +11,16 @@ import net.minecraft.world.level.storage.loot.providers.number.NumberProvider;
 
 public interface LootActionsContainer<A extends LootActionsContainer<?>> {
 
-    default A addLoot(LootEntry[] itemStacks) {
-        return addAction(new AddLootAction(itemStacks));
+    default A addLoot(LootEntry... entries) {
+        return addAction(new AddLootAction(entries));
+    }
+
+    default A addAlternativesLoot(LootEntry... entries) {
+        return addAction(new AddLootAction(entries, AddLootAction.AddType.ALTERNATIVES));
+    }
+
+    default A addSequenceLoot(LootEntry... entries) {
+        return addAction(new AddLootAction(entries, AddLootAction.AddType.SEQUENCE));
     }
 
     default A addWeightedLoot(NumberProvider numberProvider, boolean allowDuplicateLoot, LootEntry[] poolEntries) {

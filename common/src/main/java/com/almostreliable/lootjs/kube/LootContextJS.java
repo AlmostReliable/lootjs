@@ -173,8 +173,10 @@ public class LootContextJS {
     }
 
     public void addLoot(LootEntry lootEntry) {
-        ItemStack item = lootEntry.apply(context);
-        data.getGeneratedLoot().add(item);
+        ItemStack item = lootEntry.createItem(context);
+        if (item != null) {
+            data.getGeneratedLoot().add(item);
+        }
     }
 
     public void removeLoot(ItemFilter itemFilter) {
@@ -188,6 +190,10 @@ public class LootContextJS {
                 .filter(itemFilter)
                 .map(ItemStackJS::of)
                 .collect(Collectors.toList());
+    }
+
+    public List<ItemStack> getLoot() {
+        return data.getGeneratedLoot();
     }
 
     public boolean hasLoot(ItemFilter ingredient) {

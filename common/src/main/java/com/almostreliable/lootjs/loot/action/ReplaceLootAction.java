@@ -24,11 +24,15 @@ public class ReplaceLootAction implements ILootAction {
         for (int i = 0; i < loot.size(); i++) {
             ItemStack currentItemStack = loot.get(i);
             if (predicate.test(currentItemStack)) {
-                ItemStack copy = this.lootEntry.apply(context);
-                if (preserveCount) {
-                    copy.setCount(Math.min(currentItemStack.getCount(), copy.getMaxStackSize()));
+                ItemStack newItem = this.lootEntry.createItem(context);
+                if (newItem == null) {
+                    continue;
                 }
-                loot.set(i, copy);
+
+                if (preserveCount) {
+                    newItem.setCount(Math.min(currentItemStack.getCount(), newItem.getMaxStackSize()));
+                }
+                loot.set(i, newItem);
             }
         }
 
