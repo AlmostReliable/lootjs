@@ -8,6 +8,10 @@ and this project adheres to [Semantic Versioning].
 ## [Unreleased]
 - /
 
+## [2.8.0] - 2023-04-12
+### Added
+- Added `LootEntry.when()` and `blockEntityPredicate`
+
 ## [2.7.11] - 2023-04-03
 ### Fix
 - Fix item filters on forge. Moved the specific filters from last update to `ForgeItemFilter.canPerformAnyAction()` and `ForgeItemFilter.canPerformAction()`.
