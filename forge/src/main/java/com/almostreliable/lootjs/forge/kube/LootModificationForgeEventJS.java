@@ -2,6 +2,7 @@ package com.almostreliable.lootjs.forge.kube;
 
 import com.almostreliable.lootjs.kube.LootJSPlugin;
 import com.almostreliable.lootjs.kube.LootModificationEventJS;
+import dev.latvian.mods.kubejs.event.EventResult;
 import dev.latvian.mods.kubejs.util.ConsoleJS;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.common.loot.IGlobalLootModifier;
@@ -51,7 +52,7 @@ public class LootModificationForgeEventJS extends LootModificationEventJS {
     }
 
     @Override
-    protected void afterPosted(boolean result) {
+    protected void afterPosted(EventResult result) {
         super.afterPosted(result);
 
         if (LootJSPlugin.eventsAreDisabled()) {

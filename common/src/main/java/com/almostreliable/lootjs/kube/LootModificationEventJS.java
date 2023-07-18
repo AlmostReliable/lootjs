@@ -9,6 +9,7 @@ import com.google.common.base.Preconditions;
 import dev.latvian.mods.kubejs.CommonProperties;
 import dev.latvian.mods.kubejs.block.state.BlockStatePredicate;
 import dev.latvian.mods.kubejs.event.EventJS;
+import dev.latvian.mods.kubejs.event.EventResult;
 import dev.latvian.mods.kubejs.script.ScriptType;
 import dev.latvian.mods.kubejs.util.ConsoleJS;
 import dev.latvian.mods.kubejs.util.UtilsJS;
@@ -113,7 +114,7 @@ public abstract class LootModificationEventJS extends EventJS {
     }
 
     @Override
-    protected void afterPosted(boolean result) {
+    protected void afterPosted(EventResult result) {
         super.afterPosted(result);
 
         if (LootJSPlugin.eventsAreDisabled()) {

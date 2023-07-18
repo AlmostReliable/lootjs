@@ -2,6 +2,7 @@ package com.almostreliable.lootjs.kube;
 
 import com.almostreliable.lootjs.core.LootEntry;
 import dev.latvian.mods.kubejs.item.ItemStackJS;
+import dev.latvian.mods.kubejs.item.OutputItem;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.item.ItemStack;
 
@@ -11,9 +12,9 @@ public class LootEntryWrapper {
             return entry;
         }
 
-        ItemStack itemStack = ItemStackJS.of(o);
-        int weight = Double.isNaN(itemStack.kjs$getChance()) ?  1 : (int) itemStack.kjs$getChance();
-        return new LootEntry(itemStack).withWeight(weight);
+        OutputItem outputItem = OutputItem.of(o);
+        int weight = Double.isNaN(outputItem.getChance()) ?  1 : (int) outputItem.getChance();
+        return new LootEntry(outputItem.item).withWeight(weight);
     }
 
     public static LootEntry of(ItemStack in, int count) {

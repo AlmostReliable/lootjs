@@ -25,7 +25,7 @@ public class LootTablesMixin {
     @Shadow private Map<ResourceLocation, LootTable> tables;
 
     @Inject(method = "apply(Ljava/util/Map;Lnet/minecraft/server/packs/resources/ResourceManager;Lnet/minecraft/util/profiling/ProfilerFiller;)V", at = @At("RETURN"))
-    private void invokeLootModifiers(Map<ResourceLocation, JsonElement> object, ResourceManager resourceManager, ProfilerFiller profiler, CallbackInfo ci) {
+    private void lootjs$lootModifierReload(Map<ResourceLocation, JsonElement> object, ResourceManager resourceManager, ProfilerFiller profiler, CallbackInfo ci) {
         tables.forEach((id, table) -> {
             ((LootTableExtension) table).lootjs$setLootTableId(id);
         });

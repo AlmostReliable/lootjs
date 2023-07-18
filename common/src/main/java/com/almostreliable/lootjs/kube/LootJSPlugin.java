@@ -8,9 +8,8 @@ import com.almostreliable.lootjs.filters.ItemFilter;
 import com.almostreliable.lootjs.filters.Resolver;
 import com.almostreliable.lootjs.filters.ResourceLocationFilter;
 import com.almostreliable.lootjs.kube.wrapper.IntervalJS;
-import com.almostreliable.lootjs.util.WeightedItemStack;
 import dev.latvian.mods.kubejs.KubeJSPlugin;
-import dev.latvian.mods.kubejs.item.ItemStackJS;
+import dev.latvian.mods.kubejs.item.OutputItem;
 import dev.latvian.mods.kubejs.item.ingredient.IngredientJS;
 import dev.latvian.mods.kubejs.script.BindingsEvent;
 import dev.latvian.mods.kubejs.script.ScriptType;
@@ -20,7 +19,6 @@ import dev.latvian.mods.rhino.util.wrap.TypeWrappers;
 import net.minecraft.advancements.critereon.MinMaxBounds;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.saveddata.maps.MapDecoration;
 
@@ -28,7 +26,6 @@ import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Predicate;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
@@ -86,12 +83,6 @@ public class LootJSPlugin extends KubeJSPlugin {
         typeWrappers.registerSimple(LootEntry.class, LootEntryWrapper::of);
         typeWrappers.registerSimple(MinMaxBounds.Doubles.class, IntervalJS::ofDoubles);
         typeWrappers.registerSimple(MinMaxBounds.Ints.class, IntervalJS::ofInt);
-
-        typeWrappers.registerSimple(WeightedItemStack.class, o -> {
-            ItemStack itemStack = ItemStackJS.of(o);
-            int weight = Double.isNaN(itemStack.kjs$getChance()) ?  1 : (int) itemStack.kjs$getChance();
-            return new WeightedItemStack(itemStack, weight);
-        });
 
         typeWrappers.registerSimple(ItemFilter.class, o -> {
             if (o instanceof List<?> list) {

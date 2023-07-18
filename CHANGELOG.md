@@ -8,6 +8,10 @@ and this project adheres to [Semantic Versioning].
 ## [Unreleased]
 - /
 
+## [2.9.0] - 2023-07-18
+### Changed
+- Update to KubeJS 6.1
+
 ## [2.8.0] - 2023-04-12
 ### Added
 - Added `LootEntry.when()` and `blockEntityPredicate`
@@ -124,6 +128,7 @@ We are now on 1.18.2!
 
 <!-- Versions -->
 [unreleased]: https://github.com/AlmostReliable/lootjs/compare/1.18...HEAD
+[2.9.0]: https://github.com/AlmostReliable/lootjs/releases/tag/v1.18-2.9.0
 [2.7.11]: https://github.com/AlmostReliable/lootjs/releases/tag/v1.18-2.7.11
 [2.7.10]: https://github.com/AlmostReliable/lootjs/releases/tag/v1.18-2.7.10
 [2.7.9]: https://github.com/AlmostReliable/lootjs/releases/tag/v1.18-2.7.9
