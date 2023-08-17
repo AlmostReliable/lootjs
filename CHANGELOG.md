@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning].
 
 ## [Unreleased]
 - /
+- 
+## [2.9.1] - 2023-08-17
+### Changed
+- Fix bug where loot does not drop if CraftTweaker is installed together with LootJS on fabric
 
 ## [2.9.0] - 2023-07-18
 ### Changed
@@ -128,6 +132,7 @@ We are now on 1.18.2!
 
 <!-- Versions -->
 [unreleased]: https://github.com/AlmostReliable/lootjs/compare/1.18...HEAD
+[2.9.1]: https://github.com/AlmostReliable/lootjs/releases/tag/v1.18-2.9.1
 [2.9.0]: https://github.com/AlmostReliable/lootjs/releases/tag/v1.18-2.9.0
 [2.7.11]: https://github.com/AlmostReliable/lootjs/releases/tag/v1.18-2.7.11
 [2.7.10]: https://github.com/AlmostReliable/lootjs/releases/tag/v1.18-2.7.10
