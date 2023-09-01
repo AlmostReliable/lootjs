@@ -11,9 +11,6 @@ accessible field net/minecraft/advancements/critereon/EntityFlagsPredicate$Build
 accessible method net/minecraft/world/level/storage/loot/IntRange <init> (Lnet/minecraft/world/level/storage/loot/providers/number/NumberProvider;Lnet/minecraft/world/level/storage/loot/providers/number/NumberProvider;)V # IntRange
 accessible class net/minecraft/world/level/storage/loot/functions/SetAttributesFunction$Modifier
 
-accessible method net/minecraft/world/entity/LivingEntity createLootContext (ZLnet/minecraft/world/damagesource/DamageSource;)Lnet/minecraft/world/level/storage/loot/LootContext$Builder; # createLootContext
-accessible method net/minecraft/world/entity/Mob createLootContext (ZLnet/minecraft/world/damagesource/DamageSource;)Lnet/minecraft/world/level/storage/loot/LootContext$Builder; # createLootContext
-
 accessible field net/minecraft/world/entity/LightningBolt visualOnly Z# visualOnly
 accessible field net/minecraft/world/level/Explosion fire Z# fire
 accessible field net/minecraft/world/level/Explosion blockInteraction Lnet/minecraft/world/level/Explosion$BlockInteraction;# blockInteraction

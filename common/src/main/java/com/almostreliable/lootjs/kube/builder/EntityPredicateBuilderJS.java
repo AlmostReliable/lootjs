@@ -7,9 +7,9 @@ import com.almostreliable.lootjs.predicate.ExtendedEntityFlagsPredicate;
 import com.almostreliable.lootjs.predicate.MultiEntityTypePredicate;
 import com.almostreliable.lootjs.util.Utils;
 import net.minecraft.advancements.critereon.*;
-import net.minecraft.core.Registry;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.entity.EntityType;
@@ -123,12 +123,12 @@ public class EntityPredicateBuilderJS implements ExtendedEntityFlagsPredicate.IB
     public EntityPredicateBuilderJS matchBlock(Resolver resolver, Map<String, String> propertyMap) {
         BlockPredicate.Builder builder = BlockPredicate.Builder.block();
         if (resolver instanceof Resolver.ByEntry byEntry) {
-            Block block = byEntry.resolve(Registry.BLOCK);
+            Block block = byEntry.resolve(BuiltInRegistries.BLOCK);
             StatePropertiesPredicate.Builder properties = Utils.createProperties(block, propertyMap);
             builder.setProperties(properties.build());
             builder.of(block);
         } else if (resolver instanceof Resolver.ByTagKey byTag) {
-            TagKey<Block> tagKey = byTag.resolve(Registry.BLOCK);
+            TagKey<Block> tagKey = byTag.resolve(Registries.BLOCK);
             builder.of(tagKey);
         }
         blockPredicate = builder.build();
@@ -141,10 +141,10 @@ public class EntityPredicateBuilderJS implements ExtendedEntityFlagsPredicate.IB
 
     public EntityPredicateBuilderJS matchFluid(Resolver resolver) {
         if (resolver instanceof Resolver.ByEntry byEntry) {
-            Fluid fluid = byEntry.resolve(Registry.FLUID);
+            Fluid fluid = byEntry.resolve(BuiltInRegistries.FLUID);
             fluidPredicate = new FluidPredicate(null, fluid, StatePropertiesPredicate.ANY);
         } else if (resolver instanceof Resolver.ByTagKey byTag) {
-            TagKey<Fluid> tagKey = byTag.resolve(Registry.FLUID);
+            TagKey<Fluid> tagKey = byTag.resolve(Registries.FLUID);
             fluidPredicate = new FluidPredicate(tagKey, null, StatePropertiesPredicate.ANY);
         }
         return this;
@@ -207,9 +207,9 @@ public class EntityPredicateBuilderJS implements ExtendedEntityFlagsPredicate.IB
 
         for (Resolver resolver : resolvers) {
             if (resolver instanceof Resolver.ByEntry byEntry) {
-                types.add(byEntry.resolve(Registry.ENTITY_TYPE));
+                types.add(byEntry.resolve(BuiltInRegistries.ENTITY_TYPE));
             } else if (resolver instanceof Resolver.ByTagKey byTag) {
-                tags.add(byTag.resolve(Registry.ENTITY_TYPE));
+                tags.add(byTag.resolve(Registries.ENTITY_TYPE));
             }
         }
 

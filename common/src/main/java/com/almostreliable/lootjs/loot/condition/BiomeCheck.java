@@ -2,6 +2,7 @@ package com.almostreliable.lootjs.loot.condition;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
+import net.minecraft.core.Vec3i;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.level.biome.Biome;
@@ -26,7 +27,7 @@ public class BiomeCheck implements IExtendedLootCondition {
         Vec3 origin = context.getParamOrNull(LootContextParams.ORIGIN);
         if (origin == null) return false;
 
-        BlockPos blockPos = new BlockPos(origin.x, origin.y, origin.z);
+        BlockPos blockPos = new BlockPos((int) origin.x, (int) origin.y, (int) origin.z);
         return match(context.getLevel().getBiome(blockPos));
     }
 

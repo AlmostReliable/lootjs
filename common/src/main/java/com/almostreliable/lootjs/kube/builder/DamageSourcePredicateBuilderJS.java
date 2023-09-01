@@ -3,6 +3,10 @@ package com.almostreliable.lootjs.kube.builder;
 import com.almostreliable.lootjs.loot.condition.WrappedDamageSourceCondition;
 import dev.latvian.mods.rhino.util.HideFromJS;
 import net.minecraft.advancements.critereon.DamageSourcePredicate;
+import net.minecraft.advancements.critereon.TagPredicate;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.tags.TagKey;
 import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
 
 import java.util.function.Consumer;
@@ -16,43 +20,13 @@ public class DamageSourcePredicateBuilderJS implements LootItemCondition.Builder
         return this;
     }
 
-    public DamageSourcePredicateBuilderJS isProjectile(boolean flag) {
-        vanillaBuilder.isProjectile(flag);
+    public DamageSourcePredicateBuilderJS is(ResourceLocation tag) {
+        vanillaBuilder.tag(TagPredicate.is(TagKey.create(Registries.DAMAGE_TYPE, tag)));
         return this;
     }
 
-    public DamageSourcePredicateBuilderJS isExplosion(boolean flag) {
-        vanillaBuilder.isExplosion(flag);
-        return this;
-    }
-
-    public DamageSourcePredicateBuilderJS doesBypassArmor(boolean flag) {
-        vanillaBuilder.bypassesArmor(flag);
-        return this;
-    }
-
-    public DamageSourcePredicateBuilderJS doesBypassInvulnerability(boolean flag) {
-        vanillaBuilder.bypassesInvulnerability(flag);
-        return this;
-    }
-
-    public DamageSourcePredicateBuilderJS doesBypassMagic(boolean flag) {
-        vanillaBuilder.bypassesMagic(flag);
-        return this;
-    }
-
-    public DamageSourcePredicateBuilderJS isFire(boolean flag) {
-        vanillaBuilder.isFire(flag);
-        return this;
-    }
-
-    public DamageSourcePredicateBuilderJS isMagic(boolean flag) {
-        vanillaBuilder.isMagic(flag);
-        return this;
-    }
-
-    public DamageSourcePredicateBuilderJS isLightning(boolean flag) {
-        vanillaBuilder.isLightning(flag);
+    public DamageSourcePredicateBuilderJS isNot(ResourceLocation tag) {
+        vanillaBuilder.tag(TagPredicate.isNot(TagKey.create(Registries.DAMAGE_TYPE, tag)));
         return this;
     }
 

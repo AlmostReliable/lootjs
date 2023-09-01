@@ -4,6 +4,7 @@ import com.mojang.datafixers.util.Pair;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
@@ -33,12 +34,12 @@ public class AnyStructure implements IExtendedLootCondition {
         Vec3 origin = context.getParamOrNull(LootContextParams.ORIGIN);
 
         if (origin != null) {
-            BlockPos blockPos = new BlockPos(origin.x, origin.y, origin.z);
+            BlockPos blockPos = new BlockPos((int) origin.x, (int) origin.y, (int) origin.z);
             StructureManager structureManager = context.getLevel().structureManager();
             Registry<Structure> registry = context
                     .getLevel()
                     .registryAccess()
-                    .registryOrThrow(Registry.STRUCTURE_REGISTRY);
+                    .registryOrThrow(Registries.STRUCTURE);
 
 
             for (StructureLocator l : structureLocators) {
@@ -97,10 +98,10 @@ public class AnyStructure implements IExtendedLootCondition {
         public Builder add(String idOrTag) {
             if (idOrTag.startsWith("#")) {
                 var rl = new ResourceLocation(idOrTag.substring(1));
-                tags.add(TagKey.create(Registry.STRUCTURE_REGISTRY, rl));
+                tags.add(TagKey.create(Registries.STRUCTURE, rl));
             } else {
                 var rl = new ResourceLocation(idOrTag);
-                ids.add(ResourceKey.create(Registry.STRUCTURE_REGISTRY, rl));
+                ids.add(ResourceKey.create(Registries.STRUCTURE, rl));
             }
             return this;
         }

@@ -58,7 +58,11 @@ public interface LootActionsContainer<A extends LootActionsContainer<?>> {
     default A triggerExplosion(float radius, boolean destroy, boolean fire) {
         Explosion.BlockInteraction mode = destroy
                                           ? Explosion.BlockInteraction.DESTROY
-                                          : Explosion.BlockInteraction.NONE;
+                                          : Explosion.BlockInteraction.KEEP;
+        return addAction(new ExplodeAction(radius, mode, fire));
+    }
+
+    default A triggerExplosion(float radius, Explosion.BlockInteraction mode, boolean fire) {
         return addAction(new ExplodeAction(radius, mode, fire));
     }
 

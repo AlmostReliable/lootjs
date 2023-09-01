@@ -25,7 +25,18 @@ public class ExplodeAction implements ILootAction {
     public boolean applyLootHandler(LootContext context, List<ItemStack> loot) {
         Vec3 origin = context.getParamOrNull(LootContextParams.ORIGIN);
         if (origin == null) return true;
-        context.getLevel().explode(null, origin.x, origin.y, origin.z, radius, fire, mode);
+        Explosion explosion = new Explosion(context.getLevel(),
+                null,
+                null,
+                null,
+                origin.x,
+                origin.y,
+                origin.z,
+                radius,
+                fire,
+                mode);
+        explosion.explode();
+        explosion.finalizeExplosion(true);
         return true;
     }
 }

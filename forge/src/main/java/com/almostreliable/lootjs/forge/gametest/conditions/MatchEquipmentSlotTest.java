@@ -13,6 +13,7 @@ import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.storage.loot.LootContext;
+import net.minecraft.world.level.storage.loot.LootParams;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraftforge.gametest.GameTestHolder;
@@ -66,7 +67,7 @@ public class MatchEquipmentSlotTest {
     public LootContext basicSetup(GameTestHelper helper) {
         ServerPlayer player = new ServerPlayer(helper.getLevel().getServer(),
                 helper.getLevel(),
-                new GameProfile(UUID.randomUUID(), "test-mock-server-player"), null) {
+                new GameProfile(UUID.randomUUID(), "test-mock-server-player")) {
 
             @Override
             public boolean isSpectator() {
@@ -79,9 +80,11 @@ public class MatchEquipmentSlotTest {
             }
         };
 
-        LootContext.Builder builder = new LootContext.Builder(helper.getLevel())
+        var params = new LootParams.Builder(helper.getLevel())
                 .withParameter(LootContextParams.ORIGIN, player.position())
-                .withParameter(LootContextParams.THIS_ENTITY, player);
+                .withParameter(LootContextParams.THIS_ENTITY, player)
+                .create(LootContextParamSets.CHEST);
+        LootContext lc = new LootContext.Builder(params).create(null);
 
         player.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(Items.DIAMOND));
         player.setItemSlot(EquipmentSlot.OFFHAND, new ItemStack(Items.STICK));
@@ -90,6 +93,6 @@ public class MatchEquipmentSlotTest {
         player.setItemSlot(EquipmentSlot.LEGS, new ItemStack(Items.DIAMOND_LEGGINGS));
         player.setItemSlot(EquipmentSlot.FEET, new ItemStack(Items.DIAMOND_BOOTS));
 
-        return builder.create(LootContextParamSets.CHEST);
+        return lc;
     }
 }

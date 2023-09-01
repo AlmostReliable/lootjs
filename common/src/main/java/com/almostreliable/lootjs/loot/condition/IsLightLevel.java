@@ -22,7 +22,7 @@ public class IsLightLevel implements IExtendedLootCondition {
             return false;
         }
 
-        BlockPos blockPos = new BlockPos(origin.x, origin.y, origin.z);
+        BlockPos blockPos = new BlockPos((int) origin.x, (int) origin.y, (int) origin.z);
         int light = context.getLevel().getMaxLocalRawBrightness(blockPos);
         return min <= light && light <= max;
     }

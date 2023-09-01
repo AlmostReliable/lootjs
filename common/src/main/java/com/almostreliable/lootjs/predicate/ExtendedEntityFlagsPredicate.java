@@ -70,7 +70,7 @@ public class ExtendedEntityFlagsPredicate extends EntityFlagsPredicate {
     }
 
     private boolean matchesOnGround(Entity entity) {
-        return isOnGround == null || isOnGround == entity.isOnGround();
+        return isOnGround == null || isOnGround == entity.onGround();
     }
 
     private boolean matchesCreature(Entity entity) {

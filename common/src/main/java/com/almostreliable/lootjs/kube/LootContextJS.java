@@ -81,7 +81,7 @@ public class LootContextJS {
 
     public BlockPos getBlockPos() {
         Vec3 position = getPosition();
-        return new BlockPos(position.x, position.y, position.z);
+        return new BlockPos((int) position.x, (int) position.y, (int) position.z);
     }
 
     @Nullable

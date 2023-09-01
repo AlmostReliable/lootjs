@@ -19,7 +19,7 @@ public class MatchFluid implements IExtendedLootCondition {
         Vec3 origin = context.getParamOrNull(LootContextParams.ORIGIN);
         if (origin == null) return false;
 
-        BlockPos blockPos = new BlockPos(origin.x, origin.y, origin.z);
+        BlockPos blockPos = new BlockPos((int) origin.x, (int) origin.y, (int) origin.z);
         return predicate.matches(context.getLevel(), blockPos);
     }
 }

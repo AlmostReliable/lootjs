@@ -46,7 +46,7 @@ public class Utils {
         return String.format("Type=%s, Id=%s, Dim=%s, x=%.2f, y=%.2f, z=%.2f",
                 quote(LootJSPlatform.INSTANCE.getRegistryName(entity.getType())),
                 entity.getId(),
-                quote(entity.level.dimension().location()),
+                quote(entity.level().dimension().location()),
                 entity.getX(),
                 entity.getY(),
                 entity.getZ());

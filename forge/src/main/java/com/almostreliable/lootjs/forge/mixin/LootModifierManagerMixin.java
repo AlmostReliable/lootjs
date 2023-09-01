@@ -23,7 +23,7 @@ import java.util.Set;
 @Mixin(LootModifierManager.class)
 public class LootModifierManagerMixin {
 
-    @Shadow private Map<ResourceLocation, IGlobalLootModifier> registeredLootModifiers;
+    @Shadow(remap = false) private Map<ResourceLocation, IGlobalLootModifier> registeredLootModifiers;
 
     @Inject(method = "apply", at = @At("RETURN"), remap = false)
     private void lootjs$lootModifierReload(Map<ResourceLocation, JsonElement> resourceList, ResourceManager resourceManagerIn, ProfilerFiller profilerIn, CallbackInfo ci) {

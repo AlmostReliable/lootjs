@@ -14,6 +14,7 @@ import dev.latvian.mods.kubejs.stages.Stages;
 import net.minecraft.advancements.critereon.MinMaxBounds;
 import net.minecraft.advancements.critereon.StatePropertiesPredicate;
 import net.minecraft.core.Registry;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
@@ -100,9 +101,9 @@ public interface LootConditionsContainer<B extends LootConditionsContainer<?>> {
 
         for (Resolver resolver : resolvers) {
             if (resolver instanceof Resolver.ByEntry byEntry) {
-                biomes.add(byEntry.resolve(Registry.BIOME_REGISTRY));
+                biomes.add(byEntry.resolve(Registries.BIOME));
             } else if (resolver instanceof Resolver.ByTagKey byTagKey) {
-                tagKeys.add(byTagKey.resolve(Registry.BIOME_REGISTRY));
+                tagKeys.add(byTagKey.resolve(Registries.BIOME));
             }
         }
 
@@ -115,9 +116,9 @@ public interface LootConditionsContainer<B extends LootConditionsContainer<?>> {
 
         for (Resolver resolver : resolvers) {
             if (resolver instanceof Resolver.ByEntry byEntry) {
-                biomes.add(byEntry.resolve(Registry.BIOME_REGISTRY));
+                biomes.add(byEntry.resolve(Registries.BIOME));
             } else if (resolver instanceof Resolver.ByTagKey byTagKey) {
-                tagKeys.add(byTagKey.resolve(Registry.BIOME_REGISTRY));
+                tagKeys.add(byTagKey.resolve(Registries.BIOME));
             }
         }
         return addCondition(new AnyBiomeCheck(biomes, tagKeys));

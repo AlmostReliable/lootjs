@@ -15,6 +15,8 @@ import dev.latvian.mods.kubejs.util.ConsoleJS;
 import dev.latvian.mods.kubejs.util.UtilsJS;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.Registry;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.EntityType;
 import org.apache.commons.lang3.StringUtils;
@@ -91,7 +93,7 @@ public abstract class LootModificationEventJS extends EventJS {
         modifierSuppliers.add(() -> {
             List<ILootHandler> actions = builder.getHandlers();
             String logName = builder.getLogName(Utils.quote("Entities",
-                    set.stream().map(Registry.ENTITY_TYPE::getKey).collect(Collectors.toList())));
+                    set.stream().map(BuiltInRegistries.ENTITY_TYPE::getKey).collect(Collectors.toList())));
             return new LootModificationByEntity(logName, set, new ArrayList<>(actions));
         });
         return builder;

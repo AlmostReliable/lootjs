@@ -2,7 +2,10 @@ package com.almostreliable.lootjs.fabric;
 
 import net.minecraft.resources.ResourceLocation;
 
-public interface LootTableExtension {
+import javax.annotation.Nullable;
+
+public interface LootTableIdOwner {
+    @Nullable
     ResourceLocation lootjs$getLootTableId();
 
     void lootjs$setLootTableId(ResourceLocation id);

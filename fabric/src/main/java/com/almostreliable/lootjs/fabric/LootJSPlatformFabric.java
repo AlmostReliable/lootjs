@@ -5,6 +5,7 @@ import com.almostreliable.lootjs.fabric.core.FabricLootContextExtension;
 import dev.latvian.mods.kubejs.script.BindingsEvent;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.core.Registry;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.level.block.Block;
@@ -28,12 +29,12 @@ public class LootJSPlatformFabric implements LootJSPlatform {
 
     @Override
     public ResourceLocation getRegistryName(Block block) {
-        return Registry.BLOCK.getKey(block);
+        return BuiltInRegistries.BLOCK.getKey(block);
     }
 
     @Override
     public ResourceLocation getRegistryName(EntityType<?> entityType) {
-        return Registry.ENTITY_TYPE.getKey(entityType);
+        return BuiltInRegistries.ENTITY_TYPE.getKey(entityType);
     }
 
     @Override

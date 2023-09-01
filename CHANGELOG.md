@@ -7,7 +7,11 @@ and this project adheres to [Semantic Versioning].
 
 ## [Unreleased]
 - /
-- 
+
+## [2.10.0] - 2023-09-03
+### Changed
+- 1.20.1 Release
+
 ## [2.9.1] - 2023-08-17
 ### Changed
 - Fix bug where loot does not drop if CraftTweaker is installed together with LootJS on fabric
