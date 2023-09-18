@@ -8,6 +8,10 @@ and this project adheres to [Semantic Versioning].
 ## [Unreleased]
 - /
 
+## [2.10.1] - 2023-09-18
+### Fix
+- Fix bug where loot does not drop for entities on fabric
+
 ## [2.10.0] - 2023-09-03
 ### Changed
 - 1.20.1 Release
@@ -136,6 +140,7 @@ We are now on 1.18.2!
 
 <!-- Versions -->
 [unreleased]: https://github.com/AlmostReliable/lootjs/compare/1.18...HEAD
+[2.10.1]: https://github.com/AlmostReliable/lootjs/releases/tag/v1.18-2.10.1
 [2.9.1]: https://github.com/AlmostReliable/lootjs/releases/tag/v1.18-2.9.1
 [2.9.0]: https://github.com/AlmostReliable/lootjs/releases/tag/v1.18-2.9.0
 [2.7.11]: https://github.com/AlmostReliable/lootjs/releases/tag/v1.18-2.7.11
