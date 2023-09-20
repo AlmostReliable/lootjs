@@ -13,7 +13,6 @@ import com.google.gson.JsonObject;
 import dev.latvian.mods.kubejs.stages.Stages;
 import net.minecraft.advancements.critereon.MinMaxBounds;
 import net.minecraft.advancements.critereon.StatePropertiesPredicate;
-import net.minecraft.core.Registry;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
@@ -268,7 +267,7 @@ public interface LootConditionsContainer<B extends LootConditionsContainer<?>> {
     }
 
     default B customCondition(JsonObject json) {
-        LootItemCondition condition = LootJS.GSON.fromJson(json, LootItemCondition.class);
+        LootItemCondition condition = LootJS.CONDITION_GSON.fromJson(json, LootItemCondition.class);
         return addCondition((ILootCondition) condition);
     }
 

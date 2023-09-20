@@ -1,13 +1,17 @@
 package com.almostreliable.lootjs.loot;
 
+import com.almostreliable.lootjs.LootJS;
+import com.almostreliable.lootjs.core.ILootCondition;
 import com.almostreliable.lootjs.filters.ItemFilter;
 import com.almostreliable.lootjs.loot.action.LootItemFunctionWrapperAction;
+import com.google.gson.JsonObject;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.alchemy.Potion;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.level.storage.loot.IntRange;
 import net.minecraft.world.level.storage.loot.functions.*;
+import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
 import net.minecraft.world.level.storage.loot.providers.number.NumberProvider;
 
 import javax.annotation.Nullable;
@@ -124,6 +128,11 @@ public interface LootFunctionsContainer<F extends LootFunctionsContainer<?>> {
      */
     default F addNbt(CompoundTag tag) {
         return addFunction(SetNbtFunction.setTag(tag));
+    }
+
+    default F customFunction(JsonObject json) {
+        var function = LootJS.FUNCTION_GSON.fromJson(json, LootItemFunction.class);
+        return addFunction(function);
     }
 
     default F functions(ItemFilter filter, Consumer<LootFunctionsContainer<F>> action) {

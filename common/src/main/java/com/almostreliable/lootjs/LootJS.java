@@ -7,5 +7,6 @@ import org.apache.logging.log4j.Logger;
 
 public class LootJS {
     public static final Logger LOG = LogManager.getLogger("LootJS");
-    public static final Gson GSON = Deserializers.createConditionSerializer().create();
+    public static final Gson CONDITION_GSON = Deserializers.createConditionSerializer().create();
+    public static final Gson FUNCTION_GSON = Deserializers.createFunctionSerializer().create();
 }
