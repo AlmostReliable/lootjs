@@ -8,6 +8,10 @@ and this project adheres to [Semantic Versioning].
 ## [Unreleased]
 - /
 
+## [2.10.2] - 2023-09-23
+### Add
+- Add custom loot function `customFunction(json)`
+
 ## [2.10.1] - 2023-09-18
 ### Fix
 - Fix bug where loot does not drop for entities on fabric
