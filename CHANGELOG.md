@@ -8,6 +8,10 @@ and this project adheres to [Semantic Versioning].
 ## [Unreleased]
 - /
 
+## [2.10.3] - 2023-09-27
+### Fixed
+- Fixed null pointer exception when using `addLootTableModifier` and an entity dies
+
 ## [2.10.2] - 2023-09-23
 ### Add
 - Add custom loot function `customFunction(json)`
@@ -144,6 +148,8 @@ We are now on 1.18.2!
 
 <!-- Versions -->
 [unreleased]: https://github.com/AlmostReliable/lootjs/compare/1.18...HEAD
+[2.10.3]: https://github.com/AlmostReliable/lootjs/releases/tag/v1.18-2.10.3
+[2.10.2]: https://github.com/AlmostReliable/lootjs/releases/tag/v1.18-2.10.2
 [2.10.1]: https://github.com/AlmostReliable/lootjs/releases/tag/v1.18-2.10.1
 [2.9.1]: https://github.com/AlmostReliable/lootjs/releases/tag/v1.18-2.9.1
 [2.9.0]: https://github.com/AlmostReliable/lootjs/releases/tag/v1.18-2.9.0
