@@ -69,7 +69,7 @@ subprojects {
     apply(plugin = "java")
     apply(plugin = "dev.architectury.loom")
     apply(plugin = "maven-publish")
-    apply(plugin = "io.github.juuxel.loom-quiltflower")
+    apply(plugin = "io.github.juuxel.loom-vineflower")
 
     base.archivesName.set("$modId-${project.name.lowercase()}")
     version = "$minecraftVersion-$modVersion"
