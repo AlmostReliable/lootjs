@@ -3,13 +3,15 @@
 
 A [Minecraft] mod for packdevs to easily modify the loot system with [KubeJS].
 
-[![Version][version_badge]][version_link]
-[![Total Downloads CF][total_downloads_cf_badge]][curseforge]
-[![Total Downloads MR][total_downloads_mr_badge]][modrinth]
 [![Workflow Status][workflow_status_badge]][workflow_status_link]
 [![License][license_badge]][license]
 
-[Discord] | [CurseForge] | [Modrinth]
+[![Version][version_badge]][version_link]
+[![Total Downloads CF][total_downloads_cf_badge]][curseforge]
+[![Total Downloads MR][total_downloads_mr_badge]][modrinth]
+
+[![Discord][discord_badge]][discord]
+[![Wiki][wiki_badge]][wiki]
 
 </div>
 
@@ -27,7 +29,7 @@ Loot modifications are handled server side. So all your scripts will go into you
 
 Here's simple example which adds a gunpowder for creepers:
 ```js
-onEvent("lootjs", (event) => {
+LootJS.modifiers((event) => {
     event
         .addEntityLootModifier("minecraft:creeper")
         .randomChance(0.3) // 30% chance
@@ -37,7 +39,7 @@ onEvent("lootjs", (event) => {
 
 Instead of using a loot table for reference, you can also apply the modification to all entities:
 ```js
-onEvent("lootjs", (event) => {
+LootJS.modifiers((event) => {
     event
         .addLootTypeModifier(LootType.ENTITY) // you also can use multiple types
         .logName("It's raining loot") // you can set a custom name for logging
@@ -53,7 +55,7 @@ onEvent("lootjs", (event) => {
 
 Next, let's check if the player holds a specific item:
 ```js
-onEvent("lootjs", (event) => {
+LootJS.modifiers((event) => {
     event
         .addBlockLootModifier("#forge:ores") // keep in mind this is a block tag not an item tag
         .matchEquip(EquipmentSlot.MAINHAND, Item.of("minecraft:netherite_pickaxe").ignoreNBT())
@@ -72,7 +74,7 @@ visit our [wiki] or explore the [examples].
 ## **❌ Disable loot tables for loot modifications** (**[Forge] only**)
 Some blocks like leaves are getting randomly destroyed. If you don't want them to trigger your loot modifications, you can disable their loot tables. The default loot tables will still be triggered.
 ```js
-onEvent("lootjs", (event) => {
+LootJS.modifiers((event) => {
     // all leaves disabled via regex
     event.disableLootModification(/.*:blocks\/.*_leaves/);
 
@@ -85,7 +87,7 @@ onEvent("lootjs", (event) => {
 ## **📜 Enable logging for loot modifications**
 With a lot of modifications, it can be hard to track which modification triggers on specific conditions. With `enableLogging`, LootJS will log every modification trigger into `your_minecraft_instance/logs/kubejs/server.txt`.
 ```js
-onEvent("lootjs", (event) => {
+LootJS.modifiers((event) => {
     event.enableLogging();
 });
 ```
@@ -119,13 +121,15 @@ Here's the output for the `additional gunpowder` and `raining loot` examples:
 This project is licensed under the [GNU Lesser General Public License v3.0][license].
 
 <!-- Badges -->
-[version_badge]: https://img.shields.io/github/v/release/AlmostReliable/lootjs?include_prereleases&style=flat-square
-[version_link]: https://github.com/AlmostReliable/lootjs/releases/latest
-[total_downloads_cf_badge]: http://cf.way2muchnoise.eu/full_570630.svg?badge_style=flat
-[total_downloads_mr_badge]: https://img.shields.io/badge/dynamic/json?style=flat-square&color=5da545&label=modrinth&query=downloads&url=https://api.modrinth.com/api/v1/mod/fJFETWDN
-[workflow_status_badge]: https://img.shields.io/github/workflow/status/AlmostReliable/lootjs/CI?style=flat-square
+[workflow_status_badge]: https://img.shields.io/github/actions/workflow/status/AlmostReliable/lootjs/build.yml?branch=1.20.1&style=for-the-badge
 [workflow_status_link]: https://github.com/AlmostReliable/lootjs/actions
-[license_badge]: https://img.shields.io/github/license/AlmostReliable/lootjs?style=flat-square
+[total_downloads_cf_badge]: https://img.shields.io/badge/dynamic/json?color=e04e14&label=CurseForge&style=for-the-badge&query=downloads.total&url=https://api.cfwidget.com/570630&logo=curseforge
+[total_downloads_mr_badge]: https://img.shields.io/modrinth/dt/fJFETWDN?color=5da545&label=Modrinth&style=for-the-badge&logo=modrinth
+[version_badge]: https://img.shields.io/github/v/release/AlmostReliable/lootjs?include_prereleases&style=for-the-badge
+[version_link]: https://github.com/AlmostReliable/lootjs/releases/latest
+[license_badge]: https://img.shields.io/github/license/AlmostReliable/lootjs?style=for-the-badge
+[discord_badge]: https://img.shields.io/discord/917251858974789693?color=5865f2&label=Discord&logo=discord&style=for-the-badge
+[wiki_badge]: https://img.shields.io/badge/Read%20the-Wiki-ba00ff?style=for-the-badge
 
 <!-- Links -->
 [forgeloot]: https://mcforge.readthedocs.io/en/latest/items/globallootmodifiers/
