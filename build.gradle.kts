@@ -104,6 +104,8 @@ subprojects {
                 println("Extra mod ${f.nameWithoutExtension} detected.")
                 "modLocalRuntime"("extra-mods:$mod:$version")
             }
+
+        implementation("com.google.code.findbugs:jsr305:3.0.2")
     }
 
     /**
@@ -156,7 +158,8 @@ subprojects {
                 "forgeVersion" to forgeVersion,
                 "forgeFMLVersion" to forgeVersion.substringBefore("."), // Only use major version as FML error message sucks. The error message for wrong Forge version is way better.
                 "githubUser" to githubUser,
-                "githubRepo" to githubRepo
+                "githubRepo" to githubRepo,
+                "kubejsVersion" to kubejsVersion
             )
 
             println("[Process Resources] Replacing properties in resources: ")

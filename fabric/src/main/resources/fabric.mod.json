@@ -9,7 +9,7 @@
   ],
   "contact": {
     "homepage": "https://almostreliable.com/",
-    "sources": "https://github.com/${github_user}/${githubRepo}/issues"
+    "sources": "https://github.com/${githubUser}/${githubRepo}/issues"
   },
   "license": "${license}",
   "icon": "assets/${modId}/icon.png",
