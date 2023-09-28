@@ -1,12 +1,13 @@
 package com.almostreliable.lootjs.loot.condition;
 
-import com.almostreliable.lootjs.core.LootJSParamSets;
 import com.almostreliable.lootjs.core.ILootCondition;
 import com.almostreliable.lootjs.core.ILootContextData;
+import com.almostreliable.lootjs.core.LootJSParamSets;
 import com.almostreliable.lootjs.loot.results.Info;
 import com.almostreliable.lootjs.loot.results.LootInfoCollector;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.storage.loot.LootContext;
+import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,8 +15,8 @@ import java.util.List;
 public class AndCondition implements IExtendedLootCondition {
     private final ILootCondition[] conditions;
 
-    public AndCondition(ILootCondition... conditions) {
-        this.conditions = conditions;
+    public AndCondition(LootItemCondition... conditions) {
+        this.conditions = (ILootCondition[]) conditions;
     }
 
     @Override

@@ -2,10 +2,10 @@ package com.almostreliable.lootjs.forge.gametest;
 
 import com.almostreliable.lootjs.BuildConfig;
 import com.almostreliable.lootjs.core.ILootContextData;
-import com.almostreliable.lootjs.core.LootEntry;
 import com.almostreliable.lootjs.loot.action.AddLootAction;
 import com.almostreliable.lootjs.loot.action.RemoveLootAction;
 import com.almostreliable.lootjs.loot.action.ReplaceLootAction;
+import com.almostreliable.lootjs.loot.table.entry.LootEntry;
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.world.entity.player.Player;
@@ -33,7 +33,8 @@ public class LootActionGameTests {
                     data.getGeneratedLoot().stream().anyMatch(i -> i.getItem().equals(Items.LANTERN)),
                     "Should contains no lanterns");
             AddLootAction action = new AddLootAction(new LootEntry[]{
-                    new LootEntry(Items.APPLE), new LootEntry(Items.LANTERN)
+                    LootEntry.ofItemStack(Items.APPLE.getDefaultInstance()),
+                    LootEntry.ofItemStack(Items.LANTERN.getDefaultInstance())
             });
             action.applyLootHandler(ctx, data.getGeneratedLoot());
             GameTestUtils.assertTrue(helper,
@@ -78,7 +79,7 @@ public class LootActionGameTests {
                     "Magma cream does not exist currently");
 
             ReplaceLootAction action = new ReplaceLootAction(i -> i.getItem().equals(Items.DIAMOND),
-                    new LootEntry(Items.MAGMA_CREAM), false);
+                    LootEntry.ofItemStack(Items.MAGMA_CREAM.getDefaultInstance()), false);
             action.applyLootHandler(ctx, data.getGeneratedLoot());
 
             GameTestUtils.assertFalse(helper,

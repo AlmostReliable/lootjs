@@ -7,6 +7,7 @@ import com.almostreliable.lootjs.kube.LootConditionsContainer;
 import com.almostreliable.lootjs.loot.action.GroupedLootAction;
 import com.almostreliable.lootjs.loot.action.LootItemFunctionWrapperAction;
 import net.minecraft.world.level.storage.loot.functions.LootItemFunction;
+import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
 import net.minecraft.world.level.storage.loot.providers.number.ConstantValue;
 import net.minecraft.world.level.storage.loot.providers.number.NumberProvider;
 
@@ -26,8 +27,8 @@ public class GroupedLootBuilder implements LootConditionsContainer<GroupedLootBu
     }
 
     @Override
-    public GroupedLootBuilder addCondition(ILootCondition condition) {
-        handlers.add(condition);
+    public GroupedLootBuilder addCondition(LootItemCondition condition) {
+        handlers.add((ILootCondition) condition); // TODO Remove ILootCondition some day
         return this;
     }
 

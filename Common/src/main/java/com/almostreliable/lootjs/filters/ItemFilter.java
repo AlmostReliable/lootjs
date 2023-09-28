@@ -1,8 +1,10 @@
 package com.almostreliable.lootjs.filters;
 
+import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.*;
@@ -15,6 +17,7 @@ import java.util.function.Predicate;
 public interface ItemFilter extends Predicate<ItemStack> {
     ItemFilter ALWAYS_FALSE = itemStack -> false;
     ItemFilter ALWAYS_TRUE = itemStack -> true;
+    ItemFilter EMPTY = ItemStack::isEmpty;
     ItemFilter SWORD = itemStack -> itemStack.getItem() instanceof SwordItem;
     ItemFilter PICKAXE = itemStack -> itemStack.getItem() instanceof PickaxeItem;
     ItemFilter AXE = itemStack -> itemStack.getItem() instanceof AxeItem;
@@ -61,6 +64,14 @@ public interface ItemFilter extends Predicate<ItemStack> {
             }
             return false;
         };
+    }
+
+    static ItemFilter tag(String tag) {
+        if (tag.startsWith("#")) {
+            tag = tag.substring(1);
+        }
+
+        return new Tag(TagKey.create(Registries.ITEM, new ResourceLocation(tag)));
     }
 
     static ItemFilter equipmentSlot(EquipmentSlot slot) {
@@ -126,5 +137,21 @@ public interface ItemFilter extends Predicate<ItemStack> {
     default ItemFilter or(ItemFilter other) {
         Objects.requireNonNull(other);
         return (itemStack) -> test(itemStack) || other.test(itemStack);
+    }
+
+    record Ingredient(net.minecraft.world.item.crafting.Ingredient ingredient) implements ItemFilter {
+
+        @Override
+        public boolean test(ItemStack itemStack) {
+            return ingredient.test(itemStack);
+        }
+    }
+
+    record Tag(TagKey<Item> tag) implements ItemFilter {
+
+        @Override
+        public boolean test(ItemStack itemStack) {
+            return itemStack.is(tag);
+        }
     }
 }

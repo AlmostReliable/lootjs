@@ -1,7 +1,7 @@
 package com.almostreliable.lootjs.loot.action;
 
 import com.almostreliable.lootjs.core.ILootAction;
-import com.almostreliable.lootjs.core.LootEntry;
+import com.almostreliable.lootjs.loot.table.entry.LootEntry;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.storage.loot.LootContext;
 
@@ -24,7 +24,7 @@ public class ReplaceLootAction implements ILootAction {
         for (int i = 0; i < loot.size(); i++) {
             ItemStack currentItemStack = loot.get(i);
             if (predicate.test(currentItemStack)) {
-                ItemStack newItem = this.lootEntry.createItem(context);
+                ItemStack newItem = this.lootEntry.createItemStack(context);
                 if (newItem == null) {
                     continue;
                 }
@@ -32,6 +32,7 @@ public class ReplaceLootAction implements ILootAction {
                 if (preserveCount) {
                     newItem.setCount(Math.min(currentItemStack.getCount(), newItem.getMaxStackSize()));
                 }
+
                 loot.set(i, newItem);
             }
         }

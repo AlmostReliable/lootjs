@@ -5,7 +5,6 @@ import com.almostreliable.lootjs.core.ILootCondition;
 import com.almostreliable.lootjs.kube.LootConditionsContainer;
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
 import net.minecraft.world.level.storage.loot.predicates.LootItemEntityPropertyCondition;
@@ -53,8 +52,8 @@ public class ConditionsContainer {
         private ILootCondition last;
 
         @Override
-        public TestLootConditionsContainer addCondition(ILootCondition condition) {
-            this.last = condition;
+        public TestLootConditionsContainer addCondition(LootItemCondition condition) {
+            this.last = (ILootCondition) condition;
             return this;
         }
 

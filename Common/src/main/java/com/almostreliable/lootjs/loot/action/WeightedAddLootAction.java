@@ -1,7 +1,7 @@
 package com.almostreliable.lootjs.loot.action;
 
 import com.almostreliable.lootjs.core.ILootAction;
-import com.almostreliable.lootjs.core.LootEntry;
+import com.almostreliable.lootjs.loot.table.entry.LootEntry;
 import net.minecraft.util.RandomSource;
 import net.minecraft.util.random.SimpleWeightedRandomList;
 import net.minecraft.world.item.ItemStack;
@@ -35,7 +35,7 @@ public class WeightedAddLootAction implements ILootAction {
         int lootRolls = numberProvider.getInt(context);
         for (int i = 0; i < lootRolls; i++) {
             weightedRandomList.getRandomValue(random).ifPresent(poolEntry -> {
-                ItemStack item = poolEntry.createItem(context);
+                ItemStack item = poolEntry.createItemStack(context);
                 if (item != null) {
                     rolledItems.add(item);
                 }

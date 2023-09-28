@@ -15,6 +15,7 @@ import com.almostreliable.lootjs.util.Utils;
 import dev.latvian.mods.rhino.util.HideFromJS;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.storage.loot.functions.LootItemFunction;
+import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -52,8 +53,8 @@ public class LootActionsBuilderJS implements LootConditionsContainer<LootActions
     }
 
     @Override
-    public LootActionsBuilderJS addCondition(ILootCondition condition) {
-        handlers.add(condition);
+    public LootActionsBuilderJS addCondition(LootItemCondition condition) {
+        handlers.add((ILootCondition) condition); // TODO Remove ILootCondition some day
         return this;
     }
 

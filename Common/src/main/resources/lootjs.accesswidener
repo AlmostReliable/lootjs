@@ -19,3 +19,42 @@ accessible field net/minecraft/world/entity/Entity  wasEyeInWater Z# wasEyeInWat
 accessible field net/minecraft/world/entity/Entity  wasTouchingWater Z# wasTouchingWater
 accessible field net/minecraft/world/entity/Entity blockPosition Lnet/minecraft/core/BlockPos;# blockPosition
 accessible field net/minecraft/world/level/storage/loot/predicates/LootItemEntityPropertyCondition entityTarget Lnet/minecraft/world/level/storage/loot/LootContext$EntityTarget;# entityTarget
+
+accessible class net/minecraft/world/level/storage/loot/entries/ComposableEntryContainer
+accessible field net/minecraft/world/level/storage/loot/entries/LootPoolEntryContainer conditions [Lnet/minecraft/world/level/storage/loot/predicates/LootItemCondition;
+accessible field net/minecraft/world/level/storage/loot/entries/LootPoolEntryContainer compositeCondition Ljava/util/function/Predicate;
+accessible field net/minecraft/world/level/storage/loot/entries/LootPoolSingletonContainer weight I
+accessible field net/minecraft/world/level/storage/loot/entries/LootPoolSingletonContainer quality I
+accessible field net/minecraft/world/level/storage/loot/entries/LootPoolSingletonContainer functions [Lnet/minecraft/world/level/storage/loot/functions/LootItemFunction;
+accessible field net/minecraft/world/level/storage/loot/entries/LootPoolSingletonContainer compositeFunction Ljava/util/function/BiFunction;
+accessible field net/minecraft/world/level/storage/loot/entries/LootItem item Lnet/minecraft/world/item/Item;
+accessible field net/minecraft/world/level/storage/loot/entries/TagEntry tag Lnet/minecraft/tags/TagKey;
+accessible field net/minecraft/world/level/storage/loot/entries/TagEntry expand Z
+accessible field net/minecraft/world/level/storage/loot/entries/LootTableReference name Lnet/minecraft/resources/ResourceLocation;
+accessible field net/minecraft/world/level/storage/loot/entries/DynamicLoot name Lnet/minecraft/resources/ResourceLocation;
+accessible field net/minecraft/world/level/storage/loot/entries/CompositeEntryBase children [Lnet/minecraft/world/level/storage/loot/entries/LootPoolEntryContainer;
+
+mutable field net/minecraft/world/level/storage/loot/entries/LootPoolEntryContainer conditions [Lnet/minecraft/world/level/storage/loot/predicates/LootItemCondition;
+mutable field net/minecraft/world/level/storage/loot/entries/LootPoolEntryContainer compositeCondition Ljava/util/function/Predicate;
+mutable field net/minecraft/world/level/storage/loot/entries/LootPoolSingletonContainer weight I
+mutable field net/minecraft/world/level/storage/loot/entries/LootPoolSingletonContainer quality I
+mutable field net/minecraft/world/level/storage/loot/entries/LootPoolSingletonContainer functions [Lnet/minecraft/world/level/storage/loot/functions/LootItemFunction;
+mutable field net/minecraft/world/level/storage/loot/entries/LootPoolSingletonContainer compositeFunction Ljava/util/function/BiFunction;
+mutable field net/minecraft/world/level/storage/loot/entries/LootItem item Lnet/minecraft/world/item/Item;
+mutable field net/minecraft/world/level/storage/loot/entries/TagEntry tag Lnet/minecraft/tags/TagKey;
+mutable field net/minecraft/world/level/storage/loot/entries/TagEntry expand Z
+mutable field net/minecraft/world/level/storage/loot/entries/LootTableReference name Lnet/minecraft/resources/ResourceLocation;
+mutable field net/minecraft/world/level/storage/loot/entries/DynamicLoot name Lnet/minecraft/resources/ResourceLocation;
+
+# constructors
+accessible method net/minecraft/world/level/storage/loot/entries/LootItem <init> (Lnet/minecraft/world/item/Item;II[Lnet/minecraft/world/level/storage/loot/predicates/LootItemCondition;[Lnet/minecraft/world/level/storage/loot/functions/LootItemFunction;)V
+accessible method net/minecraft/world/level/storage/loot/entries/TagEntry <init> (Lnet/minecraft/tags/TagKey;ZII[Lnet/minecraft/world/level/storage/loot/predicates/LootItemCondition;[Lnet/minecraft/world/level/storage/loot/functions/LootItemFunction;)V
+accessible method net/minecraft/world/level/storage/loot/entries/LootTableReference <init> (Lnet/minecraft/resources/ResourceLocation;II[Lnet/minecraft/world/level/storage/loot/predicates/LootItemCondition;[Lnet/minecraft/world/level/storage/loot/functions/LootItemFunction;)V
+accessible method net/minecraft/world/level/storage/loot/entries/DynamicLoot <init> (Lnet/minecraft/resources/ResourceLocation;II[Lnet/minecraft/world/level/storage/loot/predicates/LootItemCondition;[Lnet/minecraft/world/level/storage/loot/functions/LootItemFunction;)V
+accessible method net/minecraft/world/level/storage/loot/entries/EmptyLootItem <init> (II[Lnet/minecraft/world/level/storage/loot/predicates/LootItemCondition;[Lnet/minecraft/world/level/storage/loot/functions/LootItemFunction;)V
+accessible method net/minecraft/world/level/storage/loot/entries/AlternativesEntry <init> ([Lnet/minecraft/world/level/storage/loot/entries/LootPoolEntryContainer;[Lnet/minecraft/world/level/storage/loot/predicates/LootItemCondition;)V
+accessible method net/minecraft/world/level/storage/loot/entries/SequentialEntry <init> ([Lnet/minecraft/world/level/storage/loot/entries/LootPoolEntryContainer;[Lnet/minecraft/world/level/storage/loot/predicates/LootItemCondition;)V
+accessible method net/minecraft/world/level/storage/loot/entries/EntryGroup <init> ([Lnet/minecraft/world/level/storage/loot/entries/LootPoolEntryContainer;[Lnet/minecraft/world/level/storage/loot/predicates/LootItemCondition;)V
+accessible method net/minecraft/world/level/storage/loot/predicates/InvertedLootItemCondition <init> (Lnet/minecraft/world/level/storage/loot/predicates/LootItemCondition;)V
+accessible method net/minecraft/world/level/storage/loot/predicates/AnyOfCondition <init> ([Lnet/minecraft/world/level/storage/loot/predicates/LootItemCondition;)V
+accessible method net/minecraft/world/level/storage/loot/predicates/AllOfCondition <init> ([Lnet/minecraft/world/level/storage/loot/predicates/LootItemCondition;)V

@@ -3,9 +3,9 @@ package com.almostreliable.lootjs.kube;
 import com.almostreliable.lootjs.LootJSPlatform;
 import com.almostreliable.lootjs.core.ILootContextData;
 import com.almostreliable.lootjs.core.LootContextType;
-import com.almostreliable.lootjs.core.LootEntry;
 import com.almostreliable.lootjs.core.LootJSParamSets;
 import com.almostreliable.lootjs.filters.ItemFilter;
+import com.almostreliable.lootjs.loot.table.entry.LootEntry;
 import com.almostreliable.lootjs.util.LootContextUtils;
 import dev.latvian.mods.kubejs.item.ItemStackJS;
 import dev.latvian.mods.kubejs.level.BlockContainerJS;
@@ -172,11 +172,20 @@ public class LootContextJS {
         return data.getGeneratedLoot().size();
     }
 
-    public void addLoot(LootEntry lootEntry) {
-        ItemStack item = lootEntry.createItem(context);
-        if (item != null) {
-            data.getGeneratedLoot().add(item);
+    public void addLoot(Object unknown) {
+        if (unknown instanceof String asStr) {
+            ItemStack itemStack = ItemStackJS.of(unknown);
+            if (!itemStack.isEmpty()) {
+                data.getGeneratedLoot().add(itemStack);
+            }
+
+            return;
         }
+
+        LootEntry lootEntry = LootContainerWrapper.ofSingle(unknown);
+        lootEntry.saveAndGetOrigin().expand(context, e -> {
+            e.createItemStack(itemStack -> data.getGeneratedLoot().add(itemStack), context);
+        });
     }
 
     public void removeLoot(ItemFilter itemFilter) {

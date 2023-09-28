@@ -7,6 +7,7 @@ import com.almostreliable.lootjs.loot.results.Info;
 import com.almostreliable.lootjs.loot.results.LootInfoCollector;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.storage.loot.LootContext;
+import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,8 +15,8 @@ import java.util.List;
 public class NotCondition implements IExtendedLootCondition {
     private final ILootCondition condition;
 
-    public NotCondition(ILootCondition condition) {
-        this.condition = condition;
+    public NotCondition(LootItemCondition condition) {
+        this.condition = (ILootCondition) condition;
     }
 
     @Override

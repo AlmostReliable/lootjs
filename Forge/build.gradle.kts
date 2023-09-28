@@ -37,6 +37,8 @@ dependencies {
     modApi("dev.latvian.mods:kubejs-forge:${kubejsVersion}")
     localRuntime("io.github.llamalad7:mixinextras-forge:0.2.0-rc.4")
 
+    modImplementation("curse.maven:probejs-585406:4750396")
+
     // common module
     common(project(":Common", "namedElements")) { isTransitive = false }
     shadowCommon(project(":Common", "transformProductionForge")) { isTransitive = false }

@@ -7,6 +7,7 @@ public enum LootContextType {
     CHEST,
     FISHING,
     GIFT,
+    ARCHAEOLOGY,
     PIGLIN_BARTER,
     ADVANCEMENT_ENTITY,
     ADVANCEMENT_REWARD

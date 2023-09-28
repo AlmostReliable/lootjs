@@ -6,7 +6,9 @@
   "mixins": [
     "LootContextMixin",
     "LootParamsMixin",
+    "LootPoolFactory",
     "LootTableBuilderMixin",
+    "LootTableMixin",
     "LootTablePostMixin",
     "LootTablePreMixin",
     "LootTablesMixin"

@@ -1,9 +1,9 @@
 package com.almostreliable.lootjs.loot;
 
 import com.almostreliable.lootjs.core.ILootAction;
-import com.almostreliable.lootjs.core.LootEntry;
 import com.almostreliable.lootjs.filters.ItemFilter;
 import com.almostreliable.lootjs.loot.action.*;
+import com.almostreliable.lootjs.loot.table.entry.LootEntry;
 import net.minecraft.util.random.SimpleWeightedRandomList;
 import net.minecraft.world.level.Explosion;
 import net.minecraft.world.level.storage.loot.providers.number.ConstantValue;

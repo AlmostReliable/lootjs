@@ -1,23 +1,20 @@
 package com.almostreliable.lootjs.loot;
 
-import com.almostreliable.lootjs.LootJS;
-import com.almostreliable.lootjs.core.ILootCondition;
 import com.almostreliable.lootjs.filters.ItemFilter;
 import com.almostreliable.lootjs.loot.action.LootItemFunctionWrapperAction;
+import com.almostreliable.lootjs.loot.table.LootFunction;
 import com.google.gson.JsonObject;
+import dev.latvian.mods.kubejs.util.ConsoleJS;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.alchemy.Potion;
 import net.minecraft.world.item.enchantment.Enchantment;
-import net.minecraft.world.level.storage.loot.IntRange;
-import net.minecraft.world.level.storage.loot.functions.*;
-import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
+import net.minecraft.world.level.storage.loot.functions.LootItemFunction;
 import net.minecraft.world.level.storage.loot.providers.number.NumberProvider;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.function.Consumer;
 
 @SuppressWarnings("unused")
@@ -28,111 +25,92 @@ public interface LootFunctionsContainer<F extends LootFunctionsContainer<?>> {
     }
 
     default F enchantRandomly(Enchantment[] enchantments) {
-        EnchantRandomlyFunction.Builder enchantRandomlyFunctionBuilder = EnchantRandomlyFunction.randomEnchantment();
-        for (Enchantment enchantment : enchantments) {
-            enchantRandomlyFunctionBuilder.withEnchantment(enchantment);
-        }
-        return addFunction(enchantRandomlyFunctionBuilder);
+        return addFunction(LootFunction.enchantRandomly(enchantments));
     }
 
     default F enchantWithLevels(NumberProvider numberProvider) {
-        return enchantWithLevels(numberProvider, true);
+        return addFunction(LootFunction.enchantWithLevels(numberProvider));
     }
 
     default F enchantWithLevels(NumberProvider numberProvider, boolean allowTreasure) {
-        EnchantWithLevelsFunction.Builder ewlBuilder = EnchantWithLevelsFunction.enchantWithLevels(numberProvider);
-        if (allowTreasure) ewlBuilder.allowTreasure();
-        return addFunction(ewlBuilder);
+        return addFunction(LootFunction.enchantWithLevels(numberProvider, allowTreasure));
     }
 
     default F applyLootingBonus(NumberProvider numberProvider) {
-        LootingEnchantFunction.Builder lootingEnchantBuilder = LootingEnchantFunction.lootingMultiplier(numberProvider);
-        return addFunction(lootingEnchantBuilder);
+        return addFunction(LootFunction.applyLootingBonus(numberProvider));
     }
 
     default F applyBinomialDistributionBonus(Enchantment enchantment, float probability, int n) {
-        LootItemConditionalFunction.Builder<?> applyBonusBuilder = ApplyBonusCount
-                .addBonusBinomialDistributionCount(enchantment, probability, n);
-        return addFunction(applyBonusBuilder);
+        return addFunction(LootFunction.applyBinomialDistributionBonus(enchantment, probability, n));
     }
 
     default F applyOreBonus(Enchantment enchantment) {
-        LootItemConditionalFunction.Builder<?> applyBonusBuilder = ApplyBonusCount.addOreBonusCount(enchantment);
-        return addFunction(applyBonusBuilder);
+        return addFunction(LootFunction.applyOreBonus(enchantment));
     }
 
     default F applyBonus(Enchantment enchantment, int multiplier) {
-        LootItemConditionalFunction.Builder<?> applyBonusBuilder = ApplyBonusCount.addUniformBonusCount(enchantment,
-                multiplier);
-        return addFunction(applyBonusBuilder);
+        return addFunction(LootFunction.applyBonus(enchantment, multiplier));
     }
 
     default F simulateExplosionDecay() {
-        return addFunction(ApplyExplosionDecay.explosionDecay());
+        return addFunction(LootFunction.simulateExplosionDecay());
     }
 
     default F smeltLoot() {
-        return addFunction(SmeltItemFunction.smelted());
+        return addFunction(LootFunction.smeltLoot());
     }
 
     default F damage(NumberProvider numberProvider) {
-        return addFunction(SetItemDamageFunction.setDamage(numberProvider));
+        return addFunction(LootFunction.damage(numberProvider));
     }
 
     default F addPotion(Potion potion) {
-        Objects.requireNonNull(potion);
-        return addFunction(SetPotionFunction.setPotion(potion));
+        return addFunction(LootFunction.addPotion(potion));
     }
 
     default F addAttributes(Consumer<AddAttributesFunction.Builder> action) {
-        AddAttributesFunction.Builder builder = new AddAttributesFunction.Builder();
-        action.accept(builder);
-        return addFunction(builder);
+        return addFunction(LootFunction.addAttributes(action));
     }
 
     default F limitCount(@Nullable NumberProvider numberProviderMin, @Nullable NumberProvider numberProviderMax) {
-        IntRange intRange = new IntRange(numberProviderMin, numberProviderMax);
-        return addFunction(LimitCount.limitCount(intRange));
+        return addFunction(LootFunction.limitCount(numberProviderMin, numberProviderMax));
     }
 
+    @Deprecated
     default F limitCount(NumberProvider numberProvider) {
-        return addFunction(SetItemCountFunction.setCount(numberProvider));
+        ConsoleJS.SERVER.warn("limitCount(NumberProvider) is deprecated, use setCount(NumberProvider) instead");
+        return addFunction(LootFunction.setCount(numberProvider));
+    }
+
+    default F setCount(NumberProvider numberProvider) {
+        return addFunction(LootFunction.setCount(numberProvider));
     }
 
     default F addLore(Component... components) {
-        SetLoreFunction.Builder builder = SetLoreFunction.setLore();
-        for (Component c : components) {
-            builder.addLine(c);
-        }
-        return addFunction(builder);
+        return addFunction(LootFunction.addLore(components));
     }
 
     default F replaceLore(Component... components) {
-        SetLoreFunction.Builder builder = SetLoreFunction.setLore();
-        for (Component c : components) {
-            builder.addLine(c);
-        }
-        return addFunction(builder.setReplace(true));
+        return addFunction(LootFunction.replaceLore(components));
     }
 
     default F setName(Component component) {
-        return addFunction(SetNameFunction.setName(component));
+        return addFunction(LootFunction.setName(component));
     }
 
     default F addNBT(CompoundTag tag) {
-        return addFunction(SetNbtFunction.setTag(tag));
+        return addFunction(LootFunction.addNBT(tag));
     }
 
     /**
      * For the people who always forget if "NBT" or "Nbt"
      */
     default F addNbt(CompoundTag tag) {
-        return addFunction(SetNbtFunction.setTag(tag));
+        return addFunction(LootFunction.addNbt(tag));
     }
 
     default F customFunction(JsonObject json) {
-        var function = LootJS.FUNCTION_GSON.fromJson(json, LootItemFunction.class);
-        return addFunction(function);
+        return addFunction(LootFunction.fromJson(json));
     }
 
     default F functions(ItemFilter filter, Consumer<LootFunctionsContainer<F>> action) {
@@ -157,10 +135,7 @@ public interface LootFunctionsContainer<F extends LootFunctionsContainer<?>> {
 
     default F addFunction(LootItemFunction.Builder builder) {
         return addFunction(builder.build());
-//        return addAction(new LootItemFunctionWrapperAction(builder.build()));
     }
 
     F addFunction(LootItemFunction lootItemFunction);
-
-//    F addAction(ILootAction action);
 }

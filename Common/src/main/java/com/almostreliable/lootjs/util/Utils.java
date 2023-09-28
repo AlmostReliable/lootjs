@@ -17,6 +17,11 @@ import java.util.stream.Collectors;
 
 public class Utils {
 
+    @SuppressWarnings("unchecked")
+    public static <T> T cast(Object o) {
+        return (T) o;
+    }
+
     public static <T> String getClassNameEnding(T t) {
         String tName = t.getClass().getName();
         return tName.substring(tName.lastIndexOf('.') + 1);
