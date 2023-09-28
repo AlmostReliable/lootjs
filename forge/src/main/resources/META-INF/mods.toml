@@ -1,32 +1,32 @@
 modLoader = "javafml"
-loaderVersion = "[${forge_min_version},)"
-issueTrackerURL = "https://github.com/${github_user}/${github_repo}/issues"
+loaderVersion = "[${forgeFMLVersion},)"
+issueTrackerURL = "https://github.com/${githubUser}/${githubRepo}/issues"
 license = "${license}"
 
 [[mods]]
-modId = "${mod_id}"
+modId = "${modId}"
 version = "${version}"
-displayName = "${mod_name}"
-authors = "${mod_author}"
-description = '''${mod_description}'''
+displayName = "${modName}"
+authors = "${modAuthor}"
+description = '''${modDescription}'''
 
 [[dependencies.${mod_id}]]
 modId = "forge"
 mandatory = true
-versionRange = "[${forge_min_version},)"
+versionRange = "[${forgeVersion},)"
 ordering = "NONE"
 side = "BOTH"
 
 [[dependencies.${mod_id}]]
 modId = "minecraft"
 mandatory = true
-versionRange = "[${minecraft_version},)"
+versionRange = "[${minecraftVersion},)"
 ordering = "NONE"
 side = "BOTH"
 
 [[dependencies.${mod_id}]]
 modId = "kubejs"
 mandatory = true
-versionRange = "[${kubejs_version},)"
+versionRange = "[${kubejsVersion},)"
 ordering = "NONE"
 side = "BOTH"

@@ -1,18 +1,18 @@
 {
   "schemaVersion": 1,
-  "id": "${mod_id}",
+  "id": "${modId}",
   "version": "${version}",
-  "name": "${mod_name}",
-  "description": "${mod_description}",
+  "name": "${modName}",
+  "description": "${modDescription}",
   "authors": [
-    "${mod_author}"
+    "${modAuthor}"
   ],
   "contact": {
     "homepage": "https://almostreliable.com/",
-    "sources": "https://github.com/${github_user}/${github_repo}/issues"
+    "sources": "https://github.com/${github_user}/${githubRepo}/issues"
   },
   "license": "${license}",
-  "icon": "assets/${mod_id}/icon.png",
+  "icon": "assets/${modId}/icon.png",
   "environment": "*",
   "entrypoints": {
     "main": [
@@ -26,8 +26,8 @@
   "accessWidener" : "lootjs.accesswidener",
   "depends": {
     "fabric": "*",
-    "minecraft": ">=${minecraft_version}",
-    "kubejs": ">=${kubejs_version}",
+    "minecraft": ">=${minecraftVersion}",
+    "kubejs": ">=${kubejsVersion}",
     "java": ">=17"
   }
 }
