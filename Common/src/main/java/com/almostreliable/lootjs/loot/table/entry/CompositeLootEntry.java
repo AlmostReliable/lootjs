@@ -1,9 +1,9 @@
 package com.almostreliable.lootjs.loot.table.entry;
 
-import com.almostreliable.lootjs.filters.ItemFilter;
-import com.almostreliable.lootjs.loot.table.CompositeEntryBaseExtension;
-import com.almostreliable.lootjs.loot.table.LootConditionList;
-import com.almostreliable.lootjs.loot.table.LootEntryList;
+import com.almostreliable.lootjs.core.filters.ItemFilter;
+import com.almostreliable.lootjs.loot.extension.CompositeEntryBaseExtension;
+import com.almostreliable.lootjs.loot.LootConditionList;
+import com.almostreliable.lootjs.loot.LootEntryList;
 import com.almostreliable.lootjs.util.DebugInfo;
 import com.almostreliable.lootjs.util.NullableFunction;
 import net.minecraft.world.level.storage.loot.entries.*;

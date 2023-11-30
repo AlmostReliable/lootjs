@@ -1,12 +1,8 @@
 package com.almostreliable.lootjs.loot.results;
 
 import com.almostreliable.lootjs.LootModificationsAPI;
-import com.almostreliable.lootjs.core.ILootHandler;
-import com.almostreliable.lootjs.loot.action.CompositeLootAction;
-import com.almostreliable.lootjs.loot.action.LootItemFunctionWrapperAction;
-import com.almostreliable.lootjs.loot.condition.AndCondition;
-import com.almostreliable.lootjs.loot.condition.NotCondition;
-import com.almostreliable.lootjs.loot.condition.OrCondition;
+import com.almostreliable.lootjs.loot.modifier.LootHandler;
+import com.almostreliable.lootjs.loot.modifier.handler.VanillaFunctionWrapper;
 import net.minecraft.world.level.storage.loot.functions.LootItemFunction;
 import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
 import org.apache.commons.lang3.StringUtils;
@@ -16,28 +12,22 @@ import java.util.*;
 
 public class LootInfoCollector {
 
-    public static final Class<?>[] COMPOSITES = new Class[]{
-            OrCondition.class,
-            AndCondition.class,
-            NotCondition.class,
-            CompositeLootAction.class,
-            };
-
     protected final List<Info> firstLayer = new ArrayList<>();
     protected final Stack<Info.Composite> cursorHistory = new Stack<>();
 
     @Nullable
-    public static Info create(@Nullable LootInfoCollector collector, ILootHandler lootHandler) {
+    public static Info create(@Nullable LootInfoCollector collector, LootHandler lootHandler) {
         if (!LootModificationsAPI.LOOT_MODIFICATION_LOGGING || collector == null) return null;
 
-        Info info = createBaseInfo(lootHandler);
-        for (Class<?> composite : COMPOSITES) {
-            if (composite.isInstance(lootHandler)) {
-                return createInfo(collector, new Info.Composite(info));
-            }
-        }
-
-        return createInfo(collector, info);
+        throw new IllegalArgumentException("Debug Info currently not supported");
+//        Info info = createBaseInfo(lootHandler);
+//        for (Class<?> composite : COMPOSITES) {
+//            if (composite.isInstance(lootHandler)) {
+//                return createInfo(collector, new Info.Composite(info));
+//            }
+//        }
+//
+//        return createInfo(collector, info);
     }
 
     public static void createFunctionInfo(@Nullable LootInfoCollector collector, LootItemFunction function) {
@@ -75,7 +65,7 @@ public class LootInfoCollector {
         }
     }
 
-    private static Info createBaseInfo(ILootHandler lootHandler) {
+    private static Info createBaseInfo(LootHandler lootHandler) {
         String title = createTitle(lootHandler);
 
         if (lootHandler instanceof LootItemCondition) {
@@ -85,9 +75,9 @@ public class LootInfoCollector {
         return new Info.TitledInfo(Icon.ACTION, title);
     }
 
-    private static String createTitle(ILootHandler lootHandler) {
-        if (lootHandler instanceof LootItemFunctionWrapperAction lif) {
-            return lif.getLootItemFunction().getClass().getSimpleName();
+    private static String createTitle(LootHandler lootHandler) {
+        if (lootHandler instanceof VanillaFunctionWrapper lif) {
+            return lif.lootItemFunction().getClass().getSimpleName();
         }
 
         return lootHandler.getClass().getSimpleName();

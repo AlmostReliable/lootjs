@@ -2,17 +2,17 @@ package com.almostreliable.lootjs.kube;
 
 import com.almostreliable.lootjs.LootJSPlatform;
 import com.almostreliable.lootjs.LootModificationsAPI;
-import com.almostreliable.lootjs.core.LootContextType;
-import com.almostreliable.lootjs.filters.ItemFilter;
-import com.almostreliable.lootjs.filters.Resolver;
-import com.almostreliable.lootjs.filters.ResourceLocationFilter;
-import com.almostreliable.lootjs.kube.wrapper.IntervalJS;
-import com.almostreliable.lootjs.loot.table.LootCondition;
-import com.almostreliable.lootjs.loot.table.LootFunction;
+import com.almostreliable.lootjs.core.LootType;
+import com.almostreliable.lootjs.core.filters.ItemFilter;
+import com.almostreliable.lootjs.core.filters.Resolver;
+import com.almostreliable.lootjs.core.filters.ResourceLocationFilter;
+import com.almostreliable.lootjs.loot.LootCondition;
+import com.almostreliable.lootjs.loot.LootFunction;
 import com.almostreliable.lootjs.loot.table.entry.LootContainer;
 import com.almostreliable.lootjs.loot.table.entry.LootEntry;
 import com.almostreliable.lootjs.util.EntityTypeFilter;
 import dev.latvian.mods.kubejs.KubeJSPlugin;
+import dev.latvian.mods.kubejs.item.OutputItem;
 import dev.latvian.mods.kubejs.item.ingredient.IngredientJS;
 import dev.latvian.mods.kubejs.script.BindingsEvent;
 import dev.latvian.mods.kubejs.script.ScriptType;
@@ -25,6 +25,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.saveddata.maps.MapDecoration;
 
@@ -91,11 +92,9 @@ public class LootJSPlugin extends KubeJSPlugin {
 
     @Override
     public void registerBindings(BindingsEvent event) {
-        event.add("LootType", LootContextType.class);
-        event.add("Interval", new IntervalJS());
+        event.add("LootType", LootType.class);
         event.add("ItemFilter", ItemFilter.class);
-        event.add("Loot", LootContainerWrapper.class);
-        event.add("LootEntry", LootContainerWrapper.class);
+        event.add("LootEntry", LootEntry.class);
         event.add("LootCondition", LootCondition.class);
         event.add("LootFunction", LootFunction.class);
         LootJSPlatform.INSTANCE.registerBindings(event);
@@ -103,10 +102,16 @@ public class LootJSPlugin extends KubeJSPlugin {
 
     @Override
     public void registerTypeWrappers(ScriptType type, TypeWrappers typeWrappers) {
-        typeWrappers.registerSimple(LootContainer.class, LootContainerWrapper::of);
-        typeWrappers.registerSimple(LootEntry.class, LootContainerWrapper::ofSingle);
-        typeWrappers.registerSimple(MinMaxBounds.Doubles.class, IntervalJS::ofDoubles);
-        typeWrappers.registerSimple(MinMaxBounds.Ints.class, IntervalJS::ofInt);
+        typeWrappers.registerSimple(LootContainer.class, o -> {
+            if (o instanceof LootContainer container) {
+                return container;
+            }
+
+            return ofLootEntry(o);
+        });
+        typeWrappers.registerSimple(LootEntry.class, LootJSPlugin::ofLootEntry);
+        typeWrappers.registerSimple(MinMaxBounds.Doubles.class, LootJSPlugin::ofMinMaxDoubles);
+        typeWrappers.registerSimple(MinMaxBounds.Ints.class, LootJSPlugin::ofMinMaxInt);
         typeWrappers.registerSimple(EntityTypeFilter.class, EntityTypeFilter::of);
 
         typeWrappers.registerSimple(ItemFilter.class, o -> {
@@ -146,5 +151,65 @@ public class LootJSPlugin extends KubeJSPlugin {
         } else {
             return new ResourceLocationFilter.ByPattern(pattern);
         }
+    }
+
+    public static LootEntry ofLootEntry(@Nullable Object o) {
+        if (o instanceof LootEntry entry) {
+            return entry;
+        }
+
+        if (o instanceof String str && str.startsWith("#")) {
+            String tag = str.substring(0, 1);
+            return LootEntry.tag(tag, false);
+        }
+
+        OutputItem outputItem = OutputItem.of(o);
+        ItemStack itemStack = outputItem.item;
+        if (itemStack.isEmpty()) {
+            ConsoleJS.SERVER.error("[Loot.of()] Invalid item stack, returning empty stack: " + o);
+            ConsoleJS.SERVER.error("- Consider using `Loot.empty()` if you want to create an empty loot entry.");
+            return LootEntry.empty();
+        }
+
+        return LootEntry.of(itemStack).withWeight(outputItem.hasChance() ? (int) outputItem.getChance() : 1);
+    }
+
+    public static MinMaxBounds.Doubles ofMinMaxDoubles(Object o) {
+        if (o instanceof List<?> list) {
+            if (list.size() == 1) {
+                return ofMinMaxDoubles(list.get(0));
+            }
+
+            if (list.size() == 2) {
+                Object min = list.get(0);
+                Object max = list.get(1);
+                if (min instanceof Number minN && max instanceof Number maxN) {
+                    return MinMaxBounds.Doubles.between(minN.doubleValue(), maxN.doubleValue());
+                }
+            }
+        }
+
+        if (o instanceof Number) {
+            return MinMaxBounds.Doubles.atLeast(((Number) o).doubleValue());
+        }
+
+        if (o instanceof MinMaxBounds<? extends Number> minMaxBounds) {
+            Double min = minMaxBounds.getMin() != null ? minMaxBounds.getMin().doubleValue() : null;
+            Double max = minMaxBounds.getMax() != null ? minMaxBounds.getMax().doubleValue() : null;
+            return new MinMaxBounds.Doubles(min, max);
+        }
+
+        throw new IllegalArgumentException("Argument is not a MinMaxBound");
+    }
+
+    public static MinMaxBounds.Ints ofMinMaxInt(Object o) {
+        if (o instanceof MinMaxBounds.Ints) {
+            return (MinMaxBounds.Ints) o;
+        }
+
+        MinMaxBounds.Doubles doubles = ofMinMaxDoubles(o);
+        Integer min = doubles.getMin() != null ? doubles.getMin().intValue() : null;
+        Integer max = doubles.getMax() != null ? doubles.getMax().intValue() : null;
+        return new MinMaxBounds.Ints(min, max);
     }
 }

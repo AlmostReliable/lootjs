@@ -1,9 +1,8 @@
 package com.almostreliable.lootjs.kube;
 
 import com.almostreliable.lootjs.core.LootContextParamSetsMapping;
-import com.almostreliable.lootjs.core.LootContextType;
-import com.almostreliable.lootjs.filters.ResourceLocationFilter;
-import com.almostreliable.lootjs.loot.table.LootTableHolder;
+import com.almostreliable.lootjs.core.LootType;
+import com.almostreliable.lootjs.core.filters.ResourceLocationFilter;
 import com.almostreliable.lootjs.loot.table.MutableLootTable;
 import com.almostreliable.lootjs.mixin.LootDataManagerAccessor;
 import com.almostreliable.lootjs.util.EntityTypeFilter;
@@ -29,7 +28,7 @@ import java.util.stream.Collectors;
 public class LootTableEventJS extends EventJS {
 
     private final Map<LootDataId<?>, ?> rawData;
-    private final Map<ResourceLocation, LootTableHolder> lootTableHolders = new HashMap<>();
+    private final Map<ResourceLocation, MutableLootTable> lootTableHolders = new HashMap<>();
     private final LootDataManager manager;
     @Nullable private Map<LootDataId<?>, ?> unwrappedData;
 
@@ -70,21 +69,21 @@ public class LootTableEventJS extends EventJS {
                 .collect(Collectors.toSet());
     }
 
-    public void forEachTable(ResourceLocationFilter filter, Consumer<LootTableHolder> onForEach) {
+    public void forEachTable(ResourceLocationFilter filter, Consumer<MutableLootTable> onForEach) {
         getLootTableIds(filter).forEach(location -> {
-            LootTableHolder holder = getLootTable(location);
-            if (holder != null) {
-                onForEach.accept(holder);
+            var table = getLootTable(location);
+            if (table != null) {
+                onForEach.accept(table);
             }
         });
     }
 
-    public boolean hasLootTable(ResourceLocation location) {
-        return getData().containsKey(new LootDataId<>(LootDataType.TABLE, location));
+    public void forEachTable(Consumer<MutableLootTable> onForEach) {
+        forEachTable(location -> true, onForEach);
     }
 
-    public void forEachTable(Consumer<LootTableHolder> onForEach) {
-        forEachTable(location -> true, onForEach);
+    public boolean hasLootTable(ResourceLocation location) {
+        return getData().containsKey(new LootDataId<>(LootDataType.TABLE, location));
     }
 
     public void clearLootTables(ResourceLocationFilter filter) {
@@ -93,15 +92,15 @@ public class LootTableEventJS extends EventJS {
                 continue;
             }
 
-            LootTableHolder holder = getLootTable(id.location());
-            if (holder != null) {
-                holder.clear();
+            var table = getLootTable(id.location());
+            if (table != null) {
+                table.clear();
             }
         }
     }
 
     @Nullable
-    public LootTableHolder getLootTable(ResourceLocation location) {
+    public MutableLootTable getLootTable(ResourceLocation location) {
         var dataId = new LootDataId<>(LootDataType.TABLE, location);
         if (!getData().containsKey(dataId)) {
             return null;
@@ -110,78 +109,83 @@ public class LootTableEventJS extends EventJS {
         return lootTableHolders.computeIfAbsent(location, rl -> {
             var entry = getData().get(dataId);
             if (entry instanceof LootTable table) {
-                return new LootTableHolder(table, location);
+                return new MutableLootTable(table, location);
             }
 
             throw new RuntimeException("[Internal LootJS Error] Loot table not found: " + rl);
         });
     }
 
-    public void modifyLootTable(ResourceLocationFilter filter, Consumer<MutableLootTable> onModify) {
+    @Nullable
+    public MutableLootTable getBlockLoot(Block block) {
+        return getLootTable(block.getLootTable());
+    }
+
+    @Nullable
+    public MutableLootTable getEntityLoot(EntityType<?> entityType) {
+        return getLootTable(entityType.getDefaultLootTable());
+    }
+
+    public void modifyLootTables(ResourceLocationFilter filter, Consumer<MutableLootTable> onModify) {
         getData().forEach((id, entry) -> {
             if (!filter.test(id.location())) {
                 return;
             }
 
-            LootTableHolder holder = getLootTable(id.location());
-            if (holder != null) {
-                holder.modify(onModify);
+            var table = getLootTable(id.location());
+            if (table != null) {
+                onModify.accept(table);
             }
         });
     }
 
     public void modifyBlockLoot(BlockStatePredicate filter, Consumer<MutableLootTable> onModify) {
-        Set<ResourceLocation> ids = filter.getBlocks().stream().map(Block::getLootTable).collect(Collectors.toSet());
-        for (ResourceLocation id : ids) {
-            LootTableHolder holder = getLootTable(id);
-            if (holder != null) {
-                holder.modify(onModify);
+        for (Block block : filter.getBlocks()) {
+            MutableLootTable table = getBlockLoot(block);
+            if (table != null) {
+                onModify.accept(table);
             }
         }
     }
 
     public void modifyEntityLoot(EntityTypeFilter filter, Consumer<MutableLootTable> onModify) {
-        Set<ResourceLocation> ids = filter
-                .getEntityTypes()
-                .stream()
-                .map(EntityType::getDefaultLootTable).collect(Collectors.toSet());
-        for (ResourceLocation id : ids) {
-            LootTableHolder holder = getLootTable(id);
-            if (holder != null) {
-                holder.modify(onModify);
+        for (EntityType<?> entityType : filter.getEntityTypes()) {
+            var table = getEntityLoot(entityType);
+            if (table != null) {
+                onModify.accept(table);
             }
         }
     }
 
-    public void modifyLootType(LootContextType type, Consumer<MutableLootTable> onModify) {
-        modifyLootType(new LootContextType[]{ type }, onModify);
+    public void modifyLootType(LootType type, Consumer<MutableLootTable> onModify) {
+        modifyLootType(new LootType[]{ type }, onModify);
     }
 
-    public void modifyLootType(LootContextType[] types, Consumer<MutableLootTable> onModify) {
-        Set<LootContextType> asSet = new HashSet<>(Arrays.asList(types));
+    public void modifyLootType(LootType[] types, Consumer<MutableLootTable> onModify) {
+        Set<LootType> asSet = new HashSet<>(Arrays.asList(types));
         getData().forEach((id, entry) -> {
-            if (!(entry instanceof LootTable table)) {
+            if (!(entry instanceof LootTable vanillaTable)) {
                 return;
             }
 
-            LootContextType type = LootContextParamSetsMapping.PSETS_TO_TYPE.getOrDefault(table.getParamSet(),
-                    LootContextType.UNKNOWN);
+            LootType type = LootContextParamSetsMapping.PSETS_TO_TYPE.getOrDefault(vanillaTable.getParamSet(),
+                    LootType.UNKNOWN);
             if (!asSet.contains(type)) {
                 return;
             }
 
-            LootTableHolder holder = getLootTable(id.location());
-            if (holder != null) {
-                holder.modify(onModify);
+            var table = getLootTable(id.location());
+            if (table != null) {
+                onModify.accept(table);
             }
         });
     }
 
     public void create(ResourceLocation location, Consumer<MutableLootTable> onCreate) {
-        create(location, LootContextType.CHEST, onCreate);
+        create(location, LootType.CHEST, onCreate);
     }
 
-    public void create(ResourceLocation location, LootContextType type, Consumer<MutableLootTable> onCreate) {
+    public void create(ResourceLocation location, LootType type, Consumer<MutableLootTable> onCreate) {
         if (hasLootTable(location)) {
             throw new RuntimeException("[LootJS Error] Loot table already exists, cannot create new one: " + location);
         }
@@ -196,23 +200,25 @@ public class LootTableEventJS extends EventJS {
         unwrapData();
         LootTable lootTable = new LootTable.Builder().setParamSet(paramSet).setRandomSequence(location).build();
         getData().put(new LootDataId<>(LootDataType.TABLE, location), Utils.cast(lootTable));
-        LootTableHolder holder = new LootTableHolder(lootTable, location, true);
-        LootTableHolder old = lootTableHolders.put(location, holder);
-        if (old != null) {
+        var table = new MutableLootTable(lootTable, location);
+        table.markDirty();
+        if (lootTableHolders.put(location, table) != null) {
             throw new IllegalStateException("Loot table already exists: " + location);
         }
 
-        onCreate.accept(holder.mutate());
+        onCreate.accept(table);
     }
 
     @Override
     protected void afterPosted(EventResult result) {
         super.afterPosted(result);
 
-        lootTableHolders.forEach((location, holder) -> {
+        lootTableHolders.forEach((location, table) -> {
             try {
-                holder.ifChanged(MutableLootTable::writeToVanillaTable);
-                ConsoleJS.SERVER.info("Re-applied modified loot table to vanilla: " + location);
+                if (table.isDirty()) {
+                    table.writeToVanillaTable();
+                    ConsoleJS.SERVER.info("Re-applied modified loot table to vanilla: " + location);
+                }
             } catch (Exception e) {
                 ConsoleJS.SERVER.error("Error while re-applying modified loot table to vanilla: " + location, e);
             }

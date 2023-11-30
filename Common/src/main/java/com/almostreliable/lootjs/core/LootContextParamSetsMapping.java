@@ -8,21 +8,21 @@ import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
 import java.util.Map;
 
 public class LootContextParamSetsMapping {
-    public static final Map<LootContextParamSet, LootContextType> PSETS_TO_TYPE = ImmutableMap
-            .<LootContextParamSet, LootContextType>builder()
-            .put(LootContextParamSets.BLOCK, LootContextType.BLOCK)
-            .put(LootContextParamSets.ENTITY, LootContextType.ENTITY)
-            .put(LootContextParamSets.CHEST, LootContextType.CHEST)
-            .put(LootContextParamSets.FISHING, LootContextType.FISHING)
-            .put(LootContextParamSets.GIFT, LootContextType.GIFT)
-            .put(LootContextParamSets.ARCHAEOLOGY, LootContextType.ARCHAEOLOGY)
-            .put(LootContextParamSets.PIGLIN_BARTER, LootContextType.PIGLIN_BARTER)
-            .put(LootContextParamSets.ADVANCEMENT_ENTITY, LootContextType.ADVANCEMENT_ENTITY)
-            .put(LootContextParamSets.ADVANCEMENT_REWARD, LootContextType.ADVANCEMENT_REWARD)
+    public static final Map<LootContextParamSet, LootType> PSETS_TO_TYPE = ImmutableMap
+            .<LootContextParamSet, LootType>builder()
+            .put(LootContextParamSets.BLOCK, LootType.BLOCK)
+            .put(LootContextParamSets.ENTITY, LootType.ENTITY)
+            .put(LootContextParamSets.CHEST, LootType.CHEST)
+            .put(LootContextParamSets.FISHING, LootType.FISHING)
+            .put(LootContextParamSets.GIFT, LootType.GIFT)
+            .put(LootContextParamSets.ARCHAEOLOGY, LootType.ARCHAEOLOGY)
+            .put(LootContextParamSets.PIGLIN_BARTER, LootType.PIGLIN_BARTER)
+            .put(LootContextParamSets.ADVANCEMENT_ENTITY, LootType.ADVANCEMENT_ENTITY)
+            .put(LootContextParamSets.ADVANCEMENT_REWARD, LootType.ADVANCEMENT_REWARD)
             .build();
 
-    public static final Map<LootContextType, LootContextParamSet> TYPE_TO_PSETS = Util.make(() -> {
-        var builder = ImmutableMap.<LootContextType, LootContextParamSet>builder();
+    public static final Map<LootType, LootContextParamSet> TYPE_TO_PSETS = Util.make(() -> {
+        var builder = ImmutableMap.<LootType, LootContextParamSet>builder();
         for (var entry : PSETS_TO_TYPE.entrySet()) {
             builder.put(entry.getValue(), entry.getKey());
         }

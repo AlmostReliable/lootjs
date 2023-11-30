@@ -2,6 +2,10 @@ package com.almostreliable.lootjs.loot.table;
 
 import com.almostreliable.lootjs.LootJS;
 import com.almostreliable.lootjs.LootJSPlatform;
+import com.almostreliable.lootjs.loot.LootConditionList;
+import com.almostreliable.lootjs.loot.LootEntryList;
+import com.almostreliable.lootjs.loot.LootFunctionList;
+import com.almostreliable.lootjs.loot.extension.LootPoolExtension;
 import com.almostreliable.lootjs.loot.table.entry.LootAppendHelper;
 import com.almostreliable.lootjs.loot.table.entry.LootContainer;
 import com.almostreliable.lootjs.loot.table.entry.LootEntry;

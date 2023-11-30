@@ -1,6 +1,6 @@
 package com.almostreliable.lootjs.forge.mixin;
 
-import com.almostreliable.lootjs.loot.table.LootTableExtension;
+import com.almostreliable.lootjs.loot.extension.LootTableExtension;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.storage.loot.LootContext;
@@ -26,7 +26,6 @@ public class LootTableMixin implements LootTableExtension {
     @Mutable @Shadow @Final LootContextParamSet paramSet;
     @Mutable @Shadow @Final @Nullable ResourceLocation randomSequence;
     @Mutable @Shadow @Final private BiFunction<ItemStack, LootContext, ItemStack> compositeFunction;
-
     @Mutable @Shadow @Final private List<LootPool> f_79109_;
 
     @Override

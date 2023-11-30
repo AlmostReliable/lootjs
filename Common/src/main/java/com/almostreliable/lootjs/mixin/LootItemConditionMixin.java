@@ -1,6 +1,5 @@
 package com.almostreliable.lootjs.mixin;
 
-import com.almostreliable.lootjs.core.ILootCondition;
 import dev.latvian.mods.rhino.util.RemapPrefixForJS;
 import net.minecraft.world.level.storage.loot.predicates.AllOfCondition;
 import net.minecraft.world.level.storage.loot.predicates.AnyOfCondition;
@@ -11,7 +10,7 @@ import org.spongepowered.asm.mixin.Unique;
 
 @Mixin(LootItemCondition.class)
 @RemapPrefixForJS("lootjs$")
-public interface LootItemConditionMixin extends ILootCondition {
+public interface LootItemConditionMixin {
 
 
     @Unique

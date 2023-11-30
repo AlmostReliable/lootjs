@@ -1,6 +1,6 @@
 package com.almostreliable.lootjs.mixin;
 
-import com.almostreliable.lootjs.loot.table.CompositeEntryBaseExtension;
+import com.almostreliable.lootjs.loot.extension.CompositeEntryBaseExtension;
 import net.minecraft.world.level.storage.loot.entries.ComposableEntryContainer;
 import net.minecraft.world.level.storage.loot.entries.CompositeEntryBase;
 import net.minecraft.world.level.storage.loot.entries.LootPoolEntryContainer;

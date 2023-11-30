@@ -1,7 +1,7 @@
 package com.almostreliable.lootjs.forge.gametest.conditions;
 
 import com.almostreliable.lootjs.BuildConfig;
-import com.almostreliable.lootjs.filters.ItemFilter;
+import com.almostreliable.lootjs.core.filters.ItemFilter;
 import com.almostreliable.lootjs.forge.gametest.GameTestTemplates;
 import com.almostreliable.lootjs.forge.gametest.GameTestUtils;
 import com.almostreliable.lootjs.loot.condition.MatchEquipmentSlot;

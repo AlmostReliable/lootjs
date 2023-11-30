@@ -1,8 +1,8 @@
 package com.almostreliable.lootjs.mixin;
 
-import com.almostreliable.lootjs.loot.table.LootConditionList;
-import com.almostreliable.lootjs.loot.table.LootItemConditionalFunctionExtension;
-import com.almostreliable.lootjs.loot.table.LootItemFunctionExtension;
+import com.almostreliable.lootjs.loot.LootConditionList;
+import com.almostreliable.lootjs.loot.extension.LootItemConditionalFunctionExtension;
+import com.almostreliable.lootjs.loot.extension.LootItemFunctionExtension;
 import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.functions.LootItemConditionalFunction;
 import net.minecraft.world.level.storage.loot.functions.LootItemFunction;

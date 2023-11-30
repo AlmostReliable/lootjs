@@ -8,6 +8,26 @@ and this project adheres to [Semantic Versioning].
 ## [Unreleased]
 - /
 
+## [3.0.0] - 
+### Changes
+- Added `LootJS.loot_tables` event for direct loot table modification
+- Add `LootBucket` as wrapper class for loot for easier execute some helper functions
+- `LootEntry` does not only represent single items anymore. It now represents all different loot entries vanilla minecraft has.
+  - `LootEntry.of(item)`: Single item
+  - `LootEntry.empty()`: Empty entry
+  - `LootEntry.tag(tag)`: Tag entry
+  - `LootEntry.reference(lootTable)`: Reference to another loot table. For example, `LootEntry.reference("minecraft:chests/abandoned_mineshaft")`
+  - `LootEntry.alternative(lootEntries...)`: Alternative loot
+  - `LootEntry.sequence(lootEntries...)`: Sequence loot
+  - `LootEntry.group(lootEntries...)`: Grouped loot
+- Changes to `LootJS.modifiers` event:
+  - `addLootTableModifier`, `addLootTypeModifier`, `addBlockLootModifier`, `addEntityLootModifier` renamed into `addTableModifier`, `addTypeModifier`, `addBlockModifier`, `addEntityModifier`
+  - `.pool((pool) => {...})` removed. Instead, now use `.group((group) => {...})` or `.group(itemFilter, (item) => {...})`. Second one will pre-filter current loot for further modifications. 
+  - `.group()` can use `.repeat(numberprovider)` to execute the group multiple times
+  - `.functions(itemFilter, (f) => {})` removed. Better to just use `group` now
+  - `LootContextJS` wrapper removed. Using `LootContext` instead but added all helper methods from `LootContextJS` too
+  - 
+
 ## [2.10.3] - 2023-09-27
 ### Fixed
 - Fixed null pointer exception when using `addLootTableModifier` and an entity dies

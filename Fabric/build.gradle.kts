@@ -30,6 +30,8 @@ dependencies {
 
     modApi("dev.latvian.mods:kubejs-fabric:${kubejsVersion}")
 
+    modImplementation("curse.maven:probejs-585406:4750395")
+
     // common module
     common(project(":Common", "namedElements")) { isTransitive = false }
     shadowCommon(project(":Common", "transformProductionFabric")) { isTransitive = false }

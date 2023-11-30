@@ -2,8 +2,7 @@ package com.almostreliable.lootjs.loot.results;
 
 import com.almostreliable.lootjs.LootJSPlatform;
 import com.almostreliable.lootjs.LootModificationsAPI;
-import com.almostreliable.lootjs.core.LootJSParamSets;
-import com.almostreliable.lootjs.core.ILootContextData;
+import com.almostreliable.lootjs.loot.extension.LootContextExtension;
 import com.almostreliable.lootjs.util.LootContextUtils;
 import com.almostreliable.lootjs.util.Utils;
 import net.minecraft.server.level.ServerPlayer;
@@ -25,18 +24,14 @@ public class LootContextInfo {
     private LootContextInfo() {}
 
     @Nullable
-    public static LootContextInfo create(LootContext context) {
+    public static LootContextInfo create(LootContext context, Iterable<ItemStack> loot) {
         if (!LootModificationsAPI.LOOT_MODIFICATION_LOGGING) return null;
 
         LootContextInfo lci = new LootContextInfo();
 
         lci.add("LootTable", Utils.quote(LootJSPlatform.INSTANCE.getQueriedLootTableId(context)));
-
-        ILootContextData data = context.getParamOrNull(LootJSParamSets.DATA);
-        if (data != null) {
-            lci.add("LootType", data.getLootContextType().name());
-            lci.updateLoot(data.getGeneratedLoot());
-        }
+        lci.add("LootType", LootContextExtension.cast(context).lootjs$getType().name());
+        lci.updateLoot(loot);
 
         Vec3 origin = context.getParamOrNull(LootContextParams.ORIGIN);
         lci.addOptional("Position", origin, Utils::formatPosition);
@@ -85,7 +80,7 @@ public class LootContextInfo {
         add(left, Utils.formatItemStack(itemStack));
     }
 
-    public void updateLoot(Collection<ItemStack> loot) {
+    public void updateLoot(Iterable<ItemStack> loot) {
         LootComposite lootComposite = (LootComposite) collector
                 .getFirstLayer()
                 .stream()
@@ -102,7 +97,7 @@ public class LootContextInfo {
         }
     }
 
-    private void updateLoot(Collection<ItemStack> loot, Info.Composite composite) {
+    private void updateLoot(Iterable<ItemStack> loot, Info.Composite composite) {
         for (ItemStack itemStack : loot) {
             composite.addChildren(new Info.TitledInfo(Utils.formatItemStack(itemStack)));
         }

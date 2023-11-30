@@ -1,6 +1,6 @@
 package com.almostreliable.lootjs.forge.filters;
 
-import com.almostreliable.lootjs.filters.ItemFilter;
+import com.almostreliable.lootjs.core.filters.ItemFilter;
 import net.minecraftforge.common.ToolAction;
 
 public interface ForgeItemFilter extends ItemFilter {

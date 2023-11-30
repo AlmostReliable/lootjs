@@ -1,8 +1,7 @@
 package com.almostreliable.lootjs.forge.gametest;
 
 import com.almostreliable.lootjs.BuildConfig;
-import com.almostreliable.lootjs.core.ILootCondition;
-import com.almostreliable.lootjs.kube.LootConditionsContainer;
+import com.almostreliable.lootjs.loot.LootConditionsContainer;
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.world.level.storage.loot.LootContext;
@@ -49,11 +48,11 @@ public class ConditionsContainer {
     }
 
     public static class TestLootConditionsContainer implements LootConditionsContainer<TestLootConditionsContainer> {
-        private ILootCondition last;
+        private LootItemCondition last;
 
         @Override
         public TestLootConditionsContainer addCondition(LootItemCondition condition) {
-            this.last = (ILootCondition) condition;
+            this.last = condition;
             return this;
         }
 

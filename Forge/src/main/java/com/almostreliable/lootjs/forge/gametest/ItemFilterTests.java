@@ -1,11 +1,8 @@
 package com.almostreliable.lootjs.forge.gametest;
 
 import com.almostreliable.lootjs.BuildConfig;
-import com.almostreliable.lootjs.filters.ItemFilter;
-import com.almostreliable.lootjs.filters.ResourceLocationFilter;
-import net.minecraft.core.Registry;
-import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.core.registries.Registries;
+import com.almostreliable.lootjs.core.filters.ItemFilter;
+import com.almostreliable.lootjs.core.filters.ResourceLocationFilter;
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.world.item.EnchantedBookItem;

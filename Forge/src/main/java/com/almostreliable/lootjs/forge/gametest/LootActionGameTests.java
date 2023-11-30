@@ -1,10 +1,10 @@
 package com.almostreliable.lootjs.forge.gametest;
 
 import com.almostreliable.lootjs.BuildConfig;
-import com.almostreliable.lootjs.core.ILootContextData;
-import com.almostreliable.lootjs.loot.action.AddLootAction;
-import com.almostreliable.lootjs.loot.action.RemoveLootAction;
-import com.almostreliable.lootjs.loot.action.ReplaceLootAction;
+import com.almostreliable.lootjs.loot.modifier.handler.AddLootAction;
+import com.almostreliable.lootjs.loot.modifier.handler.RemoveLootAction;
+import com.almostreliable.lootjs.loot.modifier.handler.ReplaceLootAction;
+import com.almostreliable.lootjs.core.LootBucket;
 import com.almostreliable.lootjs.loot.table.entry.LootEntry;
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
@@ -25,23 +25,23 @@ public class LootActionGameTests {
         helper.succeedIf(() -> {
             Player p = helper.makeMockPlayer();
             LootContext ctx = GameTestUtils.chestContext(helper.getLevel(), p.position(), p);
-            ILootContextData data = GameTestUtils.fillExampleLoot(ctx);
+            LootBucket loot = GameTestUtils.fillExampleLoot(ctx);
             GameTestUtils.assertFalse(helper,
-                    data.getGeneratedLoot().stream().anyMatch(i -> i.getItem().equals(Items.APPLE)),
+                    loot.hasItem(itemStack -> itemStack.getItem().equals(Items.APPLE)),
                     "Should contains no apples");
             GameTestUtils.assertFalse(helper,
-                    data.getGeneratedLoot().stream().anyMatch(i -> i.getItem().equals(Items.LANTERN)),
+                    loot.hasItem(itemStack -> itemStack.getItem().equals(Items.LANTERN)),
                     "Should contains no lanterns");
             AddLootAction action = new AddLootAction(new LootEntry[]{
-                    LootEntry.ofItemStack(Items.APPLE.getDefaultInstance()),
-                    LootEntry.ofItemStack(Items.LANTERN.getDefaultInstance())
+                    LootEntry.of(Items.APPLE.getDefaultInstance()),
+                    LootEntry.of(Items.LANTERN.getDefaultInstance())
             });
-            action.applyLootHandler(ctx, data.getGeneratedLoot());
+            action.apply(ctx, loot);
             GameTestUtils.assertTrue(helper,
-                    data.getGeneratedLoot().stream().anyMatch(i -> i.getItem().equals(Items.APPLE)),
+                    loot.hasItem(itemStack -> itemStack.getItem().equals(Items.APPLE)),
                     "Should contains apples now");
             GameTestUtils.assertTrue(helper,
-                    data.getGeneratedLoot().stream().anyMatch(i -> i.getItem().equals(Items.LANTERN)),
+                    loot.hasItem(itemStack -> itemStack.getItem().equals(Items.LANTERN)),
                     "Should contains lanterns now");
         });
     }
@@ -51,15 +51,15 @@ public class LootActionGameTests {
         helper.succeedIf(() -> {
             Player p = helper.makeMockPlayer();
             LootContext ctx = GameTestUtils.chestContext(helper.getLevel(), p.position(), p);
-            ILootContextData data = GameTestUtils.fillExampleLoot(ctx);
+            var loot = GameTestUtils.fillExampleLoot(ctx);
 
             RemoveLootAction action = new RemoveLootAction(i -> i.getItem().equals(Items.DIAMOND));
-            action.applyLootHandler(ctx, data.getGeneratedLoot());
+            action.apply(ctx, loot);
             GameTestUtils.assertFalse(helper,
-                    data.getGeneratedLoot().stream().anyMatch(i -> i.getItem().equals(Items.DIAMOND)),
+                    loot.hasItem(i -> i.getItem().equals(Items.DIAMOND)),
                     "Diamond does not exist anymore");
             GameTestUtils.assertTrue(helper,
-                    data.getGeneratedLoot().size() == 2,
+                    loot.size() == 2,
                     "2 items in loot pool after removing diamond");
         });
     }
@@ -69,26 +69,26 @@ public class LootActionGameTests {
         helper.succeedIf(() -> {
             Player p = helper.makeMockPlayer();
             LootContext ctx = GameTestUtils.chestContext(helper.getLevel(), p.position(), p);
-            ILootContextData data = GameTestUtils.fillExampleLoot(ctx);
+            var loot = GameTestUtils.fillExampleLoot(ctx);
 
             GameTestUtils.assertTrue(helper,
-                    data.getGeneratedLoot().stream().anyMatch(i -> i.getItem().equals(Items.DIAMOND)),
+                    loot.hasItem(i -> i.getItem().equals(Items.DIAMOND)),
                     "Diamond exist");
             GameTestUtils.assertFalse(helper,
-                    data.getGeneratedLoot().stream().anyMatch(i -> i.getItem().equals(Items.MAGMA_CREAM)),
+                    loot.hasItem(i -> i.getItem().equals(Items.MAGMA_CREAM)),
                     "Magma cream does not exist currently");
 
             ReplaceLootAction action = new ReplaceLootAction(i -> i.getItem().equals(Items.DIAMOND),
-                    LootEntry.ofItemStack(Items.MAGMA_CREAM.getDefaultInstance()), false);
-            action.applyLootHandler(ctx, data.getGeneratedLoot());
+                    LootEntry.of(Items.MAGMA_CREAM.getDefaultInstance()), false);
+            action.apply(ctx, loot);
 
             GameTestUtils.assertFalse(helper,
-                    data.getGeneratedLoot().stream().anyMatch(i -> i.getItem().equals(Items.DIAMOND)),
+                    loot.hasItem(i -> i.getItem().equals(Items.DIAMOND)),
                     "Diamond does not exist anymore");
             GameTestUtils.assertTrue(helper,
-                    data.getGeneratedLoot().stream().anyMatch(i -> i.getItem().equals(Items.MAGMA_CREAM)),
+                    loot.hasItem(i -> i.getItem().equals(Items.MAGMA_CREAM)),
                     "Magma cream exists now");
-            GameTestUtils.assertTrue(helper, data.getGeneratedLoot().size() == 3, "still 3 items in loot pool");
+            GameTestUtils.assertTrue(helper, loot.size() == 3, "still 3 items in loot pool");
         });
     }
 }

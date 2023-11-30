@@ -1,9 +1,7 @@
 package com.almostreliable.lootjs.forge.gametest;
 
-import com.almostreliable.lootjs.core.ILootContextData;
-import com.almostreliable.lootjs.core.LootJSParamSets;
+import com.almostreliable.lootjs.core.LootBucket;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.server.level.ServerLevel;
@@ -16,15 +14,12 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.LootParams;
-import net.minecraft.world.level.storage.loot.parameters.LootContextParamSet;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.phys.Vec3;
 
 import javax.annotation.Nullable;
 import java.util.Objects;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 public class GameTestUtils {
     public static LootContext unknownContext(ServerLevel level, Vec3 origin) { // TODO: since 1.20 now chest context. Hopefully this is safe?
@@ -44,29 +39,30 @@ public class GameTestUtils {
         return new LootContext.Builder(params).create(null);
     }
 
-    public static ILootContextData fillExampleLoot(LootContext context) {
-        ILootContextData data = context.getParamOrNull(LootJSParamSets.DATA);
-        assert data != null;
-        data.setGeneratedLoot(Stream
-                .of(new ItemStack(Items.DIAMOND),
-                        new ItemStack(Items.NETHER_BRICK, 10),
-                        new ItemStack(Items.GOLDEN_CHESTPLATE))
-                .collect(Collectors.toList()));
-        return data;
+    public static LootBucket fillExampleLoot(LootContext context) {
+        var bucket = new LootBucket(context);
+        bucket.addItem(new ItemStack(Items.DIAMOND));
+        bucket.addItem(new ItemStack(Items.NETHER_BRICK, 10));
+        bucket.addItem(new ItemStack(Items.GOLDEN_CHESTPLATE));
+        return bucket;
     }
 
-    public static ILootContextData fillExampleLoot(LootContext context, ItemStack... items) {
-        ILootContextData data = context.getParamOrNull(LootJSParamSets.DATA);
-        assert data != null;
-        data.setGeneratedLoot(Stream.of(items).collect(Collectors.toList()));
-        return data;
+    public static LootBucket fillExampleLoot(LootContext context, ItemStack... items) {
+        var bucket = new LootBucket(context);
+        for (ItemStack item : items) {
+            bucket.addItem(item);
+        }
+
+        return bucket;
     }
 
-    public static ILootContextData fillExampleLoot(LootContext context, Item... items) {
-        ILootContextData data = context.getParamOrNull(LootJSParamSets.DATA);
-        assert data != null;
-        data.setGeneratedLoot(Stream.of(items).map(ItemStack::new).collect(Collectors.toList()));
-        return data;
+    public static LootBucket fillExampleLoot(LootContext context, Item... items) {
+        var bucket = new LootBucket(context);
+        for (Item item : items) {
+            bucket.addItem(new ItemStack(item));
+        }
+
+        return bucket;
     }
 
     public static <E extends Entity> E simpleEntity(EntityType<E> entityType, ServerLevel level, BlockPos pos) {

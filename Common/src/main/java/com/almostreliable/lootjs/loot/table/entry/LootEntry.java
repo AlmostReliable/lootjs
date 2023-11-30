@@ -1,9 +1,9 @@
 package com.almostreliable.lootjs.loot.table.entry;
 
-import com.almostreliable.lootjs.filters.ItemFilter;
+import com.almostreliable.lootjs.core.filters.ItemFilter;
 import com.almostreliable.lootjs.loot.LootFunctionsContainer;
-import com.almostreliable.lootjs.loot.table.LootConditionList;
-import com.almostreliable.lootjs.loot.table.LootFunctionList;
+import com.almostreliable.lootjs.loot.LootConditionList;
+import com.almostreliable.lootjs.loot.LootFunctionList;
 import com.almostreliable.lootjs.util.DebugInfo;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
@@ -13,6 +13,7 @@ import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.entries.*;
 import net.minecraft.world.level.storage.loot.functions.LootItemFunction;
@@ -23,6 +24,7 @@ import net.minecraft.world.level.storage.loot.providers.number.ConstantValue;
 import net.minecraft.world.level.storage.loot.providers.number.NumberProvider;
 
 import javax.annotation.Nullable;
+import java.util.List;
 import java.util.function.Consumer;
 
 @SuppressWarnings("UnusedReturnValue")
@@ -35,11 +37,18 @@ public class LootEntry implements LootContainer, LootFunctionsContainer<LootEntr
         this.origin = origin;
     }
 
-    public static LootEntry ofItemStack(ItemStack itemStack) {
-        itemStack = itemStack.copy();
+    public static LootEntry of(ItemStack itemStack) {
         return ofItem(itemStack.getItem(),
                 itemStack.getCount() > 1 ? ConstantValue.exactly(itemStack.getCount()) : null,
-                itemStack.getTag());
+                itemStack.getTag() != null ? itemStack.getTag().copy() : null);
+    }
+
+    public static LootEntry of(Item item, int count) {
+        return ofItem(item, ConstantValue.exactly(count), null);
+    }
+
+    public static LootEntry of(Item item, int count, CompoundTag nbt) {
+        return ofItem(item, ConstantValue.exactly(count), nbt);
     }
 
     public static LootEntry ofItem(Item item, @Nullable NumberProvider count, @Nullable CompoundTag nbt) {
@@ -73,7 +82,7 @@ public class LootEntry implements LootContainer, LootFunctionsContainer<LootEntr
                 new LootItemFunction[0]));
     }
 
-    public static LootEntry ofDynamic(ResourceLocation name) {
+    public static LootEntry dynamic(ResourceLocation name) {
         return new LootEntry(new DynamicLoot(name,
                 LootPoolSingletonContainer.DEFAULT_WEIGHT,
                 LootPoolSingletonContainer.DEFAULT_QUALITY,
@@ -81,7 +90,7 @@ public class LootEntry implements LootContainer, LootFunctionsContainer<LootEntr
                 new LootItemFunction[0]));
     }
 
-    public static LootEntry ofReferece(ResourceLocation lootTable) {
+    public static LootEntry reference(ResourceLocation lootTable) {
         return new LootEntry(new LootTableReference(lootTable,
                 LootPoolSingletonContainer.DEFAULT_WEIGHT,
                 LootPoolSingletonContainer.DEFAULT_QUALITY,
@@ -89,7 +98,11 @@ public class LootEntry implements LootContainer, LootFunctionsContainer<LootEntr
                 new LootItemFunction[0]));
     }
 
-    public static LootEntry ofTag(String tag, boolean expand) {
+    public static LootEntry tag(String tag) {
+        return tag(tag, false);
+    }
+
+    public static LootEntry tag(String tag, boolean expand) {
         if (tag.startsWith("#")) {
             tag = tag.substring(1);
         }
@@ -101,6 +114,47 @@ public class LootEntry implements LootContainer, LootFunctionsContainer<LootEntr
                 LootPoolSingletonContainer.DEFAULT_QUALITY,
                 new LootItemCondition[0],
                 new LootItemFunction[0]));
+    }
+
+    public static CompositeLootEntry ofIngredient(Ingredient ingredient) {
+        if (ingredient.isEmpty()) {
+            throw new IllegalArgumentException(
+                    "[LootEntry.ofIngredient()] Invalid ingredient, returning empty group. Consider using `LootEntry.empty()` if you want to create an empty loot entry.");
+        }
+
+        CompositeLootEntry group = CompositeLootEntry.group();
+        for (ItemStack item : ingredient.getItems()) {
+            group.getEntries().add(LootEntry.of(item));
+        }
+
+        return group;
+    }
+
+    public static CompositeLootEntry alternative(LootContainer... entries) {
+        var composite = CompositeLootEntry.alternative();
+        if (entries.length != 0) {
+            composite.getEntries().addAll(List.of(entries));
+        }
+
+        return composite;
+    }
+
+    public static CompositeLootEntry sequence(LootContainer... entries) {
+        var composite = CompositeLootEntry.sequence();
+        if (entries.length != 0) {
+            composite.getEntries().addAll(List.of(entries));
+        }
+
+        return composite;
+    }
+
+    public static CompositeLootEntry group(LootContainer... entries) {
+        var composite = CompositeLootEntry.group();
+        if (entries.length != 0) {
+            composite.getEntries().addAll(List.of(entries));
+        }
+
+        return composite;
     }
 
     public LootPoolSingletonContainer getOrigin() {
@@ -260,6 +314,10 @@ public class LootEntry implements LootContainer, LootFunctionsContainer<LootEntr
         return origin instanceof DynamicLoot;
     }
 
+    public boolean isSingle() {
+        return isItem() || (isTag() && !getExpand());
+    }
+
     public LootPoolEntryType getVanillaType() {
         return origin.getType();
     }
@@ -368,6 +426,11 @@ public class LootEntry implements LootContainer, LootFunctionsContainer<LootEntr
 
     @Nullable
     public ItemStack createItemStack(LootContext context) {
+        if(!isSingle()) {
+            throw new IllegalStateException("LootEntry must contain a single entry. Cannot use loot table reference or other types of entries which can contain multiple entries");
+        }
+
+        // TODO maybe deprecate it in the future
         if (isEmpty()) {
             return ItemStack.EMPTY;
         }

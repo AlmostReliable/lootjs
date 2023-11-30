@@ -1,7 +1,7 @@
 package com.almostreliable.lootjs.util;
 
 
-import com.almostreliable.lootjs.filters.ResourceLocationFilter;
+import com.almostreliable.lootjs.core.filters.ResourceLocationFilter;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;

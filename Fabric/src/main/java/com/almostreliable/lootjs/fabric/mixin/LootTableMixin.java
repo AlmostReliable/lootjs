@@ -1,6 +1,6 @@
 package com.almostreliable.lootjs.fabric.mixin;
 
-import com.almostreliable.lootjs.loot.table.LootTableExtension;
+import com.almostreliable.lootjs.loot.extension.LootTableExtension;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.storage.loot.LootContext;

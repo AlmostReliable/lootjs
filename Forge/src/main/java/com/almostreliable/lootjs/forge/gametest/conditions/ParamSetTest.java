@@ -1,12 +1,11 @@
 package com.almostreliable.lootjs.forge.gametest.conditions;
 
 import com.almostreliable.lootjs.BuildConfig;
-import com.almostreliable.lootjs.core.LootJSParamSets;
-import com.almostreliable.lootjs.core.LootContextType;
+import com.almostreliable.lootjs.core.LootType;
 import com.almostreliable.lootjs.forge.gametest.GameTestTemplates;
 import com.almostreliable.lootjs.forge.gametest.GameTestUtils;
+import com.almostreliable.lootjs.loot.extension.LootContextExtension;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Vec3i;
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.world.damagesource.DamageSource;
@@ -36,8 +35,8 @@ public class ParamSetTest {
         LootContext ctx = GameTestUtils.chestContext(helper.getLevel(), TEST_POS, null);
 
         helper.succeedIf(() -> GameTestUtils.assertEquals(helper,
-                ctx.getParam(LootJSParamSets.DATA).getLootContextType(),
-                LootContextType.CHEST));
+                LootContextExtension.cast(ctx).lootjs$getType(),
+                LootType.CHEST));
     }
 
     @GameTest(template = GameTestTemplates.EMPTY)
@@ -56,8 +55,8 @@ public class ParamSetTest {
         LootContext ctx = new LootContext.Builder(params).create(null);
 
         helper.succeedIf(() -> GameTestUtils.assertEquals(helper,
-                ctx.getParam(LootJSParamSets.DATA).getLootContextType(),
-                LootContextType.ENTITY));
+                LootContextExtension.cast(ctx).lootjs$getType(),
+                LootType.ENTITY));
     }
 
     @GameTest(template = GameTestTemplates.EMPTY)
@@ -71,8 +70,8 @@ public class ParamSetTest {
         LootContext ctx = new LootContext.Builder(params).create(null);
 
         helper.succeedIf(() -> GameTestUtils.assertEquals(helper,
-                ctx.getParam(LootJSParamSets.DATA).getLootContextType(),
-                LootContextType.CHEST));
+                LootContextExtension.cast(ctx).lootjs$getType(),
+                LootType.CHEST));
     }
 
     @GameTest(template = GameTestTemplates.EMPTY)
@@ -89,8 +88,8 @@ public class ParamSetTest {
 
         LootContext ctx = new LootContext.Builder(params).create(null);
         helper.succeedIf(() -> GameTestUtils.assertEquals(helper,
-                ctx.getParam(LootJSParamSets.DATA).getLootContextType(),
-                LootContextType.FISHING));
+                LootContextExtension.cast(ctx).lootjs$getType(),
+                LootType.FISHING));
     }
 
     @GameTest(template = GameTestTemplates.EMPTY)
@@ -102,7 +101,7 @@ public class ParamSetTest {
 
         LootContext ctx = new LootContext.Builder(params).create(null);
         helper.succeedIf(() -> GameTestUtils.assertEquals(helper,
-                ctx.getParam(LootJSParamSets.DATA).getLootContextType(),
-                LootContextType.UNKNOWN));
+                LootContextExtension.cast(ctx).lootjs$getType(),
+                LootType.UNKNOWN));
     }
 }

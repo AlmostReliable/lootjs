@@ -1,10 +1,10 @@
 package com.almostreliable.lootjs.forge.gametest.conditions;
 
 import com.almostreliable.lootjs.BuildConfig;
-import com.almostreliable.lootjs.filters.ItemFilter;
+import com.almostreliable.lootjs.core.filters.ItemFilter;
 import com.almostreliable.lootjs.forge.gametest.GameTestTemplates;
 import com.almostreliable.lootjs.forge.gametest.GameTestUtils;
-import com.almostreliable.lootjs.loot.condition.ContainsLootCondition;
+import com.almostreliable.lootjs.loot.modifier.handler.ContainsLootCheck;
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.world.item.Items;
@@ -22,38 +22,38 @@ public class ContainsLootConditionTest {
     @GameTest(template = GameTestTemplates.EMPTY)
     public void nonExactCheck(GameTestHelper helper) {
         LootContext ctx = GameTestUtils.unknownContext(helper.getLevel(), TEST_POS);
-        GameTestUtils.fillExampleLoot(ctx, Items.DIAMOND, Items.DIAMOND_HELMET);
-        ContainsLootCondition c = new ContainsLootCondition(itemStack -> itemStack.getItem() ==
-                                                                         Items.DIAMOND, false);
-        helper.succeedIf(() -> GameTestUtils.assertTrue(helper, c.test(ctx), "Should pass"));
+        var loot =GameTestUtils.fillExampleLoot(ctx, Items.DIAMOND, Items.DIAMOND_HELMET);
+        ContainsLootCheck c = new ContainsLootCheck(itemStack -> itemStack.getItem() ==
+                                                                 Items.DIAMOND, false);
+        helper.succeedIf(() -> GameTestUtils.assertTrue(helper, c.apply(ctx, loot), "Should pass"));
     }
 
     @GameTest(template = GameTestTemplates.EMPTY)
     public void exactCheck(GameTestHelper helper) {
         LootContext ctx = GameTestUtils.unknownContext(helper.getLevel(), TEST_POS);
-        GameTestUtils.fillExampleLoot(ctx, Items.DIAMOND, Items.DIAMOND_HELMET);
-        ContainsLootCondition c = new ContainsLootCondition(itemStack -> itemStack.getItem() == Items.DIAMOND ||
+        var loot = GameTestUtils.fillExampleLoot(ctx, Items.DIAMOND, Items.DIAMOND_HELMET);
+        ContainsLootCheck c = new ContainsLootCheck(itemStack -> itemStack.getItem() == Items.DIAMOND ||
                                                                          itemStack.getItem() ==
                                                                          Items.DIAMOND_HELMET, true);
-        helper.succeedIf(() -> GameTestUtils.assertTrue(helper, c.test(ctx), "Should pass"));
+        helper.succeedIf(() -> GameTestUtils.assertTrue(helper, c.apply(ctx, loot), "Should pass"));
     }
 
     @GameTest(template = GameTestTemplates.EMPTY)
     public void exactCheck_fail(GameTestHelper helper) {
         LootContext ctx = GameTestUtils.unknownContext(helper.getLevel(), TEST_POS);
-        GameTestUtils.fillExampleLoot(ctx, Items.DIAMOND, Items.DIAMOND_HELMET);
-        ContainsLootCondition c = new ContainsLootCondition(ItemFilter.ARMOR, true);
+        var loot = GameTestUtils.fillExampleLoot(ctx, Items.DIAMOND, Items.DIAMOND_HELMET);
+        ContainsLootCheck c = new ContainsLootCheck(ItemFilter.ARMOR, true);
         helper.succeedIf(() -> GameTestUtils.assertFalse(helper,
-                c.test(ctx),
+                c.apply(ctx, loot),
                 "Should fail, because of diamond is not armor"));
     }
 
     @GameTest(template = GameTestTemplates.EMPTY)
     public void simpleCheck_fail(GameTestHelper helper) {
         LootContext ctx = GameTestUtils.unknownContext(helper.getLevel(), TEST_POS);
-        GameTestUtils.fillExampleLoot(ctx, Items.DIAMOND, Items.DIAMOND_HELMET);
-        ContainsLootCondition c = new ContainsLootCondition(itemStack -> itemStack.getItem() ==
-                                                                         Items.NETHER_BRICK, false);
-        helper.succeedIf(() -> GameTestUtils.assertFalse(helper, c.test(ctx), "Should fail"));
+        var loot = GameTestUtils.fillExampleLoot(ctx, Items.DIAMOND, Items.DIAMOND_HELMET);
+        ContainsLootCheck c = new ContainsLootCheck(itemStack -> itemStack.getItem() ==
+                                                                 Items.NETHER_BRICK, false);
+        helper.succeedIf(() -> GameTestUtils.assertFalse(helper, c.apply(ctx, loot), "Should fail"));
     }
 }

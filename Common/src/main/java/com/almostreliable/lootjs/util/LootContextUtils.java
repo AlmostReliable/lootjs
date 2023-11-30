@@ -1,7 +1,6 @@
 package com.almostreliable.lootjs.util;
 
-import com.almostreliable.lootjs.core.LootJSParamSets;
-import com.almostreliable.lootjs.core.ILootContextData;
+import com.almostreliable.lootjs.loot.extension.LootContextExtension;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.storage.loot.LootContext;
@@ -12,10 +11,7 @@ import javax.annotation.Nullable;
 public class LootContextUtils {
     @Nullable
     public static ServerPlayer getPlayerOrNull(LootContext context) {
-        ILootContextData data = context.getParamOrNull(LootJSParamSets.DATA);
-        if (data == null) return null;
-
-        switch (data.getLootContextType()) {
+        switch (LootContextExtension.cast(context).lootjs$getType()) {
             case BLOCK:
             case CHEST:
                 return tryGetPlayer(context.getParamOrNull(LootContextParams.THIS_ENTITY));

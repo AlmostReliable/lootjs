@@ -1,7 +1,7 @@
 package com.almostreliable.lootjs.loot.table.entry;
 
-import com.almostreliable.lootjs.filters.ItemFilter;
-import com.almostreliable.lootjs.loot.table.LootConditionList;
+import com.almostreliable.lootjs.core.filters.ItemFilter;
+import com.almostreliable.lootjs.loot.LootConditionList;
 import com.almostreliable.lootjs.util.DebugInfo;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;

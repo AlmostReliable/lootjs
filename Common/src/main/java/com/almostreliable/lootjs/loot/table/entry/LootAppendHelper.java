@@ -16,23 +16,23 @@ public interface LootAppendHelper {
     }
 
     default LootEntry addItem(ItemStack itemStack) {
-        return addAndReturn(LootEntry.ofItemStack(itemStack));
+        return addAndReturn(LootEntry.of(itemStack));
     }
 
     default LootEntry addTag(String tag) {
-        return addAndReturn(LootEntry.ofTag(tag, false));
+        return addAndReturn(LootEntry.tag(tag, false));
     }
 
     default LootEntry addTag(String tag, boolean expand) {
-        return addAndReturn(LootEntry.ofTag(tag, expand));
+        return addAndReturn(LootEntry.tag(tag, expand));
     }
 
     default LootEntry addReference(ResourceLocation lootTable) {
-        return addAndReturn(LootEntry.ofReferece(lootTable));
+        return addAndReturn(LootEntry.reference(lootTable));
     }
 
     default LootEntry addDynamic(ResourceLocation name) {
-        return addAndReturn(LootEntry.ofDynamic(name));
+        return addAndReturn(LootEntry.dynamic(name));
     }
 
     default LootEntry addEmpty() {

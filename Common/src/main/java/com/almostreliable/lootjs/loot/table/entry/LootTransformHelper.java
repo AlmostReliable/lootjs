@@ -1,7 +1,7 @@
 package com.almostreliable.lootjs.loot.table.entry;
 
-import com.almostreliable.lootjs.filters.ItemFilter;
-import com.almostreliable.lootjs.filters.ResourceLocationFilter;
+import com.almostreliable.lootjs.core.filters.ItemFilter;
+import com.almostreliable.lootjs.core.filters.ResourceLocationFilter;
 import com.almostreliable.lootjs.util.NullableFunction;
 import net.minecraft.world.item.ItemStack;
 

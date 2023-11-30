@@ -1,8 +1,5 @@
 package com.almostreliable.lootjs.loot;
 
-import com.almostreliable.lootjs.filters.ItemFilter;
-import com.almostreliable.lootjs.loot.action.LootItemFunctionWrapperAction;
-import com.almostreliable.lootjs.loot.table.LootFunction;
 import com.google.gson.JsonObject;
 import dev.latvian.mods.kubejs.util.ConsoleJS;
 import net.minecraft.nbt.CompoundTag;
@@ -13,11 +10,9 @@ import net.minecraft.world.level.storage.loot.functions.LootItemFunction;
 import net.minecraft.world.level.storage.loot.providers.number.NumberProvider;
 
 import javax.annotation.Nullable;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.function.Consumer;
 
-@SuppressWarnings("unused")
+@SuppressWarnings({ "unused", "UnusedReturnValue" })
 public interface LootFunctionsContainer<F extends LootFunctionsContainer<?>> {
 
     default F enchantRandomly() {
@@ -111,30 +106,6 @@ public interface LootFunctionsContainer<F extends LootFunctionsContainer<?>> {
 
     default F customFunction(JsonObject json) {
         return addFunction(LootFunction.fromJson(json));
-    }
-
-    default F functions(ItemFilter filter, Consumer<LootFunctionsContainer<F>> action) {
-        // TODO not sure if I like this
-        List<LootItemFunction> functions = new ArrayList<>();
-        LootFunctionsContainer<F> lfc = new LootFunctionsContainer<>() {
-            @Override
-            public F addFunction(LootItemFunction lootItemFunction) {
-                functions.add(lootItemFunction);
-                //noinspection unchecked
-                return (F) this;
-            }
-
-            @Override
-            public F functions(ItemFilter filter, Consumer<LootFunctionsContainer<F>> action) {
-                throw new UnsupportedOperationException("Nested `filteredFunctions` are not supported.");
-            }
-        };
-        action.accept(lfc);
-        return addFunction(new LootItemFunctionWrapperAction.CompositeLootItemFunction(functions, filter));
-    }
-
-    default F addFunction(LootItemFunction.Builder builder) {
-        return addFunction(builder.build());
     }
 
     F addFunction(LootItemFunction lootItemFunction);

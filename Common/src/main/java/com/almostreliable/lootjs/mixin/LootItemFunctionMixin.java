@@ -1,7 +1,7 @@
 package com.almostreliable.lootjs.mixin;
 
-import com.almostreliable.lootjs.loot.table.LootConditionList;
-import com.almostreliable.lootjs.loot.table.LootItemFunctionExtension;
+import com.almostreliable.lootjs.loot.LootConditionList;
+import com.almostreliable.lootjs.loot.extension.LootItemFunctionExtension;
 import dev.latvian.mods.kubejs.util.ConsoleJS;
 import net.minecraft.world.level.storage.loot.functions.LootItemFunction;
 import org.spongepowered.asm.mixin.Mixin;

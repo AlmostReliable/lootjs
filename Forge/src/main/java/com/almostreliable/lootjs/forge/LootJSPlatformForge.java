@@ -9,6 +9,7 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.LootPool;
+import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.level.storage.loot.entries.LootPoolEntryContainer;
 import net.minecraft.world.level.storage.loot.functions.LootItemFunction;
 import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
@@ -54,6 +55,11 @@ public class LootJSPlatformForge implements LootJSPlatform {
     @Override
     public void setQueriedLootTableId(LootContext context, ResourceLocation id) {
         context.setQueriedLootTableId(id);
+    }
+
+    @Override
+    public ResourceLocation getLootTableId(LootTable lootTable) {
+        return lootTable.getLootTableId();
     }
 
     @Override

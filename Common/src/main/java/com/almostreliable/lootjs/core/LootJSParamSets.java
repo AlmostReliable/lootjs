@@ -6,10 +6,6 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParam;
 
 public class LootJSParamSets {
-    public static final LootContextParam<ILootContextData> DATA = new LootContextParam<>(new ResourceLocation(
-            BuildConfig.MOD_ID,
-            "param_data"));
-
     public static final LootContextParam<LootInfoCollector> RESULT_COLLECTOR = new LootContextParam<>(new ResourceLocation(
             BuildConfig.MOD_ID,
             "result_collector"));

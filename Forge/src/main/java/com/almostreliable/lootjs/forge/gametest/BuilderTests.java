@@ -1,7 +1,7 @@
 package com.almostreliable.lootjs.forge.gametest;
 
 import com.almostreliable.lootjs.BuildConfig;
-import com.almostreliable.lootjs.kube.builder.DamageSourcePredicateBuilderJS;
+import com.almostreliable.lootjs.loot.condition.builder.DamageSourcePredicateBuilder;
 import com.almostreliable.lootjs.loot.condition.WrappedDamageSourceCondition;
 import com.almostreliable.lootjs.predicate.ExtendedEntityFlagsPredicate;
 import com.google.gson.JsonElement;
@@ -20,7 +20,7 @@ public class BuilderTests {
     @GameTest(template = GameTestTemplates.EMPTY)
     public void damageSourcePredicateBuilderJS_Empty(GameTestHelper helper) {
         helper.succeedIf(() -> {
-            WrappedDamageSourceCondition defaultP = new DamageSourcePredicateBuilderJS().build();
+            WrappedDamageSourceCondition defaultP = new DamageSourcePredicateBuilder().build();
             JsonObject dsp = defaultP.serializeToJson().getAsJsonObject("DamageSourcePredicate");
 
             GameTestUtils.assertNull(helper, dsp.get("is_projectile"));
@@ -126,9 +126,9 @@ public class BuilderTests {
 //        damageSourcePredicateFieldTest(helper, DamageSourcePredicateBuilderJS::isLightning, "is_lightning", false);
 //    }
 
-    public void damageSourcePredicateFieldTest(GameTestHelper helper, BiConsumer<DamageSourcePredicateBuilderJS, Boolean> setter, String key, boolean value) {
+    public void damageSourcePredicateFieldTest(GameTestHelper helper, BiConsumer<DamageSourcePredicateBuilder, Boolean> setter, String key, boolean value) {
         helper.succeedIf(() -> {
-            DamageSourcePredicateBuilderJS builder = new DamageSourcePredicateBuilderJS();
+            DamageSourcePredicateBuilder builder = new DamageSourcePredicateBuilder();
             setter.accept(builder, value);
             JsonObject dsp = builder
                     .build()
