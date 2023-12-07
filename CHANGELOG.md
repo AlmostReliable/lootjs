@@ -8,6 +8,10 @@ and this project adheres to [Semantic Versioning].
 ## [Unreleased]
 - /
 
+## [2.10.4] - 2023-12-07
+### Fixed
+- Crash with newest kubejs version
+
 ## [2.10.3] - 2023-09-27
 ### Fixed
 - Fixed null pointer exception when using `addLootTableModifier` and an entity dies

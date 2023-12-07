@@ -129,15 +129,6 @@ public abstract class LootModificationEventJS extends EventJS {
             }
         } catch (Exception exception) {
             ConsoleJS.SERVER.error(exception);
-        } finally {
-            if (CommonProperties.get().announceReload && UtilsJS.staticServer != null &&
-                !CommonProperties.get().hideServerScriptErrors) {
-                if (!ScriptType.SERVER.errors.isEmpty()) {
-                    UtilsJS.staticServer.kjs$tell(Component.literal(
-                            "LootJS Errors found! [" + ScriptType.SERVER.errors.size() +
-                            "]! Run '/kubejs errors' for more info").withStyle(ChatFormatting.DARK_RED));
-                }
-            }
         }
     }
 }
