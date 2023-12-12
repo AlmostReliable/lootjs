@@ -2,14 +2,12 @@ package com.almostreliable.lootjs.loot.table;
 
 import com.almostreliable.lootjs.LootJS;
 import com.almostreliable.lootjs.LootJSPlatform;
+import com.almostreliable.lootjs.core.entry.SimpleLootEntry;
 import com.almostreliable.lootjs.loot.LootConditionList;
 import com.almostreliable.lootjs.loot.LootEntryList;
 import com.almostreliable.lootjs.loot.LootFunctionList;
 import com.almostreliable.lootjs.loot.extension.LootPoolExtension;
-import com.almostreliable.lootjs.loot.table.entry.LootAppendHelper;
-import com.almostreliable.lootjs.loot.table.entry.LootContainer;
-import com.almostreliable.lootjs.loot.table.entry.LootEntry;
-import com.almostreliable.lootjs.loot.table.entry.LootTransformHelper;
+import com.almostreliable.lootjs.core.entry.LootEntry;
 import com.almostreliable.lootjs.util.DebugInfo;
 import com.almostreliable.lootjs.util.NullableFunction;
 import com.google.gson.JsonElement;
@@ -119,18 +117,18 @@ public class MutableLootPool implements LootTransformHelper, LootAppendHelper {
     }
 
     @Override
-    public void addEntry(LootContainer entry) {
+    public void addEntry(LootEntry entry) {
         entries.add(entry);
     }
 
     @Override
-    public void transformLoot(NullableFunction<LootEntry, Object> onTransform, boolean deepTransform) {
-        getEntries().transformLoot(onTransform, deepTransform);
+    public void transformEntry(NullableFunction<SimpleLootEntry, Object> onTransform, boolean deepTransform) {
+        getEntries().transformEntry(onTransform, deepTransform);
     }
 
     @Override
-    public void removeLoot(Predicate<LootEntry> onRemove, boolean deepRemove) {
-        getEntries().removeLoot(onRemove, deepRemove);
+    public void removeEntry(Predicate<SimpleLootEntry> onRemove, boolean deepRemove) {
+        getEntries().removeEntry(onRemove, deepRemove);
     }
 
     public MutableLootPool when(Consumer<LootConditionList> onConditions) {

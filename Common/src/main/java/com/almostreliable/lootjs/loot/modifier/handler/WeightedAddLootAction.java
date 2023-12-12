@@ -1,8 +1,8 @@
 package com.almostreliable.lootjs.loot.modifier.handler;
 
-import com.almostreliable.lootjs.loot.modifier.LootHandler;
 import com.almostreliable.lootjs.core.LootBucket;
-import com.almostreliable.lootjs.loot.table.entry.LootEntry;
+import com.almostreliable.lootjs.core.entry.SingleLootEntry;
+import com.almostreliable.lootjs.loot.modifier.LootHandler;
 import net.minecraft.util.RandomSource;
 import net.minecraft.util.random.SimpleWeightedRandomList;
 import net.minecraft.world.item.ItemStack;
@@ -16,10 +16,10 @@ import java.util.HashSet;
 public class WeightedAddLootAction implements LootHandler {
 
     private final NumberProvider numberProvider;
-    private final SimpleWeightedRandomList<LootEntry> weightedRandomList;
+    private final SimpleWeightedRandomList<SingleLootEntry> weightedRandomList;
     private final boolean allowDuplicateLoot;
 
-    public WeightedAddLootAction(NumberProvider numberProvider, SimpleWeightedRandomList<LootEntry> weightedRandomList, boolean allowDuplicateLoot) {
+    public WeightedAddLootAction(NumberProvider numberProvider, SimpleWeightedRandomList<SingleLootEntry> weightedRandomList, boolean allowDuplicateLoot) {
         this.numberProvider = numberProvider;
         this.weightedRandomList = weightedRandomList;
         this.allowDuplicateLoot = allowDuplicateLoot;
@@ -35,7 +35,7 @@ public class WeightedAddLootAction implements LootHandler {
         int lootRolls = numberProvider.getInt(context);
         for (int i = 0; i < lootRolls; i++) {
             weightedRandomList.getRandomValue(random).ifPresent(poolEntry -> {
-                ItemStack item = poolEntry.createItemStack(context);
+                ItemStack item = poolEntry.create(context);
                 if (item != null) {
                     rolledItems.add(item);
                 }

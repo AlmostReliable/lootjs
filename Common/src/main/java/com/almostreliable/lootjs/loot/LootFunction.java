@@ -1,7 +1,6 @@
 package com.almostreliable.lootjs.loot;
 
 import com.almostreliable.lootjs.LootJS;
-import com.almostreliable.lootjs.loot.AddAttributesFunction;
 import com.google.gson.JsonObject;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
@@ -114,14 +113,14 @@ public class LootFunction {
         return SetNameFunction.setName(component).build();
     }
 
-    public static LootItemFunction addNBT(CompoundTag tag) {
+    public static LootItemFunction setNBT(CompoundTag tag) {
         return SetNbtFunction.setTag(tag).build();
     }
 
     /**
      * For the people who always forget if "NBT" or "Nbt"
      */
-    public static LootItemFunction addNbt(CompoundTag tag) {
+    public static LootItemFunction setNbt(CompoundTag tag) {
         return SetNbtFunction.setTag(tag).build();
     }
 

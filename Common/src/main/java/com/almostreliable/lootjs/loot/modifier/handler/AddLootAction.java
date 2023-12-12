@@ -2,7 +2,7 @@ package com.almostreliable.lootjs.loot.modifier.handler;
 
 import com.almostreliable.lootjs.loot.modifier.LootHandler;
 import com.almostreliable.lootjs.core.LootBucket;
-import com.almostreliable.lootjs.loot.table.entry.LootContainer;
+import com.almostreliable.lootjs.core.entry.LootEntry;
 import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.entries.LootPoolEntryContainer;
 
@@ -10,10 +10,10 @@ public class AddLootAction implements LootHandler {
 
     private final LootPoolEntryContainer[] entries;
 
-    public AddLootAction(LootContainer... entries) {
+    public AddLootAction(LootEntry... entries) {
         this.entries = new LootPoolEntryContainer[entries.length];
         for (int i = 0; i < entries.length; i++) {
-            this.entries[i] = entries[i].saveAndGetOrigin();
+            this.entries[i] = entries[i].getVanillaEntry();
         }
 
     }

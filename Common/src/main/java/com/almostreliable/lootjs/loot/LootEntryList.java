@@ -1,10 +1,10 @@
 package com.almostreliable.lootjs.loot;
 
+import com.almostreliable.lootjs.core.entry.SimpleLootEntry;
+import com.almostreliable.lootjs.core.entry.LootEntry;
 import com.almostreliable.lootjs.core.filters.ResourceLocationFilter;
-import com.almostreliable.lootjs.loot.table.entry.LootAppendHelper;
-import com.almostreliable.lootjs.loot.table.entry.LootContainer;
-import com.almostreliable.lootjs.loot.table.entry.LootEntry;
-import com.almostreliable.lootjs.loot.table.entry.LootTransformHelper;
+import com.almostreliable.lootjs.loot.table.LootAppendHelper;
+import com.almostreliable.lootjs.loot.table.LootTransformHelper;
 import com.almostreliable.lootjs.util.DebugInfo;
 import com.almostreliable.lootjs.util.LootObjectList;
 import com.almostreliable.lootjs.util.NullableFunction;
@@ -20,13 +20,13 @@ import java.util.Collection;
 import java.util.List;
 import java.util.function.Predicate;
 
-public class LootEntryList extends LootObjectList<LootContainer> implements LootTransformHelper,
-                                                                            LootAppendHelper {
+public class LootEntryList extends LootObjectList<LootEntry> implements LootTransformHelper,
+                                                                        LootAppendHelper {
 
-    private static Collection<LootContainer> mutate(LootPoolEntryContainer... entries) {
-        List<LootContainer> mutableEntries = new ArrayList<>(entries.length);
+    private static Collection<LootEntry> mutate(LootPoolEntryContainer... entries) {
+        List<LootEntry> mutableEntries = new ArrayList<>(entries.length);
         for (LootPoolEntryContainer entry : entries) {
-            mutableEntries.add(LootContainer.ofVanilla(entry));
+            mutableEntries.add(LootEntry.ofVanilla(entry));
         }
 
         return mutableEntries;
@@ -42,8 +42,8 @@ public class LootEntryList extends LootObjectList<LootContainer> implements Loot
 
     @Nullable
     @Override
-    protected LootContainer wrapTransformed(@Nullable Object o) {
-        if (o instanceof LootContainer mle) {
+    protected LootEntry wrapTransformed(@Nullable Object o) {
+        if (o instanceof LootEntry mle) {
             return mle;
         }
 
@@ -55,7 +55,7 @@ public class LootEntryList extends LootObjectList<LootContainer> implements Loot
         return null;
     }
 
-    public LootEntryList(LootContainer... entries) {
+    public LootEntryList(LootEntry... entries) {
         super(Arrays.asList(entries));
     }
 
@@ -64,7 +64,7 @@ public class LootEntryList extends LootObjectList<LootContainer> implements Loot
     }
 
     @Override
-    protected boolean entryMatches(LootContainer entry, ResourceLocationFilter filter) {
+    protected boolean entryMatches(LootEntry entry, ResourceLocationFilter filter) {
         var rl = BuiltInRegistries.LOOT_POOL_ENTRY_TYPE.getKey(entry.getVanillaType());
         return filter.test(rl);
     }
@@ -73,7 +73,7 @@ public class LootEntryList extends LootObjectList<LootContainer> implements Loot
     public LootPoolEntryContainer[] createVanillaArray() {
         LootPoolEntryContainer[] entries = new LootPoolEntryContainer[this.size()];
         for (int i = 0; i < this.size(); i++) {
-            entries[i] = this.get(i).saveAndGetOrigin();
+            entries[i] = this.get(i).getVanillaEntry();
         }
 
         return entries;
@@ -84,45 +84,45 @@ public class LootEntryList extends LootObjectList<LootContainer> implements Loot
 
         info.add("% Entries: [");
         info.push();
-        for (LootContainer entry : this) {
+        for (LootEntry entry : this) {
             entry.collectDebugInfo(info);
         }
         info.pop();
         info.add("]");
     }
 
-    public void transformLoot(NullableFunction<LootEntry, Object> onTransform, boolean deepTransform) {
+    public void transformEntry(NullableFunction<SimpleLootEntry, Object> onTransform, boolean deepTransform) {
         transform(entry -> {
             if (entry instanceof LootTransformHelper helper && deepTransform) {
-                helper.transformLoot(onTransform, true);
+                helper.transformEntry(onTransform, true);
                 return entry;
             }
 
-            if (entry instanceof LootEntry sle) {
-                return onTransform.apply(sle);
+            if (entry instanceof SimpleLootEntry le) {
+                return onTransform.apply(le);
             }
 
             return entry;
         });
     }
 
-    public void removeLoot(Predicate<LootEntry> filter, boolean deepRemove) {
+    public void removeEntry(Predicate<SimpleLootEntry> filter, boolean deepRemove) {
         var it = listIterator();
         while (it.hasNext()) {
             var entry = it.next();
             if (entry instanceof LootTransformHelper helper && deepRemove) {
-                helper.removeLoot(filter, true);
+                helper.removeEntry(filter, true);
                 continue;
             }
 
-            if (entry instanceof LootEntry sle && filter.test(sle)) {
+            if (entry instanceof SimpleLootEntry le && filter.test(le)) {
                 it.remove();
             }
         }
     }
 
     @Override
-    public void addEntry(LootContainer entry) {
+    public void addEntry(LootEntry entry) {
         add(entry);
     }
 }

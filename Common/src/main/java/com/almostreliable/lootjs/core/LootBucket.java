@@ -1,9 +1,7 @@
 package com.almostreliable.lootjs.core;
 
+import com.almostreliable.lootjs.core.entry.LootEntry;
 import com.almostreliable.lootjs.core.filters.ItemFilter;
-import com.almostreliable.lootjs.loot.table.entry.CompositeLootEntry;
-import com.almostreliable.lootjs.loot.table.entry.LootContainer;
-import com.almostreliable.lootjs.loot.table.entry.LootEntry;
 import com.almostreliable.lootjs.util.NullableFunction;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.storage.loot.LootContext;
@@ -44,17 +42,8 @@ public class LootBucket implements Iterable<ItemStack> {
         }
     }
 
-    public void addEntry(LootContainer unknown) {
-        if (unknown instanceof LootEntry lc) {
-            lc.saveAndGetOrigin().expand(context, this::addEntry);
-            return;
-        }
-
-        if (unknown instanceof CompositeLootEntry cle) {
-            for (LootContainer entry : cle.getEntries()) {
-                addEntry(entry);
-            }
-        }
+    public void addEntry(LootEntry unknown) {
+        unknown.getVanillaEntry().expand(context, this::addEntry);
     }
 
     private void addEntry(LootPoolEntry entry) {
@@ -103,11 +92,11 @@ public class LootBucket implements Iterable<ItemStack> {
         }
     }
 
-    public void replace(ItemFilter filter, LootEntry lootEntry) {
-        replace(filter, lootEntry, false);
+    public void replace(ItemFilter filter, ItemStackFactory itemStackFactory) {
+        replace(filter, itemStackFactory, false);
     }
 
-    public void replace(ItemFilter filter, LootEntry lootEntry, boolean preserveCount) {
+    public void replace(ItemFilter filter, ItemStackFactory itemStackFactory, boolean preserveCount) {
         var it = iterator();
         while (it.hasNext()) {
             ItemStack thisItem = it.next();
@@ -115,8 +104,13 @@ public class LootBucket implements Iterable<ItemStack> {
                 continue;
             }
 
-            ItemStack newItem = lootEntry.createItemStack(context);
+            ItemStack newItem = itemStackFactory.create(context);
             if (newItem == null) {
+                continue;
+            }
+
+            if (newItem.isEmpty()) {
+                it.remove();
                 continue;
             }
 

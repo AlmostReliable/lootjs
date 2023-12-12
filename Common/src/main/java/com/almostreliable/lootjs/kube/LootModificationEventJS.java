@@ -23,7 +23,7 @@ public abstract class LootModificationEventJS extends EventJS {
     private final List<LootModifier.Builder> modifierBuilders = new ArrayList<>();
 
     public void enableLogging() {
-        LootModificationsAPI.LOOT_MODIFICATION_LOGGING = true;
+        LootModificationsAPI.DEBUG_LOOT_MODIFIERS = true;
     }
 
     public void disableLootModification(ResourceLocationFilter... filters) {

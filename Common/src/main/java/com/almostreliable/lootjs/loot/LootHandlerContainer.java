@@ -1,12 +1,13 @@
 package com.almostreliable.lootjs.loot;
 
+import com.almostreliable.lootjs.core.ItemStackFactory;
+import com.almostreliable.lootjs.core.entry.LootEntry;
+import com.almostreliable.lootjs.core.entry.SingleLootEntry;
 import com.almostreliable.lootjs.core.filters.ItemFilter;
 import com.almostreliable.lootjs.loot.modifier.CancelableLootAction;
 import com.almostreliable.lootjs.loot.modifier.GroupedLootHandler;
 import com.almostreliable.lootjs.loot.modifier.LootHandler;
 import com.almostreliable.lootjs.loot.modifier.handler.*;
-import com.almostreliable.lootjs.loot.table.entry.LootContainer;
-import com.almostreliable.lootjs.loot.table.entry.LootEntry;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.random.SimpleWeightedRandomList;
 import net.minecraft.world.level.Explosion;
@@ -17,31 +18,31 @@ import java.util.function.Consumer;
 
 public interface LootHandlerContainer<A extends LootHandlerContainer<?>> {
 
-    default A addLoot(LootContainer... entries) {
+    default A addLoot(LootEntry... entries) {
         return addHandler(new AddLootAction(entries));
     }
 
-    default A addAlternativesLoot(LootContainer... entries) {
+    default A addAlternativesLoot(LootEntry... entries) {
         return addHandler(new AddLootAction(LootEntry.alternative(entries)));
     }
 
-    default A addSequenceLoot(LootContainer... entries) {
+    default A addSequenceLoot(LootEntry... entries) {
         return addHandler(new AddLootAction(LootEntry.sequence(entries)));
     }
 
-    default A addWeightedLoot(NumberProvider numberProvider, boolean allowDuplicateLoot, LootEntry[] poolEntries) {
-        var weightedListBuilder = SimpleWeightedRandomList.<LootEntry>builder();
+    default A addWeightedLoot(NumberProvider numberProvider, boolean allowDuplicateLoot, SingleLootEntry[] poolEntries) {
+        var weightedListBuilder = SimpleWeightedRandomList.<SingleLootEntry>builder();
         for (var poolEntry : poolEntries) {
             weightedListBuilder.add(poolEntry, poolEntry.getWeight());
         }
         return addHandler(new WeightedAddLootAction(numberProvider, weightedListBuilder.build(), allowDuplicateLoot));
     }
 
-    default A addWeightedLoot(NumberProvider numberProvider, LootEntry[] poolEntries) {
+    default A addWeightedLoot(NumberProvider numberProvider, SingleLootEntry[] poolEntries) {
         return addWeightedLoot(numberProvider, true, poolEntries);
     }
 
-    default A addWeightedLoot(LootEntry[] poolEntries) {
+    default A addWeightedLoot(SingleLootEntry[] poolEntries) {
         return addWeightedLoot(ConstantValue.exactly(1f), true, poolEntries);
     }
 
@@ -49,12 +50,12 @@ public interface LootHandlerContainer<A extends LootHandlerContainer<?>> {
         return addHandler(new RemoveLootAction(filter));
     }
 
-    default A replaceLoot(ItemFilter filter, LootEntry lootEntry) {
-        return replaceLoot(filter, lootEntry, false);
+    default A replaceLoot(ItemFilter filter, ItemStackFactory itemStackFactory) {
+        return replaceLoot(filter, itemStackFactory, false);
     }
 
-    default A replaceLoot(ItemFilter filter, LootEntry lootEntry, boolean preserveCount) {
-        return addHandler(new ReplaceLootAction(filter, lootEntry, preserveCount));
+    default A replaceLoot(ItemFilter filter, ItemStackFactory itemStackFactory, boolean preserveCount) {
+        return addHandler(new ReplaceLootAction(filter, itemStackFactory, preserveCount));
     }
 
     default A modifyLoot(ItemFilter filter, ModifyLootAction.Callback callback) {

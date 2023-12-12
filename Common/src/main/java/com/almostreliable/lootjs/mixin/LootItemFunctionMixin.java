@@ -13,7 +13,6 @@ public interface LootItemFunctionMixin extends LootItemFunctionExtension {
 
     @Override
     default LootItemFunction lootjs$when(Consumer<LootConditionList> consumer) {
-        consumer.accept(new LootConditionList());
         ConsoleJS.SERVER.info("Non conditional loot functions are not supported yet! Added conditions will be ignored!");
         return (LootItemFunction) this;
     }

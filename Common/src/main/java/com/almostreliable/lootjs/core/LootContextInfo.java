@@ -1,7 +1,6 @@
-package com.almostreliable.lootjs.loot.results;
+package com.almostreliable.lootjs.core;
 
 import com.almostreliable.lootjs.LootJSPlatform;
-import com.almostreliable.lootjs.LootModificationsAPI;
 import com.almostreliable.lootjs.loot.extension.LootContextExtension;
 import com.almostreliable.lootjs.util.LootContextUtils;
 import com.almostreliable.lootjs.util.Utils;
@@ -11,27 +10,25 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.phys.Vec3;
+import org.apache.commons.lang3.StringUtils;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.function.Function;
 
 public class LootContextInfo {
-    LootInfoCollector collector = new LootInfoCollector();
+    private final List<String> info = new ArrayList<>();
+    private final List<String> itemInfoBefore = new ArrayList<>();
+    private final List<String> itemInfoAfter = new ArrayList<>();
 
     private LootContextInfo() {}
 
-    @Nullable
     public static LootContextInfo create(LootContext context, Iterable<ItemStack> loot) {
-        if (!LootModificationsAPI.LOOT_MODIFICATION_LOGGING) return null;
-
         LootContextInfo lci = new LootContextInfo();
 
         lci.add("LootTable", Utils.quote(LootJSPlatform.INSTANCE.getQueriedLootTableId(context)));
         lci.add("LootType", LootContextExtension.cast(context).lootjs$getType().name());
-        lci.updateLoot(loot);
 
         Vec3 origin = context.getParamOrNull(LootContextParams.ORIGIN);
         lci.addOptional("Position", origin, Utils::formatPosition);
@@ -58,11 +55,18 @@ public class LootContextInfo {
             lci.addItem("Feet", player.getItemBySlot(EquipmentSlot.FEET));
         }
 
+
+        lci.updateLootBefore(loot);
         return lci;
     }
 
+    private String f(String left, String right) {
+        return String.format("%-15s: %s", left, right);
+    }
+
     private void add(String left, String right) {
-        collector.addOrPush(new Info.RowInfo(left, right));
+        var txt = f(left, right);
+        info.add(txt);
     }
 
     private <T> void addOptional(String left, @Nullable T t, Function<T, String> formatter) {
@@ -80,62 +84,29 @@ public class LootContextInfo {
         add(left, Utils.formatItemStack(itemStack));
     }
 
-    public void updateLoot(Iterable<ItemStack> loot) {
-        LootComposite lootComposite = (LootComposite) collector
-                .getFirstLayer()
-                .stream()
-                .filter(LootComposite.class::isInstance)
-                .findFirst()
-                .orElse(null);
-
-        if (lootComposite == null) {
-            LootComposite lc = new LootComposite();
-            collector.add(lc);
-            updateLoot(loot, lc.getBefore());
-        } else {
-            updateLoot(loot, lootComposite.getAfter());
-        }
-    }
-
-    private void updateLoot(Iterable<ItemStack> loot, Info.Composite composite) {
+    public void updateLootBefore(Iterable<ItemStack> loot) {
         for (ItemStack itemStack : loot) {
-            composite.addChildren(new Info.TitledInfo(Utils.formatItemStack(itemStack)));
+            itemInfoBefore.add(Utils.formatItemStack(itemStack));
         }
     }
 
-    public LootInfoCollector getCollector() {
-        return collector;
+    public void updateLootAfter(Iterable<ItemStack> loot) {
+        for (ItemStack itemStack : loot) {
+            itemInfoAfter.add(Utils.formatItemStack(itemStack));
+        }
     }
 
-    public static class LootComposite extends Info.Composite {
-        private final Info.Composite before = new Composite("Before");
-        private final Info.Composite after = new Composite("After");
+    public void release(StringBuilder sb) {
+        sb.append("[ Loot Information ]").append("\n");
+        String indent = StringUtils.repeat(" ", 3);
+        info.forEach(s -> sb.append(indent).append(s).append("\n"));
 
-        public LootComposite() {
-            super("Loot");
-            children.add(before);
-            children.add(after);
-        }
+        sb.append(indent).append(f("Loot before", "{")).append("\n");
+        itemInfoBefore.forEach(s -> sb.append(indent).append(indent).append("- ").append(s).append("\n"));
+        sb.append(indent).append("}").append("\n");
 
-        @Override
-        public void addChildren(Info info) {
-            throw new UnsupportedOperationException("LootComposite cannot add custom children");
-        }
-
-        @Override
-        public Collection<Info> getChildren() {
-            List<Info> c = new ArrayList<>();
-            c.add(before.getChildren().isEmpty() ? new TitledInfo("before {}") : before);
-            c.add(after.getChildren().isEmpty() ? new TitledInfo("after {}") : after);
-            return c;
-        }
-
-        public Info.Composite getBefore() {
-            return before;
-        }
-
-        public Info.Composite getAfter() {
-            return after;
-        }
+        sb.append(indent).append(f("Loot after", "{")).append("\n");
+        itemInfoAfter.forEach(s -> sb.append(indent).append(indent).append("- ").append(s).append("\n"));
+        sb.append(indent).append("}").append("\n");
     }
 }

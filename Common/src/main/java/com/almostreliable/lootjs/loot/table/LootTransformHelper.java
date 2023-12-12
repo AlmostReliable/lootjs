@@ -1,5 +1,6 @@
-package com.almostreliable.lootjs.loot.table.entry;
+package com.almostreliable.lootjs.loot.table;
 
+import com.almostreliable.lootjs.core.entry.*;
 import com.almostreliable.lootjs.core.filters.ItemFilter;
 import com.almostreliable.lootjs.core.filters.ResourceLocationFilter;
 import com.almostreliable.lootjs.util.NullableFunction;
@@ -9,16 +10,16 @@ import java.util.function.Predicate;
 
 public interface LootTransformHelper {
 
-    void transformLoot(NullableFunction<LootEntry, Object> onTransform, boolean deepTransform);
+    void transformEntry(NullableFunction<SimpleLootEntry, Object> onTransform, boolean deepTransform);
 
-    default void transformLoot(NullableFunction<LootEntry, Object> onTransform) {
-        transformLoot(onTransform, true);
+    default void transformEntry(NullableFunction<SimpleLootEntry, Object> onTransform) {
+        transformEntry(onTransform, true);
     }
 
-    void removeLoot(Predicate<LootEntry> onRemove, boolean deepRemove);
+    void removeEntry(Predicate<SimpleLootEntry> onRemove, boolean deepRemove);
 
-    default void removeLoot(Predicate<LootEntry> onRemove) {
-        removeLoot(onRemove, true);
+    default void removeEntry(Predicate<SimpleLootEntry> onRemove) {
+        removeEntry(onRemove, true);
     }
 
     default void removeItem(ItemFilter filter) {
@@ -26,7 +27,7 @@ public interface LootTransformHelper {
     }
 
     default void removeItem(ItemFilter filter, boolean deepRemove) {
-        removeLoot(entry -> entry.isItem() && entry.test(filter), deepRemove);
+        removeEntry(entry -> entry instanceof ItemLootEntry ile && ile.test(filter), deepRemove);
     }
 
     default void removeTag(String tag) {
@@ -34,7 +35,7 @@ public interface LootTransformHelper {
     }
 
     default void removeTag(String tag, boolean deepRemove) {
-        removeLoot(entry -> entry.isTag() && entry.testTag(tag), deepRemove);
+        removeEntry(entry -> entry instanceof TagLootEntry tle && tle.isTag(tag), deepRemove);
     }
 
     default void removeReference(ResourceLocationFilter filter) {
@@ -42,7 +43,7 @@ public interface LootTransformHelper {
     }
 
     default void removeReference(ResourceLocationFilter filter, boolean deepRemove) {
-        removeLoot(entry -> entry.isReference() && filter.test(entry.getReference()), deepRemove);
+        removeEntry(entry -> entry instanceof ReferenceLootEntry d && filter.test(d.getLocation()), deepRemove);
     }
 
     default void removeDynamic(ResourceLocationFilter filter) {
@@ -50,7 +51,7 @@ public interface LootTransformHelper {
     }
 
     default void removeDynamic(ResourceLocationFilter filter, boolean deepRemove) {
-        removeLoot(entry -> entry.isDynamic() && filter.test(entry.getDynamic()), deepRemove);
+        removeEntry(entry -> entry instanceof DynamicLootEntry d && filter.test(d.getLocation()), deepRemove);
     }
 
     default void replaceItem(ItemFilter filter, ItemStack item) {
@@ -58,8 +59,8 @@ public interface LootTransformHelper {
     }
 
     default void replaceItem(ItemFilter filter, ItemStack item, boolean deepReplace) {
-        transformLoot(entry -> {
-            if (entry.test(filter)) {
+        transformEntry(entry -> {
+            if (entry instanceof ItemLootEntry ile && ile.test(filter)) {
                 return item;
             }
 

@@ -34,7 +34,6 @@ public interface LootContextExtension {
     }
 
     LootType lootjs$getType();
-
     default ResourceLocation lootjs$getLootTableId() {
         return LootJSPlatform.INSTANCE.getQueriedLootTableId(lootjs$self());
     }

@@ -1,7 +1,6 @@
 package com.almostreliable.lootjs.loot;
 
 import com.google.gson.JsonObject;
-import dev.latvian.mods.kubejs.util.ConsoleJS;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.alchemy.Potion;
@@ -71,12 +70,6 @@ public interface LootFunctionsContainer<F extends LootFunctionsContainer<?>> {
         return addFunction(LootFunction.limitCount(numberProviderMin, numberProviderMax));
     }
 
-    @Deprecated
-    default F limitCount(NumberProvider numberProvider) {
-        ConsoleJS.SERVER.warn("limitCount(NumberProvider) is deprecated, use setCount(NumberProvider) instead");
-        return addFunction(LootFunction.setCount(numberProvider));
-    }
-
     default F setCount(NumberProvider numberProvider) {
         return addFunction(LootFunction.setCount(numberProvider));
     }
@@ -93,15 +86,12 @@ public interface LootFunctionsContainer<F extends LootFunctionsContainer<?>> {
         return addFunction(LootFunction.setName(component));
     }
 
-    default F addNBT(CompoundTag tag) {
-        return addFunction(LootFunction.addNBT(tag));
+    default F setNBT(CompoundTag tag) {
+        return addFunction(LootFunction.setNBT(tag));
     }
 
-    /**
-     * For the people who always forget if "NBT" or "Nbt"
-     */
-    default F addNbt(CompoundTag tag) {
-        return addFunction(LootFunction.addNbt(tag));
+    default F setNbt(CompoundTag tag) {
+        return addFunction(LootFunction.setNbt(tag));
     }
 
     default F customFunction(JsonObject json) {

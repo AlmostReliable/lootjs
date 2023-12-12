@@ -1,11 +1,11 @@
 package com.almostreliable.lootjs.forge.gametest;
 
 import com.almostreliable.lootjs.BuildConfig;
+import com.almostreliable.lootjs.core.LootBucket;
+import com.almostreliable.lootjs.core.entry.LootEntry;
 import com.almostreliable.lootjs.loot.modifier.handler.AddLootAction;
 import com.almostreliable.lootjs.loot.modifier.handler.RemoveLootAction;
 import com.almostreliable.lootjs.loot.modifier.handler.ReplaceLootAction;
-import com.almostreliable.lootjs.core.LootBucket;
-import com.almostreliable.lootjs.loot.table.entry.LootEntry;
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.world.entity.player.Player;
@@ -32,10 +32,10 @@ public class LootActionGameTests {
             GameTestUtils.assertFalse(helper,
                     loot.hasItem(itemStack -> itemStack.getItem().equals(Items.LANTERN)),
                     "Should contains no lanterns");
-            AddLootAction action = new AddLootAction(new LootEntry[]{
+            AddLootAction action = new AddLootAction(
                     LootEntry.of(Items.APPLE.getDefaultInstance()),
                     LootEntry.of(Items.LANTERN.getDefaultInstance())
-            });
+            );
             action.apply(ctx, loot);
             GameTestUtils.assertTrue(helper,
                     loot.hasItem(itemStack -> itemStack.getItem().equals(Items.APPLE)),

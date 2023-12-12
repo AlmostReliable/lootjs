@@ -1,9 +1,8 @@
 package com.almostreliable.lootjs.loot.table;
 
+import com.almostreliable.lootjs.core.entry.SimpleLootEntry;
 import com.almostreliable.lootjs.loot.LootFunctionList;
 import com.almostreliable.lootjs.loot.extension.LootTableExtension;
-import com.almostreliable.lootjs.loot.table.entry.LootEntry;
-import com.almostreliable.lootjs.loot.table.entry.LootTransformHelper;
 import com.almostreliable.lootjs.util.DebugInfo;
 import com.almostreliable.lootjs.util.NullableFunction;
 import net.minecraft.resources.ResourceLocation;
@@ -165,16 +164,16 @@ public class MutableLootTable implements LootTransformHelper {
     }
 
     @Override
-    public void transformLoot(NullableFunction<LootEntry, Object> onTransform, boolean deepTransform) {
+    public void transformEntry(NullableFunction<SimpleLootEntry, Object> onTransform, boolean deepTransform) {
         for (MutableLootPool pool : getPools()) {
-            pool.transformLoot(onTransform, deepTransform);
+            pool.transformEntry(onTransform, deepTransform);
         }
     }
 
     @Override
-    public void removeLoot(Predicate<LootEntry> onRemove, boolean deepRemove) {
+    public void removeEntry(Predicate<SimpleLootEntry> onRemove, boolean deepRemove) {
         for (MutableLootPool pool : getPools()) {
-            pool.removeLoot(onRemove, deepRemove);
+            pool.removeEntry(onRemove, deepRemove);
         }
     }
 

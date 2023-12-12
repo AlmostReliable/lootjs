@@ -2,16 +2,18 @@ package com.almostreliable.lootjs.kube;
 
 import com.almostreliable.lootjs.LootJSPlatform;
 import com.almostreliable.lootjs.LootModificationsAPI;
+import com.almostreliable.lootjs.core.ItemStackFactory;
 import com.almostreliable.lootjs.core.LootType;
+import com.almostreliable.lootjs.core.entry.LootEntry;
+import com.almostreliable.lootjs.core.entry.SingleLootEntry;
 import com.almostreliable.lootjs.core.filters.ItemFilter;
 import com.almostreliable.lootjs.core.filters.Resolver;
 import com.almostreliable.lootjs.core.filters.ResourceLocationFilter;
 import com.almostreliable.lootjs.loot.LootCondition;
 import com.almostreliable.lootjs.loot.LootFunction;
-import com.almostreliable.lootjs.loot.table.entry.LootContainer;
-import com.almostreliable.lootjs.loot.table.entry.LootEntry;
 import com.almostreliable.lootjs.util.EntityTypeFilter;
 import dev.latvian.mods.kubejs.KubeJSPlugin;
+import dev.latvian.mods.kubejs.item.ItemStackJS;
 import dev.latvian.mods.kubejs.item.OutputItem;
 import dev.latvian.mods.kubejs.item.ingredient.IngredientJS;
 import dev.latvian.mods.kubejs.script.BindingsEvent;
@@ -102,14 +104,9 @@ public class LootJSPlugin extends KubeJSPlugin {
 
     @Override
     public void registerTypeWrappers(ScriptType type, TypeWrappers typeWrappers) {
-        typeWrappers.registerSimple(LootContainer.class, o -> {
-            if (o instanceof LootContainer container) {
-                return container;
-            }
-
-            return ofLootEntry(o);
-        });
         typeWrappers.registerSimple(LootEntry.class, LootJSPlugin::ofLootEntry);
+        typeWrappers.registerSimple(SingleLootEntry.class, LootJSPlugin::ofSingleLootEntry);
+        typeWrappers.registerSimple(ItemStackFactory.class, LootJSPlugin::ofItemStackFactory);
         typeWrappers.registerSimple(MinMaxBounds.Doubles.class, LootJSPlugin::ofMinMaxDoubles);
         typeWrappers.registerSimple(MinMaxBounds.Ints.class, LootJSPlugin::ofMinMaxInt);
         typeWrappers.registerSimple(EntityTypeFilter.class, EntityTypeFilter::of);
@@ -153,6 +150,40 @@ public class LootJSPlugin extends KubeJSPlugin {
         }
     }
 
+    private static ItemStackFactory ofItemStackFactory(@Nullable Object o) {
+        if (o instanceof ItemStackFactory factory) {
+            return factory;
+        }
+
+        ItemStack itemStack = ItemStackJS.of(o);
+        if (itemStack.isEmpty()) {
+            return ItemStackFactory.EMPTY;
+        }
+
+        return context -> itemStack;
+    }
+
+    public static SingleLootEntry ofSingleLootEntry(@Nullable Object o) {
+        if (o instanceof SingleLootEntry e) {
+            return e;
+        }
+
+        OutputItem outputItem = OutputItem.of(o);
+        ItemStack itemStack = outputItem.item;
+        if (itemStack.isEmpty()) {
+            ConsoleJS.SERVER.error("[LootEntry.of()] Invalid item stack, returning empty stack: " + o);
+            ConsoleJS.SERVER.error("- Consider using `LootEntry.empty()` if you want to create an empty loot entry.");
+            return LootEntry.empty();
+        }
+
+        var entry = LootEntry.of(itemStack);
+        if (outputItem.hasChance()) {
+            entry.setWeight((int) outputItem.getChance());
+        }
+
+        return entry;
+    }
+
     public static LootEntry ofLootEntry(@Nullable Object o) {
         if (o instanceof LootEntry entry) {
             return entry;
@@ -163,15 +194,7 @@ public class LootJSPlugin extends KubeJSPlugin {
             return LootEntry.tag(tag, false);
         }
 
-        OutputItem outputItem = OutputItem.of(o);
-        ItemStack itemStack = outputItem.item;
-        if (itemStack.isEmpty()) {
-            ConsoleJS.SERVER.error("[Loot.of()] Invalid item stack, returning empty stack: " + o);
-            ConsoleJS.SERVER.error("- Consider using `Loot.empty()` if you want to create an empty loot entry.");
-            return LootEntry.empty();
-        }
-
-        return LootEntry.of(itemStack).withWeight(outputItem.hasChance() ? (int) outputItem.getChance() : 1);
+        return ofSingleLootEntry(o);
     }
 
     public static MinMaxBounds.Doubles ofMinMaxDoubles(Object o) {

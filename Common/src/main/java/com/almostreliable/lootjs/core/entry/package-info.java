@@ -1,5 +1,5 @@
 @ParametersAreNonnullByDefault @MethodsReturnNonnullByDefault
-package com.almostreliable.lootjs.loot.table.entry;
+package com.almostreliable.lootjs.core.entry;
 
 import net.minecraft.MethodsReturnNonnullByDefault;
 
