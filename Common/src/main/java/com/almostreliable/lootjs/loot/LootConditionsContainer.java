@@ -56,6 +56,10 @@ public interface LootConditionsContainer<B extends LootConditionsContainer<?>> {
         return addCondition(LootCondition.weatherCheck(map));
     }
 
+    default B weatherCheck(Boolean isRaining, Boolean isThundering) {
+        return addCondition(LootCondition.weatherCheck(isRaining, isThundering));
+    }
+
     default B randomChance(float value) {
         return addCondition(LootCondition.randomChance(value));
     }
@@ -120,12 +124,12 @@ public interface LootConditionsContainer<B extends LootConditionsContainer<?>> {
         return addCondition(LootCondition.matchDamageSource(action));
     }
 
-    default B distanceToKiller(MinMaxBounds.Doubles bounds) {
-        return addCondition(LootCondition.distanceToKiller(bounds));
+    default B distance(MinMaxBounds.Doubles bounds) {
+        return addCondition(LootCondition.distance(bounds));
     }
 
-    default B customDistanceToPlayer(Consumer<DistancePredicateBuilder> action) {
-        return addCondition(LootCondition.customDistanceToPlayer(action));
+    default B customDistance(Consumer<DistancePredicateBuilder> action) {
+        return addCondition(LootCondition.customDistance(action));
     }
 
     default B playerPredicate(Predicate<ServerPlayer> predicate) {

@@ -55,11 +55,11 @@ public class LootTableEventJS extends EventJS {
         rawData.forEach((id, entry) -> unwrappedData.put(id, Utils.cast(entry)));
     }
 
-    Set<ResourceLocation> getLootTableIds() {
+    public Set<ResourceLocation> getLootTableIds() {
         return getLootTableIds(location -> true);
     }
 
-    Set<ResourceLocation> getLootTableIds(ResourceLocationFilter filter) {
+    public Set<ResourceLocation> getLootTableIds(ResourceLocationFilter filter) {
         return getData()
                 .keySet()
                 .stream()

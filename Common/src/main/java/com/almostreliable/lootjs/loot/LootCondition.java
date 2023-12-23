@@ -192,11 +192,11 @@ public class LootCondition {
         return builder.build();
     }
 
-    public static LootItemCondition distanceToKiller(MinMaxBounds.Doubles bounds) {
-        return customDistanceToPlayer(builder -> builder.absolute(bounds));
+    public static LootItemCondition distance(MinMaxBounds.Doubles bounds) {
+        return customDistance(builder -> builder.absolute(bounds));
     }
 
-    public static LootItemCondition customDistanceToPlayer(Consumer<DistancePredicateBuilder> action) {
+    public static LootItemCondition customDistance(Consumer<DistancePredicateBuilder> action) {
         DistancePredicateBuilder builder = new DistancePredicateBuilder();
         action.accept(builder);
         return new MatchKillerDistance(builder.build());

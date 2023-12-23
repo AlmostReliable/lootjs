@@ -177,7 +177,7 @@ public class MutableLootTable implements LootTransformHelper {
         }
     }
 
-    public MutableLootTable modifiers(Consumer<LootFunctionList> onModifiers) {
+    public MutableLootTable apply(Consumer<LootFunctionList> onModifiers) {
         onModifiers.accept(getFunctions());
         return this;
     }

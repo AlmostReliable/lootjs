@@ -7,18 +7,13 @@ import net.minecraft.advancements.critereon.TagPredicate;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
+import net.minecraft.world.level.storage.loot.predicates.DamageSourceCondition;
 import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
 
 import java.util.function.Consumer;
 
 public class DamageSourcePredicateBuilder implements LootItemCondition.Builder {
     private final DamageSourcePredicate.Builder vanillaBuilder = new DamageSourcePredicate.Builder();
-    private String[] sourceNames;
-
-    public DamageSourcePredicateBuilder anyType(String... names) {
-        sourceNames = names;
-        return this;
-    }
 
     public DamageSourcePredicateBuilder is(ResourceLocation tag) {
         vanillaBuilder.tag(TagPredicate.is(TagKey.create(Registries.DAMAGE_TYPE, tag)));
@@ -45,7 +40,7 @@ public class DamageSourcePredicateBuilder implements LootItemCondition.Builder {
     }
 
     @HideFromJS
-    public WrappedDamageSourceCondition build() {
-        return new WrappedDamageSourceCondition(vanillaBuilder.build(), sourceNames);
+    public DamageSourceCondition build() {
+        return (DamageSourceCondition) DamageSourceCondition.hasDamageSource(vanillaBuilder).build();
     }
 }

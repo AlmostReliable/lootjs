@@ -136,7 +136,7 @@ public class MutableLootPool implements LootTransformHelper, LootAppendHelper {
         return this;
     }
 
-    public MutableLootPool modifiers(Consumer<LootFunctionList> onModifiers) {
+    public MutableLootPool apply(Consumer<LootFunctionList> onModifiers) {
         onModifiers.accept(getFunctions());
         return this;
     }

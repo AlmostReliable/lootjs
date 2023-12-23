@@ -21,7 +21,7 @@ public interface SimpleLootEntry extends LootEntry, LootFunctionsContainer<Simpl
         return this;
     }
 
-    default SimpleLootEntry modifiers(Consumer<LootFunctionList> callback) {
+    default SimpleLootEntry apply(Consumer<LootFunctionList> callback) {
         callback.accept(getFunctions());
         return this;
     }
