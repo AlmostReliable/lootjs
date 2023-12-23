@@ -3,11 +3,8 @@ package com.almostreliable.lootjs.loot;
 import com.almostreliable.lootjs.core.filters.ItemFilter;
 import com.almostreliable.lootjs.core.filters.Resolver;
 import com.almostreliable.lootjs.loot.condition.PlayerParamPredicate;
-import com.almostreliable.lootjs.loot.condition.builder.DamageSourcePredicateBuilder;
-import com.almostreliable.lootjs.loot.condition.builder.DistancePredicateBuilder;
-import com.almostreliable.lootjs.loot.condition.builder.EntityPredicateBuilder;
 import com.google.gson.JsonObject;
-import net.minecraft.advancements.critereon.MinMaxBounds;
+import net.minecraft.advancements.critereon.*;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
@@ -96,40 +93,40 @@ public interface LootConditionsContainer<B extends LootConditionsContainer<?>> {
         return addCondition(LootCondition.killedByPlayer());
     }
 
-    default B matchBlockState(Block block, Map<String, String> propertyMap) {
-        return addCondition(LootCondition.matchBlockState(block, propertyMap));
+    default B matchBlockState(Block block, StatePropertiesPredicate properties) {
+        return addCondition(LootCondition.matchBlockState(block, properties));
     }
 
     default B matchFluid(Resolver resolver) {
         throw new UnsupportedOperationException("Not implemented currently.");
     }
 
-    default B matchEntity(Consumer<EntityPredicateBuilder> action) {
-        return addCondition(LootCondition.matchEntity(action));
+    default B matchEntity(EntityPredicate entityPredicate) {
+        return addCondition(LootCondition.matchEntity(entityPredicate));
     }
 
-    default B matchKiller(Consumer<EntityPredicateBuilder> action) {
-        return addCondition(LootCondition.matchKiller(action));
+    default B matchKiller(EntityPredicate entityPredicate) {
+        return addCondition(LootCondition.matchKiller(entityPredicate));
     }
 
-    default B matchDirectKiller(Consumer<EntityPredicateBuilder> action) {
-        return addCondition(LootCondition.matchDirectKiller(action));
+    default B matchDirectKiller(EntityPredicate entityPredicate) {
+        return addCondition(LootCondition.matchDirectKiller(entityPredicate));
     }
 
-    default B matchPlayer(Consumer<EntityPredicateBuilder> action) {
-        return addCondition(LootCondition.matchPlayer(action));
+    default B matchPlayer(EntityPredicate entityPredicate) {
+        return addCondition(LootCondition.matchPlayer(entityPredicate));
     }
 
-    default B matchDamageSource(Consumer<DamageSourcePredicateBuilder> action) {
-        return addCondition(LootCondition.matchDamageSource(action));
+    default B matchDamageSource(DamageSourcePredicate predicate) {
+        return addCondition(LootCondition.matchDamageSource(predicate));
     }
 
     default B distance(MinMaxBounds.Doubles bounds) {
         return addCondition(LootCondition.distance(bounds));
     }
 
-    default B customDistance(Consumer<DistancePredicateBuilder> action) {
-        return addCondition(LootCondition.customDistance(action));
+    default B customDistance(DistancePredicate predicate) {
+        return addCondition(LootCondition.customDistance(predicate));
     }
 
     default B playerPredicate(Predicate<ServerPlayer> predicate) {

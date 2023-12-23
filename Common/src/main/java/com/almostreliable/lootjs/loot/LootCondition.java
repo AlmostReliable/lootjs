@@ -3,15 +3,11 @@ package com.almostreliable.lootjs.loot;
 import com.almostreliable.lootjs.LootJS;
 import com.almostreliable.lootjs.core.filters.ItemFilter;
 import com.almostreliable.lootjs.core.filters.Resolver;
-import com.almostreliable.lootjs.loot.condition.builder.DamageSourcePredicateBuilder;
-import com.almostreliable.lootjs.loot.condition.builder.EntityPredicateBuilder;
 import com.almostreliable.lootjs.loot.condition.*;
-import com.almostreliable.lootjs.loot.condition.builder.DistancePredicateBuilder;
 import com.almostreliable.lootjs.util.Utils;
 import com.google.gson.JsonObject;
 import dev.latvian.mods.kubejs.stages.Stages;
-import net.minecraft.advancements.critereon.MinMaxBounds;
-import net.minecraft.advancements.critereon.StatePropertiesPredicate;
+import net.minecraft.advancements.critereon.*;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
@@ -32,7 +28,6 @@ import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Consumer;
 import java.util.function.Predicate;
 
 public class LootCondition {
@@ -153,53 +148,44 @@ public class LootCondition {
         return LootItemKilledByPlayerCondition.killedByPlayer().build();
     }
 
-    public static LootItemCondition matchBlockState(Block block, Map<String, String> propertyMap) {
-        StatePropertiesPredicate.Builder properties = Utils.createProperties(block, propertyMap);
-        return new LootItemBlockStatePropertyCondition.Builder(block).setProperties(properties).build();
+    public static LootItemCondition matchBlockState(Block block, StatePropertiesPredicate properties) {
+        return new LootItemBlockStatePropertyCondition(block, properties);
     }
 
-    public static LootItemCondition matchEntity(Consumer<EntityPredicateBuilder> action) {
-        EntityPredicateBuilder builder = new EntityPredicateBuilder();
-        action.accept(builder);
-        return LootItemEntityPropertyCondition.hasProperties(LootContext.EntityTarget.THIS,
-                builder.build()).build();
+    public static LootItemCondition matchEntity(EntityPredicate entityPredicate) {
+        return LootItemEntityPropertyCondition.hasProperties(LootContext.EntityTarget.THIS, entityPredicate).build();
     }
 
-    public static LootItemCondition matchKiller(Consumer<EntityPredicateBuilder> action) {
-        EntityPredicateBuilder builder = new EntityPredicateBuilder();
-        action.accept(builder);
-        return LootItemEntityPropertyCondition.hasProperties(LootContext.EntityTarget.KILLER,
-                builder.build()).build();
+    public static LootItemCondition matchKiller(EntityPredicate entityPredicate) {
+        return LootItemEntityPropertyCondition.hasProperties(LootContext.EntityTarget.KILLER, entityPredicate).build();
     }
 
-    public static LootItemCondition matchDirectKiller(Consumer<EntityPredicateBuilder> action) {
-        EntityPredicateBuilder builder = new EntityPredicateBuilder();
-        action.accept(builder);
+    public static LootItemCondition matchDirectKiller(EntityPredicate entityPredicate) {
         return LootItemEntityPropertyCondition
-                .hasProperties(LootContext.EntityTarget.DIRECT_KILLER, builder.build())
+                .hasProperties(LootContext.EntityTarget.DIRECT_KILLER, entityPredicate)
                 .build();
     }
 
-    public static LootItemCondition matchPlayer(Consumer<EntityPredicateBuilder> action) {
-        EntityPredicateBuilder builder = new EntityPredicateBuilder();
-        action.accept(builder);
-        return new MatchPlayer(builder.build());
+    public static LootItemCondition matchPlayer(EntityPredicate entityPredicate) {
+        return new MatchPlayer(entityPredicate);
     }
 
-    public static LootItemCondition matchDamageSource(Consumer<DamageSourcePredicateBuilder> action) {
-        DamageSourcePredicateBuilder builder = new DamageSourcePredicateBuilder();
-        action.accept(builder);
-        return builder.build();
+    public static LootItemCondition matchDamageSource(DamageSourcePredicate predicate) {
+        return new DamageSourceCondition(predicate);
     }
 
     public static LootItemCondition distance(MinMaxBounds.Doubles bounds) {
-        return customDistance(builder -> builder.absolute(bounds));
+        return customDistance(new DistancePredicate(
+                MinMaxBounds.Doubles.ANY,
+                MinMaxBounds.Doubles.ANY,
+                MinMaxBounds.Doubles.ANY,
+                MinMaxBounds.Doubles.ANY,
+                bounds
+        ));
     }
 
-    public static LootItemCondition customDistance(Consumer<DistancePredicateBuilder> action) {
-        DistancePredicateBuilder builder = new DistancePredicateBuilder();
-        action.accept(builder);
-        return new MatchKillerDistance(builder.build());
+    public static LootItemCondition customDistance(DistancePredicate predicate) {
+        return new MatchKillerDistance(predicate);
     }
 
     public static LootItemCondition playerPredicate(Predicate<ServerPlayer> predicate) {

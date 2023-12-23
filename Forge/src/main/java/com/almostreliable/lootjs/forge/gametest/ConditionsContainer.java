@@ -2,6 +2,7 @@ package com.almostreliable.lootjs.forge.gametest;
 
 import com.almostreliable.lootjs.BuildConfig;
 import com.almostreliable.lootjs.loot.LootConditionsContainer;
+import net.minecraft.advancements.critereon.EntityPredicate;
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.world.level.storage.loot.LootContext;
@@ -18,7 +19,7 @@ public class ConditionsContainer {
     public void entityTarget_Entity(GameTestHelper helper) {
         helper.succeedIf(() -> {
             TestLootConditionsContainer conditions = new TestLootConditionsContainer();
-            conditions.matchEntity(e -> {});
+            conditions.matchEntity(EntityPredicate.Builder.entity().build());
             GameTestUtils.assertEquals(helper,
                     conditions.<LootItemEntityPropertyCondition>last().entityTarget,
                     LootContext.EntityTarget.THIS);
@@ -29,7 +30,7 @@ public class ConditionsContainer {
     public void entityTarget_Killer(GameTestHelper helper) {
         helper.succeedIf(() -> {
             TestLootConditionsContainer conditions = new TestLootConditionsContainer();
-            conditions.matchKiller(e -> {});
+            conditions.matchKiller(EntityPredicate.Builder.entity().build());
             GameTestUtils.assertEquals(helper,
                     conditions.<LootItemEntityPropertyCondition>last().entityTarget,
                     LootContext.EntityTarget.KILLER);
@@ -40,7 +41,7 @@ public class ConditionsContainer {
     public void entityTarget_DirectKiller(GameTestHelper helper) {
         helper.succeedIf(() -> {
             TestLootConditionsContainer conditions = new TestLootConditionsContainer();
-            conditions.matchDirectKiller(e -> {});
+            conditions.matchDirectKiller(EntityPredicate.Builder.entity().build());
             GameTestUtils.assertEquals(helper,
                     conditions.<LootItemEntityPropertyCondition>last().entityTarget,
                     LootContext.EntityTarget.DIRECT_KILLER);

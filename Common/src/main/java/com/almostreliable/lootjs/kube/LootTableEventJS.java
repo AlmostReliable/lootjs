@@ -5,12 +5,13 @@ import com.almostreliable.lootjs.core.LootType;
 import com.almostreliable.lootjs.core.filters.ResourceLocationFilter;
 import com.almostreliable.lootjs.loot.table.MutableLootTable;
 import com.almostreliable.lootjs.mixin.LootDataManagerAccessor;
-import com.almostreliable.lootjs.util.EntityTypeFilter;
 import com.almostreliable.lootjs.util.Utils;
 import dev.latvian.mods.kubejs.block.state.BlockStatePredicate;
 import dev.latvian.mods.kubejs.event.EventJS;
 import dev.latvian.mods.kubejs.event.EventResult;
 import dev.latvian.mods.kubejs.util.ConsoleJS;
+import net.minecraft.advancements.critereon.EntityTypePredicate;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.level.block.Block;
@@ -148,11 +149,13 @@ public class LootTableEventJS extends EventJS {
         }
     }
 
-    public void modifyEntityLoot(EntityTypeFilter filter, Consumer<MutableLootTable> onModify) {
-        for (EntityType<?> entityType : filter.getEntityTypes()) {
-            var table = getEntityLoot(entityType);
-            if (table != null) {
-                onModify.accept(table);
+    public void modifyEntityLoot(EntityTypePredicate filter, Consumer<MutableLootTable> onModify) {
+        for (EntityType<?> entityType : BuiltInRegistries.ENTITY_TYPE) {
+            if (filter.matches(entityType)) {
+                var table = getEntityLoot(entityType);
+                if (table != null) {
+                    onModify.accept(table);
+                }
             }
         }
     }

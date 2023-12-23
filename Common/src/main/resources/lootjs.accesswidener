@@ -34,6 +34,7 @@ accessible field net/minecraft/world/level/storage/loot/entries/LootTableReferen
 accessible field net/minecraft/world/level/storage/loot/entries/DynamicLoot name Lnet/minecraft/resources/ResourceLocation;
 accessible field net/minecraft/world/level/storage/loot/entries/CompositeEntryBase children [Lnet/minecraft/world/level/storage/loot/entries/LootPoolEntryContainer;
 
+# pool entries
 mutable field net/minecraft/world/level/storage/loot/entries/LootPoolEntryContainer conditions [Lnet/minecraft/world/level/storage/loot/predicates/LootItemCondition;
 mutable field net/minecraft/world/level/storage/loot/entries/LootPoolEntryContainer compositeCondition Ljava/util/function/Predicate;
 mutable field net/minecraft/world/level/storage/loot/entries/LootPoolSingletonContainer weight I
@@ -46,7 +47,6 @@ mutable field net/minecraft/world/level/storage/loot/entries/TagEntry expand Z
 mutable field net/minecraft/world/level/storage/loot/entries/LootTableReference name Lnet/minecraft/resources/ResourceLocation;
 mutable field net/minecraft/world/level/storage/loot/entries/DynamicLoot name Lnet/minecraft/resources/ResourceLocation;
 
-# constructors
 accessible method net/minecraft/world/level/storage/loot/entries/LootItem <init> (Lnet/minecraft/world/item/Item;II[Lnet/minecraft/world/level/storage/loot/predicates/LootItemCondition;[Lnet/minecraft/world/level/storage/loot/functions/LootItemFunction;)V
 accessible method net/minecraft/world/level/storage/loot/entries/TagEntry <init> (Lnet/minecraft/tags/TagKey;ZII[Lnet/minecraft/world/level/storage/loot/predicates/LootItemCondition;[Lnet/minecraft/world/level/storage/loot/functions/LootItemFunction;)V
 accessible method net/minecraft/world/level/storage/loot/entries/LootTableReference <init> (Lnet/minecraft/resources/ResourceLocation;II[Lnet/minecraft/world/level/storage/loot/predicates/LootItemCondition;[Lnet/minecraft/world/level/storage/loot/functions/LootItemFunction;)V
@@ -58,3 +58,13 @@ accessible method net/minecraft/world/level/storage/loot/entries/EntryGroup <ini
 accessible method net/minecraft/world/level/storage/loot/predicates/InvertedLootItemCondition <init> (Lnet/minecraft/world/level/storage/loot/predicates/LootItemCondition;)V
 accessible method net/minecraft/world/level/storage/loot/predicates/AnyOfCondition <init> ([Lnet/minecraft/world/level/storage/loot/predicates/LootItemCondition;)V
 accessible method net/minecraft/world/level/storage/loot/predicates/AllOfCondition <init> ([Lnet/minecraft/world/level/storage/loot/predicates/LootItemCondition;)V
+
+# conditions
+accessible method net/minecraft/world/level/storage/loot/predicates/LootItemBlockStatePropertyCondition <init> (Lnet/minecraft/world/level/block/Block;Lnet/minecraft/advancements/critereon/StatePropertiesPredicate;)V
+accessible method net/minecraft/world/level/storage/loot/predicates/DamageSourceCondition <init> (Lnet/minecraft/advancements/critereon/DamageSourcePredicate;)V
+
+# predicate
+accessible method net/minecraft/advancements/critereon/StatePropertiesPredicate <init> (Ljava/util/List;)V
+accessible class net/minecraft/advancements/critereon/StatePropertiesPredicate$PropertyMatcher
+accessible class net/minecraft/advancements/critereon/StatePropertiesPredicate$ExactPropertyMatcher
+accessible class net/minecraft/advancements/critereon/StatePropertiesPredicate$RangedPropertyMatcher

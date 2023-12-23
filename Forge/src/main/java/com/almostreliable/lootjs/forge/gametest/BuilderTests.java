@@ -1,8 +1,6 @@
 package com.almostreliable.lootjs.forge.gametest;
 
 import com.almostreliable.lootjs.BuildConfig;
-import com.almostreliable.lootjs.loot.condition.builder.DamageSourcePredicateBuilder;
-import com.almostreliable.lootjs.loot.condition.WrappedDamageSourceCondition;
 import com.almostreliable.lootjs.predicate.ExtendedEntityFlagsPredicate;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -16,127 +14,6 @@ import java.util.function.BiConsumer;
 @GameTestHolder(value = BuildConfig.MOD_ID)
 @PrefixGameTestTemplate(false)
 public class BuilderTests {
-
-    @GameTest(template = GameTestTemplates.EMPTY)
-    public void damageSourcePredicateBuilderJS_Empty(GameTestHelper helper) {
-        helper.succeedIf(() -> {
-            WrappedDamageSourceCondition defaultP = new DamageSourcePredicateBuilder().build();
-            JsonObject dsp = defaultP.serializeToJson().getAsJsonObject("DamageSourcePredicate");
-
-            GameTestUtils.assertNull(helper, dsp.get("is_projectile"));
-            GameTestUtils.assertNull(helper, dsp.get("is_explosion"));
-            GameTestUtils.assertNull(helper, dsp.get("bypasses_armor"));
-            GameTestUtils.assertNull(helper, dsp.get("bypasses_invulnerability"));
-            GameTestUtils.assertNull(helper, dsp.get("bypasses_magic"));
-            GameTestUtils.assertNull(helper, dsp.get("is_fire"));
-            GameTestUtils.assertNull(helper, dsp.get("is_magic"));
-            GameTestUtils.assertNull(helper, dsp.get("is_lightning"));
-        });
-    }
-
-//    @GameTest(template = GameTestTemplates.EMPTY)
-//    public void damageSourcePredicate_isProjectile(GameTestHelper helper) {
-//        damageSourcePredicateFieldTest(helper, DamageSourcePredicateBuilderJS::isProjectile, "is_projectile", true);
-//    }
-//
-//    @GameTest(template = GameTestTemplates.EMPTY)
-//    public void damageSourcePredicate_isExplosion(GameTestHelper helper) {
-//        damageSourcePredicateFieldTest(helper, DamageSourcePredicateBuilderJS::isExplosion, "is_explosion", true);
-//    }
-//
-//    @GameTest(template = GameTestTemplates.EMPTY)
-//    public void damageSourcePredicate_doesBypassArmor(GameTestHelper helper) {
-//        damageSourcePredicateFieldTest(helper, DamageSourcePredicateBuilderJS::doesBypassArmor, "bypasses_armor", true);
-//    }
-//
-//    @GameTest(template = GameTestTemplates.EMPTY)
-//    public void damageSourcePredicate_doesBypassMagic(GameTestHelper helper) {
-//        damageSourcePredicateFieldTest(helper, DamageSourcePredicateBuilderJS::doesBypassMagic, "bypasses_magic", true);
-//    }
-//
-//    @GameTest(template = GameTestTemplates.EMPTY)
-//    public void damageSourcePredicate_isFire(GameTestHelper helper) {
-//        damageSourcePredicateFieldTest(helper, DamageSourcePredicateBuilderJS::isFire, "is_fire", true);
-//    }
-//
-//    @GameTest(template = GameTestTemplates.EMPTY)
-//    public void damageSourcePredicate_isMagic(GameTestHelper helper) {
-//        damageSourcePredicateFieldTest(helper, DamageSourcePredicateBuilderJS::isMagic, "is_magic", true);
-//    }
-//
-//    @GameTest(template = GameTestTemplates.EMPTY)
-//    public void damageSourcePredicate_doesBypassInvulnerability(GameTestHelper helper) {
-//        damageSourcePredicateFieldTest(helper,
-//                DamageSourcePredicateBuilderJS::doesBypassInvulnerability,
-//                "bypasses_invulnerability",
-//                true);
-//    }
-//
-//    @GameTest(template = GameTestTemplates.EMPTY)
-//    public void damageSourcePredicate_isLightning(GameTestHelper helper) {
-//        damageSourcePredicateFieldTest(helper, DamageSourcePredicateBuilderJS::isLightning, "is_lightning", true);
-//    }
-//
-//    @GameTest(template = GameTestTemplates.EMPTY)
-//    public void damageSourcePredicate_isProjectileFalse(GameTestHelper helper) {
-//        damageSourcePredicateFieldTest(helper, DamageSourcePredicateBuilderJS::isProjectile, "is_projectile", false);
-//    }
-//
-//    @GameTest(template = GameTestTemplates.EMPTY)
-//    public void damageSourcePredicate_isExplosionFalse(GameTestHelper helper) {
-//        damageSourcePredicateFieldTest(helper, DamageSourcePredicateBuilderJS::isExplosion, "is_explosion", false);
-//    }
-//
-//    @GameTest(template = GameTestTemplates.EMPTY)
-//    public void damageSourcePredicate_doesBypassArmorFalse(GameTestHelper helper) {
-//        damageSourcePredicateFieldTest(helper,
-//                DamageSourcePredicateBuilderJS::doesBypassArmor,
-//                "bypasses_armor",
-//                false);
-//    }
-//
-//    @GameTest(template = GameTestTemplates.EMPTY)
-//    public void damageSourcePredicate_doesBypassMagicFalse(GameTestHelper helper) {
-//        damageSourcePredicateFieldTest(helper,
-//                DamageSourcePredicateBuilderJS::doesBypassMagic,
-//                "bypasses_magic",
-//                false);
-//    }
-//
-//    @GameTest(template = GameTestTemplates.EMPTY)
-//    public void damageSourcePredicate_isFireFalse(GameTestHelper helper) {
-//        damageSourcePredicateFieldTest(helper, DamageSourcePredicateBuilderJS::isFire, "is_fire", false);
-//    }
-//
-//    @GameTest(template = GameTestTemplates.EMPTY)
-//    public void damageSourcePredicate_isMagicFalse(GameTestHelper helper) {
-//        damageSourcePredicateFieldTest(helper, DamageSourcePredicateBuilderJS::isMagic, "is_magic", false);
-//    }
-//
-//    @GameTest(template = GameTestTemplates.EMPTY)
-//    public void damageSourcePredicate_doesBypassInvulnerabilityFalse(GameTestHelper helper) {
-//        damageSourcePredicateFieldTest(helper,
-//                DamageSourcePredicateBuilderJS::doesBypassInvulnerability,
-//                "bypasses_invulnerability",
-//                false);
-//    }
-//
-//    @GameTest(template = GameTestTemplates.EMPTY)
-//    public void damageSourcePredicate_isLightningFalse(GameTestHelper helper) {
-//        damageSourcePredicateFieldTest(helper, DamageSourcePredicateBuilderJS::isLightning, "is_lightning", false);
-//    }
-
-    public void damageSourcePredicateFieldTest(GameTestHelper helper, BiConsumer<DamageSourcePredicateBuilder, Boolean> setter, String key, boolean value) {
-        helper.succeedIf(() -> {
-            DamageSourcePredicateBuilder builder = new DamageSourcePredicateBuilder();
-            setter.accept(builder, value);
-            JsonObject dsp = builder
-                    .build()
-                    .serializeToJson()
-                    .getAsJsonObject("DamageSourcePredicate");
-            GameTestUtils.assertEquals(helper, dsp.get(key).getAsBoolean(), value);
-        });
-    }
 
     @GameTest(template = GameTestTemplates.EMPTY)
     public void extendedEntityFlagsPredicate(GameTestHelper helper) {
