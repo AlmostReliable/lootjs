@@ -2,9 +2,9 @@ package com.almostreliable.lootjs.loot;
 
 import com.almostreliable.lootjs.core.filters.ItemFilter;
 import com.almostreliable.lootjs.core.filters.Resolver;
-import com.almostreliable.lootjs.loot.condition.PlayerParamPredicate;
 import com.google.gson.JsonObject;
 import net.minecraft.advancements.critereon.*;
+import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
@@ -12,7 +12,6 @@ import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.world.level.storage.loot.predicates.InvertedLootItemCondition;
 import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
 
 import javax.annotation.Nullable;
@@ -67,6 +66,14 @@ public interface LootConditionsContainer<B extends LootConditionsContainer<?>> {
 
     default B randomChanceWithEnchantment(@Nullable Enchantment enchantment, float[] chances) {
         return addCondition(LootCondition.randomChanceWithEnchantment(enchantment, chances));
+    }
+
+    default B location(LocationPredicate predicate) {
+        return addCondition(LootCondition.location(predicate));
+    }
+
+    default B location(BlockPos offset, LocationPredicate predicate) {
+        return addCondition(LootCondition.location(offset, predicate));
     }
 
     default B biome(Resolver... resolvers) {
@@ -129,38 +136,28 @@ public interface LootConditionsContainer<B extends LootConditionsContainer<?>> {
         return addCondition(LootCondition.customDistance(predicate));
     }
 
-    default B playerPredicate(Predicate<ServerPlayer> predicate) {
-        return addCondition(new PlayerParamPredicate(predicate));
+    default B customPlayerCheck(Predicate<ServerPlayer> predicate) {
+        return addCondition(LootCondition.customPlayerCheck(predicate));
     }
 
-    default B entityPredicate(Predicate<Entity> predicate) {
-        return addCondition(LootCondition.entityPredicate(predicate));
+    default B customEntityCheck(Predicate<Entity> predicate) {
+        return addCondition(LootCondition.customEntityCheck(predicate));
     }
 
-    default B killerPredicate(Predicate<Entity> predicate) {
-        return addCondition(LootCondition.killerPredicate(predicate));
+    default B customKillerCheck(Predicate<Entity> predicate) {
+        return addCondition(LootCondition.customKillerCheck(predicate));
     }
 
-    default B directKillerPredicate(Predicate<Entity> predicate) {
-        return addCondition(LootCondition.directKillerPredicate(predicate));
+    default B customDirectKillerCheck(Predicate<Entity> predicate) {
+        return addCondition(LootCondition.customDirectKillerCheck(predicate));
     }
 
     default B blockEntityPredicate(Predicate<BlockEntity> predicate) {
-        return addCondition(LootCondition.blockEntityPredicate(predicate));
+        return addCondition(LootCondition.blockEntity(predicate));
     }
 
     default B hasAnyStage(String... stages) {
         return addCondition(LootCondition.hasAnyStage(stages));
-    }
-
-    default B not(Consumer<LootConditionsContainer<B>> action) {
-        // TODO rework, use vanilla but keep tracking
-        List<LootItemCondition> conditions = createConditions(action);
-        if (conditions.size() != 1) {
-            throw new IllegalArgumentException("You only can have one condition for `not`");
-        }
-
-        return addCondition(new InvertedLootItemCondition(conditions.get(0)));
     }
 
     default B or(Consumer<LootConditionsContainer<B>> action) {
@@ -189,7 +186,7 @@ public interface LootConditionsContainer<B extends LootConditionsContainer<?>> {
         return conditions;
     }
 
-    default B customCondition(JsonObject json) {
+    default B jsonCondition(JsonObject json) {
         return addCondition(LootCondition.fromJson(json));
     }
 

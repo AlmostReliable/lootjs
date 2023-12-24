@@ -44,9 +44,9 @@ public class LootFunction {
         return lootingEnchantBuilder.build();
     }
 
-    public static LootItemFunction applyBinomialDistributionBonus(Enchantment enchantment, float probability, int n) {
+    public static LootItemFunction applyBinomialDistributionBonus(Enchantment enchantment, float probability, int extra) {
         LootItemConditionalFunction.Builder<?> applyBonusBuilder = ApplyBonusCount
-                .addBonusBinomialDistributionCount(enchantment, probability, n);
+                .addBonusBinomialDistributionCount(enchantment, probability, extra);
         return applyBonusBuilder.build();
     }
 
@@ -65,7 +65,7 @@ public class LootFunction {
         return ApplyExplosionDecay.explosionDecay().build();
     }
 
-    public static LootItemFunction smeltLoot() {
+    public static LootItemFunction smelt() {
         return SmeltItemFunction.smelted().build();
     }
 

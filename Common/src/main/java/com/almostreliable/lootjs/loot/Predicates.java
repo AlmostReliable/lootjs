@@ -60,20 +60,41 @@ public interface Predicates {
         return FluidPredicate.Builder.fluid().of(TagKey.create(Registries.FLUID, new ResourceLocation(tag)));
     }
 
+    static DamageSourcePredicate.Builder damageSource() {
+        return DamageSourcePredicate.Builder.damageType();
+    }
+
     static LightPredicate light(int min, int max) {
         return LightPredicate.Builder.light().setComposite(MinMaxBounds.Ints.between(min, max)).build();
+    }
+
+    static EnchantmentPredicate enchantment(Enchantment enchantment) {
+        return new EnchantmentPredicate(enchantment, MinMaxBounds.Ints.ANY);
     }
 
     static EnchantmentPredicate enchantment(@Nullable Enchantment enchantment, MinMaxBounds.Ints levels) {
         return new EnchantmentPredicate(enchantment, levels);
     }
 
-    static MobEffectsPredicate mobEffects(MobEffect effect) {
+    static MobEffectsPredicate effect(MobEffect effect) {
         return MobEffectsPredicate.effects();
     }
 
-    static MobEffectsPredicate mobEffects(MobEffect effect, MobEffectsPredicate.MobEffectInstancePredicate predicate) {
-        return MobEffectsPredicate.effects().and(effect, predicate);
+    static MobEffectsPredicate effect(MobEffect effect, MinMaxBounds.Ints amplifier) {
+        return effect(effect, amplifier, MinMaxBounds.Ints.ANY);
+    }
+
+    static MobEffectsPredicate effect(MobEffect effect, MinMaxBounds.Ints amplifier, MinMaxBounds.Ints duration) {
+        return effect(effect, amplifier, duration, null);
+    }
+
+    static MobEffectsPredicate effect(MobEffect effect, MinMaxBounds.Ints amplifier, MinMaxBounds.Ints duration, @Nullable Boolean ambient) {
+        return effect(effect, amplifier, duration, ambient, null);
+    }
+
+    static MobEffectsPredicate effect(MobEffect effect, MinMaxBounds.Ints amplifier, MinMaxBounds.Ints duration, @Nullable Boolean ambient, @Nullable Boolean visible) {
+        var ip = new MobEffectsPredicate.MobEffectInstancePredicate(amplifier, duration, ambient, visible);
+        return MobEffectsPredicate.effects().and(effect, ip);
     }
 
     static NbtPredicate nbt(CompoundTag nbt) {

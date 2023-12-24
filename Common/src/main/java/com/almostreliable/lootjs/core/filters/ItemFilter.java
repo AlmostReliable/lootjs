@@ -1,5 +1,6 @@
 package com.almostreliable.lootjs.core.filters;
 
+import net.minecraft.advancements.critereon.MinMaxBounds;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
@@ -42,15 +43,14 @@ public interface ItemFilter extends Predicate<ItemStack> {
     ItemFilter FOOD = ItemStack::isEdible;
     ItemFilter DAMAGEABLE = ItemStack::isDamageableItem;
     ItemFilter DAMAGED = ItemStack::isDamaged;
-    ItemFilter ENCHANTABLE = ItemStack::isEnchantable;
     ItemFilter ENCHANTED = ItemStack::isEnchanted;
-    ItemFilter BLOCK = itemStack -> itemStack.getItem() instanceof BlockItem;
+    ItemFilter BLOCK_ITEM = itemStack -> itemStack.getItem() instanceof BlockItem;
 
     static ItemFilter hasEnchantment(ResourceLocationFilter filter) {
-        return hasEnchantment(filter, 1, 255);
+        return hasEnchantment(filter, MinMaxBounds.Ints.ANY);
     }
 
-    static ItemFilter hasEnchantment(ResourceLocationFilter filter, int min, int max) {
+    static ItemFilter hasEnchantment(ResourceLocationFilter filter, MinMaxBounds.Ints levelBounds) {
         return itemStack -> {
             ListTag listTag = itemStack.is(Items.ENCHANTED_BOOK) ? EnchantedBookItem.getEnchantments(itemStack)
                                                                  : itemStack.getEnchantmentTags();
@@ -58,7 +58,7 @@ public interface ItemFilter extends Predicate<ItemStack> {
                 CompoundTag tag = listTag.getCompound(i);
                 ResourceLocation id = EnchantmentHelper.getEnchantmentId(tag);
                 int level = EnchantmentHelper.getEnchantmentLevel(tag);
-                if (id != null && filter.test(id) && min <= level && level <= max) {
+                if (id != null && filter.test(id) && levelBounds.matches(level)) {
                     return true;
                 }
             }

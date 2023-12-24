@@ -4,10 +4,10 @@ import com.almostreliable.lootjs.LootJS;
 import com.almostreliable.lootjs.core.filters.ItemFilter;
 import com.almostreliable.lootjs.core.filters.Resolver;
 import com.almostreliable.lootjs.loot.condition.*;
-import com.almostreliable.lootjs.util.Utils;
 import com.google.gson.JsonObject;
 import dev.latvian.mods.kubejs.stages.Stages;
 import net.minecraft.advancements.critereon.*;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
@@ -99,6 +99,14 @@ public class LootCondition {
         return new MainHandTableBonus(enchantment, chances);
     }
 
+    public static LootItemCondition location(LocationPredicate predicate) {
+        return new LocationCheck(predicate, BlockPos.ZERO);
+    }
+
+    public static LootItemCondition location(BlockPos offset, LocationPredicate predicate) {
+        return new LocationCheck(predicate, offset);
+    }
+
     public static LootItemCondition biome(Resolver... resolvers) {
         List<ResourceKey<Biome>> biomes = new ArrayList<>();
         List<TagKey<Biome>> tagKeys = new ArrayList<>();
@@ -188,23 +196,23 @@ public class LootCondition {
         return new MatchKillerDistance(predicate);
     }
 
-    public static LootItemCondition playerPredicate(Predicate<ServerPlayer> predicate) {
+    public static LootItemCondition customPlayerCheck(Predicate<ServerPlayer> predicate) {
         return new PlayerParamPredicate(predicate);
     }
 
-    public static LootItemCondition entityPredicate(Predicate<Entity> predicate) {
+    public static LootItemCondition customEntityCheck(Predicate<Entity> predicate) {
         return new CustomParamPredicate<>(LootContextParams.THIS_ENTITY, predicate);
     }
 
-    public static LootItemCondition killerPredicate(Predicate<Entity> predicate) {
+    public static LootItemCondition customKillerCheck(Predicate<Entity> predicate) {
         return new CustomParamPredicate<>(LootContextParams.KILLER_ENTITY, predicate);
     }
 
-    public static LootItemCondition directKillerPredicate(Predicate<Entity> predicate) {
+    public static LootItemCondition customDirectKillerCheck(Predicate<Entity> predicate) {
         return new CustomParamPredicate<>(LootContextParams.DIRECT_KILLER_ENTITY, predicate);
     }
 
-    public static LootItemCondition blockEntityPredicate(Predicate<BlockEntity> predicate) {
+    public static LootItemCondition blockEntity(Predicate<BlockEntity> predicate) {
         return new CustomParamPredicate<>(LootContextParams.BLOCK_ENTITY, predicate);
     }
 

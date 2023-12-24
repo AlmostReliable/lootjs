@@ -10,9 +10,12 @@ import com.almostreliable.lootjs.core.entry.SingleLootEntry;
 import com.almostreliable.lootjs.core.filters.ItemFilter;
 import com.almostreliable.lootjs.core.filters.Resolver;
 import com.almostreliable.lootjs.core.filters.ResourceLocationFilter;
+import com.almostreliable.lootjs.kube.wrappers.MinMaxBoundsWrapper;
+import com.almostreliable.lootjs.kube.wrappers.StatePropsPredicateWrapper;
 import com.almostreliable.lootjs.loot.LootCondition;
 import com.almostreliable.lootjs.loot.LootFunction;
 import com.almostreliable.lootjs.loot.Predicates;
+import com.almostreliable.lootjs.loot.condition.builder.DistancePredicateBuilder;
 import com.almostreliable.lootjs.util.AnyOfEntityTypePredicate;
 import dev.latvian.mods.kubejs.KubeJSPlugin;
 import dev.latvian.mods.kubejs.item.ItemStackJS;
@@ -23,6 +26,7 @@ import dev.latvian.mods.kubejs.script.ScriptType;
 import dev.latvian.mods.kubejs.util.ConsoleJS;
 import dev.latvian.mods.kubejs.util.UtilsJS;
 import dev.latvian.mods.rhino.mod.util.NBTUtils;
+import dev.latvian.mods.rhino.util.wrap.TypeWrapperFactory;
 import dev.latvian.mods.rhino.util.wrap.TypeWrappers;
 import net.minecraft.advancements.critereon.*;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -41,8 +45,8 @@ import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 public class LootJSPlugin extends KubeJSPlugin {
 
@@ -62,7 +66,7 @@ public class LootJSPlugin extends KubeJSPlugin {
         return null;
     }
 
-    private static ItemFilter ofItemFilter(@Nullable Object o) {
+    private static ItemFilter ofItemFilterSingle(@Nullable Object o) {
         if (o instanceof ItemFilter i) return i;
 
         if (o instanceof String str && !str.isEmpty()) {
@@ -88,6 +92,28 @@ public class LootJSPlugin extends KubeJSPlugin {
         return new ItemFilter.Ingredient(ingredient);
     }
 
+    private static ItemFilter ofItemFilter(Object o) {
+        if (o instanceof List<?> list) {
+            List<ItemFilter> filters = new ArrayList<>(list.size());
+            for (Object entry : list) {
+                var filter = ofItemFilter(entry);
+                filters.add(filter);
+            }
+
+            return itemStack -> {
+                for (ItemFilter filter : filters) {
+                    if (filter.test(itemStack)) {
+                        return true;
+                    }
+                }
+
+                return false;
+            };
+        }
+
+        return ofItemFilterSingle(o);
+    }
+
     @Override
     public void initStartup() {
         LootModificationsAPI.DEBUG_ACTION = s -> ConsoleJS.SERVER.info(s);
@@ -106,6 +132,8 @@ public class LootJSPlugin extends KubeJSPlugin {
         event.add("LootCondition", LootCondition.class);
         event.add("LootFunction", LootFunction.class);
 
+        event.add("IntBounds", MinMaxBounds.Ints.class);
+        event.add("Bounds", MinMaxBounds.Doubles.class);
 
         event.add("Predicates", Predicates.class);
         event.add("ItemPredicate", ItemPredicate.class);
@@ -128,33 +156,47 @@ public class LootJSPlugin extends KubeJSPlugin {
         typeWrappers.registerSimple(LootEntry.class, LootJSPlugin::ofLootEntry);
         typeWrappers.registerSimple(SingleLootEntry.class, LootJSPlugin::ofSingleLootEntry);
         typeWrappers.registerSimple(ItemStackFactory.class, LootJSPlugin::ofItemStackFactory);
-        typeWrappers.registerSimple(MinMaxBounds.Doubles.class, LootJSPlugin::ofMinMaxDoubles);
-        typeWrappers.registerSimple(MinMaxBounds.Ints.class, LootJSPlugin::ofMinMaxInt);
+        typeWrappers.registerSimple(MinMaxBounds.Doubles.class, MinMaxBoundsWrapper::ofMinMaxDoubles);
+        typeWrappers.registerSimple(MinMaxBounds.Ints.class, MinMaxBoundsWrapper::ofMinMaxInt);
         typeWrappers.registerSimple(EntityTypePredicate.class, LootJSPlugin::ofEntityTypePredicate);
-        typeWrappers.registerSimple(MobEffectsPredicate.MobEffectInstancePredicate.class,
-                LootJSPlugin::ofEntityMobEffectsInstancePredicate);
-        typeWrappers.registerSimple(StatePropertiesPredicate.class, LootJSPlugin::ofStatePropertiesPredicate);
+        typeWrappers.registerSimple(StatePropertiesPredicate.class,
+                StatePropsPredicateWrapper::ofStatePropertiesPredicate);
         typeWrappers.registerSimple(NbtPredicate.class, LootJSPlugin::ofNbtPredicate);
 
-        typeWrappers.registerSimple(ItemFilter.class, o -> {
-            if (o instanceof List<?> list) {
-                Map<Boolean, ? extends List<?>> split = list
-                        .stream()
-                        .collect(Collectors.partitioningBy(unknown -> unknown instanceof ItemFilter));
-                List<ItemFilter> itemFilters = new ArrayList<>(split
-                        .get(true)
-                        .stream()
-                        .map(LootJSPlugin::ofItemFilter)
-                        .toList());
-                if (!split.get(false).isEmpty()) {
-                    Ingredient ingredientFilter = IngredientJS.of(split.get(false));
-                    itemFilters.add(ItemFilter.custom(ingredientFilter));
-                }
-                return ItemFilter.or(itemFilters.toArray(ItemFilter[]::new));
-            }
+        createBuilderWrapper(typeWrappers,
+                EntityPredicate.class,
+                EntityPredicate.Builder.class,
+                EntityPredicate.Builder::build);
+        createBuilderWrapper(typeWrappers,
+                ItemPredicate.class,
+                ItemPredicate.Builder.class,
+                ItemPredicate.Builder::build);
+        createBuilderWrapper(typeWrappers,
+                EntityEquipmentPredicate.class,
+                EntityEquipmentPredicate.Builder.class,
+                EntityEquipmentPredicate.Builder::build);
+        createBuilderWrapper(typeWrappers,
+                LocationPredicate.class,
+                LocationPredicate.Builder.class,
+                LocationPredicate.Builder::build);
+        createBuilderWrapper(typeWrappers,
+                DistancePredicate.class,
+                DistancePredicateBuilder.class,
+                DistancePredicateBuilder::build);
+        createBuilderWrapper(typeWrappers,
+                BlockPredicate.class,
+                BlockPredicate.Builder.class,
+                BlockPredicate.Builder::build);
+        createBuilderWrapper(typeWrappers,
+                FluidPredicate.class,
+                FluidPredicate.Builder.class,
+                FluidPredicate.Builder::build);
+        createBuilderWrapper(typeWrappers,
+                DamageSourcePredicate.class,
+                DamageSourcePredicate.Builder.class,
+                DamageSourcePredicate.Builder::build);
 
-            return ofItemFilter(o);
-        });
+        typeWrappers.registerSimple(ItemFilter.class, LootJSPlugin::ofItemFilter);
 
         typeWrappers.registerSimple(ResourceLocationFilter.class, this::ofResourceLocationFilter);
         typeWrappers.registerSimple(MapDecoration.Type.class, o -> valueOf(MapDecoration.Type.class, o));
@@ -172,62 +214,6 @@ public class LootJSPlugin extends KubeJSPlugin {
         }
 
         return new NbtPredicate(new CompoundTag());
-    }
-
-    private static StatePropertiesPredicate ofStatePropertiesPredicate(@Nullable Object o) {
-        if (o instanceof StatePropertiesPredicate s) {
-            return s;
-        }
-
-        if (!(o instanceof Map<?, ?> map)) {
-            throw new IllegalArgumentException("Invalid object for state properties. Given type: " +
-                                               (o == null ? "NULL" : o.getClass().getName()));
-        }
-
-        List<StatePropertiesPredicate.PropertyMatcher> propertyMatchers = new ArrayList<>();
-        map.forEach((unknownKey, unknownValue) -> {
-            if (!(unknownKey instanceof String propertyName)) {
-                return;
-            }
-
-            if (unknownValue instanceof Map<?, ?> minMaxValue) {
-                String min = getSafePropertyValue(minMaxValue.get("min"));
-                String max = getSafePropertyValue(minMaxValue.get("max"));
-
-                var p = new StatePropertiesPredicate.RangedPropertyMatcher(propertyName, min, max);
-                propertyMatchers.add(p);
-                return;
-            }
-
-            String value = getSafePropertyValue(unknownValue);
-            if (value == null) {
-                LootJS.LOG.warn(
-                        "Can't validate value '" + unknownValue + "' for state properties. Skipping current property!");
-                return;
-            }
-
-            var p = new StatePropertiesPredicate.ExactPropertyMatcher(propertyName, value);
-            propertyMatchers.add(p);
-        });
-
-        return new StatePropertiesPredicate(propertyMatchers);
-    }
-
-    @Nullable
-    private static String getSafePropertyValue(@Nullable Object o) {
-        if (o instanceof String s) {
-            return s;
-        }
-
-        if (o instanceof Boolean b) {
-            return Boolean.toString(b);
-        }
-
-        if (o instanceof Number n) {
-            return Integer.toString(n.intValue());
-        }
-
-        return null;
     }
 
     private ResourceLocationFilter ofResourceLocationFilter(Object o) {
@@ -290,49 +276,6 @@ public class LootJSPlugin extends KubeJSPlugin {
         return ofSingleLootEntry(o);
     }
 
-    public static MinMaxBounds.Doubles ofMinMaxDoubles(Object o) {
-        if (o instanceof List<?> list) {
-            if (list.size() == 1) {
-                return ofMinMaxDoubles(list.get(0));
-            }
-
-            if (list.size() == 2) {
-                Object min = list.get(0);
-                Object max = list.get(1);
-                if (min instanceof Number minN && max instanceof Number maxN) {
-                    return MinMaxBounds.Doubles.between(minN.doubleValue(), maxN.doubleValue());
-                }
-            }
-        }
-
-        if (o instanceof Number) {
-            return MinMaxBounds.Doubles.atLeast(((Number) o).doubleValue());
-        }
-
-        if (o instanceof MinMaxBounds<? extends Number> minMaxBounds) {
-            Double min = minMaxBounds.getMin() != null ? minMaxBounds.getMin().doubleValue() : null;
-            Double max = minMaxBounds.getMax() != null ? minMaxBounds.getMax().doubleValue() : null;
-            return new MinMaxBounds.Doubles(min, max);
-        }
-
-        throw new IllegalArgumentException("Argument is not a MinMaxBound");
-    }
-
-    public static MinMaxBounds.Ints ofMinMaxInt(@Nullable Object o) {
-        if (o == null) {
-            return MinMaxBounds.Ints.exactly(Integer.MAX_VALUE);
-        }
-
-        if (o instanceof MinMaxBounds.Ints) {
-            return (MinMaxBounds.Ints) o;
-        }
-
-        MinMaxBounds.Doubles doubles = ofMinMaxDoubles(o);
-        Integer min = doubles.getMin() != null ? doubles.getMin().intValue() : null;
-        Integer max = doubles.getMax() != null ? doubles.getMax().intValue() : null;
-        return new MinMaxBounds.Ints(min, max);
-    }
-
     public static EntityTypePredicate ofEntityTypePredicate(@Nullable Object o) {
         if (o instanceof EntityType<?> type) {
             return EntityTypePredicate.of(type);
@@ -371,29 +314,26 @@ public class LootJSPlugin extends KubeJSPlugin {
         return AnyOfEntityTypePredicate.EMPTY;
     }
 
-    private static MobEffectsPredicate.MobEffectInstancePredicate ofEntityMobEffectsInstancePredicate(@Nullable Object o) {
-        if (o instanceof MobEffectsPredicate.MobEffectInstancePredicate p) {
-            return p;
+    private static <T, B> void createBuilderWrapper(TypeWrappers wrappers, Class<T> goalClazz, Class<B> builderClazz, Function<B, T> buildFunc) {
+        wrappers.registerSimple(goalClazz, new BuilderTypeWrapper<>(goalClazz, builderClazz, buildFunc));
+    }
+
+    private record BuilderTypeWrapper<T, B>(Class<T> goalClazz, Class<B> builderClazz, Function<B, T> buildFunc)
+            implements TypeWrapperFactory.Simple<T> {
+
+        @Override
+        public T wrapSimple(Object o) {
+            if (goalClazz.isInstance(o)) {
+                return goalClazz().cast(o);
+            }
+
+            if (builderClazz.isInstance(o)) {
+                return buildFunc().apply(builderClazz.cast(o));
+            }
+
+            throw new IllegalArgumentException(
+                    "LootJS Type Error. Could not build or direct cast into " + goalClazz.getSimpleName() + ", got: " +
+                    o);
         }
-
-        if (o instanceof Map<?, ?> map) {
-            var amplifier = ofMinMaxInt(map.get("amplifier"));
-            var duration = ofMinMaxInt(map.get("duration"));
-            var unknownAmbient = map.get("ambient");
-            var unknownVisible = map.get("visible");
-
-            return new MobEffectsPredicate.MobEffectInstancePredicate(
-                    amplifier,
-                    duration,
-                    unknownAmbient instanceof Boolean b ? b : null,
-                    unknownVisible instanceof Boolean b ? b : null
-            );
-        }
-
-        // amplified and duration of -1 should not happen.
-        return new MobEffectsPredicate.MobEffectInstancePredicate(MinMaxBounds.Ints.exactly(-1),
-                MinMaxBounds.Ints.exactly(-1),
-                null,
-                null);
     }
 }

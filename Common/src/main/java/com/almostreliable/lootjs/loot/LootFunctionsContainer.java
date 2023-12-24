@@ -34,8 +34,8 @@ public interface LootFunctionsContainer<F extends LootFunctionsContainer<?>> {
         return addFunction(LootFunction.applyLootingBonus(numberProvider));
     }
 
-    default F applyBinomialDistributionBonus(Enchantment enchantment, float probability, int n) {
-        return addFunction(LootFunction.applyBinomialDistributionBonus(enchantment, probability, n));
+    default F applyBinomialDistributionBonus(Enchantment enchantment, float probability, int extra) {
+        return addFunction(LootFunction.applyBinomialDistributionBonus(enchantment, probability, extra));
     }
 
     default F applyOreBonus(Enchantment enchantment) {
@@ -50,8 +50,8 @@ public interface LootFunctionsContainer<F extends LootFunctionsContainer<?>> {
         return addFunction(LootFunction.simulateExplosionDecay());
     }
 
-    default F smeltLoot() {
-        return addFunction(LootFunction.smeltLoot());
+    default F smelt() {
+        return addFunction(LootFunction.smelt());
     }
 
     default F damage(NumberProvider numberProvider) {
@@ -94,7 +94,7 @@ public interface LootFunctionsContainer<F extends LootFunctionsContainer<?>> {
         return addFunction(LootFunction.setNbt(tag));
     }
 
-    default F customFunction(JsonObject json) {
+    default F jsonFunction(JsonObject json) {
         return addFunction(LootFunction.fromJson(json));
     }
 
