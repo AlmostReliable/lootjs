@@ -19,7 +19,6 @@ import com.almostreliable.lootjs.loot.condition.builder.DistancePredicateBuilder
 import com.almostreliable.lootjs.util.AnyOfEntityTypePredicate;
 import dev.latvian.mods.kubejs.KubeJSPlugin;
 import dev.latvian.mods.kubejs.item.ItemStackJS;
-import dev.latvian.mods.kubejs.item.OutputItem;
 import dev.latvian.mods.kubejs.item.ingredient.IngredientJS;
 import dev.latvian.mods.kubejs.script.BindingsEvent;
 import dev.latvian.mods.kubejs.script.ScriptType;
@@ -247,20 +246,14 @@ public class LootJSPlugin extends KubeJSPlugin {
             return e;
         }
 
-        OutputItem outputItem = OutputItem.of(o);
-        ItemStack itemStack = outputItem.item;
+        ItemStack itemStack = ItemStackJS.of(o);
         if (itemStack.isEmpty()) {
             ConsoleJS.SERVER.error("[LootEntry.of()] Invalid item stack, returning empty stack: " + o);
             ConsoleJS.SERVER.error("- Consider using `LootEntry.empty()` if you want to create an empty loot entry.");
             return LootEntry.empty();
         }
 
-        var entry = LootEntry.of(itemStack);
-        if (outputItem.hasChance()) {
-            entry.setWeight((int) outputItem.getChance());
-        }
-
-        return entry;
+        return LootEntry.of(itemStack);
     }
 
     public static LootEntry ofLootEntry(@Nullable Object o) {
