@@ -4,12 +4,12 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.storage.loot.entries.LootPoolSingletonContainer;
 import net.minecraft.world.level.storage.loot.entries.LootTableReference;
 
-public class ReferenceLootEntry extends AbstractSimpleLootEntry<LootTableReference> {
-    public ReferenceLootEntry(LootTableReference vanillaEntry) {
+public class TableReferenceLootEntry extends AbstractSimpleLootEntry<LootTableReference> {
+    public TableReferenceLootEntry(LootTableReference vanillaEntry) {
         super(vanillaEntry);
     }
 
-    public ReferenceLootEntry(ResourceLocation location) {
+    public TableReferenceLootEntry(ResourceLocation location) {
         super(new LootTableReference(location,
                 LootPoolSingletonContainer.DEFAULT_WEIGHT,
                 LootPoolSingletonContainer.DEFAULT_QUALITY,

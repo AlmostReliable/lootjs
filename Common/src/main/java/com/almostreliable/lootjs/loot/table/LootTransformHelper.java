@@ -43,7 +43,7 @@ public interface LootTransformHelper {
     }
 
     default void removeReference(ResourceLocationFilter filter, boolean deepRemove) {
-        removeEntry(entry -> entry instanceof ReferenceLootEntry d && filter.test(d.getLocation()), deepRemove);
+        removeEntry(entry -> entry instanceof TableReferenceLootEntry d && filter.test(d.getLocation()), deepRemove);
     }
 
     default void removeDynamic(ResourceLocationFilter filter) {

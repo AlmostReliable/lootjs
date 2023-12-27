@@ -42,8 +42,8 @@ public interface LootEntry {
         return new EmptyLootEntry();
     }
 
-    static ReferenceLootEntry reference(ResourceLocation location) {
-        return new ReferenceLootEntry(location);
+    static TableReferenceLootEntry reference(ResourceLocation location) {
+        return new TableReferenceLootEntry(location);
     }
 
     static TagLootEntry tag(String tag) {
@@ -117,7 +117,7 @@ public interface LootEntry {
         }
 
         if (vanillaEntry instanceof LootTableReference e) {
-            return new ReferenceLootEntry(e);
+            return new TableReferenceLootEntry(e);
         }
 
         if (vanillaEntry instanceof DynamicLoot e) {

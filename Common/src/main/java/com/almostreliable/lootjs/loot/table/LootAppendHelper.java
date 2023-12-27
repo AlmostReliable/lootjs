@@ -26,7 +26,7 @@ public interface LootAppendHelper {
         return addAndReturn(LootEntry.tag(tag, expand));
     }
 
-    default ReferenceLootEntry addReference(ResourceLocation lootTable) {
+    default TableReferenceLootEntry addReference(ResourceLocation lootTable) {
         return addAndReturn(LootEntry.reference(lootTable));
     }
 

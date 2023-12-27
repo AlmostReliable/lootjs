@@ -26,7 +26,9 @@ and this project adheres to [Semantic Versioning].
   - `.group()` can use `.repeat(numberprovider)` to execute the group multiple times
   - `.functions(itemFilter, (f) => {})` removed. Better to just use `group` now
   - `LootContextJS` wrapper removed. Using `LootContext` instead but added all helper methods from `LootContextJS` too
-  - 
+- Changes to `Loot Functions`:
+  - `smeltLoot` renamed to `smelt`
+  - `customFunction` renamed to `jsonFunction`
 
 ## [2.10.3] - 2023-09-27
 ### Fixed
