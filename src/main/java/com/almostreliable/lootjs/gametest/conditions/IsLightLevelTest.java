@@ -1,15 +1,15 @@
-package com.almostreliable.lootjs.forge.gametest.conditions;
+package com.almostreliable.lootjs.gametest.conditions;
 
 import com.almostreliable.lootjs.BuildConfig;
-import com.almostreliable.lootjs.forge.gametest.GameTestTemplates;
-import com.almostreliable.lootjs.forge.gametest.GameTestUtils;
+import com.almostreliable.lootjs.gametest.GameTestTemplates;
+import com.almostreliable.lootjs.gametest.GameTestUtils;
 import com.almostreliable.lootjs.loot.condition.IsLightLevel;
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.gametest.GameTestHolder;
-import net.minecraftforge.gametest.PrefixGameTestTemplate;
+import net.neoforged.neoforge.gametest.GameTestHolder;
+import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
 
 @GameTestHolder(value = BuildConfig.MOD_ID)
 @PrefixGameTestTemplate(false)

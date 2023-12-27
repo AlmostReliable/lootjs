@@ -1,4 +1,4 @@
-package com.almostreliable.lootjs.forge.gametest;
+package com.almostreliable.lootjs.gametest;
 
 import com.almostreliable.lootjs.BuildConfig;
 import com.almostreliable.lootjs.loot.LootConditionsContainer;
@@ -8,8 +8,8 @@ import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
 import net.minecraft.world.level.storage.loot.predicates.LootItemEntityPropertyCondition;
-import net.minecraftforge.gametest.GameTestHolder;
-import net.minecraftforge.gametest.PrefixGameTestTemplate;
+import net.neoforged.neoforge.gametest.GameTestHolder;
+import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
 
 @GameTestHolder(value = BuildConfig.MOD_ID)
 @PrefixGameTestTemplate(false)
@@ -19,7 +19,7 @@ public class ConditionsContainer {
     public void entityTarget_Entity(GameTestHelper helper) {
         helper.succeedIf(() -> {
             TestLootConditionsContainer conditions = new TestLootConditionsContainer();
-            conditions.matchEntity(EntityPredicate.Builder.entity().build());
+            conditions.matchEntity(EntityPredicate.Builder.entity());
             GameTestUtils.assertEquals(helper,
                     conditions.<LootItemEntityPropertyCondition>last().entityTarget,
                     LootContext.EntityTarget.THIS);
@@ -30,7 +30,7 @@ public class ConditionsContainer {
     public void entityTarget_Killer(GameTestHelper helper) {
         helper.succeedIf(() -> {
             TestLootConditionsContainer conditions = new TestLootConditionsContainer();
-            conditions.matchKiller(EntityPredicate.Builder.entity().build());
+            conditions.matchKiller(EntityPredicate.Builder.entity());
             GameTestUtils.assertEquals(helper,
                     conditions.<LootItemEntityPropertyCondition>last().entityTarget,
                     LootContext.EntityTarget.KILLER);
@@ -41,7 +41,7 @@ public class ConditionsContainer {
     public void entityTarget_DirectKiller(GameTestHelper helper) {
         helper.succeedIf(() -> {
             TestLootConditionsContainer conditions = new TestLootConditionsContainer();
-            conditions.matchDirectKiller(EntityPredicate.Builder.entity().build());
+            conditions.matchDirectKiller(EntityPredicate.Builder.entity());
             GameTestUtils.assertEquals(helper,
                     conditions.<LootItemEntityPropertyCondition>last().entityTarget,
                     LootContext.EntityTarget.DIRECT_KILLER);

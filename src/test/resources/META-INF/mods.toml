@@ -1,0 +1,22 @@
+modLoader = "javafml"
+loaderVersion = "[2,)"
+license = "ARR"
+
+[[mods]]
+modId = "testmod"
+version = "0.0.0"
+displayName = "Test Mod"
+
+[[dependencies.testmod]]
+modId = "forge"
+type = "required"
+versionRange = "[1,)"
+ordering = "NONE"
+side = "BOTH"
+
+[[dependencies.testmod]]
+modId = "minecraft"
+type = "required"
+versionRange = "[1,)"
+ordering = "NONE"
+side = "BOTH"

@@ -1,4 +1,4 @@
-package com.almostreliable.lootjs.forge.gametest;
+package com.almostreliable.lootjs.gametest;
 
 import com.almostreliable.lootjs.core.LootBucket;
 import net.minecraft.core.BlockPos;

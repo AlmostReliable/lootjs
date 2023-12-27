@@ -1,13 +1,14 @@
-package com.almostreliable.lootjs.forge.gametest.conditions;
+package com.almostreliable.lootjs.gametest.conditions;
 
 import com.almostreliable.lootjs.BuildConfig;
 import com.almostreliable.lootjs.core.filters.ItemFilter;
-import com.almostreliable.lootjs.forge.gametest.GameTestTemplates;
-import com.almostreliable.lootjs.forge.gametest.GameTestUtils;
+import com.almostreliable.lootjs.gametest.GameTestTemplates;
+import com.almostreliable.lootjs.gametest.GameTestUtils;
 import com.almostreliable.lootjs.loot.condition.MatchEquipmentSlot;
 import com.mojang.authlib.GameProfile;
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
+import net.minecraft.server.level.ClientInformation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.ItemStack;
@@ -16,8 +17,8 @@ import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.LootParams;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
-import net.minecraftforge.gametest.GameTestHolder;
-import net.minecraftforge.gametest.PrefixGameTestTemplate;
+import net.neoforged.neoforge.gametest.GameTestHolder;
+import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
 
 import java.util.UUID;
 
@@ -67,7 +68,8 @@ public class MatchEquipmentSlotTest {
     public LootContext basicSetup(GameTestHelper helper) {
         ServerPlayer player = new ServerPlayer(helper.getLevel().getServer(),
                 helper.getLevel(),
-                new GameProfile(UUID.randomUUID(), "test-mock-server-player")) {
+                new GameProfile(UUID.randomUUID(), "mr_testi"),
+                ClientInformation.createDefault()) {
 
             @Override
             public boolean isSpectator() {

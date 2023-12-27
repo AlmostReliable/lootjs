@@ -1,8 +1,9 @@
-package com.almostreliable.lootjs.forge.gametest;
+package com.almostreliable.lootjs.gametest;
 
 import com.almostreliable.lootjs.BuildConfig;
 import com.almostreliable.lootjs.core.filters.ItemFilter;
 import com.almostreliable.lootjs.core.filters.ResourceLocationFilter;
+import net.minecraft.advancements.critereon.MinMaxBounds;
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.world.item.EnchantedBookItem;
@@ -11,8 +12,8 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.item.enchantment.EnchantmentInstance;
 import net.minecraft.world.item.enchantment.Enchantments;
-import net.minecraftforge.gametest.GameTestHolder;
-import net.minecraftforge.gametest.PrefixGameTestTemplate;
+import net.neoforged.neoforge.gametest.GameTestHolder;
+import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
 
 import java.util.List;
 import java.util.Objects;
@@ -110,8 +111,7 @@ public class ItemFilterTests {
         helper.succeedIf(() -> {
             EnchantmentInstance e = new EnchantmentInstance(Enchantments.PROJECTILE_PROTECTION, 2);
             ItemFilter filter = ItemFilter.hasEnchantment(rl -> rl.equals(EnchantmentHelper.getEnchantmentId(Enchantments.PROJECTILE_PROTECTION)),
-                    2,
-                    5);
+                    MinMaxBounds.Ints.between(2, 5));
             GameTestUtils.assertTrue(helper,
                     filter.test(EnchantedBookItem.createForEnchantment(e)),
                     "Enchantment in range");
@@ -122,9 +122,8 @@ public class ItemFilterTests {
     public void enchantmentMaxInclusive(GameTestHelper helper) {
         helper.succeedIf(() -> {
             EnchantmentInstance e = new EnchantmentInstance(Enchantments.PROJECTILE_PROTECTION, 5);
-            ItemFilter filter = ItemFilter.hasEnchantment(rl -> rl.equals(EnchantmentHelper.getEnchantmentId(Enchantments.PROJECTILE_PROTECTION)),
-                    2,
-                    5);
+            ItemFilter filter = ItemFilter.hasEnchantment(rl -> rl.equals(EnchantmentHelper.getEnchantmentId(
+                    Enchantments.PROJECTILE_PROTECTION)), MinMaxBounds.Ints.between(2, 5));
             GameTestUtils.assertTrue(helper,
                     filter.test(EnchantedBookItem.createForEnchantment(e)),
                     "Enchantment in range");

@@ -1,4 +1,4 @@
-package com.almostreliable.lootjs.forge.gametest;
+package com.almostreliable.lootjs.gametest;
 
 import com.almostreliable.lootjs.BuildConfig;
 import com.almostreliable.lootjs.core.LootBucket;
@@ -11,8 +11,8 @@ import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.storage.loot.LootContext;
-import net.minecraftforge.gametest.GameTestHolder;
-import net.minecraftforge.gametest.PrefixGameTestTemplate;
+import net.neoforged.neoforge.gametest.GameTestHolder;
+import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
 
 // TODO lightning strike & explosion test currently not working. No clue how to handle async stuff in GameTest.
 @GameTestHolder(value = BuildConfig.MOD_ID)

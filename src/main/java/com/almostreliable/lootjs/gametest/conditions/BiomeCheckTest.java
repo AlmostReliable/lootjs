@@ -1,14 +1,12 @@
-package com.almostreliable.lootjs.forge.gametest.conditions;
+package com.almostreliable.lootjs.gametest.conditions;
 
 import com.almostreliable.lootjs.BuildConfig;
-import com.almostreliable.lootjs.forge.gametest.GameTestTemplates;
-import com.almostreliable.lootjs.forge.gametest.GameTestUtils;
+import com.almostreliable.lootjs.gametest.GameTestTemplates;
+import com.almostreliable.lootjs.gametest.GameTestUtils;
 import com.almostreliable.lootjs.loot.condition.AnyBiomeCheck;
 import com.almostreliable.lootjs.loot.condition.BiomeCheck;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
-import net.minecraft.core.Registry;
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
@@ -18,8 +16,8 @@ import net.minecraft.tags.BiomeTags;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.storage.loot.LootContext;
-import net.minecraftforge.gametest.GameTestHolder;
-import net.minecraftforge.gametest.PrefixGameTestTemplate;
+import net.neoforged.neoforge.gametest.GameTestHolder;
+import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
 
 import java.util.ArrayList;
 import java.util.Collections;

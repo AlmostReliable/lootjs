@@ -1,7 +1,5 @@
 @file:Suppress("UnstableApiUsage")
 
-import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
-import net.fabricmc.loom.api.LoomGradleExtensionAPI
 import net.fabricmc.loom.task.RemapJarTask
 
 val license: String by project
@@ -28,6 +26,7 @@ plugins {
 //    id("io.github.juuxel.loom-vineflower") version "1.11.0" apply false
     id("dev.architectury.loom") version ("1.4.+")
     id("com.github.johnrengelman.shadow") version "8.1.1"
+    id("com.github.gmazzo.buildconfig") version "4.0.4"
 }
 
 val extraModsPrefix = "extra-mods"
@@ -62,25 +61,47 @@ version = "$minecraftVersion-$modVersion"
 
 loom {
     loom.silentMojangMappingsLicense()
+    loom.createRemapConfigurations(sourceSets.getByName("test"))
+
     accessWidenerPath.set(file("src/main/resources/${modId}.accesswidener"))
+
+    // load the test mod manually because forge always uses main by default
+    mods {
+        create("testmod") {
+            sourceSet(sourceSets.main.get())
+        }
+    }
+
     runs {
+        create("test_client") {
+            name("Testmod Client")
+            client()
+            source(sourceSets.test.get())
+        }
+
+        create("test_server") {
+            name("Testmod Server")
+            server()
+            source(sourceSets.test.get())
+        }
+
+        create("gametest") {
+            name("Gametest")
+            server()
+            source(sourceSets.test.get())
+            property("neoforge.gameTestServer", "true")
+            property("almostlib.gametest.testPackages", "testmod.*")
+        }
+
         forEach {
             it.runDir("run")
             // Allows DCEVM hot-swapping when using the JetBrains Runtime (https://github.com/JetBrains/JetBrainsRuntime).
             it.vmArgs("-XX:+IgnoreUnrecognizedVMOptions", "-XX:+AllowEnhancedClassRedefinition")
-            it.programArgs("--width", "1920", "--height", "1080")
+            if (it.environment == "client") {
+                it.programArgs("--width", "1920", "--height", "1080")
+            }
         }
     }
-
-    /**
-     * "main" matches the default mod's name. Since `compileOnly()` is being used in Architectury,
-     * the local mods for the loaders need to be set up too. Otherwise, they won't recognize :Common.
-     */
-//        with(mods.maybeCreate("main")) {
-//            fun Project.sourceSets() = extensions.getByName<SourceSetContainer>("sourceSets")
-//            sourceSet(sourceSets().getByName("main"))
-//            sourceSet(project(":Common").sourceSets().getByName("main"))
-//        }
 }
 
 
@@ -98,6 +119,7 @@ dependencies {
     })
 
     "neoForge"("net.neoforged:neoforge:${neoforgeVersion}")
+    modApi("dev.latvian.mods:kubejs-neoforge:${kubejsVersion}")
     modApi("dev.latvian.mods:kubejs-neoforge:${kubejsVersion}")
     /**
      * Helps to load mods in development through an extra directory. Sadly this does not support transitive dependencies. :-(
@@ -228,4 +250,12 @@ tasks {
 //            from(commonSources.get().archiveFile.map { zipTree(it) })
 //            archiveClassifier.set("sources")
 //        }
+}
+
+buildConfig {
+    buildConfigField("String", "MOD_ID", "\"$modId\"")
+    buildConfigField("String", "MOD_NAME", "\"$modName\"")
+    buildConfigField("String", "MOD_VERSION", "\"$version\"")
+    packageName(modPackage)
+    useJavaOutput()
 }
