@@ -1,7 +1,6 @@
 package com.almostreliable.lootjs.kube;
 
 import com.almostreliable.lootjs.LootJS;
-import com.almostreliable.lootjs.LootJSPlatform;
 import com.almostreliable.lootjs.LootModificationsAPI;
 import com.almostreliable.lootjs.core.ItemStackFactory;
 import com.almostreliable.lootjs.core.LootType;
@@ -11,12 +10,12 @@ import com.almostreliable.lootjs.core.filters.ItemFilter;
 import com.almostreliable.lootjs.core.filters.Resolver;
 import com.almostreliable.lootjs.core.filters.ResourceLocationFilter;
 import com.almostreliable.lootjs.kube.wrappers.MinMaxBoundsWrapper;
+import com.almostreliable.lootjs.kube.wrappers.MobEffectsPredicateWrapper;
 import com.almostreliable.lootjs.kube.wrappers.StatePropsPredicateWrapper;
 import com.almostreliable.lootjs.loot.LootCondition;
 import com.almostreliable.lootjs.loot.LootFunction;
 import com.almostreliable.lootjs.loot.Predicates;
 import com.almostreliable.lootjs.loot.condition.builder.DistancePredicateBuilder;
-import com.almostreliable.lootjs.util.AnyOfEntityTypePredicate;
 import dev.latvian.mods.kubejs.KubeJSPlugin;
 import dev.latvian.mods.kubejs.item.ItemStackJS;
 import dev.latvian.mods.kubejs.item.ingredient.IngredientJS;
@@ -28,6 +27,7 @@ import dev.latvian.mods.rhino.mod.util.NBTUtils;
 import dev.latvian.mods.rhino.util.wrap.TypeWrapperFactory;
 import dev.latvian.mods.rhino.util.wrap.TypeWrappers;
 import net.minecraft.advancements.critereon.*;
+import net.minecraft.core.HolderSet;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
@@ -39,6 +39,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.saveddata.maps.MapDecoration;
+import net.neoforged.neoforge.registries.holdersets.OrHolderSet;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
@@ -49,6 +50,7 @@ import java.util.regex.Pattern;
 
 public class LootJSPlugin extends KubeJSPlugin {
 
+    public static final EntityTypePredicate EMPTY_ENTITY_TYPE_PREDICATE = new EntityTypePredicate(HolderSet.direct());
     public static boolean eventsAreDisabled() {
         return Boolean.getBoolean("lootjs.disable_events");
     }
@@ -146,8 +148,6 @@ public class LootJSPlugin extends KubeJSPlugin {
         event.add("EnchantmentPredicate", EnchantmentPredicate.class);
         event.add("MobEffectsPredicate", MobEffectsPredicate.class);
         event.add("NbtPredicate", NbtPredicate.class);
-
-        LootJSPlatform.INSTANCE.registerBindings(event);
     }
 
     @Override
@@ -158,42 +158,45 @@ public class LootJSPlugin extends KubeJSPlugin {
         typeWrappers.registerSimple(MinMaxBounds.Doubles.class, MinMaxBoundsWrapper::ofMinMaxDoubles);
         typeWrappers.registerSimple(MinMaxBounds.Ints.class, MinMaxBoundsWrapper::ofMinMaxInt);
         typeWrappers.registerSimple(EntityTypePredicate.class, LootJSPlugin::ofEntityTypePredicate);
-        typeWrappers.registerSimple(StatePropertiesPredicate.class,
-                StatePropsPredicateWrapper::ofStatePropertiesPredicate);
         typeWrappers.registerSimple(NbtPredicate.class, LootJSPlugin::ofNbtPredicate);
+        typeWrappers.registerSimple(StatePropertiesPredicate.class, StatePropsPredicateWrapper::of);
+        typeWrappers.registerSimple(StatePropertiesPredicate.Builder.class, StatePropsPredicateWrapper::ofBuilder);
+        typeWrappers.registerSimple(MobEffectsPredicate.class, MobEffectsPredicateWrapper::of);
+        typeWrappers.registerSimple(MobEffectsPredicate.Builder.class, MobEffectsPredicateWrapper::ofBuilder);
+        typeWrappers.registerSimple(DistancePredicate.class, LootJSPlugin::ofDistancePredicate);
 
-        createBuilderWrapper(typeWrappers,
-                EntityPredicate.class,
-                EntityPredicate.Builder.class,
-                EntityPredicate.Builder::build);
-        createBuilderWrapper(typeWrappers,
-                ItemPredicate.class,
-                ItemPredicate.Builder.class,
-                ItemPredicate.Builder::build);
-        createBuilderWrapper(typeWrappers,
-                EntityEquipmentPredicate.class,
-                EntityEquipmentPredicate.Builder.class,
-                EntityEquipmentPredicate.Builder::build);
-        createBuilderWrapper(typeWrappers,
-                LocationPredicate.class,
-                LocationPredicate.Builder.class,
-                LocationPredicate.Builder::build);
-        createBuilderWrapper(typeWrappers,
-                DistancePredicate.class,
-                DistancePredicateBuilder.class,
-                DistancePredicateBuilder::build);
-        createBuilderWrapper(typeWrappers,
-                BlockPredicate.class,
-                BlockPredicate.Builder.class,
-                BlockPredicate.Builder::build);
-        createBuilderWrapper(typeWrappers,
-                FluidPredicate.class,
-                FluidPredicate.Builder.class,
-                FluidPredicate.Builder::build);
-        createBuilderWrapper(typeWrappers,
-                DamageSourcePredicate.class,
-                DamageSourcePredicate.Builder.class,
-                DamageSourcePredicate.Builder::build);
+//        createBuilderWrapper(typeWrappers,
+//                EntityPredicate.class,
+//                EntityPredicate.Builder.class,
+//                EntityPredicate.Builder::build);
+//        createBuilderWrapper(typeWrappers,
+//                ItemPredicate.class,
+//                ItemPredicate.Builder.class,
+//                ItemPredicate.Builder::build);
+//        createBuilderWrapper(typeWrappers,
+//                EntityEquipmentPredicate.class,
+//                EntityEquipmentPredicate.Builder.class,
+//                EntityEquipmentPredicate.Builder::build);
+//        createBuilderWrapper(typeWrappers,
+//                LocationPredicate.class,
+//                LocationPredicate.Builder.class,
+//                LocationPredicate.Builder::build);
+//        createBuilderWrapper(typeWrappers,
+//                DistancePredicate.class,
+//                DistancePredicateBuilder.class,
+//                DistancePredicateBuilder::build);
+//        createBuilderWrapper(typeWrappers,
+//                BlockPredicate.class,
+//                BlockPredicate.Builder.class,
+//                BlockPredicate.Builder::build);
+//        createBuilderWrapper(typeWrappers,
+//                FluidPredicate.class,
+//                FluidPredicate.Builder.class,
+//                FluidPredicate.Builder::build);
+//        createBuilderWrapper(typeWrappers,
+//                DamageSourcePredicate.class,
+//                DamageSourcePredicate.Builder.class,
+//                DamageSourcePredicate.Builder::build);
 
         typeWrappers.registerSimple(ItemFilter.class, LootJSPlugin::ofItemFilter);
 
@@ -201,6 +204,19 @@ public class LootJSPlugin extends KubeJSPlugin {
         typeWrappers.registerSimple(MapDecoration.Type.class, o -> valueOf(MapDecoration.Type.class, o));
         typeWrappers.registerSimple(AttributeModifier.Operation.class, o -> valueOf(AttributeModifier.Operation.class, o));
         typeWrappers.registerSimple(Resolver.class, o -> Resolver.of(o.toString()));
+    }
+
+    private static DistancePredicate ofDistancePredicate(Object o) {
+        if(o instanceof DistancePredicate distancePredicate) {
+            return distancePredicate;
+        }
+
+        if(o instanceof DistancePredicateBuilder distancePredicateBuilder) {
+            return distancePredicateBuilder.build();
+        }
+
+        LootJS.LOG.warn("Invalid distance predicate: {}", o);
+        return DistancePredicate.absolute(MinMaxBounds.Doubles.exactly(Double.MAX_VALUE));
     }
 
     private static NbtPredicate ofNbtPredicate(@Nullable Object o) {
@@ -294,17 +310,17 @@ public class LootJSPlugin extends KubeJSPlugin {
         }
 
         if (o instanceof List<?> list) {
-            List<EntityTypePredicate> predicates = new ArrayList<>();
+            List<HolderSet<EntityType<?>>> predicates = new ArrayList<>();
             for (Object object : list) {
                 var p = ofEntityTypePredicate(object);
-                predicates.add(p);
+                predicates.add(p.types());
             }
 
-            return new AnyOfEntityTypePredicate(predicates);
+            return new EntityTypePredicate(new OrHolderSet<>(predicates));
         }
 
         LootJS.LOG.error("Failed creating EntityTypePredicate. Will return empty one");
-        return AnyOfEntityTypePredicate.EMPTY;
+        return EMPTY_ENTITY_TYPE_PREDICATE;
     }
 
     private static <T, B> void createBuilderWrapper(TypeWrappers wrappers, Class<T> goalClazz, Class<B> builderClazz, Function<B, T> buildFunc) {

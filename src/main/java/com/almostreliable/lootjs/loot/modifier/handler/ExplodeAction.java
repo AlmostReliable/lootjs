@@ -23,18 +23,19 @@ public class ExplodeAction implements LootHandler {
     public boolean apply(LootContext context, LootBucket loot) {
         Vec3 origin = context.getParamOrNull(LootContextParams.ORIGIN);
         if (origin == null) return true;
-        Explosion explosion = new Explosion(context.getLevel(),
-                null,
-                null,
-                null,
-                origin.x,
-                origin.y,
-                origin.z,
-                radius,
-                fire,
-                mode);
-        explosion.explode();
-        explosion.finalizeExplosion(true);
+        // TODO Explosion
+//        Explosion explosion = new Explosion(context.getLevel(),
+//                null,
+//                null,
+//                null,
+//                origin.x,
+//                origin.y,
+//                origin.z,
+//                radius,
+//                fire,
+//                mode);
+//        explosion.explode();
+//        explosion.finalizeExplosion(true);
         return true;
     }
 }

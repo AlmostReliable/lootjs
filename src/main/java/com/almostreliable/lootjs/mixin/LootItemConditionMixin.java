@@ -8,6 +8,9 @@ import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 
+import java.util.ArrayList;
+import java.util.Collections;
+
 @Mixin(LootItemCondition.class)
 @RemapPrefixForJS("lootjs$")
 public interface LootItemConditionMixin {
@@ -19,12 +22,19 @@ public interface LootItemConditionMixin {
     }
 
     @Unique
-    default LootItemCondition lootjs$or(LootItemCondition other) {
-        return new AnyOfCondition(new LootItemCondition[]{ (LootItemCondition) this, other });
+    default LootItemCondition lootjs$or(LootItemCondition... other) {
+        ArrayList<LootItemCondition> l = new ArrayList<>();
+        l.add((LootItemCondition) this);
+        Collections.addAll(l, other);
+        return new AnyOfCondition(l);
     }
 
     @Unique
-    default LootItemCondition lootjs$and(LootItemCondition other) {
-        return new AllOfCondition(new LootItemCondition[]{ (LootItemCondition) this, other });
+    default LootItemCondition lootjs$and(LootItemCondition... other) {
+        ArrayList<LootItemCondition> l = new ArrayList<>();
+        l.add((LootItemCondition) this);
+        Collections.addAll(l, other);
+
+        return new AllOfCondition(l);
     }
 }

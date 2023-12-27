@@ -7,9 +7,27 @@ import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
+import java.util.function.Consumer;
 
 public class StatePropsPredicateWrapper {
-    public static StatePropertiesPredicate ofStatePropertiesPredicate(@Nullable Object o) {
+
+    public static StatePropertiesPredicate.Builder ofBuilder(@Nullable Object o) {
+        if (o instanceof StatePropertiesPredicate.Builder s) {
+            return s;
+        }
+
+        if (!(o instanceof Map<?, ?> map)) {
+            throw new IllegalArgumentException("Invalid object for state properties. Given type: " +
+                                               (o == null ? "NULL" : o.getClass().getName()));
+        }
+
+        var builder = StatePropertiesPredicate.Builder.properties();
+        loadMatchers(map, builder.matchers::add);
+        return builder;
+    }
+
+    public static StatePropertiesPredicate of(@Nullable Object o) {
         if (o instanceof StatePropertiesPredicate s) {
             return s;
         }
@@ -19,7 +37,12 @@ public class StatePropsPredicateWrapper {
                                                (o == null ? "NULL" : o.getClass().getName()));
         }
 
-        List<StatePropertiesPredicate.PropertyMatcher> propertyMatchers = new ArrayList<>();
+        List<StatePropertiesPredicate.PropertyMatcher> props = new ArrayList<>();
+        loadMatchers(map, props::add);
+        return new StatePropertiesPredicate(props);
+    }
+
+    private static void loadMatchers(Map<?, ?> map, Consumer<StatePropertiesPredicate.PropertyMatcher> onAdd) {
         for (Map.Entry<?, ?> entry : map.entrySet()) {
             if (!(entry.getKey() instanceof String propertyName)) {
                 continue;
@@ -27,11 +50,11 @@ public class StatePropsPredicateWrapper {
 
             Object unknownValue = entry.getValue();
             if (unknownValue instanceof Map<?, ?> minMaxValue) {
-                String min = getSafePropertyValue(minMaxValue.get("min"));
-                String max = getSafePropertyValue(minMaxValue.get("max"));
+                var min = Optional.ofNullable(getSafePropertyValue(minMaxValue.get("min")));
+                var max = Optional.ofNullable(getSafePropertyValue(minMaxValue.get("max")));
 
-                var p = new StatePropertiesPredicate.RangedPropertyMatcher(propertyName, min, max);
-                propertyMatchers.add(p);
+                var matcher = new StatePropertiesPredicate.RangedMatcher(min, max);
+                onAdd.accept(new StatePropertiesPredicate.PropertyMatcher(propertyName, matcher));
                 continue;
             }
 
@@ -42,11 +65,9 @@ public class StatePropsPredicateWrapper {
                 continue;
             }
 
-            var p = new StatePropertiesPredicate.ExactPropertyMatcher(propertyName, value);
-            propertyMatchers.add(p);
+            var matcher = new StatePropertiesPredicate.ExactMatcher(value);
+            onAdd.accept(new StatePropertiesPredicate.PropertyMatcher(propertyName, matcher));
         }
-
-        return new StatePropertiesPredicate(propertyMatchers);
     }
 
     @Nullable

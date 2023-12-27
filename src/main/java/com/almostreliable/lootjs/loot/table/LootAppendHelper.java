@@ -3,14 +3,15 @@ package com.almostreliable.lootjs.loot.table;
 import com.almostreliable.lootjs.LootJS;
 import com.almostreliable.lootjs.core.entry.*;
 import com.google.gson.JsonObject;
+import com.mojang.serialization.JsonOps;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.storage.loot.entries.LootPoolEntryContainer;
+import net.minecraft.world.level.storage.loot.entries.LootPoolEntries;
 
 public interface LootAppendHelper {
 
     default LootEntry addCustomEntry(JsonObject json) {
-        var vanilla = LootJS.FUNCTION_GSON.fromJson(json, LootPoolEntryContainer.class);
+        var vanilla = LootPoolEntries.CODEC.parse(JsonOps.INSTANCE, json).getOrThrow(false, LootJS.LOG::error);
         return addAndReturn(LootEntry.ofVanilla(vanilla));
     }
 

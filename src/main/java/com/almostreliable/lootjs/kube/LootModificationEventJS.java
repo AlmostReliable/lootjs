@@ -13,14 +13,53 @@ import dev.latvian.mods.kubejs.util.ConsoleJS;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EntityType;
+import net.neoforged.neoforge.common.loot.IGlobalLootModifier;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
-public abstract class LootModificationEventJS extends EventJS {
-
+public class LootModificationEventJS extends EventJS {
+    private final Map<ResourceLocation, IGlobalLootModifier> modifiers;
+    private final List<ResourceLocation> removedGlobalModifiers = new ArrayList<>();
     private final List<LootModifier.Builder> modifierBuilders = new ArrayList<>();
+
+    public LootModificationEventJS(Map<ResourceLocation, IGlobalLootModifier> modifiers) {
+        this.modifiers = modifiers;
+    }
+
+    public List<String> getGlobalModifiers() {
+        return modifiers.keySet().stream().map(ResourceLocation::toString).collect(Collectors.toList());
+    }
+
+    public void removeGlobalModifier(String... locationOrModIds) {
+        Set<String> modIds = new HashSet<>();
+        Set<ResourceLocation> locations = new HashSet<>();
+        for (String locationOrModId : locationOrModIds) {
+            if (locationOrModId.startsWith("@")) {
+                modIds.add(locationOrModId.substring(1));
+            } else {
+                locations.add(new ResourceLocation(locationOrModId));
+            }
+        }
+
+        Set<ResourceLocation> collectedByModIds = modifiers.keySet()
+                .stream()
+                .filter(rl -> modIds.contains(rl.getNamespace()))
+                .collect(Collectors.toSet());
+        Set<ResourceLocation> collectedByLocations = modifiers.keySet()
+                .stream()
+                .filter(locations::contains)
+                .collect(Collectors.toSet());
+
+        remove(collectedByModIds);
+        remove(collectedByLocations);
+    }
+
+    private void remove(Set<ResourceLocation> locations) {
+        locations.forEach(modifiers::remove);
+        removedGlobalModifiers.addAll(locations);
+    }
 
     public void enableLogging() {
         LootModificationsAPI.DEBUG_LOOT_MODIFIERS = true;
@@ -104,6 +143,14 @@ public abstract class LootModificationEventJS extends EventJS {
 
         if (LootJSPlugin.eventsAreDisabled()) {
             return;
+        }
+
+        if (!removedGlobalModifiers.isEmpty()) {
+            ConsoleJS.SERVER.info("[LootJS] Removed " + removedGlobalModifiers.size() + " global loot modifiers: " +
+                                  removedGlobalModifiers
+                                          .stream()
+                                          .map(ResourceLocation::toString)
+                                          .collect(Collectors.joining(", ")));
         }
 
         try {

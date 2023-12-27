@@ -34,13 +34,13 @@ public abstract class AbstractSimpleLootEntry<E extends LootPoolSingletonContain
 
     protected void free() {
         if (conditions != null) {
-            vanillaEntry.conditions = conditions.createVanillaArray();
+            vanillaEntry.conditions = conditions; // TODO check if this is needed
             vanillaEntry.compositeCondition = LootItemConditions.andConditions(vanillaEntry.conditions);
             conditions = null;
         }
 
         if (functions != null) {
-            vanillaEntry.functions = functions.createVanillaArray();
+            vanillaEntry.functions = functions;
             vanillaEntry.compositeFunction = LootItemFunctions.compose(vanillaEntry.functions);
             functions = null;
         }

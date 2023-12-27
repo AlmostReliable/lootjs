@@ -1,5 +1,5 @@
 @ParametersAreNonnullByDefault @MethodsReturnNonnullByDefault
-package com.almostreliable.lootjs.forge.filters;
+package com.almostreliable.lootjs.mixin.forge;
 
 import net.minecraft.MethodsReturnNonnullByDefault;
 

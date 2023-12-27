@@ -5,19 +5,21 @@ import net.minecraft.world.level.storage.loot.functions.LootItemFunction;
 import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
 import net.minecraft.world.level.storage.loot.providers.number.NumberProvider;
 
+import java.util.List;
+
 public interface LootPoolExtension {
 
-    LootPoolEntryContainer[] lootjs$getEntries();
+    List<LootPoolEntryContainer> lootjs$getEntries();
 
-    void lootjs$setEntries(LootPoolEntryContainer[] entries);
+    void lootjs$setEntries(List<LootPoolEntryContainer> entries);
 
-    LootItemCondition[] lootjs$getConditions();
+    List<LootItemCondition> lootjs$getConditions();
 
-    void lootjs$setConditions(LootItemCondition[] conditions);
+    void lootjs$setConditions(List<LootItemCondition> conditions);
 
-    LootItemFunction[] lootjs$getFunctions();
+    List<LootItemFunction> lootjs$getFunctions();
 
-    void lootjs$setFunctions(LootItemFunction[] functions);
+    void lootjs$setFunctions(List<LootItemFunction> functions);
 
     NumberProvider lootjs$getRolls();
 

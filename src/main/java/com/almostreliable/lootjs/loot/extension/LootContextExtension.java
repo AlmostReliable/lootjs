@@ -1,11 +1,9 @@
 package com.almostreliable.lootjs.loot.extension;
 
 import com.almostreliable.lootjs.LootJS;
-import com.almostreliable.lootjs.LootJSPlatform;
 import com.almostreliable.lootjs.core.LootType;
 import com.almostreliable.lootjs.util.LootContextUtils;
 import dev.latvian.mods.rhino.util.RemapPrefixForJS;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.damagesource.DamageSource;
@@ -34,9 +32,6 @@ public interface LootContextExtension {
     }
 
     LootType lootjs$getType();
-    default ResourceLocation lootjs$getLootTableId() {
-        return LootJSPlatform.INSTANCE.getQueriedLootTableId(lootjs$self());
-    }
 
     default Vec3 lootjs$getPosition() {
         Vec3 pos = lootjs$self().getParamOrNull(LootContextParams.ORIGIN);
@@ -49,7 +44,7 @@ public interface LootContextExtension {
             return entity.position();
         }
 
-        LootJS.LOG.warn("Loot table {} has no position. This should not happen", lootjs$getLootTableId());
+        LootJS.LOG.warn("Loot table {} has no position. This should not happen", lootjs$self().getQueriedLootTableId());
         return Vec3.ZERO;
     }
 

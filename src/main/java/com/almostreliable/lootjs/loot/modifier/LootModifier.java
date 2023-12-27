@@ -1,15 +1,14 @@
 package com.almostreliable.lootjs.loot.modifier;
 
-import com.almostreliable.lootjs.LootJSPlatform;
+import com.almostreliable.lootjs.core.LootBucket;
 import com.almostreliable.lootjs.core.LootType;
 import com.almostreliable.lootjs.core.filters.ResourceLocationFilter;
-import com.almostreliable.lootjs.loot.LootHandlerContainer;
 import com.almostreliable.lootjs.loot.LootConditionsContainer;
 import com.almostreliable.lootjs.loot.LootFunctionsContainer;
-import com.almostreliable.lootjs.loot.modifier.handler.VanillaFunctionWrapper;
-import com.almostreliable.lootjs.loot.modifier.handler.VanillaConditionWrapper;
-import com.almostreliable.lootjs.core.LootBucket;
+import com.almostreliable.lootjs.loot.LootHandlerContainer;
 import com.almostreliable.lootjs.loot.extension.LootContextExtension;
+import com.almostreliable.lootjs.loot.modifier.handler.VanillaConditionWrapper;
+import com.almostreliable.lootjs.loot.modifier.handler.VanillaFunctionWrapper;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.level.block.state.BlockState;
@@ -97,7 +96,7 @@ public class LootModifier {
         @Override
         public boolean test(LootContext context) {
             for (ResourceLocationFilter filter : filters) {
-                if (filter.test(LootJSPlatform.INSTANCE.getQueriedLootTableId(context))) {
+                if (filter.test(context.getQueriedLootTableId())) {
                     return true;
                 }
             }

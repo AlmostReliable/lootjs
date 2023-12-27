@@ -1,7 +1,6 @@
 package com.almostreliable.lootjs.mixin;
 
 import com.almostreliable.lootjs.loot.extension.EntityPredicateExtension;
-import dev.latvian.mods.rhino.util.HideFromJS;
 import net.minecraft.advancements.critereon.EntityFlagsPredicate;
 import net.minecraft.advancements.critereon.EntityPredicate;
 import org.spongepowered.asm.mixin.Mixin;
@@ -12,6 +11,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import javax.annotation.Nullable;
+import java.util.Optional;
 
 @Mixin(EntityPredicate.Builder.class)
 public abstract class EntityPredicateBuilderMixin implements EntityPredicateExtension {
@@ -20,11 +20,9 @@ public abstract class EntityPredicateBuilderMixin implements EntityPredicateExte
     @Unique
     private EntityFlagsPredicate.Builder lootjs$flagsPredicate;
 
-    @HideFromJS
+    @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
     @Shadow
-    public abstract EntityPredicate.Builder flags(EntityFlagsPredicate flags);
-
-    @Shadow private EntityFlagsPredicate flags;
+    private Optional<EntityFlagsPredicate> flags;
 
     @Override
     public EntityPredicate.Builder lootjs$self() {
@@ -43,7 +41,7 @@ public abstract class EntityPredicateBuilderMixin implements EntityPredicateExte
     @Inject(method = "build", at = @At("HEAD"))
     private void lootjs$replaceFlagsBuilder(CallbackInfoReturnable<EntityPredicate> cir) {
         if (lootjs$flagsPredicate != null) {
-            this.flags = lootjs$flagsPredicate.build();
+            this.flags = Optional.of(lootjs$flagsPredicate.build());
         }
     }
 }

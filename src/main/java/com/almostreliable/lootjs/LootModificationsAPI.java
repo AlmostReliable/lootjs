@@ -38,7 +38,7 @@ public class LootModificationsAPI {
 
     public static void invokeActions(List<ItemStack> loot, LootContext context) {
         for (ResourceLocationFilter filter : FILTERS) {
-            if (filter.test(LootJSPlatform.INSTANCE.getQueriedLootTableId(context))) {
+            if (filter.test(context.getQueriedLootTableId())) {
                 return;
             }
         }

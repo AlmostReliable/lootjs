@@ -119,11 +119,10 @@ public class MutableLootTable implements LootTransformHelper {
         var pools = getPools().stream()
                 .map(MutableLootPool::buildVanillaPool)
                 .toList();
-        var functions = getFunctions().createVanillaArray();
 
         var lt = (LootTableExtension) origin;
         lt.lootjs$setPools(pools);
-        lt.lootjs$setFunctions(functions);
+        lt.lootjs$setFunctions(getFunctions());
         lt.lootjs$setRandomSequence(getRandomSequence());
 
         if(postLootAction != null && origin instanceof PostLootActionOwner owner) {

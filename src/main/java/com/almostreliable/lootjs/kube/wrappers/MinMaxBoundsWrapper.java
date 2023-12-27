@@ -40,9 +40,9 @@ public class MinMaxBoundsWrapper {
         }
 
         if (o instanceof MinMaxBounds<? extends Number> minMaxBounds) {
-            Double min = minMaxBounds.getMin() != null ? minMaxBounds.getMin().doubleValue() : null;
-            Double max = minMaxBounds.getMax() != null ? minMaxBounds.getMax().doubleValue() : null;
-            return new MinMaxBounds.Doubles(min, max);
+            var min = minMaxBounds.min().map(Number::doubleValue);
+            var max = minMaxBounds.max().map(Number::doubleValue);
+            return new MinMaxBounds.Doubles(min, max, min.map(d -> d * d), max.map(d -> d * d));
         }
 
 
@@ -74,9 +74,9 @@ public class MinMaxBoundsWrapper {
         }
 
         if (o instanceof MinMaxBounds<? extends Number> minMaxBounds) {
-            Integer min = minMaxBounds.getMin() != null ? minMaxBounds.getMin().intValue() : null;
-            Integer max = minMaxBounds.getMax() != null ? minMaxBounds.getMax().intValue() : null;
-            return new MinMaxBounds.Ints(min, max);
+            var min = minMaxBounds.min().map(Number::intValue);
+            var max = minMaxBounds.max().map(Number::intValue);
+            return new MinMaxBounds.Ints(min, max, min.map(i -> ((long) i * i)), max.map(i -> ((long) i * i)));
         }
 
         LootJS.LOG.warn("Failed creating bounds, got: " + o);

@@ -14,9 +14,9 @@ public interface LootTableExtension {
 
     void lootjs$setPools(List<LootPool> pools);
 
-    LootItemFunction[] lootjs$getFunctions();
+    List<LootItemFunction> lootjs$getFunctions();
 
-    void lootjs$setFunctions(LootItemFunction[] functions);
+    void lootjs$setFunctions(List<LootItemFunction> functions);
 
     void lootjs$setRandomSequence(@Nullable ResourceLocation randomSequence);
 

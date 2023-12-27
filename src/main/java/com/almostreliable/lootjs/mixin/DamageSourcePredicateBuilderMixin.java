@@ -4,7 +4,6 @@ package com.almostreliable.lootjs.mixin;
 import dev.latvian.mods.rhino.util.HideFromJS;
 import dev.latvian.mods.rhino.util.RemapPrefixForJS;
 import net.minecraft.advancements.critereon.DamageSourcePredicate;
-import net.minecraft.advancements.critereon.EntityPredicate;
 import net.minecraft.advancements.critereon.TagPredicate;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
@@ -20,14 +19,6 @@ public abstract class DamageSourcePredicateBuilderMixin {
     @HideFromJS
     @Shadow
     public abstract DamageSourcePredicate.Builder tag(TagPredicate<DamageType> tag);
-
-    @HideFromJS
-    @Shadow
-    public abstract DamageSourcePredicate.Builder source(EntityPredicate.Builder sourceEntity);
-
-    @HideFromJS
-    @Shadow
-    public abstract DamageSourcePredicate.Builder direct(EntityPredicate.Builder directEntity);
 
     @Unique
     public DamageSourcePredicate.Builder lootjs$is(ResourceLocation tag) {

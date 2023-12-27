@@ -15,53 +15,49 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Mutable;
 import org.spongepowered.asm.mixin.Shadow;
 
+import java.util.List;
 import java.util.function.BiFunction;
 import java.util.function.Predicate;
 
 @Mixin(LootPool.class)
 public class LootPoolMixin implements LootPoolExtension {
-    @Mutable @Shadow @Final LootPoolEntryContainer[] entries;
-
-    @Mutable @Shadow @Final LootItemCondition[] conditions;
-
+    @Mutable @Shadow @Final private List<LootPoolEntryContainer> entries;
+    @Mutable @Shadow @Final private List<LootItemCondition> conditions;
     @Mutable @Shadow @Final private Predicate<LootContext> compositeCondition;
-
-    @Mutable @Shadow @Final LootItemFunction[] functions;
-
+    @Mutable @Shadow @Final private List<LootItemFunction> functions;
     @Mutable @Shadow @Final private BiFunction<ItemStack, LootContext, ItemStack> compositeFunction;
+    @Mutable @Shadow private NumberProvider rolls;
+    @Mutable @Shadow private NumberProvider bonusRolls;
 
-    @Mutable @Shadow @Final NumberProvider rolls;
-
-    @Mutable @Shadow @Final NumberProvider bonusRolls;
 
     @Override
-    public LootPoolEntryContainer[] lootjs$getEntries() {
+    public List<LootPoolEntryContainer> lootjs$getEntries() {
         return this.entries;
     }
 
     @Override
-    public void lootjs$setEntries(LootPoolEntryContainer[] entries) {
+    public void lootjs$setEntries(List<LootPoolEntryContainer> entries) {
         this.entries = entries;
     }
 
     @Override
-    public LootItemCondition[] lootjs$getConditions() {
+    public List<LootItemCondition> lootjs$getConditions() {
         return this.conditions;
     }
 
     @Override
-    public void lootjs$setConditions(LootItemCondition[] conditions) {
+    public void lootjs$setConditions(List<LootItemCondition> conditions) {
         this.conditions = conditions;
         this.compositeCondition = LootItemConditions.andConditions(conditions);
     }
 
     @Override
-    public LootItemFunction[] lootjs$getFunctions() {
+    public List<LootItemFunction> lootjs$getFunctions() {
         return this.functions;
     }
 
     @Override
-    public void lootjs$setFunctions(LootItemFunction[] functions) {
+    public void lootjs$setFunctions(List<LootItemFunction> functions) {
         this.functions = functions;
         this.compositeFunction = LootItemFunctions.compose(functions);
     }

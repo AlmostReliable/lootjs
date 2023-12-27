@@ -25,7 +25,7 @@ public class ItemLootEntry extends AbstractSimpleLootEntry<LootItem> implements 
     }
 
     public ItemLootEntry(ItemStack itemStack) {
-        super(new LootItem(itemStack.getItem(),
+        super(new LootItem(itemStack.getItem().builtInRegistryHolder(),
                 LootPoolSingletonContainer.DEFAULT_WEIGHT,
                 LootPoolSingletonContainer.DEFAULT_QUALITY,
                 LootEntry.EMPTY_CONDITIONS,
@@ -42,7 +42,7 @@ public class ItemLootEntry extends AbstractSimpleLootEntry<LootItem> implements 
     }
 
     public ItemLootEntry(Item item, @Nullable NumberProvider count, @Nullable CompoundTag nbt) {
-        super(new LootItem(item,
+        super(new LootItem(item.builtInRegistryHolder(),
                 LootPoolSingletonContainer.DEFAULT_WEIGHT,
                 LootPoolSingletonContainer.DEFAULT_QUALITY,
                 LootEntry.EMPTY_CONDITIONS,
@@ -64,7 +64,7 @@ public class ItemLootEntry extends AbstractSimpleLootEntry<LootItem> implements 
     }
 
     public Item getItem() {
-        return vanillaEntry.item;
+        return vanillaEntry.item.value();
     }
 
     public void setItem(Item item) {
@@ -72,7 +72,7 @@ public class ItemLootEntry extends AbstractSimpleLootEntry<LootItem> implements 
             throw new IllegalStateException("Vanilla Loot Entry cannot be set to AIR, consider using LootEntry.empty()");
         }
 
-        vanillaEntry.item = item;
+        vanillaEntry.item = item.builtInRegistryHolder();
     }
 
     @Nullable

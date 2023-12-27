@@ -68,11 +68,11 @@ public interface LootConditionsContainer<B extends LootConditionsContainer<?>> {
         return addCondition(LootCondition.randomChanceWithEnchantment(enchantment, chances));
     }
 
-    default B location(LocationPredicate predicate) {
+    default B location(LocationPredicate.Builder predicate) {
         return addCondition(LootCondition.location(predicate));
     }
 
-    default B location(BlockPos offset, LocationPredicate predicate) {
+    default B location(BlockPos offset, LocationPredicate.Builder predicate) {
         return addCondition(LootCondition.location(offset, predicate));
     }
 
@@ -100,7 +100,7 @@ public interface LootConditionsContainer<B extends LootConditionsContainer<?>> {
         return addCondition(LootCondition.killedByPlayer());
     }
 
-    default B matchBlockState(Block block, StatePropertiesPredicate properties) {
+    default B matchBlockState(Block block, StatePropertiesPredicate.Builder properties) {
         return addCondition(LootCondition.matchBlockState(block, properties));
     }
 
@@ -108,23 +108,23 @@ public interface LootConditionsContainer<B extends LootConditionsContainer<?>> {
         throw new UnsupportedOperationException("Not implemented currently.");
     }
 
-    default B matchEntity(EntityPredicate entityPredicate) {
+    default B matchEntity(EntityPredicate.Builder entityPredicate) {
         return addCondition(LootCondition.matchEntity(entityPredicate));
     }
 
-    default B matchKiller(EntityPredicate entityPredicate) {
+    default B matchKiller(EntityPredicate.Builder entityPredicate) {
         return addCondition(LootCondition.matchKiller(entityPredicate));
     }
 
-    default B matchDirectKiller(EntityPredicate entityPredicate) {
+    default B matchDirectKiller(EntityPredicate.Builder entityPredicate) {
         return addCondition(LootCondition.matchDirectKiller(entityPredicate));
     }
 
-    default B matchPlayer(EntityPredicate entityPredicate) {
+    default B matchPlayer(EntityPredicate.Builder entityPredicate) {
         return addCondition(LootCondition.matchPlayer(entityPredicate));
     }
 
-    default B matchDamageSource(DamageSourcePredicate predicate) {
+    default B matchDamageSource(DamageSourcePredicate.Builder predicate) {
         return addCondition(LootCondition.matchDamageSource(predicate));
     }
 

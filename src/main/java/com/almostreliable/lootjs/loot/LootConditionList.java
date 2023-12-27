@@ -8,7 +8,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Arrays;
+import java.util.List;
 
 public class LootConditionList extends LootObjectList<LootItemCondition>
         implements LootConditionsContainer<LootConditionList> {
@@ -33,8 +33,8 @@ public class LootConditionList extends LootObjectList<LootItemCondition>
         return filter.test(rl);
     }
 
-    public LootConditionList(LootItemCondition... conditions) {
-        super(Arrays.asList(conditions));
+    public LootConditionList(List<LootItemCondition> conditions) {
+        super(conditions);
     }
 
     @Override

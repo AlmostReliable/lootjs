@@ -2,6 +2,7 @@ package com.almostreliable.lootjs.loot;
 
 import com.almostreliable.lootjs.LootJS;
 import com.google.gson.JsonObject;
+import com.mojang.serialization.JsonOps;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.alchemy.Potion;
@@ -125,6 +126,6 @@ public class LootFunction {
     }
 
     public static LootItemFunction fromJson(JsonObject json) {
-        return LootJS.FUNCTION_GSON.fromJson(json, LootItemFunction.class);
+        return LootItemFunctions.CODEC.parse(JsonOps.INSTANCE, json).getOrThrow(false, LootJS.LOG::error);
     }
 }

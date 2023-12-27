@@ -6,13 +6,13 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
-import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.material.Fluid;
 
 import javax.annotation.Nullable;
+import java.util.Optional;
 
 public interface Predicates {
 
@@ -73,28 +73,8 @@ public interface Predicates {
     }
 
     static EnchantmentPredicate enchantment(@Nullable Enchantment enchantment, MinMaxBounds.Ints levels) {
-        return new EnchantmentPredicate(enchantment, levels);
-    }
-
-    static MobEffectsPredicate effect(MobEffect effect) {
-        return MobEffectsPredicate.effects();
-    }
-
-    static MobEffectsPredicate effect(MobEffect effect, MinMaxBounds.Ints amplifier) {
-        return effect(effect, amplifier, MinMaxBounds.Ints.ANY);
-    }
-
-    static MobEffectsPredicate effect(MobEffect effect, MinMaxBounds.Ints amplifier, MinMaxBounds.Ints duration) {
-        return effect(effect, amplifier, duration, null);
-    }
-
-    static MobEffectsPredicate effect(MobEffect effect, MinMaxBounds.Ints amplifier, MinMaxBounds.Ints duration, @Nullable Boolean ambient) {
-        return effect(effect, amplifier, duration, ambient, null);
-    }
-
-    static MobEffectsPredicate effect(MobEffect effect, MinMaxBounds.Ints amplifier, MinMaxBounds.Ints duration, @Nullable Boolean ambient, @Nullable Boolean visible) {
-        var ip = new MobEffectsPredicate.MobEffectInstancePredicate(amplifier, duration, ambient, visible);
-        return MobEffectsPredicate.effects().and(effect, ip);
+        return new EnchantmentPredicate(
+                enchantment == null ? Optional.empty() : Optional.of(enchantment.builtInRegistryHolder()), levels);
     }
 
     static NbtPredicate nbt(CompoundTag nbt) {

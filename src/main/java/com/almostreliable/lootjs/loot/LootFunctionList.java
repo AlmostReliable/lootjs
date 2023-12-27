@@ -37,8 +37,8 @@ public class LootFunctionList extends LootObjectList<LootItemFunction>
         return filter.test(rl);
     }
 
-    public LootFunctionList(LootItemFunction... functions) {
-        super(List.of(functions));
+    public LootFunctionList(List<LootItemFunction> functions) {
+        super(functions);
     }
 
     @Override

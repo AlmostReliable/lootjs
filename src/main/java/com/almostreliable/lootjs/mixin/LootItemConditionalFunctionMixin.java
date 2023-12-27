@@ -13,32 +13,32 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Mutable;
 import org.spongepowered.asm.mixin.Shadow;
 
+import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 
 @Mixin(LootItemConditionalFunction.class)
 public class LootItemConditionalFunctionMixin implements LootItemConditionalFunctionExtension,
                                                          LootItemFunctionExtension {
-    @Mutable @Shadow @Final protected LootItemCondition[] predicates;
-
+    @Mutable @Shadow @Final protected List<LootItemCondition> predicates;
     @Mutable @Shadow @Final private Predicate<LootContext> compositePredicates;
 
     @Override
-    public LootItemCondition[] lootjs$getConditions() {
+    public List<LootItemCondition> lootjs$getConditions() {
         return this.predicates;
     }
 
     @Override
-    public void lootjs$setConditions(LootItemCondition[] conditions) {
+    public void lootjs$setConditions(List<LootItemCondition> conditions) {
         this.predicates = conditions;
         this.compositePredicates = LootItemConditions.andConditions(conditions);
     }
 
     @Override
     public LootItemFunction lootjs$when(Consumer<LootConditionList> consumer) {
-        LootConditionList l = new LootConditionList(predicates);
+        LootConditionList l = predicates instanceof LootConditionList lcl ? lcl : new LootConditionList();
         consumer.accept(l);
-        this.lootjs$setConditions(l.createVanillaArray());
+        this.lootjs$setConditions(l);
         return (LootItemFunction) this;
     }
 }

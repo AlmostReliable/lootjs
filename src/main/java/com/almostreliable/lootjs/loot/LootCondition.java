@@ -5,6 +5,7 @@ import com.almostreliable.lootjs.core.filters.ItemFilter;
 import com.almostreliable.lootjs.core.filters.Resolver;
 import com.almostreliable.lootjs.loot.condition.*;
 import com.google.gson.JsonObject;
+import com.mojang.serialization.JsonOps;
 import dev.latvian.mods.kubejs.stages.Stages;
 import net.minecraft.advancements.critereon.*;
 import net.minecraft.core.BlockPos;
@@ -25,9 +26,7 @@ import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.level.storage.loot.predicates.*;
 
 import javax.annotation.Nullable;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Predicate;
 
 public class LootCondition {
@@ -99,12 +98,12 @@ public class LootCondition {
         return new MainHandTableBonus(enchantment, chances);
     }
 
-    public static LootItemCondition location(LocationPredicate predicate) {
-        return new LocationCheck(predicate, BlockPos.ZERO);
+    public static LootItemCondition location(LocationPredicate.Builder predicate) {
+        return LocationCheck.checkLocation(predicate).build();
     }
 
-    public static LootItemCondition location(BlockPos offset, LocationPredicate predicate) {
-        return new LocationCheck(predicate, offset);
+    public static LootItemCondition location(BlockPos offset, LocationPredicate.Builder predicate) {
+        return LocationCheck.checkLocation(predicate, offset).build();
     }
 
     public static LootItemCondition biome(Resolver... resolvers) {
@@ -156,30 +155,30 @@ public class LootCondition {
         return LootItemKilledByPlayerCondition.killedByPlayer().build();
     }
 
-    public static LootItemCondition matchBlockState(Block block, StatePropertiesPredicate properties) {
-        return new LootItemBlockStatePropertyCondition(block, properties);
+    public static LootItemCondition matchBlockState(Block block, StatePropertiesPredicate.Builder properties) {
+        return LootItemBlockStatePropertyCondition.hasBlockStateProperties(block).setProperties(properties).build();
     }
 
-    public static LootItemCondition matchEntity(EntityPredicate entityPredicate) {
+    public static LootItemCondition matchEntity(EntityPredicate.Builder entityPredicate) {
         return LootItemEntityPropertyCondition.hasProperties(LootContext.EntityTarget.THIS, entityPredicate).build();
     }
 
-    public static LootItemCondition matchKiller(EntityPredicate entityPredicate) {
+    public static LootItemCondition matchKiller(EntityPredicate.Builder entityPredicate) {
         return LootItemEntityPropertyCondition.hasProperties(LootContext.EntityTarget.KILLER, entityPredicate).build();
     }
 
-    public static LootItemCondition matchDirectKiller(EntityPredicate entityPredicate) {
+    public static LootItemCondition matchDirectKiller(EntityPredicate.Builder entityPredicate) {
         return LootItemEntityPropertyCondition
                 .hasProperties(LootContext.EntityTarget.DIRECT_KILLER, entityPredicate)
                 .build();
     }
 
-    public static LootItemCondition matchPlayer(EntityPredicate entityPredicate) {
-        return new MatchPlayer(entityPredicate);
+    public static LootItemCondition matchPlayer(EntityPredicate.Builder entityPredicate) {
+        return new MatchPlayer(entityPredicate.build());
     }
 
-    public static LootItemCondition matchDamageSource(DamageSourcePredicate predicate) {
-        return new DamageSourceCondition(predicate);
+    public static LootItemCondition matchDamageSource(DamageSourcePredicate.Builder predicate) {
+        return DamageSourceCondition.hasDamageSource(predicate).build();
     }
 
     public static LootItemCondition distance(MinMaxBounds.Doubles bounds) {
@@ -233,14 +232,14 @@ public class LootCondition {
     }
 
     public static LootItemCondition fromJson(JsonObject json) {
-        return LootJS.CONDITION_GSON.fromJson(json, LootItemCondition.class);
+        return LootItemConditions.CODEC.parse(JsonOps.INSTANCE, json).getOrThrow(false, LootJS.LOG::error);
     }
 
     public static LootItemCondition or(LootItemCondition... conditions) {
-        return new AnyOfCondition(conditions);
+        return new AnyOfCondition(Arrays.asList(conditions));
     }
 
     public static LootItemCondition and(LootItemCondition... conditions) {
-        return new AllOfCondition(conditions);
+        return new AllOfCondition(Arrays.asList(conditions));
     }
 }

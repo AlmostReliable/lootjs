@@ -22,9 +22,10 @@ import java.util.function.Consumer;
 @SuppressWarnings("UnusedReturnValue")
 public interface LootEntry {
 
-    LootItemCondition[] EMPTY_CONDITIONS = new LootItemCondition[0];
-    LootItemFunction[] EMPTY_FUNCTIONS = new LootItemFunction[0];
-    LootPoolEntryContainer[] EMPTY_ENTRIES = new LootPoolEntryContainer[0];
+    // TODO instead of using empty lists, directly pass in LootConditionList etc.
+    List<LootItemCondition> EMPTY_CONDITIONS = List.of();
+    List<LootItemFunction> EMPTY_FUNCTIONS = List.of();
+    List<LootPoolEntryContainer> EMPTY_ENTRIES = List.of();
 
     static ItemLootEntry of(ItemStack itemStack) {
         return new ItemLootEntry(itemStack);

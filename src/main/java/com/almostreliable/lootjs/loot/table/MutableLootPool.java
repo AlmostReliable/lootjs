@@ -1,23 +1,25 @@
 package com.almostreliable.lootjs.loot.table;
 
 import com.almostreliable.lootjs.LootJS;
-import com.almostreliable.lootjs.LootJSPlatform;
+import com.almostreliable.lootjs.core.entry.LootEntry;
 import com.almostreliable.lootjs.core.entry.SimpleLootEntry;
 import com.almostreliable.lootjs.loot.LootConditionList;
 import com.almostreliable.lootjs.loot.LootEntryList;
 import com.almostreliable.lootjs.loot.LootFunctionList;
 import com.almostreliable.lootjs.loot.extension.LootPoolExtension;
-import com.almostreliable.lootjs.core.entry.LootEntry;
 import com.almostreliable.lootjs.util.DebugInfo;
 import com.almostreliable.lootjs.util.NullableFunction;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.mojang.serialization.JsonOps;
 import net.minecraft.world.level.storage.loot.LootPool;
 import net.minecraft.world.level.storage.loot.providers.number.ConstantValue;
 import net.minecraft.world.level.storage.loot.providers.number.NumberProvider;
+import net.minecraft.world.level.storage.loot.providers.number.NumberProviders;
 import net.minecraft.world.level.storage.loot.providers.number.UniformGenerator;
 
 import javax.annotation.Nullable;
+import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 
@@ -35,7 +37,7 @@ public class MutableLootPool implements LootTransformHelper, LootAppendHelper {
         vanillaPool = pool;
         conditions = new LootConditionList(accessor.lootjs$getConditions());
         functions = new LootFunctionList(accessor.lootjs$getFunctions());
-        entries = new LootEntryList(accessor.lootjs$getEntries());
+        entries = new LootEntryList(accessor.lootjs$getEntries()); // TODO
         rolls = accessor.lootjs$getRolls();
         bonusRolls = accessor.lootjs$getBonusRolls();
     }
@@ -69,8 +71,9 @@ public class MutableLootPool implements LootTransformHelper, LootAppendHelper {
     }
 
     public LootPool buildVanillaPool() {
-        var functions = this.functions.createVanillaArray();
-        var conditions = this.conditions.createVanillaArray();
+        // TODO maybe just directly modify the vanilla fields and replace them with our lists.
+        var functions = this.functions;
+        var conditions = this.conditions;
         var entries = this.entries.createVanillaArray();
 
         if (vanillaPool != null) {
@@ -83,7 +86,7 @@ public class MutableLootPool implements LootTransformHelper, LootAppendHelper {
             return vanillaPool;
         }
 
-        return LootJSPlatform.INSTANCE.createLootPool(entries, conditions, functions, rolls, bonusRolls, null);
+        return new LootPool(entries, conditions, functions, rolls, bonusRolls, Optional.empty()); // TODO
     }
 
     public void collectDebugInfo(DebugInfo info) {
@@ -95,7 +98,9 @@ public class MutableLootPool implements LootTransformHelper, LootAppendHelper {
     }
 
     private String getRollStr(NumberProvider numberProvider) {
-        JsonElement tree = LootJS.CONDITION_GSON.toJsonTree(numberProvider);
+        JsonElement tree = NumberProviders.CODEC
+                .encodeStart(JsonOps.INSTANCE, numberProvider)
+                .getOrThrow(false, LootJS.LOG::error);
         if (numberProvider instanceof ConstantValue) {
             if (tree instanceof JsonObject json) {
                 return json.get("value").getAsString();

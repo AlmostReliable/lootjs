@@ -165,7 +165,6 @@ tasks {
             "modDescription" to modDescription,
             "fabricApiVersion" to fabricApiVersion,
             "neoforgeVersion" to neoforgeVersion,
-            "FMLVersion" to neoforgeVersion.substringBefore("."), // Only use major version as FML error message sucks. The error message for wrong Forge version is way better.
             "githubUser" to githubUser,
             "githubRepo" to githubRepo,
             "kubejsVersion" to kubejsVersion

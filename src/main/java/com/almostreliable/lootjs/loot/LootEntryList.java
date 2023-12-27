@@ -23,8 +23,8 @@ import java.util.function.Predicate;
 public class LootEntryList extends LootObjectList<LootEntry> implements LootTransformHelper,
                                                                         LootAppendHelper {
 
-    private static Collection<LootEntry> mutate(LootPoolEntryContainer... entries) {
-        List<LootEntry> mutableEntries = new ArrayList<>(entries.length);
+    private static Collection<LootEntry> mutate(List<LootPoolEntryContainer> entries) {
+        List<LootEntry> mutableEntries = new ArrayList<>(entries.size());
         for (LootPoolEntryContainer entry : entries) {
             mutableEntries.add(LootEntry.ofVanilla(entry));
         }
@@ -59,7 +59,7 @@ public class LootEntryList extends LootObjectList<LootEntry> implements LootTran
         super(Arrays.asList(entries));
     }
 
-    public LootEntryList(LootPoolEntryContainer... entries) {
+    public LootEntryList(List<LootPoolEntryContainer> entries) {
         super(mutate(entries));
     }
 
@@ -70,10 +70,10 @@ public class LootEntryList extends LootObjectList<LootEntry> implements LootTran
     }
 
 
-    public LootPoolEntryContainer[] createVanillaArray() {
-        LootPoolEntryContainer[] entries = new LootPoolEntryContainer[this.size()];
-        for (int i = 0; i < this.size(); i++) {
-            entries[i] = this.get(i).getVanillaEntry();
+    public List<LootPoolEntryContainer> createVanillaArray() {
+        List<LootPoolEntryContainer> entries = new ArrayList<>(this.size());
+        for (LootEntry e : this) {
+            entries.add(e.getVanillaEntry());
         }
 
         return entries;

@@ -1,6 +1,5 @@
 package com.almostreliable.lootjs.core;
 
-import com.almostreliable.lootjs.LootJSPlatform;
 import com.almostreliable.lootjs.loot.extension.LootContextExtension;
 import com.almostreliable.lootjs.util.LootContextUtils;
 import com.almostreliable.lootjs.util.Utils;
@@ -27,7 +26,7 @@ public class LootContextInfo {
     public static LootContextInfo create(LootContext context, Iterable<ItemStack> loot) {
         LootContextInfo lci = new LootContextInfo();
 
-        lci.add("LootTable", Utils.quote(LootJSPlatform.INSTANCE.getQueriedLootTableId(context)));
+        lci.add("LootTable", Utils.quote(context.getQueriedLootTableId()));
         lci.add("LootType", LootContextExtension.cast(context).lootjs$getType().name());
 
         Vec3 origin = context.getParamOrNull(LootContextParams.ORIGIN);

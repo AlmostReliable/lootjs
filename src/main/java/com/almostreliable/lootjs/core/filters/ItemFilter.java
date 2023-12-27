@@ -10,6 +10,7 @@ import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.*;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
+import net.neoforged.neoforge.common.ToolAction;
 
 import java.util.Objects;
 import java.util.function.Predicate;
@@ -137,6 +138,41 @@ public interface ItemFilter extends Predicate<ItemStack> {
     default ItemFilter or(ItemFilter other) {
         Objects.requireNonNull(other);
         return (itemStack) -> test(itemStack) || other.test(itemStack);
+    }
+
+    static ItemFilter canPerformAnyAction(String... actions) {
+        ToolAction[] toolActions = getToolActions(actions);
+        return itemStack -> {
+            for (ToolAction action : toolActions) {
+                if (itemStack.canPerformAction(action)) {
+                    return true;
+                }
+            }
+
+            return false;
+        };
+    }
+
+    static ItemFilter canPerformAction(String... actions) {
+        ToolAction[] toolActions = getToolActions(actions);
+        return itemStack -> {
+            for (ToolAction action : toolActions) {
+                if (!itemStack.canPerformAction(action)) {
+                    return false;
+                }
+            }
+
+            return true;
+        };
+    }
+
+    private static ToolAction[] getToolActions(String[] actions) {
+        ToolAction[] toolActions = new ToolAction[actions.length];
+        for (int i = 0; i < actions.length; i++) {
+            toolActions[i] = ToolAction.get(actions[i]);
+        }
+
+        return toolActions;
     }
 
     record Ingredient(net.minecraft.world.item.crafting.Ingredient ingredient) implements ItemFilter {

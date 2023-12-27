@@ -1,58 +1,78 @@
 package com.almostreliable.lootjs.mixin;
 
 import com.almostreliable.lootjs.LootJS;
-import com.almostreliable.lootjs.LootJSPlatform;
 import com.almostreliable.lootjs.core.LootBucket;
+import com.almostreliable.lootjs.loot.extension.LootTableExtension;
 import com.almostreliable.lootjs.loot.table.LootTracker;
 import com.almostreliable.lootjs.loot.table.PostLootAction;
 import com.almostreliable.lootjs.loot.table.PostLootActionOwner;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.storage.loot.LootContext;
+import net.minecraft.world.level.storage.loot.LootPool;
 import net.minecraft.world.level.storage.loot.LootTable;
-import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Unique;
+import net.minecraft.world.level.storage.loot.functions.LootItemFunction;
+import net.minecraft.world.level.storage.loot.functions.LootItemFunctions;
+import net.minecraft.world.level.storage.loot.parameters.LootContextParamSet;
+import org.spongepowered.asm.mixin.*;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import javax.annotation.Nullable;
+import java.util.List;
+import java.util.Optional;
+import java.util.function.BiFunction;
 import java.util.function.Consumer;
 
 @Mixin(LootTable.class)
-public class LootTableMixin implements PostLootActionOwner {
+public abstract class LootTableMixin implements PostLootActionOwner, LootTableExtension {
+
+    @Mutable @Shadow @Final private LootContextParamSet paramSet;
+    @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
+    @Mutable
+    @Shadow
+    @Final
+    private Optional<ResourceLocation> randomSequence;
+    @Mutable @Shadow @Final private List<LootItemFunction> functions;
+    @Mutable @Shadow @Final private BiFunction<ItemStack, LootContext, ItemStack> compositeFunction;
+    @Mutable @Shadow @Final private List<LootPool> pools;
+
+    @Shadow
+    public abstract ResourceLocation getLootTableId();
 
     @Unique
     @Nullable
-    private PostLootAction postLootAction;
+    private PostLootAction lootjs$postLootAction;
 
     @Override
     public void lootjs$setPostLootAction(PostLootAction postLootAction) {
-        this.postLootAction = postLootAction;
+        this.lootjs$postLootAction = postLootAction;
     }
 
     @Nullable
     @Override
     public PostLootAction lootjs$getPostLootAction() {
-        return this.postLootAction;
+        return this.lootjs$postLootAction;
     }
 
     @ModifyVariable(method = "getRandomItemsRaw(Lnet/minecraft/world/level/storage/loot/LootContext;Ljava/util/function/Consumer;)V", at = @At("HEAD"), argsOnly = true)
     private Consumer<ItemStack> lootjs$createLootTracker(Consumer<ItemStack> output, LootContext ctx, Consumer<ItemStack> $) {
         if (lootjs$getPostLootAction() != null) {
-            return new LootTracker(output, LootJSPlatform.INSTANCE.getLootTableId((LootTable) (Object) this));
+            return new LootTracker(output, this.getLootTableId());
         }
 
         return output;
     }
 
-    @Inject(method = "getRandomItemsRaw(Lnet/minecraft/world/level/storage/loot/LootContext;Ljava/util/function/Consumer;)V", at = @At("TAIL"), cancellable = true)
+    @Inject(method = "getRandomItemsRaw(Lnet/minecraft/world/level/storage/loot/LootContext;Ljava/util/function/Consumer;)V", at = @At("TAIL"))
     private void lootjs$resolveLootTracker(LootContext context, Consumer<ItemStack> output, CallbackInfo ci) {
         if (!(output instanceof LootTracker tracker)) {
             return;
         }
 
-        var tableId = LootJSPlatform.INSTANCE.getLootTableId((LootTable) (Object) this);
+        var tableId = this.getLootTableId();
         if (tracker.getTableId() != tableId) {
             LootJS.LOG.warn(
                     "LootJS: Loot table id mismatch when trying to resolve loot tracker. Expected: '{}', actual: '{}'",
@@ -69,4 +89,45 @@ public class LootTableMixin implements PostLootActionOwner {
         tracker.resolve();
     }
 
+    @Override
+    public List<LootPool> lootjs$getPools() {
+        return this.pools;
+    }
+
+    @Override
+    public void lootjs$setPools(List<LootPool> pools) {
+        this.pools = pools;
+    }
+
+    @Override
+    public List<LootItemFunction> lootjs$getFunctions() {
+        return this.functions;
+    }
+
+    @Override
+    public void lootjs$setFunctions(List<LootItemFunction> functions) {
+        this.functions = functions;
+        this.compositeFunction = LootItemFunctions.compose(functions);
+    }
+
+    @Override
+    public void lootjs$setRandomSequence(@Nullable ResourceLocation randomSequence) {
+        this.randomSequence = Optional.ofNullable(randomSequence);
+    }
+
+    @Override
+    @Nullable
+    public ResourceLocation lootjs$getRandomSequence() {
+        return this.randomSequence.orElse(null);
+    }
+
+    @Override
+    public void lootjs$setParamSet(LootContextParamSet paramSet) {
+        this.paramSet = paramSet;
+    }
+
+    @Override
+    public LootContextParamSet lootjs$getParamSet() {
+        return this.paramSet;
+    }
 }

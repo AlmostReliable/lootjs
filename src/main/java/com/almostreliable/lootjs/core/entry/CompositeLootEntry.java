@@ -76,9 +76,9 @@ public class CompositeLootEntry implements LootEntry, LootTransformHelper, LootA
 
     protected void free() {
         if (conditions != null) {
-            vanillaEntry.conditions = conditions.createVanillaArray();
+            vanillaEntry.conditions = conditions;
+            // TODO: let LootCOnditionList implement composite check?
             vanillaEntry.compositeCondition = LootItemConditions.andConditions(vanillaEntry.conditions);
-            conditions = null;
         }
 
         if (entries != null) {
