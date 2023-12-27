@@ -1,5 +1,5 @@
 modLoader = "javafml"
-loaderVersion = "[${forgeFMLVersion},)"
+loaderVersion = "[${FMLVersion},)"
 issueTrackerURL = "https://github.com/${githubUser}/${githubRepo}/issues"
 license = "${license}"
 
@@ -11,22 +11,25 @@ authors = "${modAuthor}"
 description = '''${modDescription}'''
 
 [[dependencies.${modId}]]
-modId = "forge"
-mandatory = true
-versionRange = "[${forgeVersion},)"
+modId = "neoforge"
+type = "required"
+versionRange = "[${neoforgeVersion},)"
 ordering = "NONE"
 side = "BOTH"
 
 [[dependencies.${modId}]]
 modId = "minecraft"
-mandatory = true
+type = "required"
 versionRange = "[${minecraftVersion},)"
 ordering = "NONE"
 side = "BOTH"
 
 [[dependencies.${modId}]]
 modId = "kubejs"
-mandatory = true
+type = "optional"
 versionRange = "[${kubejsVersion},)"
 ordering = "NONE"
 side = "BOTH"
+
+[[mixins]]
+config = "lootjs.mixins.json"
