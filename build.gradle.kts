@@ -98,7 +98,7 @@ dependencies {
     })
 
     "neoForge"("net.neoforged:neoforge:${neoforgeVersion}")
-
+    modApi("dev.latvian.mods:kubejs-neoforge:${kubejsVersion}")
     /**
      * Helps to load mods in development through an extra directory. Sadly this does not support transitive dependencies. :-(
      */
