@@ -1,6 +1,0 @@
-@ParametersAreNonnullByDefault @MethodsReturnNonnullByDefault
-package com.almostreliable.lootjs.forge.mixin;
-
-import net.minecraft.MethodsReturnNonnullByDefault;
-
-import javax.annotation.ParametersAreNonnullByDefault;

@@ -1,1 +1,0 @@
-com.almostreliable.lootjs.kube.LootJSPlugin

@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning].
 
 ## [3.0.0] - 
 ### Changes
+- Now on `neoforge`
 - Added `LootJS.loot_tables` event for direct loot table modification
 - Add `LootBucket` as wrapper class for loot for easier execute some helper functions
 - `LootEntry` does not only represent single items anymore. It now represents all different loot entries vanilla minecraft has.
