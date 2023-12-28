@@ -13,8 +13,6 @@ public interface SimpleLootEntry extends LootEntry, LootFunctionsContainer<Simpl
 
     LootFunctionList getFunctions();
 
-    LootConditionList getConditions();
-
     @Override
     default SimpleLootEntry when(Consumer<LootConditionList> callback) {
         callback.accept(getConditions());

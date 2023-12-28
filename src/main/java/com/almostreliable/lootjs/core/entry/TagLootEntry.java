@@ -1,5 +1,7 @@
 package com.almostreliable.lootjs.core.entry;
 
+import com.almostreliable.lootjs.loot.LootConditionList;
+import com.almostreliable.lootjs.loot.LootFunctionList;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
@@ -24,8 +26,8 @@ public class TagLootEntry extends AbstractSimpleLootEntry<TagEntry> implements S
                 expand,
                 LootPoolSingletonContainer.DEFAULT_WEIGHT,
                 LootPoolSingletonContainer.DEFAULT_QUALITY,
-                LootEntry.EMPTY_CONDITIONS,
-                LootEntry.EMPTY_FUNCTIONS));
+                EMPTY_CONDITIONS,
+                EMPTY_FUNCTIONS));
     }
 
     public boolean getExpand() {

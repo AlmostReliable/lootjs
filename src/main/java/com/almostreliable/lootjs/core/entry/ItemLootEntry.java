@@ -1,6 +1,7 @@
 package com.almostreliable.lootjs.core.entry;
 
 import com.almostreliable.lootjs.core.filters.ItemFilter;
+import com.almostreliable.lootjs.loot.LootConditionList;
 import com.almostreliable.lootjs.loot.LootFunctionList;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.item.Item;
@@ -28,16 +29,15 @@ public class ItemLootEntry extends AbstractSimpleLootEntry<LootItem> implements 
         super(new LootItem(itemStack.getItem().builtInRegistryHolder(),
                 LootPoolSingletonContainer.DEFAULT_WEIGHT,
                 LootPoolSingletonContainer.DEFAULT_QUALITY,
-                LootEntry.EMPTY_CONDITIONS,
-                LootEntry.EMPTY_FUNCTIONS));
+                EMPTY_CONDITIONS,
+                EMPTY_FUNCTIONS));
 
-        functions = new LootFunctionList();
         if (itemStack.getCount() > 1) {
-            functions.setCount(ConstantValue.exactly(itemStack.getCount()));
+            getFunctions().setCount(ConstantValue.exactly(itemStack.getCount()));
         }
 
         if (itemStack.getTag() != null) {
-            functions.setNbt(itemStack.getTag());
+            getFunctions().setNbt(itemStack.getTag());
         }
     }
 
@@ -45,16 +45,15 @@ public class ItemLootEntry extends AbstractSimpleLootEntry<LootItem> implements 
         super(new LootItem(item.builtInRegistryHolder(),
                 LootPoolSingletonContainer.DEFAULT_WEIGHT,
                 LootPoolSingletonContainer.DEFAULT_QUALITY,
-                LootEntry.EMPTY_CONDITIONS,
-                LootEntry.EMPTY_FUNCTIONS));
+                EMPTY_CONDITIONS,
+                EMPTY_FUNCTIONS));
 
-        functions = new LootFunctionList();
         if (count != null) {
-            functions.setCount(count);
+            getFunctions().setCount(count);
         }
 
         if (nbt != null) {
-            functions.setNbt(nbt);
+            getFunctions().setNbt(nbt);
         }
     }
 

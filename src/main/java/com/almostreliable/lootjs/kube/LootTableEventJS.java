@@ -1,6 +1,5 @@
 package com.almostreliable.lootjs.kube;
 
-import com.almostreliable.lootjs.core.LootContextParamSetsMapping;
 import com.almostreliable.lootjs.core.LootType;
 import com.almostreliable.lootjs.core.filters.ResourceLocationFilter;
 import com.almostreliable.lootjs.loot.table.MutableLootTable;
@@ -171,8 +170,7 @@ public class LootTableEventJS extends EventJS {
                 return;
             }
 
-            LootType type = LootContextParamSetsMapping.PSETS_TO_TYPE.getOrDefault(vanillaTable.getParamSet(),
-                    LootType.UNKNOWN);
+            LootType type = LootType.getLootType(vanillaTable.getParamSet());
             if (!asSet.contains(type)) {
                 return;
             }
@@ -193,13 +191,7 @@ public class LootTableEventJS extends EventJS {
             throw new RuntimeException("[LootJS Error] Loot table already exists, cannot create new one: " + location);
         }
 
-        LootContextParamSet paramSet = LootContextParamSetsMapping.TYPE_TO_PSETS.get(type);
-        if (paramSet == null) {
-            ConsoleJS.SERVER.error("[LootJS Error] Unknown loot context type: " + type);
-            ConsoleJS.SERVER.error("Available types: " + LootContextParamSetsMapping.TYPE_TO_PSETS.keySet());
-            return;
-        }
-
+        LootContextParamSet paramSet = type.getParamSet();
         unwrapData();
         LootTable lootTable = new LootTable.Builder().setParamSet(paramSet).setRandomSequence(location).build();
         getData().put(new LootDataId<>(LootDataType.TABLE, location), Utils.cast(lootTable));

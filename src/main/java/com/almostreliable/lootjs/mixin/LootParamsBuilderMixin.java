@@ -1,6 +1,5 @@
 package com.almostreliable.lootjs.mixin;
 
-import com.almostreliable.lootjs.core.LootContextParamSetsMapping;
 import com.almostreliable.lootjs.core.LootType;
 import com.almostreliable.lootjs.loot.extension.LootParamsExtension;
 import net.minecraft.world.level.storage.loot.LootParams;
@@ -15,7 +14,7 @@ public abstract class LootParamsBuilderMixin {
 
     @Inject(method = "create", at = @At("RETURN"))
     public void lootjs$setType(LootContextParamSet params, CallbackInfoReturnable<LootParams> cir) {
-        LootType type = LootContextParamSetsMapping.PSETS_TO_TYPE.getOrDefault(params, LootType.UNKNOWN);
+        LootType type = LootType.getLootType(params);
         ((LootParamsExtension) cir.getReturnValue()).lootjs$setType(type);
     }
 }

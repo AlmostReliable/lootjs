@@ -2,35 +2,38 @@ package com.almostreliable.lootjs.loot;
 
 import com.almostreliable.lootjs.core.filters.ResourceLocationFilter;
 import com.almostreliable.lootjs.util.DebugInfo;
-import com.almostreliable.lootjs.util.LootObjectList;
+import com.almostreliable.lootjs.util.ListHolder;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
-import org.jetbrains.annotations.Nullable;
+import net.minecraft.world.level.storage.loot.predicates.LootItemConditionType;
 
+import java.util.Iterator;
 import java.util.List;
+import java.util.function.Predicate;
 
-public class LootConditionList extends LootObjectList<LootItemCondition>
-        implements LootConditionsContainer<LootConditionList> {
+public class LootConditionList extends ListHolder<LootItemCondition, LootItemCondition>
+        implements LootConditionsContainer<LootConditionList>, Predicate<LootContext> {
 
     public LootConditionList() {
         super();
     }
 
-    @Nullable
-    @Override
-    protected LootItemCondition wrapTransformed(@Nullable Object o) {
-        if (o instanceof LootItemCondition lic) {
-            return lic;
-        }
 
-        return null;
+    @Override
+    public Iterator<LootItemCondition> iterator() {
+        return elements.listIterator();
     }
 
     @Override
-    protected boolean entryMatches(LootItemCondition entry, ResourceLocationFilter filter) {
-        var rl = BuiltInRegistries.LOOT_CONDITION_TYPE.getKey(entry.getType());
-        return filter.test(rl);
+    protected LootItemCondition wrap(LootItemCondition entry) {
+        return entry;
+    }
+
+    @Override
+    protected LootItemCondition unwrap(LootItemCondition entry) {
+        return entry;
     }
 
     public LootConditionList(List<LootItemCondition> conditions) {
@@ -43,10 +46,6 @@ public class LootConditionList extends LootObjectList<LootItemCondition>
         return this;
     }
 
-    public LootItemCondition[] createVanillaArray() {
-        return this.toArray(new LootItemCondition[0]);
-    }
-
     public void collectDebugInfo(DebugInfo info) {
         if (this.isEmpty()) return;
 
@@ -57,7 +56,47 @@ public class LootConditionList extends LootObjectList<LootItemCondition>
             if (key == null) continue;
             info.add(key.toString());
         }
+
         info.pop();
         info.add("]");
+    }
+
+    @Override
+    public boolean test(LootContext context) {
+        for (LootItemCondition condition : this) {
+            if(!condition.test(context)) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    public boolean remove(ResourceLocationFilter type) {
+        return elements.removeIf(element -> type.test(BuiltInRegistries.LOOT_CONDITION_TYPE.getKey(element.getType())));
+    }
+
+    public boolean contains(LootItemConditionType type) {
+        return indexOf(type) != -1;
+    }
+
+    public int indexOf(LootItemConditionType type) {
+        for (int i = 0; i < elements.size(); i++) {
+            if (elements.get(i).getType().equals(type)) {
+                return i;
+            }
+        }
+
+        return -1;
+    }
+
+    public int lastIndexOf(LootItemConditionType type) {
+        for (int i = elements.size() - 1; i >= 0; i--) {
+            if (elements.get(i).getType().equals(type)) {
+                return i;
+            }
+        }
+
+        return -1;
     }
 }

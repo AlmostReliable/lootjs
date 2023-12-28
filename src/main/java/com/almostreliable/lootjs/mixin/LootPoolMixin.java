@@ -1,14 +1,15 @@
 package com.almostreliable.lootjs.mixin;
 
+import com.almostreliable.lootjs.loot.LootConditionList;
+import com.almostreliable.lootjs.loot.LootEntryList;
+import com.almostreliable.lootjs.loot.LootFunctionList;
 import com.almostreliable.lootjs.loot.extension.LootPoolExtension;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.LootPool;
 import net.minecraft.world.level.storage.loot.entries.LootPoolEntryContainer;
 import net.minecraft.world.level.storage.loot.functions.LootItemFunction;
-import net.minecraft.world.level.storage.loot.functions.LootItemFunctions;
 import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
-import net.minecraft.world.level.storage.loot.predicates.LootItemConditions;
 import net.minecraft.world.level.storage.loot.providers.number.NumberProvider;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -31,8 +32,10 @@ public class LootPoolMixin implements LootPoolExtension {
 
 
     @Override
-    public List<LootPoolEntryContainer> lootjs$getEntries() {
-        return this.entries;
+    public LootEntryList lootjs$createEntryList() {
+        var list = new LootEntryList(this.entries);
+        this.entries = list.getElements();
+        return list;
     }
 
     @Override
@@ -41,25 +44,19 @@ public class LootPoolMixin implements LootPoolExtension {
     }
 
     @Override
-    public List<LootItemCondition> lootjs$getConditions() {
-        return this.conditions;
+    public LootConditionList lootjs$createConditionList() {
+        LootConditionList cl = new LootConditionList(this.conditions);
+        this.conditions = cl.getElements();
+        this.compositeCondition = cl;
+        return cl;
     }
 
     @Override
-    public void lootjs$setConditions(List<LootItemCondition> conditions) {
-        this.conditions = conditions;
-        this.compositeCondition = LootItemConditions.andConditions(conditions);
-    }
-
-    @Override
-    public List<LootItemFunction> lootjs$getFunctions() {
-        return this.functions;
-    }
-
-    @Override
-    public void lootjs$setFunctions(List<LootItemFunction> functions) {
-        this.functions = functions;
-        this.compositeFunction = LootItemFunctions.compose(functions);
+    public LootFunctionList lootjs$createFunctionList() {
+        LootFunctionList fl = new LootFunctionList(this.functions);
+        this.functions = fl.getElements();
+        this.compositeFunction = fl;
+        return fl;
     }
 
     @Override

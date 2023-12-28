@@ -2,6 +2,7 @@ package com.almostreliable.lootjs.mixin;
 
 import com.almostreliable.lootjs.LootJS;
 import com.almostreliable.lootjs.core.LootBucket;
+import com.almostreliable.lootjs.loot.LootFunctionList;
 import com.almostreliable.lootjs.loot.extension.LootTableExtension;
 import com.almostreliable.lootjs.loot.table.LootTracker;
 import com.almostreliable.lootjs.loot.table.PostLootAction;
@@ -100,14 +101,11 @@ public abstract class LootTableMixin implements PostLootActionOwner, LootTableEx
     }
 
     @Override
-    public List<LootItemFunction> lootjs$getFunctions() {
-        return this.functions;
-    }
-
-    @Override
-    public void lootjs$setFunctions(List<LootItemFunction> functions) {
-        this.functions = functions;
-        this.compositeFunction = LootItemFunctions.compose(functions);
+    public LootFunctionList lootjs$createFunctionList() {
+        LootFunctionList fl = new LootFunctionList(this.functions);
+        this.functions = fl.getElements();
+        this.compositeFunction = fl;
+        return fl;
     }
 
     @Override

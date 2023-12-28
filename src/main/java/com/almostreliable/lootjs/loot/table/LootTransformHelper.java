@@ -3,16 +3,16 @@ package com.almostreliable.lootjs.loot.table;
 import com.almostreliable.lootjs.core.entry.*;
 import com.almostreliable.lootjs.core.filters.ItemFilter;
 import com.almostreliable.lootjs.core.filters.ResourceLocationFilter;
-import com.almostreliable.lootjs.util.NullableFunction;
 import net.minecraft.world.item.ItemStack;
 
 import java.util.function.Predicate;
+import java.util.function.UnaryOperator;
 
 public interface LootTransformHelper {
 
-    void transformEntry(NullableFunction<SimpleLootEntry, Object> onTransform, boolean deepTransform);
+    void transformEntry(UnaryOperator<SimpleLootEntry> onTransform, boolean deepTransform);
 
-    default void transformEntry(NullableFunction<SimpleLootEntry, Object> onTransform) {
+    default void transformEntry(UnaryOperator<SimpleLootEntry> onTransform) {
         transformEntry(onTransform, true);
     }
 
@@ -61,7 +61,7 @@ public interface LootTransformHelper {
     default void replaceItem(ItemFilter filter, ItemStack item, boolean deepReplace) {
         transformEntry(entry -> {
             if (entry instanceof ItemLootEntry ile && ile.test(filter)) {
-                return item;
+                return new ItemLootEntry(item);
             }
 
             return entry;

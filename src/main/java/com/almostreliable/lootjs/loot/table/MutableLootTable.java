@@ -4,7 +4,6 @@ import com.almostreliable.lootjs.core.entry.SimpleLootEntry;
 import com.almostreliable.lootjs.loot.LootFunctionList;
 import com.almostreliable.lootjs.loot.extension.LootTableExtension;
 import com.almostreliable.lootjs.util.DebugInfo;
-import com.almostreliable.lootjs.util.NullableFunction;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.storage.loot.LootPool;
 import net.minecraft.world.level.storage.loot.LootTable;
@@ -15,6 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
+import java.util.function.UnaryOperator;
 
 @SuppressWarnings("UnusedReturnValue")
 public class MutableLootTable implements LootTransformHelper {
@@ -25,41 +25,24 @@ public class MutableLootTable implements LootTransformHelper {
     private List<MutableLootPool> pools;
     @Nullable
     private LootFunctionList functions;
-    @Nullable
-    private ResourceLocation randomSequence;
     private boolean potentialModified;
-    @Nullable
-    private PostLootAction postLootAction;
 
     public MutableLootTable(LootTable lootTable, ResourceLocation location) {
         this.location = location;
         this.origin = lootTable;
-        randomSequence = ((LootTableExtension) lootTable).lootjs$getRandomSequence();
     }
 
     public MutableLootTable(LootContextParamSet paramSet, ResourceLocation location) {
         this(new LootTable.Builder().setParamSet(paramSet).setRandomSequence(location).build(), location);
     }
 
-    private void initialize() {
-        if (pools == null) {
-            pools = new ArrayList<>();
-            for (LootPool pool : ((LootTableExtension) origin).lootjs$getPools()) {
-                pools.add(new MutableLootPool(pool));
-            }
-        }
-
-        if (functions == null) {
-            functions = new LootFunctionList(((LootTableExtension) origin).lootjs$getFunctions());
-        }
-    }
-
     public ResourceLocation getRandomSequence() {
-        return randomSequence == null ? getLocation() : randomSequence;
+        ResourceLocation rs = LootTableExtension.cast(origin).lootjs$getRandomSequence();
+        return rs == null ? getLocation() : rs;
     }
 
     public void setRandomSequence(@Nullable ResourceLocation randomSequence) {
-        this.randomSequence = randomSequence;
+        LootTableExtension.cast(origin).lootjs$setRandomSequence(randomSequence);
     }
 
     public ResourceLocation getLocation() {
@@ -67,18 +50,18 @@ public class MutableLootTable implements LootTransformHelper {
     }
 
     public List<MutableLootPool> getPools() {
-        initialize();
-        markDirty();
-        assert pools != null;
-
+        if (pools == null) {
+            markDirty();
+            pools = new ArrayList<>();
+            for (LootPool pool : ((LootTableExtension) origin).lootjs$getPools()) {
+                pools.add(new MutableLootPool(pool));
+            }
+        }
         return pools;
     }
 
     public MutableLootTable firstPool(Consumer<MutableLootPool> onModifyPool) {
-        initialize();
-        markDirty();
-        assert pools != null;
-
+        var pools = getPools();
         if (pools.isEmpty()) {
             return addPool(onModifyPool);
         }
@@ -88,58 +71,50 @@ public class MutableLootTable implements LootTransformHelper {
     }
 
     public MutableLootTable addPool(Consumer<MutableLootPool> onAddPool) {
-        initialize();
-        markDirty();
-        assert pools != null;
-
         MutableLootPool pool = new MutableLootPool();
         onAddPool.accept(pool);
-        pools.add(pool);
+        getPools().add(pool);
         return this;
     }
 
     public LootFunctionList getFunctions() {
-        initialize();
-        markDirty();
-        assert functions != null;
+        if (functions == null) {
+            markDirty();
+            functions = LootTableExtension.cast(origin).lootjs$createFunctionList();
+        }
 
         return functions;
     }
 
     public MutableLootTable onDrop(PostLootAction postLootAction) {
-        this.postLootAction = postLootAction;
+        if (origin instanceof PostLootActionOwner owner) {
+            owner.lootjs$setPostLootAction(postLootAction);
+        }
+
         return this;
     }
 
     public void writeToVanillaTable() {
-        if (!potentialModified) {
-            return;
-        }
-
-        var pools = getPools().stream()
-                .map(MutableLootPool::buildVanillaPool)
-                .toList();
-
-        var lt = (LootTableExtension) origin;
-        lt.lootjs$setPools(pools);
-        lt.lootjs$setFunctions(getFunctions());
-        lt.lootjs$setRandomSequence(getRandomSequence());
-
-        if(postLootAction != null && origin instanceof PostLootActionOwner owner) {
-            owner.lootjs$setPostLootAction(postLootAction);
+        if (pools != null) {
+            LootTableExtension.cast(origin).lootjs$setPools(getPools().stream()
+                    .map(MutableLootPool::getVanillaPool)
+                    .toList());
         }
     }
 
     public void print() {
-        initialize();
-        assert pools != null;
-
         DebugInfo info = new DebugInfo();
         info.add("Loot table: " + location);
         info.push();
 
         info.add("% Pools [");
         info.push();
+        var pools = this.pools;
+        if (pools == null) {
+            List<LootPool> lootPools = LootTableExtension.cast(origin).lootjs$getPools();
+            pools = lootPools.stream().map(MutableLootPool::new).toList();
+        }
+
         for (MutableLootPool pool : pools) {
             info.add("{");
             info.push();
@@ -150,7 +125,9 @@ public class MutableLootTable implements LootTransformHelper {
 
         info.pop();
         info.add("]");
-        getFunctions().collectDebugInfo(info);
+        var f = functions == null ? LootTableExtension.cast(origin).lootjs$createFunctionList()
+                                  : functions;
+        f.collectDebugInfo(info);
         info.pop();
 
         info.release();
@@ -163,7 +140,7 @@ public class MutableLootTable implements LootTransformHelper {
     }
 
     @Override
-    public void transformEntry(NullableFunction<SimpleLootEntry, Object> onTransform, boolean deepTransform) {
+    public void transformEntry(UnaryOperator<SimpleLootEntry> onTransform, boolean deepTransform) {
         for (MutableLootPool pool : getPools()) {
             pool.transformEntry(onTransform, deepTransform);
         }

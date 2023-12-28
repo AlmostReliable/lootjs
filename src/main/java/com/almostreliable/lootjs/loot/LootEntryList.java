@@ -1,74 +1,55 @@
 package com.almostreliable.lootjs.loot;
 
-import com.almostreliable.lootjs.core.entry.SimpleLootEntry;
+import com.almostreliable.lootjs.core.entry.CompositeLootEntry;
 import com.almostreliable.lootjs.core.entry.LootEntry;
+import com.almostreliable.lootjs.core.entry.SimpleLootEntry;
 import com.almostreliable.lootjs.core.filters.ResourceLocationFilter;
 import com.almostreliable.lootjs.loot.table.LootAppendHelper;
 import com.almostreliable.lootjs.loot.table.LootTransformHelper;
 import com.almostreliable.lootjs.util.DebugInfo;
-import com.almostreliable.lootjs.util.LootObjectList;
-import com.almostreliable.lootjs.util.NullableFunction;
-import dev.latvian.mods.kubejs.item.ItemStackJS;
+import com.almostreliable.lootjs.util.ListHolder;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.storage.loot.entries.LootPoolEntryContainer;
-import org.jetbrains.annotations.Nullable;
+import net.minecraft.world.level.storage.loot.entries.LootPoolEntryType;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.function.Predicate;
+import java.util.function.UnaryOperator;
 
-public class LootEntryList extends LootObjectList<LootEntry> implements LootTransformHelper,
-                                                                        LootAppendHelper {
-
-    private static Collection<LootEntry> mutate(List<LootPoolEntryContainer> entries) {
-        List<LootEntry> mutableEntries = new ArrayList<>(entries.size());
-        for (LootPoolEntryContainer entry : entries) {
-            mutableEntries.add(LootEntry.ofVanilla(entry));
-        }
-
-        return mutableEntries;
-    }
+public class LootEntryList extends ListHolder<LootEntry, LootPoolEntryContainer> implements LootTransformHelper,
+                                                                                            LootAppendHelper {
 
     public LootEntryList() {
         super();
     }
 
-    public LootEntryList(int initialCapacity) {
-        super(initialCapacity);
-    }
-
-    @Nullable
-    @Override
-    protected LootEntry wrapTransformed(@Nullable Object o) {
-        if (o instanceof LootEntry mle) {
-            return mle;
-        }
-
-        ItemStack itemStack = ItemStackJS.of(o); // TODO outsource to not have KubeJS calls here
-        if (!itemStack.isEmpty()) {
-            return LootEntry.of(itemStack);
-        }
-
-        return null;
-    }
-
     public LootEntryList(LootEntry... entries) {
-        super(Arrays.asList(entries));
+        super(new ArrayList<>(entries.length));
+        for (LootEntry entry : entries) {
+            add(entry);
+        }
     }
 
     public LootEntryList(List<LootPoolEntryContainer> entries) {
-        super(mutate(entries));
+        super(entries);
     }
 
     @Override
-    protected boolean entryMatches(LootEntry entry, ResourceLocationFilter filter) {
-        var rl = BuiltInRegistries.LOOT_POOL_ENTRY_TYPE.getKey(entry.getVanillaType());
-        return filter.test(rl);
+    public ListIterator<LootEntry> iterator() {
+        return new ListIt(elements);
     }
 
+    @Override
+    protected LootEntry wrap(LootPoolEntryContainer entry) {
+        return LootEntry.ofVanilla(entry);
+    }
+
+    @Override
+    protected LootPoolEntryContainer unwrap(LootEntry entry) {
+        return entry.getVanillaEntry();
+    }
 
     public List<LootPoolEntryContainer> createVanillaArray() {
         List<LootPoolEntryContainer> entries = new ArrayList<>(this.size());
@@ -91,7 +72,23 @@ public class LootEntryList extends LootObjectList<LootEntry> implements LootTran
         info.add("]");
     }
 
-    public void transformEntry(NullableFunction<SimpleLootEntry, Object> onTransform, boolean deepTransform) {
+    public void transform(UnaryOperator<LootEntry> onTransform) {
+        var it = iterator();
+        while (it.hasNext()) {
+            LootEntry entry = it.next();
+            LootEntry transformed = onTransform.apply(entry);
+            if (transformed == null) {
+                it.remove();
+                continue;
+            }
+
+            if (transformed != entry) {
+                it.set(transformed);
+            }
+        }
+    }
+
+    public void transformEntry(UnaryOperator<SimpleLootEntry> onTransform, boolean deepTransform) {
         transform(entry -> {
             if (entry instanceof LootTransformHelper helper && deepTransform) {
                 helper.transformEntry(onTransform, true);
@@ -107,11 +104,11 @@ public class LootEntryList extends LootObjectList<LootEntry> implements LootTran
     }
 
     public void removeEntry(Predicate<SimpleLootEntry> filter, boolean deepRemove) {
-        var it = listIterator();
+        var it = iterator();
         while (it.hasNext()) {
-            var entry = it.next();
-            if (entry instanceof LootTransformHelper helper && deepRemove) {
-                helper.removeEntry(filter, true);
+            LootEntry entry = it.next();
+            if (entry instanceof CompositeLootEntry composite && deepRemove) {
+                composite.removeEntry(filter, true);
                 continue;
             }
 
@@ -124,5 +121,87 @@ public class LootEntryList extends LootObjectList<LootEntry> implements LootTran
     @Override
     public void addEntry(LootEntry entry) {
         add(entry);
+    }
+
+    public boolean remove(ResourceLocationFilter type) {
+        return elements.removeIf(element -> type.test(BuiltInRegistries.LOOT_POOL_ENTRY_TYPE.getKey(element.getType())));
+    }
+
+    public boolean contains(LootPoolEntryType type) {
+        return indexOf(type) != -1;
+    }
+
+    public int indexOf(LootPoolEntryType type) {
+        for (int i = 0; i < elements.size(); i++) {
+            if (elements.get(i).getType().equals(type)) {
+                return i;
+            }
+        }
+
+        return -1;
+    }
+
+    public int lastIndexOf(LootPoolEntryType type) {
+        for (int i = elements.size() - 1; i >= 0; i--) {
+            if (elements.get(i).getType().equals(type)) {
+                return i;
+            }
+        }
+
+        return -1;
+    }
+
+    private static class ListIt implements ListIterator<LootEntry> {
+
+        private final ListIterator<LootPoolEntryContainer> it;
+
+        public ListIt(List<LootPoolEntryContainer> entries) {
+            this.it = entries.listIterator();
+        }
+
+        @Override
+        public boolean hasNext() {
+            return it.hasNext();
+        }
+
+        @Override
+        public LootEntry next() {
+            return LootEntry.ofVanilla(it.next());
+        }
+
+        @Override
+        public boolean hasPrevious() {
+            return it.hasPrevious();
+        }
+
+        @Override
+        public LootEntry previous() {
+            return LootEntry.ofVanilla(it.previous());
+        }
+
+        @Override
+        public int nextIndex() {
+            return it.nextIndex();
+        }
+
+        @Override
+        public int previousIndex() {
+            return it.previousIndex();
+        }
+
+        @Override
+        public void remove() {
+            it.remove();
+        }
+
+        @Override
+        public void set(LootEntry lootEntry) {
+            it.set(lootEntry.getVanillaEntry());
+        }
+
+        @Override
+        public void add(LootEntry lootEntry) {
+            it.add(lootEntry.getVanillaEntry());
+        }
     }
 }

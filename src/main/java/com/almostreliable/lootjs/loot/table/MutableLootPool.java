@@ -8,7 +8,6 @@ import com.almostreliable.lootjs.loot.LootEntryList;
 import com.almostreliable.lootjs.loot.LootFunctionList;
 import com.almostreliable.lootjs.loot.extension.LootPoolExtension;
 import com.almostreliable.lootjs.util.DebugInfo;
-import com.almostreliable.lootjs.util.NullableFunction;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.mojang.serialization.JsonOps;
@@ -19,79 +18,73 @@ import net.minecraft.world.level.storage.loot.providers.number.NumberProviders;
 import net.minecraft.world.level.storage.loot.providers.number.UniformGenerator;
 
 import javax.annotation.Nullable;
+import java.util.ArrayList;
 import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
+import java.util.function.UnaryOperator;
 
 public class MutableLootPool implements LootTransformHelper, LootAppendHelper {
 
-    private final LootConditionList conditions;
-    private final LootFunctionList functions;
-    private final LootEntryList entries;
-    private NumberProvider rolls = ConstantValue.exactly(1);
-    private NumberProvider bonusRolls = ConstantValue.exactly(0);
-    @Nullable private LootPool vanillaPool;
+    @Nullable private LootConditionList conditions;
+    @Nullable private LootFunctionList functions;
+    @Nullable private LootEntryList entries;
+    private final LootPool vanillaPool;
 
     public MutableLootPool(LootPool pool) {
-        var accessor = (LootPoolExtension) pool;
         vanillaPool = pool;
-        conditions = new LootConditionList(accessor.lootjs$getConditions());
-        functions = new LootFunctionList(accessor.lootjs$getFunctions());
-        entries = new LootEntryList(accessor.lootjs$getEntries()); // TODO
-        rolls = accessor.lootjs$getRolls();
-        bonusRolls = accessor.lootjs$getBonusRolls();
     }
 
     public MutableLootPool() {
-        conditions = new LootConditionList();
-        functions = new LootFunctionList();
-        entries = new LootEntryList();
+        vanillaPool = new LootPool(new ArrayList<>(),
+                new ArrayList<>(),
+                new ArrayList<>(),
+                ConstantValue.exactly(1),
+                ConstantValue.exactly(0),
+                Optional.empty());
     }
 
     public MutableLootPool rolls(NumberProvider rolls) {
-        this.rolls = rolls;
+        LootPoolExtension.cast(vanillaPool).lootjs$setRolls(rolls);
         return this;
     }
 
     public MutableLootPool bonusRolls(NumberProvider bonusRolls) {
-        this.bonusRolls = bonusRolls;
+        LootPoolExtension.cast(vanillaPool).lootjs$setBonusRolls(bonusRolls);
         return this;
     }
 
     public LootConditionList getConditions() {
+        if (conditions == null) {
+            conditions = LootPoolExtension.cast(vanillaPool).lootjs$createConditionList();
+        }
+
         return conditions;
     }
 
     public LootFunctionList getFunctions() {
+        if (functions == null) {
+            functions = LootPoolExtension.cast(vanillaPool).lootjs$createFunctionList();
+        }
+
         return functions;
     }
 
     public LootEntryList getEntries() {
+        if (entries == null) {
+            entries = LootPoolExtension.cast(vanillaPool).lootjs$createEntryList();
+        }
+
         return entries;
     }
 
-    public LootPool buildVanillaPool() {
-        // TODO maybe just directly modify the vanilla fields and replace them with our lists.
-        var functions = this.functions;
-        var conditions = this.conditions;
-        var entries = this.entries.createVanillaArray();
-
-        if (vanillaPool != null) {
-            var ext = (LootPoolExtension) vanillaPool;
-            ext.lootjs$setConditions(conditions);
-            ext.lootjs$setEntries(entries);
-            ext.lootjs$setFunctions(functions);
-            ext.lootjs$setRolls(rolls);
-            ext.lootjs$setBonusRolls(bonusRolls);
-            return vanillaPool;
-        }
-
-        return new LootPool(entries, conditions, functions, rolls, bonusRolls, Optional.empty()); // TODO
+    public LootPool getVanillaPool() {
+        return vanillaPool;
     }
 
     public void collectDebugInfo(DebugInfo info) {
-        info.add("% Rolls -> " + getRollStr(rolls));
-        info.add("% Bonus rolls -> " + getRollStr(bonusRolls));
+        info.add("% Rolls -> " + getRollStr(LootPoolExtension.cast(vanillaPool).lootjs$getRolls()));
+        info.add("% Bonus rolls -> " + getRollStr(LootPoolExtension.cast(vanillaPool).lootjs$getBonusRolls()));
         getEntries().collectDebugInfo(info);
         getConditions().collectDebugInfo(info);
         getFunctions().collectDebugInfo(info);
@@ -123,11 +116,11 @@ public class MutableLootPool implements LootTransformHelper, LootAppendHelper {
 
     @Override
     public void addEntry(LootEntry entry) {
-        entries.add(entry);
+        getEntries().add(entry);
     }
 
     @Override
-    public void transformEntry(NullableFunction<SimpleLootEntry, Object> onTransform, boolean deepTransform) {
+    public void transformEntry(UnaryOperator<SimpleLootEntry> onTransform, boolean deepTransform) {
         getEntries().transformEntry(onTransform, deepTransform);
     }
 

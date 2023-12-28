@@ -4,8 +4,6 @@ import com.almostreliable.lootjs.loot.LootConditionList;
 import com.almostreliable.lootjs.loot.LootFunctionList;
 import net.minecraft.world.level.storage.loot.entries.LootPoolEntryType;
 import net.minecraft.world.level.storage.loot.entries.LootPoolSingletonContainer;
-import net.minecraft.world.level.storage.loot.functions.LootItemFunctions;
-import net.minecraft.world.level.storage.loot.predicates.LootItemConditions;
 
 import javax.annotation.Nullable;
 
@@ -13,12 +11,18 @@ public abstract class AbstractSimpleLootEntry<E extends LootPoolSingletonContain
 
     protected final E vanillaEntry;
     @Nullable
-    protected LootFunctionList functions;
+    private LootConditionList conditions;
     @Nullable
-    protected LootConditionList conditions;
+    private LootFunctionList functions;
 
     public AbstractSimpleLootEntry(E vanillaEntry) {
         this.vanillaEntry = vanillaEntry;
+    }
+
+    public AbstractSimpleLootEntry(E vanillaEntry, LootConditionList conditions, LootFunctionList functions) {
+        this(vanillaEntry);
+        this.conditions = conditions;
+        this.functions = functions;
     }
 
     @Override
@@ -28,27 +32,14 @@ public abstract class AbstractSimpleLootEntry<E extends LootPoolSingletonContain
 
     @Override
     public E getVanillaEntry() {
-        free();
         return vanillaEntry;
-    }
-
-    protected void free() {
-        if (conditions != null) {
-            vanillaEntry.conditions = conditions; // TODO check if this is needed
-            vanillaEntry.compositeCondition = LootItemConditions.andConditions(vanillaEntry.conditions);
-            conditions = null;
-        }
-
-        if (functions != null) {
-            vanillaEntry.functions = functions;
-            vanillaEntry.compositeFunction = LootItemFunctions.compose(vanillaEntry.functions);
-            functions = null;
-        }
     }
 
     public LootFunctionList getFunctions() {
         if (functions == null) {
             functions = new LootFunctionList(vanillaEntry.functions);
+            vanillaEntry.functions = functions.getElements();
+            vanillaEntry.compositeFunction = functions;
         }
 
         return functions;
@@ -58,6 +49,8 @@ public abstract class AbstractSimpleLootEntry<E extends LootPoolSingletonContain
     public LootConditionList getConditions() {
         if (conditions == null) {
             conditions = new LootConditionList(vanillaEntry.conditions);
+            vanillaEntry.conditions = conditions.getElements();
+            vanillaEntry.compositeCondition = conditions;
         }
 
         return conditions;

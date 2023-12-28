@@ -13,8 +13,8 @@ public class TableReferenceLootEntry extends AbstractSimpleLootEntry<LootTableRe
         super(new LootTableReference(location,
                 LootPoolSingletonContainer.DEFAULT_WEIGHT,
                 LootPoolSingletonContainer.DEFAULT_QUALITY,
-                LootEntry.EMPTY_CONDITIONS,
-                LootEntry.EMPTY_FUNCTIONS));
+                EMPTY_CONDITIONS,
+                EMPTY_FUNCTIONS));
     }
 
     public ResourceLocation getLocation() {

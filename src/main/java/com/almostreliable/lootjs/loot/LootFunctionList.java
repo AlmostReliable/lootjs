@@ -2,43 +2,45 @@ package com.almostreliable.lootjs.loot;
 
 import com.almostreliable.lootjs.core.filters.ResourceLocationFilter;
 import com.almostreliable.lootjs.util.DebugInfo;
-import com.almostreliable.lootjs.util.LootObjectList;
+import com.almostreliable.lootjs.util.ListHolder;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.functions.LootItemFunction;
 import net.minecraft.world.level.storage.loot.functions.LootItemFunctionType;
 import net.minecraft.world.level.storage.loot.functions.LootItemFunctions;
 import net.minecraft.world.level.storage.loot.providers.number.NumberProvider;
-import org.jetbrains.annotations.Nullable;
 
+import java.util.Iterator;
 import java.util.List;
+import java.util.function.BiFunction;
 
-public class LootFunctionList extends LootObjectList<LootItemFunction>
-        implements LootFunctionsContainer<LootFunctionList> {
+public class LootFunctionList extends ListHolder<LootItemFunction, LootItemFunction>
+        implements LootFunctionsContainer<LootFunctionList>, BiFunction<ItemStack, LootContext, ItemStack> {
 
     public LootFunctionList() {
         super();
     }
 
-    @Nullable
-    @Override
-    protected LootItemFunction wrapTransformed(@Nullable Object o) {
-        if (o instanceof LootItemFunction lif) {
-            return lif;
-        }
-
-        return null;
-    }
-
-    @Override
-    protected boolean entryMatches(LootItemFunction entry, ResourceLocationFilter filter) {
-        var rl = BuiltInRegistries.LOOT_FUNCTION_TYPE.getKey(entry.getType());
-        return filter.test(rl);
-    }
-
     public LootFunctionList(List<LootItemFunction> functions) {
         super(functions);
+    }
+
+    @Override
+    public Iterator<LootItemFunction> iterator() {
+        return elements.listIterator();
+    }
+
+    @Override
+    protected LootItemFunction wrap(LootItemFunction entry) {
+        return entry;
+    }
+
+    @Override
+    protected LootItemFunction unwrap(LootItemFunction entry) {
+        return entry;
     }
 
     @Override
@@ -64,21 +66,6 @@ public class LootFunctionList extends LootObjectList<LootItemFunction>
         return setNbt(nbt);
     }
 
-    public void replace(LootItemFunctionType type, LootItemFunction function) {
-        var it = this.listIterator();
-        while (it.hasNext()) {
-            var entry = it.next();
-            if (entry.getType() == type) {
-                it.set(function);
-                return;
-            }
-        }
-    }
-
-    public LootItemFunction[] createVanillaArray() {
-        return this.toArray(new LootItemFunction[0]);
-    }
-
     public void collectDebugInfo(DebugInfo info) {
         if (this.isEmpty()) return;
 
@@ -92,5 +79,46 @@ public class LootFunctionList extends LootObjectList<LootItemFunction>
 
         info.pop();
         info.add("]");
+    }
+
+    @Override
+    public ItemStack apply(ItemStack itemStack, LootContext context) {
+        for (var entry : this) {
+            itemStack = entry.apply(itemStack, context);
+        }
+
+        return itemStack;
+    }
+
+    public void replace(LootItemFunctionType type, LootItemFunction function) {
+        elements.replaceAll(entry -> entry.getType().equals(type) ? function : entry);
+    }
+
+    public boolean remove(ResourceLocationFilter type) {
+        return elements.removeIf(element -> type.test(BuiltInRegistries.LOOT_FUNCTION_TYPE.getKey(element.getType())));
+    }
+
+    public boolean contains(LootItemFunctionType type) {
+        return indexOf(type) != -1;
+    }
+
+    public int indexOf(LootItemFunctionType type) {
+        for (int i = 0; i < elements.size(); i++) {
+            if (elements.get(i).getType().equals(type)) {
+                return i;
+            }
+        }
+
+        return -1;
+    }
+
+    public int lastIndexOf(LootItemFunctionType type) {
+        for (int i = elements.size() - 1; i >= 0; i--) {
+            if (elements.get(i).getType().equals(type)) {
+                return i;
+            }
+        }
+
+        return -1;
     }
 }

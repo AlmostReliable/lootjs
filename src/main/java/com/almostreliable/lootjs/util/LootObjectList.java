@@ -26,16 +26,6 @@ public abstract class LootObjectList<T> extends ArrayList<T> {
         removeIf(entry -> entryMatches(entry, filter));
     }
 
-    public void transform(ResourceLocationFilter filter, NullableFunction<T, Object> onTransform) {
-        transform(entry -> {
-            if (entryMatches(entry, filter)) {
-                return onTransform.apply(entry);
-            }
-
-            return entry;
-        });
-    }
-
     public void transform(NullableFunction<T, Object> onTransform) {
         ListIterator<T> it = listIterator();
         while (it.hasNext()) {

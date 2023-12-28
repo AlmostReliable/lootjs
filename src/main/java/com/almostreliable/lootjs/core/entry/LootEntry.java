@@ -22,10 +22,8 @@ import java.util.function.Consumer;
 @SuppressWarnings("UnusedReturnValue")
 public interface LootEntry {
 
-    // TODO instead of using empty lists, directly pass in LootConditionList etc.
     List<LootItemCondition> EMPTY_CONDITIONS = List.of();
     List<LootItemFunction> EMPTY_FUNCTIONS = List.of();
-    List<LootPoolEntryContainer> EMPTY_ENTRIES = List.of();
 
     static ItemLootEntry of(ItemStack itemStack) {
         return new ItemLootEntry(itemStack);
@@ -60,32 +58,21 @@ public interface LootEntry {
     }
 
     static CompositeLootEntry alternative(LootEntry... entries) {
-        var composite = new CompositeLootEntry(new AlternativesEntry(LootEntry.EMPTY_ENTRIES,
-                LootEntry.EMPTY_CONDITIONS));
-        if (entries.length != 0) {
-            composite.getEntries().addAll(List.of(entries));
-        }
-
-        return composite;
+        var el = new LootEntryList(entries);
+        var cl = new LootConditionList();
+        return new CompositeLootEntry(new AlternativesEntry(el.getElements(), cl.getElements()), el, cl);
     }
 
     static CompositeLootEntry sequence(LootEntry... entries) {
-        var composite = new CompositeLootEntry(new SequentialEntry(LootEntry.EMPTY_ENTRIES,
-                LootEntry.EMPTY_CONDITIONS));
-        if (entries.length != 0) {
-            composite.getEntries().addAll(List.of(entries));
-        }
-
-        return composite;
+        var el = new LootEntryList(entries);
+        var cl = new LootConditionList();
+        return new CompositeLootEntry(new SequentialEntry(el.getElements(), cl.getElements()), el, cl);
     }
 
     static CompositeLootEntry group(LootEntry... entries) {
-        var composite = new CompositeLootEntry(new EntryGroup(LootEntry.EMPTY_ENTRIES, LootEntry.EMPTY_CONDITIONS));
-        if (entries.length != 0) {
-            composite.getEntries().addAll(List.of(entries));
-        }
-
-        return composite;
+        var el = new LootEntryList(entries);
+        var cl = new LootConditionList();
+        return new CompositeLootEntry(new EntryGroup(el.getElements(), cl.getElements()), el, cl);
     }
 
     static CompositeLootEntry ofIngredient(Ingredient ingredient) {

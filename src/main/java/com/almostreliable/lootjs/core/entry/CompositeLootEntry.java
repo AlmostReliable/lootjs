@@ -6,24 +6,29 @@ import com.almostreliable.lootjs.loot.extension.CompositeEntryBaseExtension;
 import com.almostreliable.lootjs.loot.table.LootAppendHelper;
 import com.almostreliable.lootjs.loot.table.LootTransformHelper;
 import com.almostreliable.lootjs.util.DebugInfo;
-import com.almostreliable.lootjs.util.NullableFunction;
 import net.minecraft.world.level.storage.loot.entries.CompositeEntryBase;
 import net.minecraft.world.level.storage.loot.entries.LootPoolEntryType;
-import net.minecraft.world.level.storage.loot.predicates.LootItemConditions;
 
 import javax.annotation.Nullable;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
+import java.util.function.UnaryOperator;
 
 public class CompositeLootEntry implements LootEntry, LootTransformHelper, LootAppendHelper {
     private final CompositeEntryBase vanillaEntry;
     @Nullable
     private LootEntryList entries;
     @Nullable
-    protected LootConditionList conditions;
+    private LootConditionList conditions;
 
     public CompositeLootEntry(CompositeEntryBase vanillaEntry) {
         this.vanillaEntry = vanillaEntry;
+    }
+
+    public CompositeLootEntry(CompositeEntryBase vanillaEntry, LootEntryList entries, LootConditionList conditions) {
+        this.vanillaEntry = vanillaEntry;
+        this.entries = entries;
+        this.conditions = conditions;
     }
 
     public LootEntryList getEntries() {
@@ -60,6 +65,8 @@ public class CompositeLootEntry implements LootEntry, LootTransformHelper, LootA
     public LootConditionList getConditions() {
         if (conditions == null) {
             conditions = new LootConditionList(vanillaEntry.conditions);
+            vanillaEntry.conditions = conditions.getElements();
+            vanillaEntry.compositeCondition = conditions;
         }
 
         return conditions;
@@ -75,12 +82,6 @@ public class CompositeLootEntry implements LootEntry, LootTransformHelper, LootA
     }
 
     protected void free() {
-        if (conditions != null) {
-            vanillaEntry.conditions = conditions;
-            // TODO: let LootCOnditionList implement composite check?
-            vanillaEntry.compositeCondition = LootItemConditions.andConditions(vanillaEntry.conditions);
-        }
-
         if (entries != null) {
             ((CompositeEntryBaseExtension) vanillaEntry).lootjs$setEntries(entries.createVanillaArray());
             entries = null;
@@ -93,7 +94,7 @@ public class CompositeLootEntry implements LootEntry, LootTransformHelper, LootA
     }
 
     @Override
-    public void transformEntry(NullableFunction<SimpleLootEntry, Object> onTransform, boolean deepTransform) {
+    public void transformEntry(UnaryOperator<SimpleLootEntry> onTransform, boolean deepTransform) {
         getEntries().transformEntry(onTransform, deepTransform);
     }
 
