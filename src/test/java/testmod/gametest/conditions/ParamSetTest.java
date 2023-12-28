@@ -1,9 +1,9 @@
-package com.almostreliable.lootjs.gametest.conditions;
+package testmod.gametest.conditions;
 
 import com.almostreliable.lootjs.BuildConfig;
 import com.almostreliable.lootjs.core.LootType;
-import com.almostreliable.lootjs.gametest.GameTestTemplates;
-import com.almostreliable.lootjs.gametest.GameTestUtils;
+import testmod.gametest.GameTestTemplates;
+import testmod.gametest.GameTestUtils;
 import com.almostreliable.lootjs.loot.extension.LootContextExtension;
 import net.minecraft.core.BlockPos;
 import net.minecraft.gametest.framework.GameTest;
@@ -22,6 +22,8 @@ import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.gametest.GameTestHolder;
 import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
+
+import java.util.Optional;
 
 @GameTestHolder(value = BuildConfig.MOD_ID)
 @PrefixGameTestTemplate(false)
@@ -52,7 +54,7 @@ public class ParamSetTest {
                 .withOptionalParameter(LootContextParams.DIRECT_KILLER_ENTITY, ds.getDirectEntity())
                 .create(LootContextParamSets.ENTITY);
 
-        LootContext ctx = new LootContext.Builder(params).create(null);
+        LootContext ctx = new LootContext.Builder(params).create(Optional.empty());
 
         helper.succeedIf(() -> GameTestUtils.assertEquals(helper,
                 LootContextExtension.cast(ctx).lootjs$getType(),
@@ -67,7 +69,7 @@ public class ParamSetTest {
                 .withParameter(LootContextParams.BLOCK_STATE, helper.getLevel().getBlockState(TEST_BLOCK_POS))
                 .create(LootContextParamSets.CHEST);
 
-        LootContext ctx = new LootContext.Builder(params).create(null);
+        LootContext ctx = new LootContext.Builder(params).create(Optional.empty());
 
         helper.succeedIf(() -> GameTestUtils.assertEquals(helper,
                 LootContextExtension.cast(ctx).lootjs$getType(),
@@ -86,7 +88,7 @@ public class ParamSetTest {
                 .withLuck(0)
                 .create(LootContextParamSets.FISHING);
 
-        LootContext ctx = new LootContext.Builder(params).create(null);
+        LootContext ctx = new LootContext.Builder(params).create(Optional.empty());
         helper.succeedIf(() -> GameTestUtils.assertEquals(helper,
                 LootContextExtension.cast(ctx).lootjs$getType(),
                 LootType.FISHING));
@@ -99,7 +101,7 @@ public class ParamSetTest {
                 .withParameter(LootContextParams.ORIGIN, TEST_POS)
                 .create(set);
 
-        LootContext ctx = new LootContext.Builder(params).create(null);
+        LootContext ctx = new LootContext.Builder(params).create(Optional.empty());
         helper.succeedIf(() -> GameTestUtils.assertEquals(helper,
                 LootContextExtension.cast(ctx).lootjs$getType(),
                 LootType.UNKNOWN));

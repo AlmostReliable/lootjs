@@ -96,7 +96,9 @@ public interface LootHandlerContainer<A extends LootHandlerContainer<?>> {
     }
 
     default A group(Consumer<GroupedLootHandler.Builder> callback) {
-        return group(ItemFilter.ALWAYS_TRUE, callback);
+        GroupedLootHandler.Builder builder = new GroupedLootHandler.Builder();
+        callback.accept(builder);
+        return addHandler(builder.build());
     }
 
 

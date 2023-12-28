@@ -1,4 +1,4 @@
-package com.almostreliable.lootjs.gametest;
+package testmod.gametest;
 
 import com.almostreliable.lootjs.core.LootBucket;
 import net.minecraft.core.BlockPos;
@@ -19,13 +19,15 @@ import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.phys.Vec3;
 
 import javax.annotation.Nullable;
+import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 public class GameTestUtils {
     public static LootContext unknownContext(ServerLevel level, Vec3 origin) { // TODO: since 1.20 now chest context. Hopefully this is safe?
         var params = new LootParams.Builder(level)
                 .withParameter(LootContextParams.ORIGIN, origin).create(LootContextParamSets.CHEST);
-        return new LootContext.Builder(params).create(null);
+        return new LootContext.Builder(params).create(Optional.empty());
     }
 
     public static LootContext chestContext(ServerLevel level, Vec3 origin, @Nullable Player player) {
@@ -36,7 +38,7 @@ public class GameTestUtils {
         }
 
         var params = pb.create(LootContextParamSets.CHEST);
-        return new LootContext.Builder(params).create(null);
+        return new LootContext.Builder(params).create(Optional.empty());
     }
 
     public static LootBucket fillExampleLoot(LootContext context) {

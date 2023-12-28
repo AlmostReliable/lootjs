@@ -1,8 +1,8 @@
-package com.almostreliable.lootjs.gametest.conditions;
+package testmod.gametest.conditions;
 
 import com.almostreliable.lootjs.BuildConfig;
-import com.almostreliable.lootjs.gametest.GameTestTemplates;
-import com.almostreliable.lootjs.gametest.GameTestUtils;
+import testmod.gametest.GameTestTemplates;
+import testmod.gametest.GameTestUtils;
 import com.almostreliable.lootjs.loot.condition.MatchKillerDistance;
 import com.almostreliable.lootjs.loot.condition.builder.DistancePredicateBuilder;
 import net.minecraft.advancements.critereon.MinMaxBounds;
@@ -19,6 +19,8 @@ import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.neoforged.neoforge.gametest.GameTestHolder;
 import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
+
+import java.util.Optional;
 
 @GameTestHolder(value = BuildConfig.MOD_ID)
 @PrefixGameTestTemplate(false)
@@ -41,7 +43,7 @@ public class MatchKillerDistanceTest {
                 .withLuck(player.getLuck())
                 .create(LootContextParamSets.ENTITY);
 
-        LootContext ctx = new LootContext.Builder(params).create(null);
+        LootContext ctx = new LootContext.Builder(params).create(Optional.empty());
 
         double dist = player.distanceTo(cow);
         MatchKillerDistance mkd = new MatchKillerDistance(new DistancePredicateBuilder()
@@ -68,7 +70,7 @@ public class MatchKillerDistanceTest {
                 .withLuck(player.getLuck())
                 .create(LootContextParamSets.ENTITY);
 
-        LootContext ctx = new LootContext.Builder(params).create(null);
+        LootContext ctx = new LootContext.Builder(params).create(Optional.empty());
 
         MatchKillerDistance mkd = new MatchKillerDistance(new DistancePredicateBuilder()
                 .absolute(MinMaxBounds.Doubles.between(1000d, 1000d))

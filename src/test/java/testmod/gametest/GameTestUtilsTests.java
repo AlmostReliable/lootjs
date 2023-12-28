@@ -1,4 +1,4 @@
-package com.almostreliable.lootjs.gametest;
+package testmod.gametest;
 
 import com.almostreliable.lootjs.BuildConfig;
 import net.minecraft.gametest.framework.GameTest;

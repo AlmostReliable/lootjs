@@ -1,9 +1,9 @@
-package com.almostreliable.lootjs.gametest.conditions;
+package testmod.gametest.conditions;
 
 import com.almostreliable.lootjs.BuildConfig;
 import com.almostreliable.lootjs.core.filters.ItemFilter;
-import com.almostreliable.lootjs.gametest.GameTestTemplates;
-import com.almostreliable.lootjs.gametest.GameTestUtils;
+import testmod.gametest.GameTestTemplates;
+import testmod.gametest.GameTestUtils;
 import com.almostreliable.lootjs.loot.modifier.handler.ContainsLootCheck;
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;

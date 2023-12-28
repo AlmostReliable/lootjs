@@ -1,14 +1,7 @@
-package com.almostreliable.lootjs.gametest.conditions;
+package testmod.gametest.conditions;
 
 import com.almostreliable.lootjs.BuildConfig;
-import com.almostreliable.lootjs.gametest.GameTestTemplates;
-import com.almostreliable.lootjs.gametest.GameTestUtils;
-import com.almostreliable.lootjs.predicate.ExtendedEntityFlagsPredicate;
 import net.minecraft.core.BlockPos;
-import net.minecraft.gametest.framework.GameTest;
-import net.minecraft.gametest.framework.GameTestHelper;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EntityType;
 import net.neoforged.neoforge.gametest.GameTestHolder;
 import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
 

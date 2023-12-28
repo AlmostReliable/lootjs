@@ -1,8 +1,8 @@
-package com.almostreliable.lootjs.gametest.conditions;
+package testmod.gametest.conditions;
 
 import com.almostreliable.lootjs.BuildConfig;
-import com.almostreliable.lootjs.gametest.GameTestTemplates;
-import com.almostreliable.lootjs.gametest.GameTestUtils;
+import testmod.gametest.GameTestTemplates;
+import testmod.gametest.GameTestUtils;
 import com.almostreliable.lootjs.loot.condition.AnyDimension;
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;

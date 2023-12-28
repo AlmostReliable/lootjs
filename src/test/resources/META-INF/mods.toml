@@ -8,7 +8,7 @@ version = "0.0.0"
 displayName = "Test Mod"
 
 [[dependencies.testmod]]
-modId = "forge"
+modId = "neoforge"
 type = "required"
 versionRange = "[1,)"
 ordering = "NONE"

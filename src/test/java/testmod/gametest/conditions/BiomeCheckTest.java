@@ -1,8 +1,8 @@
-package com.almostreliable.lootjs.gametest.conditions;
+package testmod.gametest.conditions;
 
 import com.almostreliable.lootjs.BuildConfig;
-import com.almostreliable.lootjs.gametest.GameTestTemplates;
-import com.almostreliable.lootjs.gametest.GameTestUtils;
+import testmod.gametest.GameTestTemplates;
+import testmod.gametest.GameTestUtils;
 import com.almostreliable.lootjs.loot.condition.AnyBiomeCheck;
 import com.almostreliable.lootjs.loot.condition.BiomeCheck;
 import net.minecraft.core.BlockPos;
@@ -16,6 +16,7 @@ import net.minecraft.tags.BiomeTags;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.storage.loot.LootContext;
+import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.gametest.GameTestHolder;
 import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
 
@@ -31,9 +32,8 @@ public class BiomeCheckTest {
 
     @GameTest(template = GameTestTemplates.EMPTY)
     public void AnyBiomeCheck_match(GameTestHelper helper) {
-        Player player = helper.makeMockPlayer();
         Holder<Biome> biomeHolder = helper.getLevel().getBiome(TEST_POS);
-        LootContext ctx = GameTestUtils.unknownContext(helper.getLevel(), player.position());
+        LootContext ctx = GameTestUtils.unknownContext(helper.getLevel(), Vec3.atLowerCornerOf(TEST_POS));
 
         ResourceLocation biome = helper
                 .getLevel()
@@ -49,9 +49,8 @@ public class BiomeCheckTest {
 
     @GameTest(template = GameTestTemplates.EMPTY)
     public void BiomeCheck_match(GameTestHelper helper) {
-        Player player = helper.makeMockPlayer();
         Holder<Biome> biomeHolder = helper.getLevel().getBiome(TEST_POS);
-        LootContext ctx = GameTestUtils.unknownContext(helper.getLevel(), player.position());
+        LootContext ctx = GameTestUtils.unknownContext(helper.getLevel(), Vec3.atLowerCornerOf(TEST_POS));
 
         ResourceLocation biome = helper
                 .getLevel()
@@ -107,7 +106,7 @@ public class BiomeCheckTest {
     public void BiomeCheck_matchAllTags(GameTestHelper helper) {
         Player player = helper.makeMockPlayer();
         Holder<Biome> biomeHolder = helper.getLevel().getBiome(TEST_POS);
-        LootContext ctx = GameTestUtils.unknownContext(helper.getLevel(), player.position());
+        LootContext ctx = GameTestUtils.unknownContext(helper.getLevel(), Vec3.atLowerCornerOf(TEST_POS));
 
         var types = biomeHolder.tags().toList();
         BiomeCheck check = new BiomeCheck(new ArrayList<>(), new ArrayList<>(types));

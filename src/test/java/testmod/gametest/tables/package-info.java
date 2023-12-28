@@ -1,5 +1,5 @@
 @ParametersAreNonnullByDefault @MethodsReturnNonnullByDefault
-package com.almostreliable.lootjs.gametest.tables;
+package testmod.gametest.tables;
 
 import net.minecraft.MethodsReturnNonnullByDefault;
 

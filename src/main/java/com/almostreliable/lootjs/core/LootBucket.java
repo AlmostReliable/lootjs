@@ -7,12 +7,13 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.entries.LootPoolEntry;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.ListIterator;
 
 public class LootBucket implements Iterable<ItemStack> {
     private final LootContext context;
     private final List<ItemStack> loot;
-    private final ItemFilter filter;
 
     public LootBucket(LootContext context) {
         this(context, new ArrayList<>());
@@ -21,19 +22,10 @@ public class LootBucket implements Iterable<ItemStack> {
     public LootBucket(LootContext context, List<ItemStack> loot) {
         this.context = context;
         this.loot = loot;
-        this.filter = ItemFilter.ALWAYS_TRUE;
-    }
-
-    public LootBucket(LootContext context, List<ItemStack> loot, ItemFilter filter) {
-        this.context = context;
-        this.loot = loot;
-        this.filter = filter;
     }
 
     public void addItem(ItemStack item) {
-        if (filter.test(item)) {
-            loot.add(item);
-        }
+        loot.add(item);
     }
 
     public void addAllItems(List<ItemStack> items) {
@@ -122,18 +114,22 @@ public class LootBucket implements Iterable<ItemStack> {
         }
     }
 
-    /**
-     * Applies the provided item filter to the loot items.
-     *
-     * @param filter the filter to be applied on the loot items.
-     * @return new LootItems instance with the applied filter.
-     */
-    public LootBucket filter(ItemFilter filter) {
-        if (filter == ItemFilter.ALWAYS_TRUE) {
-            return this;
+    public LootBucket extract(ItemFilter filter) {
+        List<ItemStack> extracted = new ArrayList<>();
+        var it = iterator();
+        while (it.hasNext()) {
+            var itemStack = it.next();
+            if (filter.test(itemStack)) {
+                extracted.add(itemStack);
+                it.remove();
+            }
         }
 
-        return new LootBucket(context, loot, this.filter.and(filter));
+        return new LootBucket(context, extracted);
+    }
+
+    public void merge(LootBucket other) {
+        addAllItems(other.loot);
     }
 
     /**
@@ -147,21 +143,11 @@ public class LootBucket implements Iterable<ItemStack> {
             return ItemStack.EMPTY;
         }
 
-        ItemStack itemStack = loot.get(index);
-        if (filter.test(itemStack)) {
-            return itemStack;
-        }
-
-        return ItemStack.EMPTY;
+        return loot.get(index);
     }
 
     public int size() {
-        int s = 0;
-        for (ItemStack itemStack : this) {
-            s++;
-        }
-
-        return s;
+        return loot.size();
     }
 
     public boolean isEmpty() {
@@ -169,56 +155,7 @@ public class LootBucket implements Iterable<ItemStack> {
     }
 
     @Override
-    public It iterator() {
-        return new It(loot.listIterator(), filter);
-    }
-
-    public It filteredIterator(ItemFilter filter) {
-        return new It(loot.listIterator(), this.filter.and(filter));
-    }
-
-    public static class It implements Iterator<ItemStack> {
-        private final ListIterator<ItemStack> iterator;
-        private final ItemFilter filter;
-        private ItemStack next;
-
-        private It(ListIterator<ItemStack> iterator, ItemFilter filter) {
-            this.iterator = iterator;
-            this.filter = filter;
-            advance();
-        }
-
-        private void advance() {
-            while (iterator.hasNext()) {
-                var itemStack = iterator.next();
-                if (filter.test(itemStack)) {
-                    next = itemStack;
-                    return;
-                }
-            }
-
-            next = null;
-        }
-
-        @Override
-        public boolean hasNext() {
-            return next != null;
-        }
-
-        @Override
-        public ItemStack next() {
-            if (next == null) throw new NoSuchElementException();
-            var itemStack = next;
-            advance();
-            return itemStack;
-        }
-
-        public void set(ItemStack itemStack) {
-            iterator.set(itemStack);
-        }
-
-        public void remove() {
-            iterator.remove();
-        }
+    public ListIterator<ItemStack> iterator() {
+        return loot.listIterator();
     }
 }

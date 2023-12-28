@@ -194,6 +194,11 @@ public class LootTableEventJS extends EventJS {
         LootContextParamSet paramSet = type.getParamSet();
         unwrapData();
         LootTable lootTable = new LootTable.Builder().setParamSet(paramSet).setRandomSequence(location).build();
+        //noinspection ConstantValue
+        if (lootTable.getLootTableId() == null) {
+            lootTable.setLootTableId(location);
+        }
+
         getData().put(new LootDataId<>(LootDataType.TABLE, location), Utils.cast(lootTable));
         var table = new MutableLootTable(lootTable, location);
         table.markDirty();

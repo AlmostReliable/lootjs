@@ -27,6 +27,10 @@ public class MutableLootTable implements LootTransformHelper {
     private LootFunctionList functions;
     private boolean potentialModified;
 
+    public MutableLootTable(LootTable lootTable) {
+        this(lootTable, lootTable.getLootTableId());
+    }
+
     public MutableLootTable(LootTable lootTable, ResourceLocation location) {
         this.location = location;
         this.origin = lootTable;

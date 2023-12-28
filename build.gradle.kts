@@ -51,29 +51,25 @@ loom {
     // load the test mod manually because forge always uses main by default
     mods {
         create("testmod") {
-            sourceSet(sourceSets.main.get())
+            sourceSet(sourceSets.test.get())
         }
     }
 
     runs {
-        create("test_client") {
-            name("Testmod Client")
-            client()
-            source(sourceSets.test.get())
-        }
-
-        create("test_server") {
-            name("Testmod Server")
-            server()
-            source(sourceSets.test.get())
-        }
-
         create("gametest") {
             name("Gametest")
             server()
             source(sourceSets.test.get())
             property("neoforge.gameTestServer", "true")
-            property("almostlib.gametest.testPackages", "testmod.*")
+            property("neoforge.enabledGameTestNamespaces", "testmod")
+        }
+
+        create("testmod") {
+            name("Testmod Client")
+            client()
+            source(sourceSets.test.get())
+            property("neoforge.gameTestServer", "true")
+            property("neoforge.enabledGameTestNamespaces", "testmod")
         }
 
         forEach {
@@ -94,6 +90,7 @@ dependencies {
 
     neoForge("net.neoforged:neoforge:${neoforgeVersion}")
     modApi("dev.latvian.mods:kubejs-neoforge:${kubejsVersion}")
+    testImplementation("dev.latvian.mods:kubejs-neoforge:${kubejsVersion}")
 
     /**
      * Helps to load mods in development through an extra directory. Sadly this does not support transitive dependencies. :-(

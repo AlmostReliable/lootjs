@@ -1,9 +1,9 @@
-package com.almostreliable.lootjs.gametest.conditions;
+package testmod.gametest.conditions;
 
 import com.almostreliable.lootjs.BuildConfig;
 import com.almostreliable.lootjs.core.filters.ItemFilter;
-import com.almostreliable.lootjs.gametest.GameTestTemplates;
-import com.almostreliable.lootjs.gametest.GameTestUtils;
+import testmod.gametest.GameTestTemplates;
+import testmod.gametest.GameTestUtils;
 import com.almostreliable.lootjs.loot.condition.MatchEquipmentSlot;
 import com.mojang.authlib.GameProfile;
 import net.minecraft.gametest.framework.GameTest;
@@ -20,6 +20,7 @@ import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.neoforged.neoforge.gametest.GameTestHolder;
 import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
 
+import java.util.Optional;
 import java.util.UUID;
 
 @GameTestHolder(value = BuildConfig.MOD_ID)
@@ -86,7 +87,7 @@ public class MatchEquipmentSlotTest {
                 .withParameter(LootContextParams.ORIGIN, player.position())
                 .withParameter(LootContextParams.THIS_ENTITY, player)
                 .create(LootContextParamSets.CHEST);
-        LootContext lc = new LootContext.Builder(params).create(null);
+        LootContext lc = new LootContext.Builder(params).create(Optional.empty());
 
         player.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(Items.DIAMOND));
         player.setItemSlot(EquipmentSlot.OFFHAND, new ItemStack(Items.STICK));

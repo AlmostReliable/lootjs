@@ -1,8 +1,8 @@
 package com.almostreliable.lootjs.loot.modifier.handler;
 
-import com.almostreliable.lootjs.loot.modifier.LootHandler;
-import com.almostreliable.lootjs.core.filters.ItemFilter;
 import com.almostreliable.lootjs.core.LootBucket;
+import com.almostreliable.lootjs.core.filters.ItemFilter;
+import com.almostreliable.lootjs.loot.modifier.LootHandler;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.storage.loot.LootContext;
 
@@ -16,7 +16,13 @@ public class ModifyLootAction implements LootHandler {
     }
 
     public boolean apply(LootContext context, LootBucket loot) {
-        loot.filter(predicate).modifyItems(callback::modify);
+        loot.modifyItems(itemStack -> {
+            if (predicate.test(itemStack)) {
+                return callback.modify(itemStack);
+            }
+
+            return itemStack;
+        });
         return true;
     }
 
