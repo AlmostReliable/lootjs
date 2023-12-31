@@ -4,8 +4,7 @@ import com.almostreliable.lootjs.core.entry.CompositeLootEntry;
 import com.almostreliable.lootjs.core.entry.LootEntry;
 import com.almostreliable.lootjs.core.entry.SimpleLootEntry;
 import com.almostreliable.lootjs.core.filters.ResourceLocationFilter;
-import com.almostreliable.lootjs.loot.table.LootAppendHelper;
-import com.almostreliable.lootjs.loot.table.LootTransformHelper;
+import com.almostreliable.lootjs.loot.table.LootApplier;
 import com.almostreliable.lootjs.util.DebugInfo;
 import com.almostreliable.lootjs.util.ListHolder;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -18,8 +17,7 @@ import java.util.ListIterator;
 import java.util.function.Predicate;
 import java.util.function.UnaryOperator;
 
-public class LootEntryList extends ListHolder<LootEntry, LootPoolEntryContainer> implements LootTransformHelper,
-                                                                                            LootAppendHelper {
+public class LootEntryList extends ListHolder<LootEntry, LootPoolEntryContainer> implements LootApplier {
 
     public LootEntryList() {
         super();
@@ -88,9 +86,9 @@ public class LootEntryList extends ListHolder<LootEntry, LootPoolEntryContainer>
         }
     }
 
-    public void transformEntry(UnaryOperator<SimpleLootEntry> onTransform, boolean deepTransform) {
+    public LootEntryList transformEntry(UnaryOperator<SimpleLootEntry> onTransform, boolean deepTransform) {
         transform(entry -> {
-            if (entry instanceof LootTransformHelper helper && deepTransform) {
+            if (entry instanceof LootApplier helper && deepTransform) {
                 helper.transformEntry(onTransform, true);
                 return entry;
             }
@@ -101,9 +99,11 @@ public class LootEntryList extends ListHolder<LootEntry, LootPoolEntryContainer>
 
             return entry;
         });
+
+        return this;
     }
 
-    public void removeEntry(Predicate<SimpleLootEntry> filter, boolean deepRemove) {
+    public LootEntryList removeEntry(Predicate<SimpleLootEntry> filter, boolean deepRemove) {
         var it = iterator();
         while (it.hasNext()) {
             LootEntry entry = it.next();
@@ -116,11 +116,14 @@ public class LootEntryList extends ListHolder<LootEntry, LootPoolEntryContainer>
                 it.remove();
             }
         }
+
+        return this;
     }
 
     @Override
-    public void addEntry(LootEntry entry) {
+    public LootEntryList addEntry(LootEntry entry) {
         add(entry);
+        return this;
     }
 
     public boolean remove(ResourceLocationFilter type) {

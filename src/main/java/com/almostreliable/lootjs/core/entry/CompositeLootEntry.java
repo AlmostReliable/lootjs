@@ -3,8 +3,7 @@ package com.almostreliable.lootjs.core.entry;
 import com.almostreliable.lootjs.loot.LootConditionList;
 import com.almostreliable.lootjs.loot.LootEntryList;
 import com.almostreliable.lootjs.loot.extension.CompositeEntryBaseExtension;
-import com.almostreliable.lootjs.loot.table.LootAppendHelper;
-import com.almostreliable.lootjs.loot.table.LootTransformHelper;
+import com.almostreliable.lootjs.loot.table.LootApplier;
 import com.almostreliable.lootjs.util.DebugInfo;
 import net.minecraft.world.level.storage.loot.entries.CompositeEntryBase;
 import net.minecraft.world.level.storage.loot.entries.LootPoolEntryType;
@@ -14,7 +13,7 @@ import java.util.function.Consumer;
 import java.util.function.Predicate;
 import java.util.function.UnaryOperator;
 
-public class CompositeLootEntry implements LootEntry, LootTransformHelper, LootAppendHelper {
+public class CompositeLootEntry implements LootEntry, LootApplier {
     private final CompositeEntryBase vanillaEntry;
     @Nullable
     private LootEntryList entries;
@@ -89,17 +88,20 @@ public class CompositeLootEntry implements LootEntry, LootTransformHelper, LootA
     }
 
     @Override
-    public void addEntry(LootEntry entry) {
+    public CompositeLootEntry addEntry(LootEntry entry) {
         entries(entries -> entries.add(entry));
+        return this;
     }
 
     @Override
-    public void transformEntry(UnaryOperator<SimpleLootEntry> onTransform, boolean deepTransform) {
+    public CompositeLootEntry transformEntry(UnaryOperator<SimpleLootEntry> onTransform, boolean deepTransform) {
         getEntries().transformEntry(onTransform, deepTransform);
+        return this;
     }
 
     @Override
-    public void removeEntry(Predicate<SimpleLootEntry> onRemove, boolean deepRemove) {
+    public CompositeLootEntry removeEntry(Predicate<SimpleLootEntry> onRemove, boolean deepRemove) {
         getEntries().removeEntry(onRemove, deepRemove);
+        return this;
     }
 }

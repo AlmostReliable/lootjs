@@ -1,5 +1,7 @@
 package com.almostreliable.lootjs.loot.table;
 
+import com.almostreliable.lootjs.core.LootType;
+import com.almostreliable.lootjs.core.entry.LootEntry;
 import com.almostreliable.lootjs.core.entry.SimpleLootEntry;
 import com.almostreliable.lootjs.loot.LootFunctionList;
 import com.almostreliable.lootjs.loot.extension.LootTableExtension;
@@ -17,7 +19,7 @@ import java.util.function.Predicate;
 import java.util.function.UnaryOperator;
 
 @SuppressWarnings("UnusedReturnValue")
-public class MutableLootTable implements LootTransformHelper {
+public class MutableLootTable implements LootApplier {
 
     private final LootTable origin;
     private final ResourceLocation location;
@@ -49,6 +51,10 @@ public class MutableLootTable implements LootTransformHelper {
         LootTableExtension.cast(origin).lootjs$setRandomSequence(randomSequence);
     }
 
+    public LootType getLootType() {
+        return LootType.getLootType(origin.getParamSet());
+    }
+
     public ResourceLocation getLocation() {
         return location;
     }
@@ -65,20 +71,28 @@ public class MutableLootTable implements LootTransformHelper {
     }
 
     public MutableLootTable firstPool(Consumer<MutableLootPool> onModifyPool) {
-        var pools = getPools();
-        if (pools.isEmpty()) {
-            return addPool(onModifyPool);
-        }
-
-        onModifyPool.accept(pools.get(0));
+        onModifyPool.accept(firstPool());
         return this;
     }
 
-    public MutableLootTable addPool(Consumer<MutableLootPool> onAddPool) {
-        MutableLootPool pool = new MutableLootPool();
-        onAddPool.accept(pool);
-        getPools().add(pool);
+    public MutableLootPool firstPool() {
+        var pools = getPools();
+        if (pools.isEmpty()) {
+            return createPool();
+        }
+
+        return pools.get(0);
+    }
+
+    public MutableLootTable createPool(Consumer<MutableLootPool> onCreatePool) {
+        onCreatePool.accept(createPool());
         return this;
+    }
+
+    public MutableLootPool createPool() {
+        var pool = new MutableLootPool();
+        getPools().add(pool);
+        return pool;
     }
 
     public LootFunctionList getFunctions() {
@@ -144,17 +158,27 @@ public class MutableLootTable implements LootTransformHelper {
     }
 
     @Override
-    public void transformEntry(UnaryOperator<SimpleLootEntry> onTransform, boolean deepTransform) {
-        for (MutableLootPool pool : getPools()) {
-            pool.transformEntry(onTransform, deepTransform);
-        }
+    public MutableLootTable addEntry(LootEntry entry) {
+        createPool(pool -> pool.addEntry(entry));
+        return this;
     }
 
     @Override
-    public void removeEntry(Predicate<SimpleLootEntry> onRemove, boolean deepRemove) {
+    public MutableLootTable transformEntry(UnaryOperator<SimpleLootEntry> onTransform, boolean deepTransform) {
+        for (MutableLootPool pool : getPools()) {
+            pool.transformEntry(onTransform, deepTransform);
+        }
+
+        return this;
+    }
+
+    @Override
+    public MutableLootTable removeEntry(Predicate<SimpleLootEntry> onRemove, boolean deepRemove) {
         for (MutableLootPool pool : getPools()) {
             pool.removeEntry(onRemove, deepRemove);
         }
+
+        return this;
     }
 
     public MutableLootTable apply(Consumer<LootFunctionList> onModifiers) {

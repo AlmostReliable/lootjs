@@ -24,7 +24,7 @@ import java.util.function.Consumer;
 import java.util.function.Predicate;
 import java.util.function.UnaryOperator;
 
-public class MutableLootPool implements LootTransformHelper, LootAppendHelper {
+public class MutableLootPool implements LootApplier {
 
     @Nullable private LootConditionList conditions;
     @Nullable private LootFunctionList functions;
@@ -115,18 +115,21 @@ public class MutableLootPool implements LootTransformHelper, LootAppendHelper {
     }
 
     @Override
-    public void addEntry(LootEntry entry) {
+    public MutableLootPool addEntry(LootEntry entry) {
         getEntries().add(entry);
+        return this;
     }
 
     @Override
-    public void transformEntry(UnaryOperator<SimpleLootEntry> onTransform, boolean deepTransform) {
+    public MutableLootPool transformEntry(UnaryOperator<SimpleLootEntry> onTransform, boolean deepTransform) {
         getEntries().transformEntry(onTransform, deepTransform);
+        return this;
     }
 
     @Override
-    public void removeEntry(Predicate<SimpleLootEntry> onRemove, boolean deepRemove) {
+    public MutableLootPool removeEntry(Predicate<SimpleLootEntry> onRemove, boolean deepRemove) {
         getEntries().removeEntry(onRemove, deepRemove);
+        return this;
     }
 
     public MutableLootPool when(Consumer<LootConditionList> onConditions) {

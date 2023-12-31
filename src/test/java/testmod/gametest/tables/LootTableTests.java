@@ -62,7 +62,7 @@ public class LootTableTests {
         helper.succeedIf(() -> {
             var table = getTable(helper, BURIED_TREASURE);
             int oldSize = LootTableExtension.cast(table).lootjs$getPools().size();
-            new MutableLootTable(table).addPool(mutableLootPool -> {}).writeToVanillaTable();
+            new MutableLootTable(table).createPool(mutableLootPool -> {}).writeToVanillaTable();
             int newSize = LootTableExtension.cast(table).lootjs$getPools().size();
             GameTestUtils.assertEquals(helper, oldSize + 1, newSize);
         });

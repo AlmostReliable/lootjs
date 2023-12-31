@@ -2,6 +2,7 @@ package com.almostreliable.lootjs.kube;
 
 import com.almostreliable.lootjs.core.LootType;
 import com.almostreliable.lootjs.core.filters.ResourceLocationFilter;
+import com.almostreliable.lootjs.loot.table.LootTableList;
 import com.almostreliable.lootjs.loot.table.MutableLootTable;
 import com.almostreliable.lootjs.mixin.LootDataManagerAccessor;
 import com.almostreliable.lootjs.util.Utils;
@@ -126,67 +127,45 @@ public class LootTableEventJS extends EventJS {
         return getLootTable(entityType.getDefaultLootTable());
     }
 
-    public void modifyLootTables(ResourceLocationFilter filter, Consumer<MutableLootTable> onModify) {
-        getData().forEach((id, entry) -> {
-            if (!filter.test(id.location())) {
-                return;
-            }
-
-            var table = getLootTable(id.location());
-            if (table != null) {
-                onModify.accept(table);
-            }
-        });
+    public LootTableList modifyLootTables(ResourceLocationFilter filter) {
+        var tables = getData()
+                .keySet()
+                .stream()
+                .filter(id -> filter.test(id.location()))
+                .map(id -> getLootTable(id.location()));
+        return new LootTableList(tables);
     }
 
-    public void modifyBlockLoot(BlockStatePredicate filter, Consumer<MutableLootTable> onModify) {
-        for (Block block : filter.getBlocks()) {
-            MutableLootTable table = getBlockLoot(block);
-            if (table != null) {
-                onModify.accept(table);
-            }
-        }
+    public LootTableList modifyBlockLoot(BlockStatePredicate filter) {
+        var tables = filter.getBlocks().stream().map(this::getBlockLoot);
+        return new LootTableList(tables);
     }
 
-    public void modifyEntityLoot(EntityTypePredicate filter, Consumer<MutableLootTable> onModify) {
-        for (EntityType<?> entityType : BuiltInRegistries.ENTITY_TYPE) {
-            if (filter.matches(entityType)) {
-                var table = getEntityLoot(entityType);
-                if (table != null) {
-                    onModify.accept(table);
-                }
-            }
-        }
+    public LootTableList modifyEntityLoot(EntityTypePredicate filter) {
+        var tables = BuiltInRegistries.ENTITY_TYPE.stream().filter(filter::matches).map(this::getEntityLoot);
+        return new LootTableList(tables);
     }
 
-    public void modifyLootType(LootType type, Consumer<MutableLootTable> onModify) {
-        modifyLootType(new LootType[]{ type }, onModify);
+    public LootTableList modifyLootType(LootType type) {
+        return modifyLootType(new LootType[]{ type });
     }
 
-    public void modifyLootType(LootType[] types, Consumer<MutableLootTable> onModify) {
+    public LootTableList modifyLootType(LootType[] types) {
         Set<LootType> asSet = new HashSet<>(Arrays.asList(types));
-        getData().forEach((id, entry) -> {
-            if (!(entry instanceof LootTable vanillaTable)) {
-                return;
-            }
 
-            LootType type = LootType.getLootType(vanillaTable.getParamSet());
-            if (!asSet.contains(type)) {
-                return;
-            }
-
-            var table = getLootTable(id.location());
-            if (table != null) {
-                onModify.accept(table);
-            }
-        });
+        var tables = getData()
+                .keySet()
+                .stream()
+                .map(id -> getLootTable(id.location()))
+                .filter(table -> table != null && asSet.contains(table.getLootType()));
+        return new LootTableList(tables);
     }
 
-    public void create(ResourceLocation location, Consumer<MutableLootTable> onCreate) {
-        create(location, LootType.CHEST, onCreate);
+    public MutableLootTable create(ResourceLocation location) {
+        return create(location, LootType.CHEST);
     }
 
-    public void create(ResourceLocation location, LootType type, Consumer<MutableLootTable> onCreate) {
+    public MutableLootTable create(ResourceLocation location, LootType type) {
         if (hasLootTable(location)) {
             throw new RuntimeException("[LootJS Error] Loot table already exists, cannot create new one: " + location);
         }
@@ -206,7 +185,7 @@ public class LootTableEventJS extends EventJS {
             throw new IllegalStateException("Loot table already exists: " + location);
         }
 
-        onCreate.accept(table);
+        return table;
     }
 
     @Override
