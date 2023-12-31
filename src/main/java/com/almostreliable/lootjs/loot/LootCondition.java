@@ -74,11 +74,14 @@ public class LootCondition {
     public static LootItemCondition weatherCheck(Map<String, Boolean> map) {
         Boolean isRaining = map.getOrDefault("raining", null);
         Boolean isThundering = map.getOrDefault("thundering", null);
-        return new WeatherCheck.Builder().setRaining(isRaining).setThundering(isThundering).build();
+        return weatherCheck(isRaining, isThundering);
     }
 
-    public static LootItemCondition weatherCheck(Boolean raining, Boolean thundering) {
-        return new WeatherCheck.Builder().setRaining(raining).setThundering(thundering).build();
+    public static LootItemCondition weatherCheck(@Nullable Boolean raining, @Nullable Boolean thundering) {
+        WeatherCheck.Builder builder = new WeatherCheck.Builder();
+        if(raining != null) builder.setRaining(raining);
+        if(thundering != null) builder.setThundering(thundering);
+        return builder.build();
     }
 
     public static LootItemCondition randomChance(float value) {

@@ -20,6 +20,9 @@ public class LootConditionList extends ListHolder<LootItemCondition, LootItemCon
         super();
     }
 
+    public LootConditionList(List<LootItemCondition> conditions) {
+        super(conditions);
+    }
 
     @Override
     public Iterator<LootItemCondition> iterator() {
@@ -34,10 +37,6 @@ public class LootConditionList extends ListHolder<LootItemCondition, LootItemCon
     @Override
     protected LootItemCondition unwrap(LootItemCondition entry) {
         return entry;
-    }
-
-    public LootConditionList(List<LootItemCondition> conditions) {
-        super(conditions);
     }
 
     @Override
