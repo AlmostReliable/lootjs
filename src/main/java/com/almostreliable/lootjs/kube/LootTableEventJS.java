@@ -107,6 +107,10 @@ public class LootTableEventJS extends EventJS {
             return null;
         }
 
+        if (LootDataManager.EMPTY_LOOT_TABLE_KEY.equals(dataId)) {
+            return null;
+        }
+
         return lootTableHolders.computeIfAbsent(location, rl -> {
             var entry = getData().get(dataId);
             if (entry instanceof LootTable table) {
@@ -118,12 +122,12 @@ public class LootTableEventJS extends EventJS {
     }
 
     @Nullable
-    public MutableLootTable getBlockLoot(Block block) {
+    public MutableLootTable getBlockTable(Block block) {
         return getLootTable(block.getLootTable());
     }
 
     @Nullable
-    public MutableLootTable getEntityLoot(EntityType<?> entityType) {
+    public MutableLootTable getEntityTable(EntityType<?> entityType) {
         return getLootTable(entityType.getDefaultLootTable());
     }
 
@@ -136,21 +140,17 @@ public class LootTableEventJS extends EventJS {
         return new LootTableList(tables);
     }
 
-    public LootTableList modifyBlockLoot(BlockStatePredicate filter) {
-        var tables = filter.getBlocks().stream().map(this::getBlockLoot);
+    public LootTableList modifyBlockTables(BlockStatePredicate filter) {
+        var tables = filter.getBlocks().stream().map(this::getBlockTable);
         return new LootTableList(tables);
     }
 
-    public LootTableList modifyEntityLoot(EntityTypePredicate filter) {
-        var tables = BuiltInRegistries.ENTITY_TYPE.stream().filter(filter::matches).map(this::getEntityLoot);
+    public LootTableList modifyEntityTables(EntityTypePredicate filter) {
+        var tables = BuiltInRegistries.ENTITY_TYPE.stream().filter(filter::matches).map(this::getEntityTable);
         return new LootTableList(tables);
     }
 
-    public LootTableList modifyLootType(LootType type) {
-        return modifyLootType(new LootType[]{ type });
-    }
-
-    public LootTableList modifyLootType(LootType[] types) {
+    public LootTableList modifyLootTypeTables(LootType... types) {
         Set<LootType> asSet = new HashSet<>(Arrays.asList(types));
 
         var tables = getData()
