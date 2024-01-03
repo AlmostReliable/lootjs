@@ -24,6 +24,10 @@ import java.util.function.Predicate;
 @SuppressWarnings({ "UnusedReturnValue", "unused" })
 public interface LootConditionsContainer<B extends LootConditionsContainer<?>> {
 
+    default B matchTool(ItemPredicate predicate) {
+        return addCondition(LootCondition.matchTool(predicate));
+    }
+
     default B matchMainHand(ItemFilter filter) {
         return addCondition(LootCondition.matchMainHand(filter));
     }

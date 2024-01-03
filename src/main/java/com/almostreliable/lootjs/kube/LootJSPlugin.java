@@ -9,6 +9,7 @@ import com.almostreliable.lootjs.core.entry.SingleLootEntry;
 import com.almostreliable.lootjs.core.filters.ItemFilter;
 import com.almostreliable.lootjs.core.filters.Resolver;
 import com.almostreliable.lootjs.core.filters.ResourceLocationFilter;
+import com.almostreliable.lootjs.kube.wrappers.ItemPredicateWrapper;
 import com.almostreliable.lootjs.kube.wrappers.MinMaxBoundsWrapper;
 import com.almostreliable.lootjs.kube.wrappers.MobEffectsPredicateWrapper;
 import com.almostreliable.lootjs.kube.wrappers.StatePropsPredicateWrapper;
@@ -165,6 +166,8 @@ public class LootJSPlugin extends KubeJSPlugin {
         typeWrappers.registerSimple(MobEffectsPredicate.Builder.class, MobEffectsPredicateWrapper::ofBuilder);
         typeWrappers.registerSimple(DistancePredicate.class, LootJSPlugin::ofDistancePredicate);
 
+        typeWrappers.registerSimple(ItemPredicate.Builder.class, ItemPredicateWrapper::ofBuilder);
+        typeWrappers.registerSimple(ItemPredicate.class, ItemPredicateWrapper::of);
 //        createBuilderWrapper(typeWrappers,
 //                EntityPredicate.class,
 //                EntityPredicate.Builder.class,

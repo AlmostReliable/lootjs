@@ -30,6 +30,9 @@ import java.util.*;
 import java.util.function.Predicate;
 
 public class LootCondition {
+    public static LootItemCondition matchTool(ItemPredicate predicate) {
+        return new MatchTool(Optional.of(predicate));
+    }
 
     public static LootItemCondition matchMainHand(ItemFilter filter) {
         return new MatchEquipmentSlot(EquipmentSlot.MAINHAND, filter);
