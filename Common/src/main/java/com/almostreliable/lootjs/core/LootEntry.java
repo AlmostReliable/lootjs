@@ -4,7 +4,9 @@ import com.almostreliable.lootjs.kube.LootConditionsContainer;
 import com.almostreliable.lootjs.loot.LootFunctionsContainer;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.storage.loot.LootContext;
+import net.minecraft.world.level.storage.loot.entries.LootPoolEntryContainer;
 import net.minecraft.world.level.storage.loot.functions.LootItemFunction;
 
 import javax.annotation.Nullable;
@@ -14,17 +16,21 @@ import java.util.function.Consumer;
 
 public class LootEntry implements LootFunctionsContainer<LootEntry> {
 
-    private final ItemStack itemStack;
+    private final Generator generator;
     private final List<LootItemFunction> postModifications = new ArrayList<>();
     private final List<ILootCondition> conditions = new ArrayList<>();
     private int weight = 1;
 
     public LootEntry(Item item) {
-        this.itemStack = new ItemStack(item);
+        this.generator = new ItemGenerator(new ItemStack(item));
     }
 
     public LootEntry(ItemStack itemStack) {
-        this.itemStack = itemStack;
+        this.generator = new ItemGenerator(itemStack);
+    }
+
+    public LootEntry(Generator generator) {
+        this.generator = generator;
     }
 
     /**
@@ -36,6 +42,11 @@ public class LootEntry implements LootFunctionsContainer<LootEntry> {
     @Nullable
     public ItemStack createItem(LootContext context) {
         if (!matchesConditions(context)) {
+            return null;
+        }
+
+        ItemStack itemStack = generator.create(context);
+        if (itemStack == null) {
             return null;
         }
 
@@ -97,5 +108,47 @@ public class LootEntry implements LootFunctionsContainer<LootEntry> {
         action.accept(lcc);
         this.conditions.addAll(conditions);
         return this;
+    }
+
+    public interface Generator {
+
+        @Nullable
+        ItemStack create(LootContext context);
+    }
+
+    public record ItemGenerator(ItemStack item) implements Generator {
+        @Nullable
+        @Override
+        public ItemStack create(LootContext context) {
+            return item;
+        }
+    }
+
+    public record RandomIngredientGenerator(Ingredient ingredient) implements Generator {
+        @Nullable
+        @Override
+        public ItemStack create(LootContext context) {
+            ItemStack[] items = ingredient.getItems();
+            if (items.length == 0) {
+                return ItemStack.EMPTY;
+            }
+
+            int index = context.getRandom().nextInt(items.length);
+            return items[index];
+        }
+    }
+
+    public record VanillaWrappedLootEntry(LootPoolEntryContainer entry) implements Generator {
+        @Override
+        public ItemStack create(LootContext context) {
+            List<ItemStack> items = new ArrayList<>();
+            entry.expand(context, entry -> entry.createItemStack(items::add, context));
+
+            if (items.isEmpty()) {
+                return null;
+            }
+
+            return items.get(context.getRandom().nextInt(items.size()));
+        }
     }
 }

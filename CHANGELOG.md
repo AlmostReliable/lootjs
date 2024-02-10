@@ -8,6 +8,11 @@ and this project adheres to [Semantic Versioning].
 ## [Unreleased]
 - /
 
+## [2.11.0] - 2023-02-11
+### Added
+- Added `LootEntry.of("#tag")`, `LootEntry.of("@modid")` to select a random entry from a tag or modid.
+- Added `LootEntry.ofJson(json)` to create a loot entry from JSON to support custom entries from other mods
+
 ## [2.10.4] - 2023-12-07
 ### Fixed
 - Crash with newest kubejs version
