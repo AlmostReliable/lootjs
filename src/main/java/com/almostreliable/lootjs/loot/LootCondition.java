@@ -157,6 +157,10 @@ public class LootCondition {
         return new IsLightLevel(min, max);
     }
 
+    public static LootItemCondition luck(MinMaxBounds.Doubles bounds) {
+        return customPlayerCheck(serverPlayer -> bounds.matches(serverPlayer.getLuck()));
+    }
+
     public static LootItemCondition killedByPlayer() {
         return LootItemKilledByPlayerCondition.killedByPlayer().build();
     }
