@@ -61,7 +61,7 @@ public class MobEffectsPredicateWrapper {
         }
 
         if (o instanceof Map<?, ?> map) {
-            getEffect(map.get("name")).ifPresent(h -> {
+            getEffect(map.get("id")).ifPresent(h -> {
                 onAdd.accept(h, createPredicate(map));
             });
         }
