@@ -19,7 +19,6 @@ import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.phys.Vec3;
 
 import javax.annotation.Nullable;
-import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -69,7 +68,7 @@ public class GameTestUtils {
 
     public static <E extends Entity> E simpleEntity(EntityType<E> entityType, ServerLevel level, BlockPos pos) {
         @SuppressWarnings("unchecked")
-        E entity = (E) entityType.spawn(level, null, e -> {}, pos, MobSpawnType.COMMAND, false, false);
+        E entity = (E) entityType.spawn(level, null, null, pos, MobSpawnType.COMMAND, false, false);
         if (entity == null) {
             throw new RuntimeException("Entity type + '" + BuiltInRegistries.ENTITY_TYPE.getKey(entityType) +
                                        "' cannot be created through 'GameTestUtils::simpleEntity'");

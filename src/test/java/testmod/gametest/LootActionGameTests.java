@@ -10,6 +10,7 @@ import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.level.GameType;
 import net.minecraft.world.level.storage.loot.LootContext;
 import net.neoforged.neoforge.gametest.GameTestHolder;
 import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
@@ -23,7 +24,7 @@ public class LootActionGameTests {
     @GameTest(template = GameTestTemplates.EMPTY)
     public void addLootAction(GameTestHelper helper) {
         helper.succeedIf(() -> {
-            Player p = helper.makeMockPlayer();
+            Player p = helper.makeMockPlayer(GameType.SURVIVAL);
             LootContext ctx = GameTestUtils.chestContext(helper.getLevel(), p.position(), p);
             LootBucket loot = GameTestUtils.fillExampleLoot(ctx);
             GameTestUtils.assertFalse(helper,
@@ -49,7 +50,7 @@ public class LootActionGameTests {
     @GameTest(template = GameTestTemplates.EMPTY)
     public void removeLootAction(GameTestHelper helper) {
         helper.succeedIf(() -> {
-            Player p = helper.makeMockPlayer();
+            Player p = helper.makeMockPlayer(GameType.SURVIVAL);
             LootContext ctx = GameTestUtils.chestContext(helper.getLevel(), p.position(), p);
             var loot = GameTestUtils.fillExampleLoot(ctx);
 
@@ -67,7 +68,7 @@ public class LootActionGameTests {
     @GameTest(template = GameTestTemplates.EMPTY)
     public void replaceLootAction(GameTestHelper helper) {
         helper.succeedIf(() -> {
-            Player p = helper.makeMockPlayer();
+            Player p = helper.makeMockPlayer(GameType.SURVIVAL);
             LootContext ctx = GameTestUtils.chestContext(helper.getLevel(), p.position(), p);
             var loot = GameTestUtils.fillExampleLoot(ctx);
 

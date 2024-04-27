@@ -104,7 +104,7 @@ public interface LootEntry {
             return new EmptyLootEntry(e);
         }
 
-        if (vanillaEntry instanceof LootTableReference e) {
+        if (vanillaEntry instanceof NestedLootTable e) {
             return new TableReferenceLootEntry(e);
         }
 
@@ -158,7 +158,7 @@ public interface LootEntry {
     }
 
     default boolean isReference() {
-        return getVanillaType() == LootPoolEntries.REFERENCE;
+        return getVanillaType() == LootPoolEntries.LOOT_TABLE;
     }
 
     default boolean isSimple() {

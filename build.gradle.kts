@@ -18,7 +18,7 @@ val kubejsVersion: String by project
 plugins {
     java
     `maven-publish`
-    id("dev.architectury.loom") version ("1.4.+")
+    id("dev.architectury.loom") version ("1.6.+")
     id("com.github.johnrengelman.shadow") version "8.1.1"
     id("com.github.gmazzo.buildconfig") version "4.0.4"
 }
@@ -89,23 +89,10 @@ dependencies {
     mappings(loom.officialMojangMappings())
 
     neoForge("net.neoforged:neoforge:${neoforgeVersion}")
-    modApi("dev.latvian.mods:kubejs-neoforge:${kubejsVersion}")
-    testImplementation("dev.latvian.mods:kubejs-neoforge:${kubejsVersion}")
 
-    /**
-     * Helps to load mods in development through an extra directory. Sadly this does not support transitive dependencies. :-(
-     */
-    fileTree("$extraModsPrefix-$minecraftVersion") { include("**/*.jar") }
-        .forEach { f ->
-            val sepIndex = f.nameWithoutExtension.lastIndexOf('-')
-            if (sepIndex == -1) {
-                throw IllegalArgumentException("Invalid mod name: '${f.nameWithoutExtension}'. Expected format: 'modName-version.jar'")
-            }
-            val mod = f.nameWithoutExtension.substring(0, sepIndex)
-            val version = f.nameWithoutExtension.substring(sepIndex + 1)
-            println("Extra mod ${f.nameWithoutExtension} detected.")
-            "modLocalRuntime"("extra-mods:$mod:$version")
-        }
+    // TODO change back to modApi and testImplementation once kubejs is updated
+    compileOnly("dev.latvian.mods:kubejs-neoforge:${kubejsVersion}")
+//    testImplementation("dev.latvian.mods:kubejs-neoforge:${kubejsVersion}")
 
     implementation("com.google.code.findbugs:jsr305:3.0.2")
 }
@@ -132,7 +119,7 @@ tasks {
      * Resource processing for defined targets. This will replace `${key}` with the specified values from the map below.
      */
     processResources {
-        val resourceTargets = listOf("META-INF/mods.toml", "pack.mcmeta", "fabric.mod.json")
+        val resourceTargets = listOf("META-INF/neoforge.mods.toml", "pack.mcmeta")
 
         val replaceProperties = mapOf(
             "version" to project.version as String,
@@ -159,7 +146,7 @@ tasks {
 
     withType<JavaCompile> {
         options.encoding = "UTF-8"
-        options.release.set(17)
+        options.release.set(21)
     }
 
     /**
@@ -181,7 +168,7 @@ tasks {
 }
 
 extensions.configure<JavaPluginExtension> {
-    toolchain.languageVersion.set(JavaLanguageVersion.of(17))
+    toolchain.languageVersion.set(JavaLanguageVersion.of(21))
     withSourcesJar()
 }
 

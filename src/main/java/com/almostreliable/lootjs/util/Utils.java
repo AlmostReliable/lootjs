@@ -37,15 +37,7 @@ public class Utils {
     }
 
     public static String formatItemStack(ItemStack itemStack) {
-        String tag = "";
-        ItemStack copy = itemStack.copy();
-        if (copy.getTag() != null) {
-            if (copy.getTag().contains("AttributeModifiers")) {
-                copy.getTag().putString("AttributeModifiers", "...");
-            }
-            tag += " " + copy.getTag();
-        }
-        return copy + tag;
+        return itemStack.toString();
     }
 
     public static String quote(String s) {

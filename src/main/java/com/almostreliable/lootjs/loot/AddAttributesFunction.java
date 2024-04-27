@@ -1,29 +1,25 @@
 package com.almostreliable.lootjs.loot;
 
-import com.google.common.collect.Multimap;
-import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.core.Holder;
+import net.minecraft.core.component.DataComponents;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.world.entity.EquipmentSlotGroup;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.component.ItemAttributeModifiers;
 import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.functions.LootItemFunction;
 import net.minecraft.world.level.storage.loot.functions.LootItemFunctionType;
 import net.minecraft.world.level.storage.loot.providers.number.NumberProvider;
 
 import javax.annotation.Nullable;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.UUID;
+import java.util.*;
 import java.util.function.Consumer;
-import java.util.function.Function;
 
+// TODO test pls help
 public class AddAttributesFunction implements LootItemFunction {
-    private static final Function<ItemStack, EquipmentSlot[]> SLOTS_BY_ITEM = itemStack -> new EquipmentSlot[]{
-            LivingEntity.getEquipmentSlotForItem(itemStack)
-    };
-
     private final boolean preserveDefaultModifier;
     private final List<Modifier> modifiers;
 
@@ -34,14 +30,22 @@ public class AddAttributesFunction implements LootItemFunction {
 
     @Override
     public ItemStack apply(ItemStack itemStack, LootContext context) {
+        var stackModifiers = ItemAttributeModifiers.builder();
+        ItemAttributeModifiers existing = itemStack.get(DataComponents.ATTRIBUTE_MODIFIERS);
+        if (existing != null && preserveDefaultModifier) {
+            for (ItemAttributeModifiers.Entry entry : existing.modifiers()) {
+                stackModifiers.add(entry.attribute(), entry.modifier(), entry.slot());
+            }
+        }
+
+        var slot = LivingEntity.getEquipmentSlotForItem(itemStack);
         for (Modifier modifier : modifiers) {
             if (context.getRandom().nextFloat() < modifier.probability) {
                 var am = modifier.createAttributeModifier(context);
-                for (EquipmentSlot slot : modifier.slots.apply(itemStack)) {
-                    if (preserveDefaultModifier) {
-                        preserveDefaultAttributes(itemStack, slot);
+                for (EquipmentSlotGroup slotGroup : modifier.slots) {
+                    if (slotGroup.test(slot)) {
+                        stackModifiers.add(modifier.attribute, am, slotGroup);
                     }
-                    itemStack.addAttributeModifier(modifier.attribute, am, slot);
                 }
             }
         }
@@ -49,37 +53,22 @@ public class AddAttributesFunction implements LootItemFunction {
         return itemStack;
     }
 
-    public void preserveDefaultAttributes(ItemStack itemStack, EquipmentSlot slot) {
-        //noinspection ConstantConditions
-        if (itemStack.hasTag() && itemStack.getTag().contains("AttributeModifiers", 9)) {
-            return;
-        }
-
-        Multimap<Attribute, AttributeModifier> defaultAttributeModifiers = itemStack
-                .getItem()
-                .getDefaultAttributeModifiers(slot);
-        for (var entry : defaultAttributeModifiers.entries()) {
-            itemStack.addAttributeModifier(entry.getKey(), entry.getValue(), slot);
-        }
-    }
-
-
     @Override
     public LootItemFunctionType getType() {
         throw new UnsupportedOperationException("Do not call");
     }
 
     public static class Modifier {
-        protected final Attribute attribute;
+        protected final Holder<Attribute> attribute;
         protected final float probability;
         protected final AttributeModifier.Operation operation;
         protected final NumberProvider amount;
         protected final String name;
-        protected final Function<ItemStack, EquipmentSlot[]> slots;
+        protected final Set<EquipmentSlotGroup> slots;
         @Nullable
         protected UUID uuid;
 
-        public Modifier(float probability, Attribute attribute, AttributeModifier.Operation operation, NumberProvider amount, String name, Function<ItemStack, EquipmentSlot[]> slots, @Nullable UUID uuid) {
+        public Modifier(float probability, Holder<Attribute> attribute, AttributeModifier.Operation operation, NumberProvider amount, String name, Set<EquipmentSlotGroup> slots, @Nullable UUID uuid) {
             this.attribute = attribute;
             this.probability = probability;
             this.operation = operation;
@@ -98,7 +87,7 @@ public class AddAttributesFunction implements LootItemFunction {
             protected final NumberProvider amount;
             protected float probability;
             protected AttributeModifier.Operation operation;
-            protected Function<ItemStack, EquipmentSlot[]> slots;
+            protected Set<EquipmentSlotGroup> slots;
             @Nullable
             protected UUID uuid;
             @Nullable
@@ -108,8 +97,8 @@ public class AddAttributesFunction implements LootItemFunction {
                 this.attribute = attribute;
                 this.amount = amount;
                 this.probability = 1f;
-                this.operation = AttributeModifier.Operation.ADDITION;
-                this.slots = SLOTS_BY_ITEM;
+                this.operation = AttributeModifier.Operation.ADD_VALUE;
+                this.slots = new HashSet<>();
             }
 
             public void setProbability(float probability) {
@@ -120,8 +109,8 @@ public class AddAttributesFunction implements LootItemFunction {
                 this.operation = operation;
             }
 
-            public void setSlots(EquipmentSlot[] slots) {
-                this.slots = itemStack -> slots;
+            public void setSlots(EquipmentSlotGroup[] slots) {
+                this.slots = new HashSet<>(Arrays.asList(slots));
             }
 
             public void setName(@Nullable String name) {
@@ -137,7 +126,8 @@ public class AddAttributesFunction implements LootItemFunction {
                     name = "lootjs." + attribute.getDescriptionId() + "." + operation.name().toLowerCase();
                 }
 
-                return new Modifier(probability, attribute, operation, amount, name, slots, uuid);
+                Holder<Attribute> attributeHolder = BuiltInRegistries.ATTRIBUTE.wrapAsHolder(attribute);
+                return new Modifier(probability, attributeHolder, operation, amount, name, slots, uuid);
             }
         }
     }
@@ -160,11 +150,11 @@ public class AddAttributesFunction implements LootItemFunction {
             return add(attribute, amount, m -> m.setProbability(probability));
         }
 
-        public Builder forSlots(Attribute attribute, NumberProvider amount, EquipmentSlot[] slots) {
+        public Builder forSlots(Attribute attribute, NumberProvider amount, EquipmentSlotGroup[] slots) {
             return add(attribute, amount, m -> m.setSlots(slots));
         }
 
-        public Builder forSlots(float probability, Attribute attribute, NumberProvider amount, EquipmentSlot[] slots) {
+        public Builder forSlots(float probability, Attribute attribute, NumberProvider amount, EquipmentSlotGroup[] slots) {
             return add(attribute, amount, m -> {
                 m.setProbability(probability);
                 m.setSlots(slots);

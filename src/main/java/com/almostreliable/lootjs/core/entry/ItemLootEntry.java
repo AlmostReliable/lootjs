@@ -1,8 +1,9 @@
 package com.almostreliable.lootjs.core.entry;
 
 import com.almostreliable.lootjs.core.filters.ItemFilter;
-import com.almostreliable.lootjs.loot.LootConditionList;
-import com.almostreliable.lootjs.loot.LootFunctionList;
+import com.almostreliable.lootjs.util.Utils;
+import net.minecraft.core.component.DataComponentPatch;
+import net.minecraft.core.component.TypedDataComponent;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -13,11 +14,13 @@ import net.minecraft.world.level.storage.loot.entries.LootPoolEntries;
 import net.minecraft.world.level.storage.loot.entries.LootPoolEntryType;
 import net.minecraft.world.level.storage.loot.entries.LootPoolSingletonContainer;
 import net.minecraft.world.level.storage.loot.functions.LootItemFunction;
+import net.minecraft.world.level.storage.loot.functions.SetComponentsFunction;
 import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
 import net.minecraft.world.level.storage.loot.providers.number.ConstantValue;
 import net.minecraft.world.level.storage.loot.providers.number.NumberProvider;
 
 import javax.annotation.Nullable;
+import java.util.ArrayList;
 
 public class ItemLootEntry extends AbstractSimpleLootEntry<LootItem> implements SingleLootEntry {
 
@@ -36,8 +39,13 @@ public class ItemLootEntry extends AbstractSimpleLootEntry<LootItem> implements 
             getFunctions().setCount(ConstantValue.exactly(itemStack.getCount()));
         }
 
-        if (itemStack.getTag() != null) {
-            getFunctions().setNbt(itemStack.getTag());
+        if (!itemStack.getComponents().isEmpty()) {
+            DataComponentPatch.Builder builder = DataComponentPatch.builder();
+            for (TypedDataComponent<?> component : itemStack.getComponents()) {
+                builder.set(Utils.cast(component.type()), component.value());
+            }
+
+            getFunctions().addFunction(new SetComponentsFunction(new ArrayList<>(), builder.build()));
         }
     }
 

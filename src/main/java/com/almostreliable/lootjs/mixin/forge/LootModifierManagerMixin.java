@@ -1,8 +1,7 @@
 package com.almostreliable.lootjs.mixin.forge;
 
+import com.almostreliable.lootjs.LootEvents;
 import com.almostreliable.lootjs.LootModificationsAPI;
-import com.almostreliable.lootjs.kube.LootJSEvent;
-import com.almostreliable.lootjs.kube.LootModificationEventJS;
 import com.google.common.collect.ImmutableMap;
 import com.google.gson.JsonElement;
 import net.minecraft.resources.ResourceLocation;
@@ -31,7 +30,7 @@ public class LootModifierManagerMixin {
         LootModificationsAPI.reload();
 
         Map<ResourceLocation, IGlobalLootModifier> modifiers = new HashMap<>(registeredLootModifiers);
-        LootJSEvent.MODIFIERS.post(new LootModificationEventJS(modifiers));
+        LootEvents.invokeModifiers(modifiers);
         registeredLootModifiers = ImmutableMap.copyOf(modifiers);
     }
 }

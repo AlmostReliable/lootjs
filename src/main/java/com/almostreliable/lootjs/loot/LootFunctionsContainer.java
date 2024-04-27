@@ -86,10 +86,6 @@ public interface LootFunctionsContainer<F extends LootFunctionsContainer<?>> {
         return addFunction(LootFunction.setName(component));
     }
 
-    default F setNBT(CompoundTag tag) {
-        return addFunction(LootFunction.setNBT(tag));
-    }
-
     default F setNbt(CompoundTag tag) {
         return addFunction(LootFunction.setNbt(tag));
     }

@@ -2,8 +2,6 @@ package testmod.gametest.conditions;
 
 import com.almostreliable.lootjs.BuildConfig;
 import com.almostreliable.lootjs.core.LootType;
-import testmod.gametest.GameTestTemplates;
-import testmod.gametest.GameTestUtils;
 import com.almostreliable.lootjs.loot.extension.LootContextExtension;
 import net.minecraft.core.BlockPos;
 import net.minecraft.gametest.framework.GameTest;
@@ -14,6 +12,7 @@ import net.minecraft.world.entity.animal.Cow;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.FishingHook;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.GameType;
 import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.LootParams;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParamSet;
@@ -22,6 +21,8 @@ import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.gametest.GameTestHolder;
 import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
+import testmod.gametest.GameTestTemplates;
+import testmod.gametest.GameTestUtils;
 
 import java.util.Optional;
 
@@ -78,7 +79,7 @@ public class ParamSetTest {
 
     @GameTest(template = GameTestTemplates.EMPTY)
     public void fishing(GameTestHelper helper) {
-        Player player = helper.makeMockPlayer();
+        Player player = helper.makeMockPlayer(GameType.SURVIVAL);
         FishingHook martin = new FishingHook(player, helper.getLevel(), 0, 0);
         var params = new LootParams.Builder(helper.getLevel())
                 .withParameter(LootContextParams.ORIGIN, TEST_POS)

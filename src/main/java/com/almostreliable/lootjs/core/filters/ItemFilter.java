@@ -1,15 +1,16 @@
 package com.almostreliable.lootjs.core.filters;
 
 import net.minecraft.advancements.critereon.MinMaxBounds;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.ListTag;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.*;
-import net.minecraft.world.item.enchantment.EnchantmentHelper;
+import net.minecraft.world.item.enchantment.Enchantment;
+import net.minecraft.world.item.enchantment.ItemEnchantments;
 import net.neoforged.neoforge.common.ToolAction;
 
 import java.util.Objects;
@@ -41,7 +42,7 @@ public interface ItemFilter extends Predicate<ItemStack> {
     ItemFilter CHEST_ARMOR = equipmentSlot(EquipmentSlot.CHEST);
     ItemFilter LEGS_ARMOR = equipmentSlot(EquipmentSlot.LEGS);
     ItemFilter FEET_ARMOR = equipmentSlot(EquipmentSlot.FEET);
-    ItemFilter FOOD = ItemStack::isEdible;
+    ItemFilter EDIBLE = itemStack -> itemStack.getFoodProperties(null) != null;
     ItemFilter DAMAGEABLE = ItemStack::isDamageableItem;
     ItemFilter DAMAGED = ItemStack::isDamaged;
     ItemFilter ENCHANTED = ItemStack::isEnchanted;
@@ -53,16 +54,20 @@ public interface ItemFilter extends Predicate<ItemStack> {
 
     static ItemFilter hasEnchantment(ResourceLocationFilter filter, MinMaxBounds.Ints levelBounds) {
         return itemStack -> {
-            ListTag listTag = itemStack.is(Items.ENCHANTED_BOOK) ? EnchantedBookItem.getEnchantments(itemStack)
-                                                                 : itemStack.getEnchantmentTags();
-            for (int i = 0; i < listTag.size(); i++) {
-                CompoundTag tag = listTag.getCompound(i);
-                ResourceLocation id = EnchantmentHelper.getEnchantmentId(tag);
-                int level = EnchantmentHelper.getEnchantmentLevel(tag);
-                if (id != null && filter.test(id) && levelBounds.matches(level)) {
+            ItemEnchantments enchantments =
+                    itemStack.is(Items.ENCHANTED_BOOK) ? itemStack.get(DataComponents.STORED_ENCHANTMENTS)
+                                                       : itemStack.get(DataComponents.ENCHANTMENTS);
+            if (enchantments == null) return false;
+
+            for (var entry : enchantments.entrySet()) {
+                ResourceKey<Enchantment> key = entry.getKey().unwrapKey().orElse(null);
+                if (key == null) continue;
+
+                if (filter.test(key.location()) && levelBounds.matches(entry.getIntValue())) {
                     return true;
                 }
             }
+
             return false;
         };
     }

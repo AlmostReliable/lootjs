@@ -4,16 +4,19 @@ import com.almostreliable.lootjs.core.LootType;
 import com.almostreliable.lootjs.core.entry.LootEntry;
 import com.almostreliable.lootjs.core.entry.SimpleLootEntry;
 import com.almostreliable.lootjs.loot.LootFunctionList;
+import com.almostreliable.lootjs.loot.extension.LootPoolExtension;
 import com.almostreliable.lootjs.loot.extension.LootTableExtension;
 import com.almostreliable.lootjs.util.DebugInfo;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.storage.loot.LootPool;
 import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParamSet;
+import net.minecraft.world.level.storage.loot.providers.number.ConstantValue;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 import java.util.function.UnaryOperator;
@@ -23,11 +26,7 @@ public class MutableLootTable implements LootApplier {
 
     private final LootTable origin;
     private final ResourceLocation location;
-    @Nullable
-    private List<MutableLootPool> pools;
-    @Nullable
-    private LootFunctionList functions;
-    private boolean potentialModified;
+    @Nullable private LootFunctionList functions;
 
     public MutableLootTable(LootTable lootTable) {
         this(lootTable, lootTable.getLootTableId());
@@ -59,15 +58,8 @@ public class MutableLootTable implements LootApplier {
         return location;
     }
 
-    public List<MutableLootPool> getPools() {
-        if (pools == null) {
-            markDirty();
-            pools = new ArrayList<>();
-            for (LootPool pool : ((LootTableExtension) origin).lootjs$getPools()) {
-                pools.add(new MutableLootPool(pool));
-            }
-        }
-        return pools;
+    private List<LootPool> getVanillaPools() {
+        return LootTableExtension.cast(origin).lootjs$getPools();
     }
 
     public MutableLootTable firstPool(Consumer<MutableLootPool> onModifyPool) {
@@ -76,12 +68,12 @@ public class MutableLootTable implements LootApplier {
     }
 
     public MutableLootPool firstPool() {
-        var pools = getPools();
+        var pools = LootTableExtension.cast(origin).lootjs$getPools();
         if (pools.isEmpty()) {
             return createPool();
         }
 
-        return pools.get(0);
+        return new MutableLootPool(pools.get(0));
     }
 
     public MutableLootTable createPool(Consumer<MutableLootPool> onCreatePool) {
@@ -90,14 +82,18 @@ public class MutableLootTable implements LootApplier {
     }
 
     public MutableLootPool createPool() {
-        var pool = new MutableLootPool();
-        getPools().add(pool);
-        return pool;
+        var pool = new LootPool(new ArrayList<>(),
+                new ArrayList<>(),
+                new ArrayList<>(),
+                ConstantValue.exactly(1),
+                ConstantValue.exactly(0),
+                Optional.empty());
+        getVanillaPools().add(pool);
+        return new MutableLootPool(pool);
     }
 
     public LootFunctionList getFunctions() {
         if (functions == null) {
-            markDirty();
             functions = LootTableExtension.cast(origin).lootjs$createFunctionList();
         }
 
@@ -113,11 +109,7 @@ public class MutableLootTable implements LootApplier {
     }
 
     public void writeToVanillaTable() {
-        if (pools != null) {
-            LootTableExtension.cast(origin).lootjs$setPools(getPools().stream()
-                    .map(MutableLootPool::getVanillaPool)
-                    .toList());
-        }
+        // TODO remove
     }
 
     public void print() {
@@ -127,24 +119,18 @@ public class MutableLootTable implements LootApplier {
 
         info.add("% Pools [");
         info.push();
-        var pools = this.pools;
-        if (pools == null) {
-            List<LootPool> lootPools = LootTableExtension.cast(origin).lootjs$getPools();
-            pools = lootPools.stream().map(MutableLootPool::new).toList();
-        }
 
-        for (MutableLootPool pool : pools) {
+        for (var pool : getVanillaPools()) {
             info.add("{");
             info.push();
-            pool.collectDebugInfo(info);
+            LootPoolExtension.cast(pool).lootjs$collectDebugInfo(info);
             info.pop();
             info.add("}");
         }
 
         info.pop();
         info.add("]");
-        var f = functions == null ? LootTableExtension.cast(origin).lootjs$createFunctionList()
-                                  : functions;
+        var f = functions == null ? LootTableExtension.cast(origin).lootjs$createFunctionList() : functions;
         f.collectDebugInfo(info);
         info.pop();
 
@@ -153,7 +139,7 @@ public class MutableLootTable implements LootApplier {
 
     public MutableLootTable clear() {
         getFunctions().clear();
-        getPools().clear();
+        getVanillaPools().clear();
         return this;
     }
 
@@ -165,8 +151,8 @@ public class MutableLootTable implements LootApplier {
 
     @Override
     public MutableLootTable transformEntry(UnaryOperator<SimpleLootEntry> onTransform, boolean deepTransform) {
-        for (MutableLootPool pool : getPools()) {
-            pool.transformEntry(onTransform, deepTransform);
+        for (var pool : getVanillaPools()) {
+            new MutableLootPool(pool).transformEntry(onTransform, deepTransform);
         }
 
         return this;
@@ -174,8 +160,8 @@ public class MutableLootTable implements LootApplier {
 
     @Override
     public MutableLootTable removeEntry(Predicate<SimpleLootEntry> onRemove, boolean deepRemove) {
-        for (MutableLootPool pool : getPools()) {
-            pool.removeEntry(onRemove, deepRemove);
+        for (var pool : getVanillaPools()) {
+            new MutableLootPool(pool).removeEntry(onRemove, deepRemove);
         }
 
         return this;
@@ -184,13 +170,5 @@ public class MutableLootTable implements LootApplier {
     public MutableLootTable apply(Consumer<LootFunctionList> onModifiers) {
         onModifiers.accept(getFunctions());
         return this;
-    }
-
-    public boolean isDirty() {
-        return potentialModified;
-    }
-
-    public void markDirty() {
-        potentialModified = true;
     }
 }

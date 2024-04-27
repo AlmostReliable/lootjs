@@ -7,19 +7,14 @@ import com.almostreliable.lootjs.loot.modifier.LootModifier;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.storage.loot.LootContext;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Consumer;
 
 public class LootModificationsAPI {
 
     public static final List<ResourceLocationFilter> FILTERS = new ArrayList<>();
-	private static final Logger LOGGER = LogManager.getLogger();
     private static final List<LootModifier> modifiers = new ArrayList<>();
-    public static Consumer<String> DEBUG_ACTION = LOGGER::info;
     public static boolean DISABLE_WITHER_DROPPING_NETHER_STAR = false;
     public static boolean DISABLE_ZOMBIE_DROPPING_HEAD = false;
     public static boolean DISABLE_SKELETON_DROPPING_HEAD = false;
@@ -58,7 +53,7 @@ public class LootModificationsAPI {
             StringBuilder stringBuilder = new StringBuilder();
             stringBuilder.append("\n");
             lootContextInfo.release(stringBuilder);
-            DEBUG_ACTION.accept(stringBuilder.toString());
+            LootJS.DEBUG_ACTION.accept(stringBuilder.toString());
         } else {
             runModifiers(context, lootBucket);
         }

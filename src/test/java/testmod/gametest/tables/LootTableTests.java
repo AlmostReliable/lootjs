@@ -1,18 +1,18 @@
 package testmod.gametest.tables;
 
 import com.almostreliable.lootjs.BuildConfig;
-import testmod.gametest.GameTestTemplates;
-import testmod.gametest.GameTestUtils;
 import com.almostreliable.lootjs.loot.extension.LootTableExtension;
 import com.almostreliable.lootjs.loot.table.MutableLootTable;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.level.storage.loot.LootDataType;
 import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
 import net.neoforged.neoforge.gametest.GameTestHolder;
 import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
+import testmod.gametest.GameTestTemplates;
+import testmod.gametest.GameTestUtils;
 
 @GameTestHolder(value = BuildConfig.MOD_ID)
 @PrefixGameTestTemplate(false)
@@ -52,9 +52,9 @@ public class LootTableTests {
     private static LootTable getTable(GameTestHelper helper, ResourceLocation location) {
         return helper
                 .getLevel()
-                .getServer()
-                .getLootData()
-                .getElement(LootDataType.TABLE, location);
+                .registryAccess()
+                .registryOrThrow(Registries.LOOT_TABLE)
+                .get(location);
     }
 
     @GameTest(template = GameTestTemplates.EMPTY)

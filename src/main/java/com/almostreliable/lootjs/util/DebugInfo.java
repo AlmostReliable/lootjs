@@ -1,6 +1,6 @@
 package com.almostreliable.lootjs.util;
 
-import dev.latvian.mods.kubejs.util.ConsoleJS;
+import com.almostreliable.lootjs.LootJS;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,7 +34,7 @@ public class DebugInfo {
             sb.append("\n");
         }
 
-        ConsoleJS.SERVER.info(sb.toString());
+        LootJS.DEBUG_ACTION.accept(sb.toString());
     }
 
     private record Line(int indent, String text) {

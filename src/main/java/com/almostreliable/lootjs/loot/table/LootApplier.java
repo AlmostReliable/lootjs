@@ -1,6 +1,5 @@
 package com.almostreliable.lootjs.loot.table;
 
-import com.almostreliable.lootjs.LootJS;
 import com.almostreliable.lootjs.core.entry.*;
 import com.almostreliable.lootjs.core.filters.ItemFilter;
 import com.almostreliable.lootjs.core.filters.ResourceLocationFilter;
@@ -15,7 +14,7 @@ import java.util.function.UnaryOperator;
 @SuppressWarnings("UnusedReturnValue")
 public interface LootApplier {
     default LootApplier addCustomEntry(JsonObject json) {
-        var vanilla = LootPoolEntries.CODEC.parse(JsonOps.INSTANCE, json).getOrThrow(false, LootJS.LOG::error);
+        var vanilla = LootPoolEntries.CODEC.parse(JsonOps.INSTANCE, json).getOrThrow();
         return addEntry(LootEntry.ofVanilla(vanilla));
     }
 

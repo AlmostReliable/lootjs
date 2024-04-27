@@ -1,7 +1,7 @@
 package com.almostreliable.lootjs.kube;
 
+import com.almostreliable.lootjs.LootEvents;
 import com.almostreliable.lootjs.LootJS;
-import com.almostreliable.lootjs.LootModificationsAPI;
 import com.almostreliable.lootjs.core.ItemStackFactory;
 import com.almostreliable.lootjs.core.LootType;
 import com.almostreliable.lootjs.core.entry.LootEntry;
@@ -17,7 +17,9 @@ import com.almostreliable.lootjs.loot.LootCondition;
 import com.almostreliable.lootjs.loot.LootFunction;
 import com.almostreliable.lootjs.loot.Predicates;
 import com.almostreliable.lootjs.loot.condition.builder.DistancePredicateBuilder;
+import com.almostreliable.lootjs.util.BlockFilter;
 import dev.latvian.mods.kubejs.KubeJSPlugin;
+import dev.latvian.mods.kubejs.block.state.BlockStatePredicate;
 import dev.latvian.mods.kubejs.item.ItemStackJS;
 import dev.latvian.mods.kubejs.item.ingredient.IngredientJS;
 import dev.latvian.mods.kubejs.script.BindingsEvent;
@@ -35,11 +37,9 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
-import net.minecraft.world.level.saveddata.maps.MapDecoration;
 import net.neoforged.neoforge.registries.holdersets.OrHolderSet;
 
 import javax.annotation.Nullable;
@@ -52,6 +52,7 @@ import java.util.regex.Pattern;
 public class LootJSPlugin extends KubeJSPlugin {
 
     public static final EntityTypePredicate EMPTY_ENTITY_TYPE_PREDICATE = new EntityTypePredicate(HolderSet.direct());
+
     public static boolean eventsAreDisabled() {
         return Boolean.getBoolean("lootjs.disable_events");
     }
@@ -82,7 +83,10 @@ public class LootJSPlugin extends KubeJSPlugin {
                     return new ItemFilter.Tag(tag);
                 case "@":
                     String modId = str.substring(1);
-                    return itemStack -> itemStack.kjs$getMod().equals(modId);
+                    return itemStack -> {
+                        var key = BuiltInRegistries.ITEM.getKey(itemStack.getItem());
+                        return key.getNamespace().equals(modId);
+                    };
             }
         }
 
@@ -116,9 +120,27 @@ public class LootJSPlugin extends KubeJSPlugin {
         return ofItemFilterSingle(o);
     }
 
+    private static BlockFilter ofBlockFilter(Object o) {
+        if (o instanceof BlockFilter bf) {
+            return bf;
+        }
+
+        BlockStatePredicate bsp = BlockStatePredicate.of(o);
+        return () -> bsp.getBlocks().iterator();
+    }
+
     @Override
     public void initStartup() {
-        LootModificationsAPI.DEBUG_ACTION = s -> ConsoleJS.SERVER.info(s);
+        LootJS.DEBUG_ACTION = s -> ConsoleJS.SERVER.info(s);
+        LootEvents.listen(registry -> {
+            var event = new LootTableEventJS(registry);
+            LootJSEvent.LOOT_TABLES.post(event);
+        });
+
+        LootEvents.listenModifiers(modifiers -> {
+            var event = new LootModificationEventJS(modifiers);
+            LootJSEvent.MODIFIERS.post(event);
+        });
     }
 
     @Override
@@ -153,6 +175,7 @@ public class LootJSPlugin extends KubeJSPlugin {
 
     @Override
     public void registerTypeWrappers(ScriptType type, TypeWrappers typeWrappers) {
+        typeWrappers.registerSimple(BlockFilter.class, LootJSPlugin::ofBlockFilter);
         typeWrappers.registerSimple(LootEntry.class, LootJSPlugin::ofLootEntry);
         typeWrappers.registerSimple(SingleLootEntry.class, LootJSPlugin::ofSingleLootEntry);
         typeWrappers.registerSimple(ItemStackFactory.class, LootJSPlugin::ofItemStackFactory);
@@ -204,17 +227,16 @@ public class LootJSPlugin extends KubeJSPlugin {
         typeWrappers.registerSimple(ItemFilter.class, LootJSPlugin::ofItemFilter);
 
         typeWrappers.registerSimple(ResourceLocationFilter.class, this::ofResourceLocationFilter);
-        typeWrappers.registerSimple(MapDecoration.Type.class, o -> valueOf(MapDecoration.Type.class, o));
-        typeWrappers.registerSimple(AttributeModifier.Operation.class, o -> valueOf(AttributeModifier.Operation.class, o));
+//        typeWrappers.registerSimple(MapDecoration.Type.class, o -> valueOf(MapDecoration.Type.class, o)); // TODO Add back
         typeWrappers.registerSimple(Resolver.class, o -> Resolver.of(o.toString()));
     }
 
     private static DistancePredicate ofDistancePredicate(Object o) {
-        if(o instanceof DistancePredicate distancePredicate) {
+        if (o instanceof DistancePredicate distancePredicate) {
             return distancePredicate;
         }
 
-        if(o instanceof DistancePredicateBuilder distancePredicateBuilder) {
+        if (o instanceof DistancePredicateBuilder distancePredicateBuilder) {
             return distancePredicateBuilder.build();
         }
 

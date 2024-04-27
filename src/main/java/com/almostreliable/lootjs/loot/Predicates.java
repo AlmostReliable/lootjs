@@ -2,6 +2,8 @@ package com.almostreliable.lootjs.loot;
 
 import com.almostreliable.lootjs.loot.condition.builder.DistancePredicateBuilder;
 import net.minecraft.advancements.critereon.*;
+import net.minecraft.core.HolderSet;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
@@ -57,7 +59,9 @@ public interface Predicates {
     }
 
     static FluidPredicate.Builder fluidTag(String tag) {
-        return FluidPredicate.Builder.fluid().of(TagKey.create(Registries.FLUID, new ResourceLocation(tag)));
+        TagKey<Fluid> tagKey = TagKey.create(Registries.FLUID, new ResourceLocation(tag));
+        HolderSet.Named<Fluid> holderSet = BuiltInRegistries.FLUID.getOrCreateTag(tagKey);
+        return FluidPredicate.Builder.fluid().of(holderSet);
     }
 
     static DamageSourcePredicate.Builder damageSource() {

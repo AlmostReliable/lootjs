@@ -7,18 +7,16 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Iterator;
 import java.util.List;
-import java.util.Objects;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 import java.util.function.UnaryOperator;
-import java.util.stream.Stream;
 
 public class LootTableList implements LootApplier, Iterable<MutableLootTable> {
 
     private final List<MutableLootTable> tables;
 
-    public LootTableList(Stream<MutableLootTable> stream) {
-        this.tables = stream.filter(Objects::nonNull).toList();
+    public LootTableList(List<MutableLootTable> tables) {
+        this.tables = tables;
     }
 
     public List<MutableLootTable> getTables() {

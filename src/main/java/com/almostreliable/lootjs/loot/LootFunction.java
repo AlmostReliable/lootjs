@@ -1,11 +1,13 @@
 package com.almostreliable.lootjs.loot;
 
-import com.almostreliable.lootjs.LootJS;
 import com.google.gson.JsonObject;
 import com.mojang.serialization.JsonOps;
+import net.minecraft.core.component.DataComponents;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.alchemy.Potion;
+import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.level.storage.loot.IntRange;
 import net.minecraft.world.level.storage.loot.functions.*;
@@ -76,7 +78,7 @@ public class LootFunction {
 
     public static LootItemFunction addPotion(Potion potion) {
         Objects.requireNonNull(potion);
-        return SetPotionFunction.setPotion(potion).build();
+        return SetPotionFunction.setPotion(BuiltInRegistries.POTION.wrapAsHolder(potion)).build();
     }
 
     public static LootItemFunction addAttributes(Consumer<AddAttributesFunction.Builder> action) {
@@ -107,25 +109,22 @@ public class LootFunction {
         for (Component c : components) {
             builder.addLine(c);
         }
-        return builder.setReplace(true).build();
+
+        return builder.setMode(ListOperation.ReplaceAll.INSTANCE).build();
     }
 
     public static LootItemFunction setName(Component component) {
-        return SetNameFunction.setName(component).build();
-    }
-
-    public static LootItemFunction setNBT(CompoundTag tag) {
-        return SetNbtFunction.setTag(tag).build();
+        return SetComponentsFunction.setComponent(DataComponents.CUSTOM_NAME, component).build();
     }
 
     /**
      * For the people who always forget if "NBT" or "Nbt"
      */
     public static LootItemFunction setNbt(CompoundTag tag) {
-        return SetNbtFunction.setTag(tag).build();
+        return SetComponentsFunction.setComponent(DataComponents.CUSTOM_DATA, CustomData.of(tag)).build();
     }
 
     public static LootItemFunction fromJson(JsonObject json) {
-        return LootItemFunctions.CODEC.parse(JsonOps.INSTANCE, json).getOrThrow(false, LootJS.LOG::error);
+        return LootItemFunctions.CODEC.parse(JsonOps.INSTANCE, json).getOrThrow().value();
     }
 }

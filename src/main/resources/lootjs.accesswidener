@@ -4,6 +4,7 @@ accessible field net/minecraft/advancements/critereon/EntityFlagsPredicate$Build
 accessible field net/minecraft/advancements/critereon/EntityFlagsPredicate$Builder isOnFire Ljava/util/Optional;# isOnFire
 accessible field net/minecraft/advancements/critereon/EntityFlagsPredicate$Builder isSprinting Ljava/util/Optional;# isSprinting
 accessible field net/minecraft/advancements/critereon/EntityFlagsPredicate$Builder isSwimming Ljava/util/Optional;# isSwimming
+accessible method net/minecraft/world/level/storage/loot/functions/SetComponentsFunction <init> (Ljava/util/List;Lnet/minecraft/core/component/DataComponentPatch;)V
 
 accessible method net/minecraft/world/level/storage/loot/IntRange <init> (Lnet/minecraft/world/level/storage/loot/providers/number/NumberProvider;Lnet/minecraft/world/level/storage/loot/providers/number/NumberProvider;)V # IntRange
 accessible class net/minecraft/world/level/storage/loot/functions/SetAttributesFunction$Modifier
@@ -28,7 +29,7 @@ accessible field net/minecraft/world/level/storage/loot/entries/LootPoolSingleto
 accessible field net/minecraft/world/level/storage/loot/entries/LootItem item Lnet/minecraft/core/Holder;
 accessible field net/minecraft/world/level/storage/loot/entries/TagEntry tag Lnet/minecraft/tags/TagKey;
 accessible field net/minecraft/world/level/storage/loot/entries/TagEntry expand Z
-accessible field net/minecraft/world/level/storage/loot/entries/LootTableReference name Lnet/minecraft/resources/ResourceLocation;
+accessible field net/minecraft/world/level/storage/loot/entries/NestedLootTable contents Lcom/mojang/datafixers/util/Either;
 accessible field net/minecraft/world/level/storage/loot/entries/DynamicLoot name Lnet/minecraft/resources/ResourceLocation;
 accessible field net/minecraft/world/level/storage/loot/entries/CompositeEntryBase children Ljava/util/List;
 
@@ -41,13 +42,13 @@ mutable field net/minecraft/world/level/storage/loot/entries/LootPoolSingletonCo
 mutable field net/minecraft/world/level/storage/loot/entries/LootItem item Lnet/minecraft/core/Holder;
 mutable field net/minecraft/world/level/storage/loot/entries/TagEntry tag Lnet/minecraft/tags/TagKey;
 mutable field net/minecraft/world/level/storage/loot/entries/TagEntry expand Z
-mutable field net/minecraft/world/level/storage/loot/entries/LootTableReference name Lnet/minecraft/resources/ResourceLocation;
+mutable field net/minecraft/world/level/storage/loot/entries/NestedLootTable contents Lcom/mojang/datafixers/util/Either;
 mutable field net/minecraft/world/level/storage/loot/entries/DynamicLoot name Lnet/minecraft/resources/ResourceLocation;
 
 accessible method net/minecraft/world/level/storage/loot/entries/LootItem <init> (Lnet/minecraft/core/Holder;IILjava/util/List;Ljava/util/List;)V
 accessible method net/minecraft/world/level/storage/loot/entries/EmptyLootItem <init> (IILjava/util/List;Ljava/util/List;)V
 accessible method net/minecraft/world/level/storage/loot/entries/TagEntry <init> (Lnet/minecraft/tags/TagKey;ZIILjava/util/List;Ljava/util/List;)V
-accessible method net/minecraft/world/level/storage/loot/entries/LootTableReference <init> (Lnet/minecraft/resources/ResourceLocation;IILjava/util/List;Ljava/util/List;)V
+accessible method net/minecraft/world/level/storage/loot/entries/NestedLootTable <init> (Lcom/mojang/datafixers/util/Either;IILjava/util/List;Ljava/util/List;)V
 accessible method net/minecraft/world/level/storage/loot/entries/DynamicLoot <init> (Lnet/minecraft/resources/ResourceLocation;IILjava/util/List;Ljava/util/List;)V
 accessible method net/minecraft/world/level/storage/loot/entries/AlternativesEntry <init> (Ljava/util/List;Ljava/util/List;)V
 accessible method net/minecraft/world/level/storage/loot/entries/SequentialEntry <init> (Ljava/util/List;Ljava/util/List;)V

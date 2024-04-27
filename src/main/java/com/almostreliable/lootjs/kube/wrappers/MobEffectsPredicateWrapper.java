@@ -23,7 +23,7 @@ public class MobEffectsPredicateWrapper {
         }
 
         MobEffectsPredicate.Builder effects = MobEffectsPredicate.Builder.effects();
-        write(o, (h, p) -> effects.and(h.value(), p));
+        write(o, effects::and);
         return effects;
     }
 

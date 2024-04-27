@@ -56,12 +56,6 @@ public class LootFunctionList extends ListHolder<LootItemFunction, LootItemFunct
         return this;
     }
 
-    public LootFunctionList setNbt(CompoundTag nbt) {
-        LootItemFunction sc = LootFunction.setNbt(nbt);
-        replace(LootItemFunctions.SET_NBT, sc);
-        return this;
-    }
-
     public LootFunctionList setNBT(CompoundTag nbt) {
         return setNbt(nbt);
     }

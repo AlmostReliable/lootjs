@@ -1,12 +1,10 @@
 package com.almostreliable.lootjs.loot;
 
-import com.almostreliable.lootjs.LootJS;
 import com.almostreliable.lootjs.core.filters.ItemFilter;
 import com.almostreliable.lootjs.core.filters.Resolver;
 import com.almostreliable.lootjs.loot.condition.*;
 import com.google.gson.JsonObject;
 import com.mojang.serialization.JsonOps;
-import dev.latvian.mods.kubejs.stages.Stages;
 import net.minecraft.advancements.critereon.*;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.Registries;
@@ -82,8 +80,8 @@ public class LootCondition {
 
     public static LootItemCondition weatherCheck(@Nullable Boolean raining, @Nullable Boolean thundering) {
         WeatherCheck.Builder builder = new WeatherCheck.Builder();
-        if(raining != null) builder.setRaining(raining);
-        if(thundering != null) builder.setThundering(thundering);
+        if (raining != null) builder.setRaining(raining);
+        if (thundering != null) builder.setThundering(thundering);
         return builder.build();
     }
 
@@ -228,12 +226,12 @@ public class LootCondition {
     public static LootItemCondition hasAnyStage(String... stages) {
         if (stages.length == 1) {
             String stage = stages[0];
-            return new PlayerParamPredicate((player) -> Stages.get(player).has(stage));
+            return new PlayerParamPredicate((player) -> player.getTags().contains(stage));
         }
 
         return new PlayerParamPredicate((player) -> {
             for (String stage : stages) {
-                if (Stages.get(player).has(stage)) {
+                if (player.getTags().contains(stage)) {
                     return true;
                 }
             }
@@ -242,7 +240,7 @@ public class LootCondition {
     }
 
     public static LootItemCondition fromJson(JsonObject json) {
-        return LootItemConditions.CODEC.parse(JsonOps.INSTANCE, json).getOrThrow(false, LootJS.LOG::error);
+        return LootItemConditions.CODEC.parse(JsonOps.INSTANCE, json).getOrThrow().value();
     }
 
     public static LootItemCondition or(LootItemCondition... conditions) {
