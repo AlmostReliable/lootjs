@@ -26,12 +26,12 @@ public class MutableLootPool implements LootApplier {
     }
 
 
-    public MutableLootPool lootjs$rolls(NumberProvider rolls) {
+    public MutableLootPool rolls(NumberProvider rolls) {
         vanillaPool.setRolls(rolls);
         return this;
     }
 
-    public MutableLootPool lootjs$bonusRolls(NumberProvider bonusRolls) {
+    public MutableLootPool bonusRolls(NumberProvider bonusRolls) {
         vanillaPool.setBonusRolls(bonusRolls);
         return this;
     }

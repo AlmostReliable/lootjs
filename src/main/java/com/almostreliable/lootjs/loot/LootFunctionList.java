@@ -4,7 +4,6 @@ import com.almostreliable.lootjs.core.filters.ResourceLocationFilter;
 import com.almostreliable.lootjs.util.DebugInfo;
 import com.almostreliable.lootjs.util.ListHolder;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.storage.loot.LootContext;
@@ -54,10 +53,6 @@ public class LootFunctionList extends ListHolder<LootItemFunction, LootItemFunct
         LootItemFunction sc = LootFunction.setCount(numberProvider);
         replace(LootItemFunctions.SET_COUNT, sc);
         return this;
-    }
-
-    public LootFunctionList setNBT(CompoundTag nbt) {
-        return setNbt(nbt);
     }
 
     public void collectDebugInfo(DebugInfo info) {

@@ -5,7 +5,6 @@ import com.almostreliable.lootjs.loot.LootEntryList;
 import com.almostreliable.lootjs.util.DebugInfo;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
@@ -25,16 +24,16 @@ public interface LootEntry {
     List<LootItemCondition> EMPTY_CONDITIONS = List.of();
     List<LootItemFunction> EMPTY_FUNCTIONS = List.of();
 
+    static ItemLootEntry ofItem(Item item) {
+        return new ItemLootEntry(new ItemStack(item));
+    }
+
     static ItemLootEntry of(ItemStack itemStack) {
         return new ItemLootEntry(itemStack);
     }
 
     static ItemLootEntry of(Item item, NumberProvider count) {
-        return new ItemLootEntry(item, count, null);
-    }
-
-    static ItemLootEntry of(Item item, NumberProvider count, CompoundTag nbt) {
-        return new ItemLootEntry(item, count, nbt);
+        return new ItemLootEntry(item, count);
     }
 
     static EmptyLootEntry empty() {

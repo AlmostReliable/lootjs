@@ -18,7 +18,6 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParamSet;
 
-import javax.annotation.Nullable;
 import java.util.*;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
@@ -78,12 +77,10 @@ public interface LootTableEvent {
         return new MutableLootTable(lootTable);
     }
 
-    @Nullable
     default MutableLootTable getBlockTable(Block block) {
         return getLootTable(block.getLootTable());
     }
 
-    @Nullable
     default MutableLootTable getEntityTable(EntityType<?> entityType) {
         return getLootTable(entityType.getDefaultLootTable());
     }

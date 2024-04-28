@@ -3,7 +3,6 @@ package com.almostreliable.lootjs.core.entry;
 import com.almostreliable.lootjs.loot.LootConditionList;
 import com.almostreliable.lootjs.loot.LootFunctionList;
 import com.almostreliable.lootjs.loot.LootFunctionsContainer;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.level.storage.loot.functions.LootItemFunction;
 import net.minecraft.world.level.storage.loot.providers.number.NumberProvider;
 
@@ -32,17 +31,6 @@ public interface SimpleLootEntry extends LootEntry, LootFunctionsContainer<Simpl
 
     default SimpleLootEntry setCount(NumberProvider numberProvider) {
         getFunctions().setCount(numberProvider);
-        return this;
-    }
-
-    default SimpleLootEntry setNBT(CompoundTag tag) {
-        getFunctions().setNbt(tag);
-        return this;
-    }
-
-
-    default SimpleLootEntry setNbt(CompoundTag tag) {
-        getFunctions().setNbt(tag);
         return this;
     }
 

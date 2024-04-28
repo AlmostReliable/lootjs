@@ -30,6 +30,7 @@ and this project adheres to [Semantic Versioning].
 - Changes to `Loot Functions`:
   - `smeltLoot` renamed to `smelt`
   - `customFunction` renamed to `jsonFunction`
+- Added `vault`, `block_use` and `shearing` LootType
 
 ## [2.10.3] - 2023-09-27
 ### Fixed

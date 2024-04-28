@@ -4,7 +4,6 @@ import com.almostreliable.lootjs.core.filters.ItemFilter;
 import com.almostreliable.lootjs.util.Utils;
 import net.minecraft.core.component.DataComponentPatch;
 import net.minecraft.core.component.TypedDataComponent;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -49,7 +48,7 @@ public class ItemLootEntry extends AbstractSimpleLootEntry<LootItem> implements 
         }
     }
 
-    public ItemLootEntry(Item item, @Nullable NumberProvider count, @Nullable CompoundTag nbt) {
+    public ItemLootEntry(Item item, @Nullable NumberProvider count) {
         super(new LootItem(item.builtInRegistryHolder(),
                 LootPoolSingletonContainer.DEFAULT_WEIGHT,
                 LootPoolSingletonContainer.DEFAULT_QUALITY,
@@ -58,10 +57,6 @@ public class ItemLootEntry extends AbstractSimpleLootEntry<LootItem> implements 
 
         if (count != null) {
             getFunctions().setCount(count);
-        }
-
-        if (nbt != null) {
-            getFunctions().setNbt(nbt);
         }
     }
 

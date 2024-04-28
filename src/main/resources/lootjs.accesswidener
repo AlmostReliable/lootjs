@@ -4,10 +4,16 @@ accessible field net/minecraft/advancements/critereon/EntityFlagsPredicate$Build
 accessible field net/minecraft/advancements/critereon/EntityFlagsPredicate$Builder isOnFire Ljava/util/Optional;# isOnFire
 accessible field net/minecraft/advancements/critereon/EntityFlagsPredicate$Builder isSprinting Ljava/util/Optional;# isSprinting
 accessible field net/minecraft/advancements/critereon/EntityFlagsPredicate$Builder isSwimming Ljava/util/Optional;# isSwimming
+
+# LootItemFunctions
 accessible method net/minecraft/world/level/storage/loot/functions/SetComponentsFunction <init> (Ljava/util/List;Lnet/minecraft/core/component/DataComponentPatch;)V
+accessible method net/minecraft/world/level/storage/loot/functions/ToggleTooltips <init> (Ljava/util/List;Ljava/util/Map;)V
+accessible field net/minecraft/world/level/storage/loot/functions/ToggleTooltips TOGGLES Ljava/util/Map;
+accessible class net/minecraft/world/level/storage/loot/functions/SetAttributesFunction$Modifier
+accessible class net/minecraft/world/level/storage/loot/functions/ToggleTooltips$ComponentToggle
+accessible class net/minecraft/world/level/storage/loot/functions/ToggleTooltips$TooltipWither
 
 accessible method net/minecraft/world/level/storage/loot/IntRange <init> (Lnet/minecraft/world/level/storage/loot/providers/number/NumberProvider;Lnet/minecraft/world/level/storage/loot/providers/number/NumberProvider;)V # IntRange
-accessible class net/minecraft/world/level/storage/loot/functions/SetAttributesFunction$Modifier
 
 accessible field net/minecraft/world/entity/LightningBolt visualOnly Z# visualOnly
 accessible field net/minecraft/world/level/Explosion fire Z# fire

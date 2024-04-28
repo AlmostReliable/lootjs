@@ -10,17 +10,20 @@ import java.util.Map;
 public enum LootType {
     UNKNOWN(new LootContextParamSet.Builder().build()),
     BLOCK(LootContextParamSets.BLOCK),
-    ENTITY(LootContextParamSets.ENTITY),
+    BLOCK_USE(LootContextParamSets.BLOCK_USE),
     CHEST(LootContextParamSets.CHEST),
     FISHING(LootContextParamSets.FISHING),
-    GIFT(LootContextParamSets.GIFT),
+    ENTITY(LootContextParamSets.ENTITY),
     ARCHAEOLOGY(LootContextParamSets.ARCHAEOLOGY),
+    GIFT(LootContextParamSets.GIFT),
+    VAULT(LootContextParamSets.VAULT),
     PIGLIN_BARTER(LootContextParamSets.PIGLIN_BARTER),
-    ADVANCEMENT_ENTITY(LootContextParamSets.ADVANCEMENT_ENTITY),
     ADVANCEMENT_REWARD(LootContextParamSets.ADVANCEMENT_REWARD),
+    ADVANCEMENT_ENTITY(LootContextParamSets.ADVANCEMENT_ENTITY),
     ADVANCEMENT_LOCATION(LootContextParamSets.ADVANCEMENT_LOCATION),
     COMMAND(LootContextParamSets.COMMAND),
     SELECTOR(LootContextParamSets.SELECTOR),
+    SHEARING(LootContextParamSets.SHEARING),
     GENERIC(LootContextParamSets.ALL_PARAMS);
 
     private static final Map<LootContextParamSet, LootType> MAPPINGS = Util.make(new HashMap<>(), (m) -> {

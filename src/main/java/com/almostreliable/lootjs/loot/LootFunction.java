@@ -2,18 +2,22 @@ package com.almostreliable.lootjs.loot;
 
 import com.google.gson.JsonObject;
 import com.mojang.serialization.JsonOps;
+import net.minecraft.core.component.DataComponentType;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.alchemy.Potion;
-import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.level.storage.loot.IntRange;
 import net.minecraft.world.level.storage.loot.functions.*;
 import net.minecraft.world.level.storage.loot.providers.number.NumberProvider;
 
 import javax.annotation.Nullable;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.function.Consumer;
 
@@ -117,11 +121,28 @@ public class LootFunction {
         return SetComponentsFunction.setComponent(DataComponents.CUSTOM_NAME, component).build();
     }
 
-    /**
-     * For the people who always forget if "NBT" or "Nbt"
-     */
     public static LootItemFunction setNbt(CompoundTag tag) {
-        return SetComponentsFunction.setComponent(DataComponents.CUSTOM_DATA, CustomData.of(tag)).build();
+        return SetCustomDataFunction.setCustomData(tag).build();
+    }
+
+    public static LootItemFunction toggleTooltips(Map<String, Boolean> toggles) {
+        Map<ToggleTooltips.ComponentToggle<?>, Boolean> map = new HashMap<>();
+        toggles.forEach((name, flag) -> {
+            ResourceLocation id = new ResourceLocation(name);
+            DataComponentType<?> type = BuiltInRegistries.DATA_COMPONENT_TYPE.get(id);
+            if (type == null) {
+                throw new IllegalArgumentException("Component type not found: " + name);
+            }
+
+            ToggleTooltips.ComponentToggle<?> toggle = ToggleTooltips.TOGGLES.get(type);
+            if (toggle == null) {
+                throw new IllegalArgumentException("Can't toggle tooltip visiblity for: " + name);
+            }
+
+            map.put(toggle, flag);
+        });
+
+        return new ToggleTooltips(List.of(), map);
     }
 
     public static LootItemFunction fromJson(JsonObject json) {
