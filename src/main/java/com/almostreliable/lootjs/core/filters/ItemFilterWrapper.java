@@ -4,9 +4,9 @@ import com.mojang.serialization.Codec;
 import net.minecraft.advancements.critereon.ItemSubPredicate;
 import net.minecraft.world.item.ItemStack;
 
-public record ItemFilterSubPredicate(ItemFilter filter) implements ItemSubPredicate, ItemFilter {
-    public static final Codec<ItemFilterSubPredicate> CODEC = Codec.unit(() -> new ItemFilterSubPredicate(ItemFilter.ALWAYS_FALSE));
-    public static final Type<ItemFilterSubPredicate> TYPE = new Type<>(ItemFilterSubPredicate.CODEC);
+public record ItemFilterWrapper(ItemFilter filter) implements ItemSubPredicate, ItemFilter {
+    public static final Codec<ItemFilterWrapper> CODEC = Codec.unit(() -> new ItemFilterWrapper(ItemFilter.ALWAYS_FALSE));
+    public static final Type<ItemFilterWrapper> TYPE = new Type<>(ItemFilterWrapper.CODEC);
 
     @Override
     public boolean matches(ItemStack itemStack) {

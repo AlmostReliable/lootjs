@@ -1,12 +1,8 @@
 package com.almostreliable.lootjs.core.filters;
 
-import net.minecraft.advancements.critereon.EnchantmentPredicate;
-import net.minecraft.advancements.critereon.ItemEnchantmentsPredicate;
-import net.minecraft.advancements.critereon.ItemSubPredicate;
+import com.almostreliable.lootjs.loot.Predicates;
 import net.minecraft.advancements.critereon.MinMaxBounds;
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.EquipmentSlot;
@@ -14,10 +10,7 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.*;
 import net.neoforged.neoforge.common.ToolAction;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.function.Predicate;
 
 @SuppressWarnings("unused")
@@ -55,29 +48,17 @@ public interface ItemFilter extends Predicate<ItemStack> {
     }
 
     static ItemFilter hasEnchantment(ResourceLocationFilter filter, MinMaxBounds.Ints levelBounds) {
-        List<EnchantmentPredicate> predicates = new ArrayList<>();
-        if (filter instanceof ResourceLocationFilter.ByLocation byLoc) {
-            var h = BuiltInRegistries.ENCHANTMENT.getHolderOrThrow(ResourceKey.create(Registries.ENCHANTMENT,
-                    byLoc.location()));
-            predicates.add(new EnchantmentPredicate(Optional.of(h), levelBounds));
-        } else {
-            for (ResourceLocation id : BuiltInRegistries.ENCHANTMENT.keySet()) {
-                if (!filter.test(id)) continue;
-                var h = BuiltInRegistries.ENCHANTMENT.getHolderOrThrow(ResourceKey.create(Registries.ENCHANTMENT, id));
-                predicates.add(new EnchantmentPredicate(Optional.of(h), levelBounds));
-            }
-        }
+        var predicate = Predicates.itemEnchantments(filter, levelBounds);
+        return predicate::matches;
+    }
 
-        var normal = ItemEnchantmentsPredicate.enchantments(predicates);
-        var stored = ItemEnchantmentsPredicate.storedEnchantments(predicates);
+    static ItemFilter hasStoredEnchantments(ResourceLocationFilter filter) {
+        return hasStoredEnchantments(filter, MinMaxBounds.Ints.ANY);
+    }
 
-        return itemStack -> {
-            if (itemStack.is(Items.ENCHANTED_BOOK)) {
-                return stored.matches(itemStack);
-            }
-
-            return normal.matches(itemStack);
-        };
+    static ItemFilter hasStoredEnchantments(ResourceLocationFilter filter, MinMaxBounds.Ints levelBounds) {
+        var predicate = Predicates.storedEnchantments(filter, levelBounds);
+        return predicate::matches;
     }
 
     static ItemFilter tag(String tag) {
@@ -186,14 +167,6 @@ public interface ItemFilter extends Predicate<ItemStack> {
         }
 
         return toolActions;
-    }
-
-    record AsSubPredicate(ItemSubPredicate subPredicate) implements ItemFilter {
-
-        @Override
-        public boolean test(ItemStack itemStack) {
-            return subPredicate.matches(itemStack);
-        }
     }
 
     record Ingredient(net.minecraft.world.item.crafting.Ingredient ingredient) implements ItemFilter {

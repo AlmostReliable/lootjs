@@ -1,11 +1,13 @@
 package com.almostreliable.lootjs.loot;
 
+import com.almostreliable.lootjs.core.filters.ResourceLocationFilter;
 import com.almostreliable.lootjs.loot.condition.builder.DistancePredicateBuilder;
 import net.minecraft.advancements.critereon.*;
 import net.minecraft.core.HolderSet;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
@@ -14,6 +16,8 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.material.Fluid;
 
 import javax.annotation.Nullable;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 public interface Predicates {
@@ -76,9 +80,36 @@ public interface Predicates {
         return new EnchantmentPredicate(enchantment, MinMaxBounds.Ints.ANY);
     }
 
-    static EnchantmentPredicate enchantment(@Nullable Enchantment enchantment, MinMaxBounds.Ints levels) {
+    static EnchantmentPredicate enchantment(@Nullable Enchantment enchantment, MinMaxBounds.Ints levelBound) {
         return new EnchantmentPredicate(
-                enchantment == null ? Optional.empty() : Optional.of(enchantment.builtInRegistryHolder()), levels);
+                enchantment == null ? Optional.empty() : Optional.of(enchantment.builtInRegistryHolder()), levelBound);
+    }
+
+    static List<EnchantmentPredicate> enchantments(ResourceLocationFilter filter, MinMaxBounds.Ints levelBound) {
+        List<EnchantmentPredicate> predicates = new ArrayList<>();
+        if (filter instanceof ResourceLocationFilter.ByLocation byLoc) {
+            var h = BuiltInRegistries.ENCHANTMENT.getHolderOrThrow(ResourceKey.create(Registries.ENCHANTMENT,
+                    byLoc.location()));
+            predicates.add(new EnchantmentPredicate(Optional.of(h), levelBound));
+        } else {
+            for (ResourceLocation id : BuiltInRegistries.ENCHANTMENT.keySet()) {
+                if (!filter.test(id)) continue;
+                var h = BuiltInRegistries.ENCHANTMENT.getHolderOrThrow(ResourceKey.create(Registries.ENCHANTMENT, id));
+                predicates.add(new EnchantmentPredicate(Optional.of(h), levelBound));
+            }
+        }
+
+        return predicates;
+    }
+
+    static ItemEnchantmentsPredicate itemEnchantments(ResourceLocationFilter filter, MinMaxBounds.Ints levelBound) {
+        List<EnchantmentPredicate> predicates = enchantments(filter, levelBound);
+        return ItemEnchantmentsPredicate.enchantments(predicates);
+    }
+
+    static ItemEnchantmentsPredicate storedEnchantments(ResourceLocationFilter filter, MinMaxBounds.Ints levelBound) {
+        List<EnchantmentPredicate> predicates = enchantments(filter, levelBound);
+        return ItemEnchantmentsPredicate.storedEnchantments(predicates);
     }
 
     static NbtPredicate nbt(CompoundTag nbt) {

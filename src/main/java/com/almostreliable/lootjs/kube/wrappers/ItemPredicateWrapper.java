@@ -1,6 +1,8 @@
 package com.almostreliable.lootjs.kube.wrappers;
 
 import com.almostreliable.lootjs.core.filters.ItemFilter;
+import com.almostreliable.lootjs.core.filters.ItemFilterWrapper;
+import com.almostreliable.lootjs.util.ModHolderSet;
 import dev.latvian.mods.kubejs.item.ingredient.IngredientJS;
 import net.minecraft.advancements.critereon.ItemPredicate;
 import net.minecraft.advancements.critereon.MinMaxBounds;
@@ -12,27 +14,13 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.neoforged.neoforge.registries.holdersets.AnyHolderSet;
 
 import javax.annotation.Nullable;
 import java.util.HashMap;
 import java.util.Optional;
 
 public class ItemPredicateWrapper {
-//
-//    private record ItemFilterPredicate(ItemFilter filter) implements ICustomItemPredicate {
-//        private static final ItemFilterPredicate INSTANCE = new ItemFilterPredicate(ItemFilter.ALWAYS_FALSE);
-//        private static final Codec<ItemFilterPredicate> CODEC = Codec.unit(INSTANCE);
-//
-//        @Override
-//        public Codec<? extends ICustomItemPredicate> codec() {
-//            return CODEC;
-//        }
-//
-//        @Override
-//        public boolean test(ItemStack itemStack) {
-//            return filter.test(itemStack);
-//        }
-//    }
 
     public static ItemPredicate.Builder ofBuilder(@Nullable Object o) {
         if (o instanceof ItemPredicate.Builder b) {
@@ -46,24 +34,39 @@ public class ItemPredicateWrapper {
         if (o instanceof ItemPredicate i) return i;
 
         if (o instanceof ItemFilter filter) {
-//            new ItemPredicate(new ItemFilterPredicate(filter));
-            throw new UnsupportedOperationException("TODO");
+            return ItemPredicate.Builder
+                    .item()
+                    .withSubPredicate(ItemFilterWrapper.TYPE, new ItemFilterWrapper(filter))
+                    .build();
         }
 
         if (o instanceof String str && !str.isEmpty()) {
             String first = str.substring(0, 1);
-            if (first.equals("#")) {
-                var location = new ResourceLocation(str.substring(1));
-                var tag = TagKey.create(Registries.ITEM, location);
-                var holderSet = BuiltInRegistries.ITEM.getOrCreateTag(tag);
-                return new ItemPredicate(Optional.of(holderSet),
-                        MinMaxBounds.Ints.ANY,
-                        DataComponentPredicate.EMPTY,
-                        new HashMap<>());
-//                case "@": // TODO create custom holder set for this?
-//                    String modId = str.substring(1);
-//                    ItemFilter filter = itemStack -> itemStack.kjs$getMod().equals(modId);
-//                    return new ItemPredicate(new ItemFilterPredicate(filter));
+            switch (first) {
+                case "*" -> {
+                    var anyHolder = new AnyHolderSet<>(BuiltInRegistries.ITEM.asLookup());
+                    return new ItemPredicate(Optional.of(anyHolder),
+                            MinMaxBounds.Ints.ANY,
+                            DataComponentPredicate.EMPTY,
+                            new HashMap<>());
+                }
+                case "#" -> {
+                    var location = new ResourceLocation(str.substring(1));
+                    var tag = TagKey.create(Registries.ITEM, location);
+                    var holderSet = BuiltInRegistries.ITEM.getOrCreateTag(tag);
+                    return new ItemPredicate(Optional.of(holderSet),
+                            MinMaxBounds.Ints.ANY,
+                            DataComponentPredicate.EMPTY,
+                            new HashMap<>());
+                }
+                case "@" -> {
+                    String modId = str.substring(1);
+                    ModHolderSet<Item> holderSet = new ModHolderSet<>(BuiltInRegistries.ITEM.asLookup(), modId);
+                    return new ItemPredicate(Optional.of(holderSet),
+                            MinMaxBounds.Ints.ANY,
+                            DataComponentPredicate.EMPTY,
+                            new HashMap<>());
+                }
             }
         }
 

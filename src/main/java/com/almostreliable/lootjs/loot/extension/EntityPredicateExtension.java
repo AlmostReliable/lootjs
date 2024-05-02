@@ -4,8 +4,6 @@ import dev.latvian.mods.rhino.util.RemapPrefixForJS;
 import net.minecraft.advancements.critereon.EntityFlagsPredicate;
 import net.minecraft.advancements.critereon.EntityPredicate;
 
-import javax.annotation.Nullable;
-
 @RemapPrefixForJS("lootjs$")
 public interface EntityPredicateExtension {
 
@@ -13,27 +11,27 @@ public interface EntityPredicateExtension {
 
     EntityPredicate.Builder lootjs$self();
 
-    default EntityPredicate.Builder lootjs$setOnFire(@Nullable Boolean onFire) {
+    default EntityPredicate.Builder lootjs$setOnFire(boolean onFire) {
         lootjs$getFlagsBuilder().setOnFire(onFire);
         return lootjs$self();
     }
 
-    default EntityPredicate.Builder lootjs$setCrouching(@Nullable Boolean isCrouching) {
+    default EntityPredicate.Builder lootjs$setCrouching(boolean isCrouching) {
         lootjs$getFlagsBuilder().setCrouching(isCrouching);
         return lootjs$self();
     }
 
-    default EntityPredicate.Builder lootjs$setSprinting(@Nullable Boolean isSprinting) {
+    default EntityPredicate.Builder lootjs$setSprinting(boolean isSprinting) {
         lootjs$getFlagsBuilder().setSprinting(isSprinting);
         return lootjs$self();
     }
 
-    default EntityPredicate.Builder lootjs$setSwimming(@Nullable Boolean isSwimming) {
+    default EntityPredicate.Builder lootjs$setSwimming(boolean isSwimming) {
         lootjs$getFlagsBuilder().setSwimming(isSwimming);
         return lootjs$self();
     }
 
-    default EntityPredicate.Builder lootjs$setIsBaby(@Nullable Boolean isBaby) {
+    default EntityPredicate.Builder lootjs$setIsBaby(boolean isBaby) {
         lootjs$getFlagsBuilder().setIsBaby(isBaby);
         return lootjs$self();
     }
