@@ -14,7 +14,7 @@ import java.util.Objects;
 import java.util.function.Predicate;
 
 @SuppressWarnings("unused")
-public interface ItemFilter extends Predicate<ItemStack> {
+public interface ItemFilter {
     ItemFilter ALWAYS_FALSE = itemStack -> false;
     ItemFilter ALWAYS_TRUE = itemStack -> true;
     ItemFilter EMPTY = ItemStack::isEmpty;
@@ -117,7 +117,6 @@ public interface ItemFilter extends Predicate<ItemStack> {
         return predicate::test;
     }
 
-    @Override
     boolean test(ItemStack itemStack);
 
     default ItemFilter and(ItemFilter other) {
@@ -155,7 +154,6 @@ public interface ItemFilter extends Predicate<ItemStack> {
                     return false;
                 }
             }
-
             return true;
         };
     }
