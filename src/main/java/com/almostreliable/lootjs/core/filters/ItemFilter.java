@@ -1,13 +1,14 @@
 package com.almostreliable.lootjs.core.filters;
 
-import com.almostreliable.lootjs.loot.Predicates;
 import net.minecraft.advancements.critereon.MinMaxBounds;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.*;
+import net.minecraft.world.item.enchantment.ItemEnchantments;
 import net.neoforged.neoforge.common.ToolAction;
 
 import java.util.Objects;
@@ -48,17 +49,43 @@ public interface ItemFilter {
     }
 
     static ItemFilter hasEnchantment(ResourceLocationFilter filter, MinMaxBounds.Ints levelBounds) {
-        var predicate = Predicates.itemEnchantments(filter, levelBounds);
-        return predicate::matches;
+        return itemStack -> {
+            ItemEnchantments enchantments = itemStack.get(DataComponents.ENCHANTMENTS);
+            if (enchantments == null) {
+                return false;
+            }
+
+            for (var entry : enchantments.entrySet()) {
+                boolean matches = entry.getKey().unwrapKey().filter(key -> filter.test(key.location())).isPresent();
+                if (matches && levelBounds.matches(entry.getIntValue())) {
+                    return true;
+                }
+            }
+
+            return false;
+        };
     }
 
-    static ItemFilter hasStoredEnchantments(ResourceLocationFilter filter) {
-        return hasStoredEnchantments(filter, MinMaxBounds.Ints.ANY);
+    static ItemFilter hasStoredEnchantment(ResourceLocationFilter filter) {
+        return hasStoredEnchantment(filter, MinMaxBounds.Ints.ANY);
     }
 
-    static ItemFilter hasStoredEnchantments(ResourceLocationFilter filter, MinMaxBounds.Ints levelBounds) {
-        var predicate = Predicates.storedEnchantments(filter, levelBounds);
-        return predicate::matches;
+    static ItemFilter hasStoredEnchantment(ResourceLocationFilter filter, MinMaxBounds.Ints levelBounds) {
+        return itemStack -> {
+            ItemEnchantments enchantments = itemStack.get(DataComponents.STORED_ENCHANTMENTS);
+            if (enchantments == null) {
+                return false;
+            }
+
+            for (var entry : enchantments.entrySet()) {
+                boolean matches = entry.getKey().unwrapKey().filter(key -> filter.test(key.location())).isPresent();
+                if (matches && levelBounds.matches(entry.getIntValue())) {
+                    return true;
+                }
+            }
+
+            return false;
+        };
     }
 
     static ItemFilter tag(String tag) {

@@ -61,7 +61,7 @@ loom {
             server()
             source(sourceSets.test.get())
             property("neoforge.gameTestServer", "true")
-            property("neoforge.enabledGameTestNamespaces", "testmod")
+            property("neoforge.enabledGameTestNamespaces", modId)
         }
 
         create("testmod") {
@@ -69,7 +69,7 @@ loom {
             client()
             source(sourceSets.test.get())
             property("neoforge.gameTestServer", "true")
-            property("neoforge.enabledGameTestNamespaces", "testmod")
+            property("neoforge.enabledGameTestNamespaces", modId)
         }
 
         forEach {

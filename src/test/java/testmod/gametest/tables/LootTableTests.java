@@ -6,6 +6,7 @@ import com.almostreliable.lootjs.loot.table.MutableLootTable;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
@@ -48,13 +49,12 @@ public class LootTableTests {
         return new MutableLootTable(LootContextParamSets.ALL_PARAMS, new ResourceLocation("testmod:some_table"));
     }
 
-    @SuppressWarnings("DataFlowIssue")
     private static LootTable getTable(GameTestHelper helper, ResourceLocation location) {
         return helper
                 .getLevel()
-                .registryAccess()
-                .registryOrThrow(Registries.LOOT_TABLE)
-                .get(location);
+                .getServer()
+                .reloadableRegistries()
+                .getLootTable(ResourceKey.create(Registries.LOOT_TABLE, location));
     }
 
     @GameTest(template = GameTestTemplates.EMPTY)

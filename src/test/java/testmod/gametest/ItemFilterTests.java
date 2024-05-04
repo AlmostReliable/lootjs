@@ -27,7 +27,7 @@ public class ItemFilterTests {
     public void simpleTest(GameTestHelper helper) {
         helper.succeedIf(() -> {
             ExampleLoot loot = new ExampleLoot();
-            ItemFilter filter = ItemFilter.hasStoredEnchantments(rl -> rl.equals(BuiltInRegistries.ENCHANTMENT.getKey(
+            ItemFilter filter = ItemFilter.hasEnchantment(rl -> rl.equals(BuiltInRegistries.ENCHANTMENT.getKey(
                     Enchantments.PROJECTILE_PROTECTION)));
             GameTestUtils.assertTrue(helper, filter.test(loot.helmet), "Helmet should pass filter");
             GameTestUtils.assertTrue(helper, filter.test(loot.chestPlate), "Chestplate should pass filter");
@@ -41,7 +41,7 @@ public class ItemFilterTests {
         helper.succeedIf(() -> {
             ExampleLoot loot = new ExampleLoot();
             ItemFilter filter = ItemFilter
-                    .hasStoredEnchantments(rl -> rl.equals(BuiltInRegistries.ENCHANTMENT.getKey(Enchantments.PROJECTILE_PROTECTION)))
+                    .hasEnchantment(rl -> rl.equals(BuiltInRegistries.ENCHANTMENT.getKey(Enchantments.PROJECTILE_PROTECTION)))
                     .or(ItemFilter.SWORD);
             GameTestUtils.assertTrue(helper, filter.test(loot.helmet), "Helmet should pass filter");
             GameTestUtils.assertTrue(helper, filter.test(loot.chestPlate), "Chestplate should pass filter");
@@ -55,7 +55,7 @@ public class ItemFilterTests {
         helper.succeedIf(() -> {
             ExampleLoot loot = new ExampleLoot();
             ItemFilter filter = ItemFilter
-                    .hasStoredEnchantments(rl -> rl.equals(BuiltInRegistries.ENCHANTMENT.getKey(Enchantments.SHARPNESS)))
+                    .hasEnchantment(rl -> rl.equals(BuiltInRegistries.ENCHANTMENT.getKey(Enchantments.SHARPNESS)))
                     .and(ItemFilter.SWORD);
             GameTestUtils.assertFalse(helper, filter.test(loot.helmet), "Helmet should not pass filter");
             GameTestUtils.assertFalse(helper, filter.test(loot.chestPlate), "Chestplate not should pass filter");
@@ -69,7 +69,7 @@ public class ItemFilterTests {
         helper.succeedIf(() -> {
             ExampleLoot loot = new ExampleLoot();
             ItemFilter filter = ItemFilter
-                    .hasStoredEnchantments(rl -> rl.equals(BuiltInRegistries.ENCHANTMENT.getKey(Enchantments.LOOTING)))
+                    .hasEnchantment(rl -> rl.equals(BuiltInRegistries.ENCHANTMENT.getKey(Enchantments.LOOTING)))
                     .and(ItemFilter.SWORD);
             GameTestUtils.assertFalse(helper, filter.test(loot.helmet), "Helmet should not pass filter");
             GameTestUtils.assertFalse(helper, filter.test(loot.chestPlate), "Chestplate not should pass filter");
@@ -82,7 +82,7 @@ public class ItemFilterTests {
     public void enchantmentRegex(GameTestHelper helper) {
         helper.succeedIf(() -> {
             ExampleLoot loot = new ExampleLoot();
-            ItemFilter filter = ItemFilter.hasStoredEnchantments(new ResourceLocationFilter.ByPattern(Pattern.compile(
+            ItemFilter filter = ItemFilter.hasEnchantment(new ResourceLocationFilter.ByPattern(Pattern.compile(
                     ".*sharpness.*")));
             GameTestUtils.assertFalse(helper, filter.test(loot.helmet), "Helmet should not pass filter");
             GameTestUtils.assertFalse(helper, filter.test(loot.chestPlate), "Chestplate should not pass filter");
@@ -99,10 +99,15 @@ public class ItemFilterTests {
                             Pattern.compile(".*sharpness.*")),
                     new ResourceLocationFilter.ByLocation(Objects.requireNonNull(BuiltInRegistries.ENCHANTMENT.getKey(
                             Enchantments.INFINITY)))));
-            ItemFilter filter = ItemFilter.hasStoredEnchantments(rlf);
+            ItemFilter filter = ItemFilter.hasEnchantment(rlf);
             GameTestUtils.assertFalse(helper, filter.test(loot.helmet), "Helmet should not pass filter");
             GameTestUtils.assertFalse(helper, filter.test(loot.chestPlate), "Chestplate should not pass filter");
             GameTestUtils.assertTrue(helper, filter.test(loot.sword), "Sword should pass filter");
+            GameTestUtils.assertFalse(helper,
+                    filter.test(loot.book),
+                    "Book should not pass filter, because we need to use stored enchantments");
+
+            filter = ItemFilter.hasStoredEnchantment(rlf);
             GameTestUtils.assertTrue(helper, filter.test(loot.book), "Book should pass filter");
         });
     }
@@ -111,7 +116,7 @@ public class ItemFilterTests {
     public void enchantmentMinInclusive(GameTestHelper helper) {
         helper.succeedIf(() -> {
             EnchantmentInstance e = new EnchantmentInstance(Enchantments.PROJECTILE_PROTECTION, 2);
-            ItemFilter filter = ItemFilter.hasStoredEnchantments(rl -> rl.equals(BuiltInRegistries.ENCHANTMENT.getKey(
+            ItemFilter filter = ItemFilter.hasStoredEnchantment(rl -> rl.equals(BuiltInRegistries.ENCHANTMENT.getKey(
                             Enchantments.PROJECTILE_PROTECTION)),
                     MinMaxBounds.Ints.between(2, 5));
             GameTestUtils.assertTrue(helper,
@@ -124,7 +129,7 @@ public class ItemFilterTests {
     public void enchantmentMaxInclusive(GameTestHelper helper) {
         helper.succeedIf(() -> {
             EnchantmentInstance e = new EnchantmentInstance(Enchantments.PROJECTILE_PROTECTION, 5);
-            ItemFilter filter = ItemFilter.hasStoredEnchantments(rl -> rl.equals(BuiltInRegistries.ENCHANTMENT.getKey(
+            ItemFilter filter = ItemFilter.hasStoredEnchantment(rl -> rl.equals(BuiltInRegistries.ENCHANTMENT.getKey(
                     Enchantments.PROJECTILE_PROTECTION)), MinMaxBounds.Ints.between(2, 5));
             GameTestUtils.assertTrue(helper,
                     filter.test(EnchantedBookItem.createForEnchantment(e)),
