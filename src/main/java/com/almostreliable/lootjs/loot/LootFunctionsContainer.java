@@ -9,6 +9,7 @@ import net.minecraft.world.level.storage.loot.functions.LootItemFunction;
 import net.minecraft.world.level.storage.loot.providers.number.NumberProvider;
 
 import javax.annotation.Nullable;
+import java.util.Map;
 import java.util.function.Consumer;
 
 @SuppressWarnings({ "unused", "UnusedReturnValue" })
@@ -88,6 +89,10 @@ public interface LootFunctionsContainer<F extends LootFunctionsContainer<?>> {
 
     default F setNbt(CompoundTag tag) {
         return addFunction(LootFunction.setNbt(tag));
+    }
+
+    default F toggleTooltips(Map<String, Boolean> toggles) {
+        return addFunction(LootFunction.toggleTooltips(toggles));
     }
 
     default F jsonFunction(JsonObject json) {

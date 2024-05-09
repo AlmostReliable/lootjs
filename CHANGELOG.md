@@ -33,7 +33,7 @@ and this project adheres to [Semantic Versioning].
 - Changes to `ItemFilter`:
     - `.hasEnchantments(...)` only works for item enchantments now. For `stored` enchantments
       use `.hasStoredEnchantments(...)`
-    -
+  
 - Added `vault`, `block_use` and `shearing` LootType
 
 ## [2.10.3] - 2023-09-27

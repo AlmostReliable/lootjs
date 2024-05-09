@@ -22,6 +22,8 @@ public interface LootPoolExtension {
 
     LootFunctionList lootjs$getFunctions();
 
+    void lootjs$setName(String name);
+
     default void lootjs$collectDebugInfo(DebugInfo info) {
         var rollStr = NumberProviders.CODEC
                 .encodeStart(JsonOps.INSTANCE, lootjs$asVanillaPool().getRolls())
@@ -35,53 +37,4 @@ public interface LootPoolExtension {
         lootjs$getConditions().collectDebugInfo(info);
         lootjs$getFunctions().collectDebugInfo(info);
     }
-//
-//    default void lootjs$collectDebugInfo(DebugInfo info) {
-//        var rollStr = NumberProviders.CODEC
-//                .encodeStart(JsonOps.INSTANCE, lootjs$asVanillaPool().getRolls())
-//                .getOrThrow();
-//        var bonusStr = NumberProviders.CODEC
-//                .encodeStart(JsonOps.INSTANCE, lootjs$asVanillaPool().getBonusRolls())
-//                .getOrThrow();
-//        info.add("% Rolls -> " + rollStr.toString());
-//        info.add("% Bonus rolls -> " + bonusStr.toString());
-//        lootjs$getEntries().collectDebugInfo(info);
-//        lootjs$getConditions().collectDebugInfo(info);
-//        lootjs$getFunctions().collectDebugInfo(info);
-//    }
-//
-//    default LootPool lootjs$rolls(NumberProvider rolls) {
-//        lootjs$asVanillaPool().setRolls(rolls);
-//        return lootjs$asVanillaPool();
-//    }
-//
-//    default LootPool lootjs$bonusRolls(NumberProvider bonusRolls) {
-//        lootjs$asVanillaPool().setBonusRolls(bonusRolls);
-//        return lootjs$asVanillaPool();
-//    }
-//
-//    default LootPool when(Consumer<LootConditionList> onConditions) {
-//        onConditions.accept(lootjs$getConditions());
-//        return lootjs$asVanillaPool();
-//    }
-//
-//    default LootPool apply(Consumer<LootFunctionList> onModifiers) {
-//        onModifiers.accept(lootjs$getFunctions());
-//        return lootjs$asVanillaPool();
-//    }
-//
-//    @Override
-//    default LootApplier addEntry(LootEntry entry) {
-//        return this;
-//    }
-//
-//    @Override
-//    default LootApplier transformEntry(UnaryOperator<SimpleLootEntry> onTransform, boolean deepTransform) {
-//        return this;
-//    }
-//
-//    @Override
-//    default LootApplier removeEntry(Predicate<SimpleLootEntry> onRemove, boolean deepRemove) {
-//        return this;
-//    }
 }

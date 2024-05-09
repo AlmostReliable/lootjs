@@ -25,6 +25,15 @@ public class MutableLootPool implements LootApplier {
         vanillaPool = pool;
     }
 
+    @Nullable
+    public String getName() {
+        return vanillaPool.getName();
+    }
+
+    public MutableLootPool name(String name) {
+        LootPoolExtension.cast(vanillaPool).lootjs$setName(name);
+        return this;
+    }
 
     public MutableLootPool rolls(NumberProvider rolls) {
         vanillaPool.setRolls(rolls);

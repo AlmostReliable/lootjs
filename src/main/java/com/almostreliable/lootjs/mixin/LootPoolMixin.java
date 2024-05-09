@@ -10,6 +10,7 @@ import net.minecraft.world.level.storage.loot.LootPool;
 import net.minecraft.world.level.storage.loot.entries.LootPoolEntryContainer;
 import net.minecraft.world.level.storage.loot.functions.LootItemFunction;
 import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
+import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Mutable;
@@ -26,6 +27,7 @@ public class LootPoolMixin implements LootPoolExtension {
     @Mutable @Shadow @Final private Predicate<LootContext> compositeCondition;
     @Mutable @Shadow @Final private List<LootItemFunction> functions;
     @Mutable @Shadow @Final private BiFunction<ItemStack, LootContext, ItemStack> compositeFunction;
+    @Shadow @Nullable private String name;
 
     @Override
     public LootPool lootjs$asVanillaPool() {
@@ -53,5 +55,10 @@ public class LootPoolMixin implements LootPoolExtension {
         this.functions = fl.getElements();
         this.compositeFunction = fl;
         return fl;
+    }
+
+    @Override
+    public void lootjs$setName(String name) {
+        this.name = name;
     }
 }
