@@ -1,7 +1,6 @@
 package com.almostreliable.lootjs.core.entry;
 
-import com.almostreliable.lootjs.loot.LootConditionList;
-import com.almostreliable.lootjs.loot.LootFunctionList;
+import com.almostreliable.lootjs.util.DebugInfo;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
@@ -86,5 +85,11 @@ public class TagLootEntry extends AbstractSimpleLootEntry<TagEntry> implements S
         }
 
         return null;
+    }
+
+    @Override
+    public void collectDebugInfo(DebugInfo info) {
+        info.add("% Tag: " + getTag());
+        super.collectDebugInfo(info);
     }
 }

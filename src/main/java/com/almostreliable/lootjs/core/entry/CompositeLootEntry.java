@@ -73,7 +73,7 @@ public class CompositeLootEntry implements LootEntry, LootApplier {
 
     @Override
     public void collectDebugInfo(DebugInfo info) {
-        info.add(getType().toString());
+        info.add("% Composite: " + getType());
         info.push();
         entries(entries -> entries.collectDebugInfo(info));
         when(conditions -> conditions.collectDebugInfo(info));

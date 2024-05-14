@@ -2,6 +2,7 @@ package com.almostreliable.lootjs.core.entry;
 
 import com.almostreliable.lootjs.loot.LootConditionList;
 import com.almostreliable.lootjs.loot.LootFunctionList;
+import com.almostreliable.lootjs.util.DebugInfo;
 import net.minecraft.world.level.storage.loot.entries.LootPoolEntryType;
 import net.minecraft.world.level.storage.loot.entries.LootPoolSingletonContainer;
 
@@ -70,5 +71,13 @@ public abstract class AbstractSimpleLootEntry<E extends LootPoolSingletonContain
 
     public int getQuality() {
         return vanillaEntry.quality;
+    }
+
+    @Override
+    public void collectDebugInfo(DebugInfo info) {
+        info.push();
+        when(conditions -> conditions.collectDebugInfo(info));
+        getFunctions().collectDebugInfo(info);
+        info.pop();
     }
 }

@@ -4,14 +4,11 @@ import com.almostreliable.lootjs.core.filters.ResourceLocationFilter;
 import com.almostreliable.lootjs.util.DebugInfo;
 import com.almostreliable.lootjs.util.ListHolder;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.functions.LootItemFunction;
 import net.minecraft.world.level.storage.loot.functions.LootItemFunctionType;
-import net.minecraft.world.level.storage.loot.functions.LootItemFunctions;
-import net.minecraft.world.level.storage.loot.providers.number.NumberProvider;
 
 import java.util.Iterator;
 import java.util.List;
@@ -49,23 +46,6 @@ public class LootFunctionList extends ListHolder<LootItemFunction, LootItemFunct
         return this;
     }
 
-    @Override
-    public LootFunctionList setCount(NumberProvider numberProvider) {
-        LootItemFunction sc = LootFunction.setCount(numberProvider);
-        replace(LootItemFunctions.SET_COUNT, sc);
-        return this;
-    }
-
-    public LootFunctionList setNbt(CompoundTag nbt) {
-        LootItemFunction sc = LootFunction.setNbt(nbt);
-        replace(LootItemFunctions.SET_NBT, sc);
-        return this;
-    }
-
-    public LootFunctionList setNBT(CompoundTag nbt) {
-        return setNbt(nbt);
-    }
-
     public void collectDebugInfo(DebugInfo info) {
         if (this.isEmpty()) return;
 
@@ -73,7 +53,11 @@ public class LootFunctionList extends ListHolder<LootItemFunction, LootItemFunct
         info.push();
         for (var entry : this) {
             ResourceLocation key = BuiltInRegistries.LOOT_FUNCTION_TYPE.getKey(entry.getType());
-            if (key == null) continue;
+            if (key == null) {
+                info.add(entry.getClass().getSimpleName());
+                continue;
+            }
+
             info.add(key.toString());
         }
 

@@ -1,8 +1,8 @@
 package com.almostreliable.lootjs.core.entry;
 
 import com.almostreliable.lootjs.core.filters.ItemFilter;
-import com.almostreliable.lootjs.loot.LootConditionList;
-import com.almostreliable.lootjs.loot.LootFunctionList;
+import com.almostreliable.lootjs.util.DebugInfo;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -94,5 +94,11 @@ public class ItemLootEntry extends AbstractSimpleLootEntry<LootItem> implements 
 
     public boolean test(ItemFilter filter) {
         return filter.test(new ItemStack(getItem()));
+    }
+
+    @Override
+    public void collectDebugInfo(DebugInfo info) {
+        info.add("% Item: " + BuiltInRegistries.ITEM.getKey(getItem()));
+        super.collectDebugInfo(info);
     }
 }

@@ -1,5 +1,6 @@
 package com.almostreliable.lootjs.core.entry;
 
+import com.almostreliable.lootjs.util.DebugInfo;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.storage.loot.entries.LootPoolSingletonContainer;
 import net.minecraft.world.level.storage.loot.entries.LootTableReference;
@@ -23,5 +24,11 @@ public class TableReferenceLootEntry extends AbstractSimpleLootEntry<LootTableRe
 
     public void setLocation(ResourceLocation reference) {
         vanillaEntry.name = reference;
+    }
+
+    @Override
+    public void collectDebugInfo(DebugInfo info) {
+        info.add("% Table: " + vanillaEntry.name);
+        super.collectDebugInfo(info);
     }
 }

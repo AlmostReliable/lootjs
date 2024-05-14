@@ -63,9 +63,13 @@ public class LootEntryList extends ListHolder<LootEntry, LootPoolEntryContainer>
 
         info.add("% Entries: [");
         info.push();
+        info.add("{");
+        info.push();
         for (LootEntry entry : this) {
             entry.collectDebugInfo(info);
         }
+        info.pop();
+        info.add("}");
         info.pop();
         info.add("]");
     }

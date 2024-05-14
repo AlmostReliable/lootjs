@@ -140,7 +140,6 @@ public interface LootEntry {
 
     }
 
-
     default boolean isItem() {
         return getVanillaType() == LootPoolEntries.ITEM;
     }
