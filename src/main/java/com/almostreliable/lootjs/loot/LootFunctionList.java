@@ -71,7 +71,7 @@ public class LootFunctionList extends ListHolder<LootItemFunction, LootItemFunct
         return itemStack;
     }
 
-    public boolean replace(LootItemFunctionType type, LootItemFunction function) {
+    public boolean replace(LootItemFunctionType<?> type, LootItemFunction function) {
         MutableBoolean found = new MutableBoolean(false);
         elements.replaceAll(entry -> {
             if (entry.getType().equals(type)) {
@@ -89,11 +89,11 @@ public class LootFunctionList extends ListHolder<LootItemFunction, LootItemFunct
         return elements.removeIf(element -> type.test(BuiltInRegistries.LOOT_FUNCTION_TYPE.getKey(element.getType())));
     }
 
-    public boolean contains(LootItemFunctionType type) {
+    public boolean contains(LootItemFunctionType<?> type) {
         return indexOf(type) != -1;
     }
 
-    public int indexOf(LootItemFunctionType type) {
+    public int indexOf(LootItemFunctionType<?> type) {
         for (int i = 0; i < elements.size(); i++) {
             if (elements.get(i).getType().equals(type)) {
                 return i;
@@ -103,7 +103,7 @@ public class LootFunctionList extends ListHolder<LootItemFunction, LootItemFunct
         return -1;
     }
 
-    public int lastIndexOf(LootItemFunctionType type) {
+    public int lastIndexOf(LootItemFunctionType<?> type) {
         for (int i = elements.size() - 1; i >= 0; i--) {
             if (elements.get(i).getType().equals(type)) {
                 return i;
