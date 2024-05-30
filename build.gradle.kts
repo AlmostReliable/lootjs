@@ -90,9 +90,8 @@ dependencies {
 
     neoForge("net.neoforged:neoforge:${neoforgeVersion}")
 
-    // TODO change back to modApi and testImplementation once kubejs is updated
-    compileOnly("dev.latvian.mods:kubejs-neoforge:${kubejsVersion}")
-//    testImplementation("dev.latvian.mods:kubejs-neoforge:${kubejsVersion}")
+    modApi("dev.latvian.mods:kubejs-neoforge:${kubejsVersion}")
+    testImplementation("dev.latvian.mods:kubejs-neoforge:${kubejsVersion}")
 
     implementation("com.google.code.findbugs:jsr305:3.0.2")
 }

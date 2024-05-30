@@ -7,8 +7,8 @@ import com.almostreliable.lootjs.loot.modifier.LootModifier;
 import com.almostreliable.lootjs.util.Utils;
 import com.google.common.base.Preconditions;
 import dev.latvian.mods.kubejs.block.state.BlockStatePredicate;
-import dev.latvian.mods.kubejs.event.EventJS;
 import dev.latvian.mods.kubejs.event.EventResult;
+import dev.latvian.mods.kubejs.event.KubeEvent;
 import dev.latvian.mods.kubejs.util.ConsoleJS;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
@@ -19,7 +19,7 @@ import org.apache.commons.lang3.StringUtils;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class LootModificationEventJS extends EventJS {
+public class LootModificationEventJS implements KubeEvent {
     private final Map<ResourceLocation, IGlobalLootModifier> modifiers;
     private final List<ResourceLocation> removedGlobalModifiers = new ArrayList<>();
     private final List<LootModifier.Builder> modifierBuilders = new ArrayList<>();
@@ -138,9 +138,7 @@ public class LootModificationEventJS extends EventJS {
     }
 
     @Override
-    protected void afterPosted(EventResult result) {
-        super.afterPosted(result);
-
+    public void afterPosted(EventResult result) {
         if (LootJSPlugin.eventsAreDisabled()) {
             return;
         }
