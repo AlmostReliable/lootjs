@@ -9,8 +9,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.functions.LootItemFunction;
 import net.minecraft.world.level.storage.loot.functions.LootItemFunctionType;
-import net.minecraft.world.level.storage.loot.functions.LootItemFunctions;
-import net.minecraft.world.level.storage.loot.providers.number.NumberProvider;
+import org.apache.commons.lang3.mutable.MutableBoolean;
 
 import java.util.Iterator;
 import java.util.List;
@@ -48,13 +47,6 @@ public class LootFunctionList extends ListHolder<LootItemFunction, LootItemFunct
         return this;
     }
 
-    @Override
-    public LootFunctionList setCount(NumberProvider numberProvider) {
-        LootItemFunction sc = LootFunction.setCount(numberProvider);
-        replace(LootItemFunctions.SET_COUNT, sc);
-        return this;
-    }
-
     public void collectDebugInfo(DebugInfo info) {
         if (this.isEmpty()) return;
 
@@ -79,8 +71,18 @@ public class LootFunctionList extends ListHolder<LootItemFunction, LootItemFunct
         return itemStack;
     }
 
-    public void replace(LootItemFunctionType type, LootItemFunction function) {
-        elements.replaceAll(entry -> entry.getType().equals(type) ? function : entry);
+    public boolean replace(LootItemFunctionType type, LootItemFunction function) {
+        MutableBoolean found = new MutableBoolean(false);
+        elements.replaceAll(entry -> {
+            if (entry.getType().equals(type)) {
+                found.setValue(true);
+                return function;
+            }
+
+            return entry;
+        });
+
+        return found.booleanValue();
     }
 
     public boolean remove(ResourceLocationFilter type) {
