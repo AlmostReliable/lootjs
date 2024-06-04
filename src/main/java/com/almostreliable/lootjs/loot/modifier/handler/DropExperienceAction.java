@@ -5,12 +5,13 @@ import com.almostreliable.lootjs.loot.modifier.LootAction;
 import net.minecraft.world.entity.ExperienceOrb;
 import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
+import net.minecraft.world.level.storage.loot.providers.number.NumberProvider;
 import net.minecraft.world.phys.Vec3;
 
 public class DropExperienceAction implements LootAction {
-    private final int amount;
+    private final NumberProvider amount;
 
-    public DropExperienceAction(int amount) {
+    public DropExperienceAction(NumberProvider amount) {
         this.amount = amount;
     }
 
@@ -18,7 +19,7 @@ public class DropExperienceAction implements LootAction {
     public void apply(LootContext context, LootBucket loot) {
         Vec3 origin = context.getParamOrNull(LootContextParams.ORIGIN);
         if (origin != null) {
-            ExperienceOrb.award(context.getLevel(), origin, amount);
+            ExperienceOrb.award(context.getLevel(), origin, amount.getInt(context));
         }
     }
 }

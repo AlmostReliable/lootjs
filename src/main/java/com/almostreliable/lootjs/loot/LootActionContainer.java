@@ -10,6 +10,7 @@ import com.almostreliable.lootjs.loot.table.MutableLootPool;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.Explosion;
 import net.minecraft.world.level.storage.loot.LootPool;
+import net.minecraft.world.level.storage.loot.providers.number.NumberProvider;
 
 import java.util.function.Consumer;
 
@@ -58,7 +59,7 @@ public interface LootActionContainer<A extends LootActionContainer<?>> {
         return addAction(new LightningStrikeAction(shouldDamage));
     }
 
-    default A dropExperience(int amount) {
+    default A dropExperience(NumberProvider amount) {
         return addAction(new DropExperienceAction(amount));
     }
 
