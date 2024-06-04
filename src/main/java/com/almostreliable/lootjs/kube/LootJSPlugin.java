@@ -27,7 +27,6 @@ import dev.latvian.mods.kubejs.script.BindingsEvent;
 import dev.latvian.mods.kubejs.script.WrapperRegistry;
 import dev.latvian.mods.kubejs.util.ConsoleJS;
 import dev.latvian.mods.kubejs.util.NBTUtils;
-import dev.latvian.mods.kubejs.util.RegExpJS;
 import dev.latvian.mods.rhino.Context;
 import dev.latvian.mods.rhino.type.TypeInfo;
 import net.minecraft.advancements.critereon.*;
@@ -242,12 +241,23 @@ public class LootJSPlugin implements KubeJSPlugin {
             return new ResourceLocationFilter.Or(list.stream().map(this::ofResourceLocationFilter).toList());
         }
 
-        Pattern pattern = RegExpJS.of(o);
-        if (pattern == null) {
-            return new ResourceLocationFilter.ByLocation(new ResourceLocation(o.toString()));
-        } else {
+        if (o instanceof String str) {
+            if (str.startsWith("@")) {
+                return new ResourceLocationFilter.ByMod(str.substring(1));
+            }
+
+            return new ResourceLocationFilter.ByLocation(new ResourceLocation(str));
+        }
+
+        if (o instanceof ResourceLocation rl) {
+            return new ResourceLocationFilter.ByLocation(rl);
+        }
+
+        if (o instanceof Pattern pattern) {
             return new ResourceLocationFilter.ByPattern(pattern);
         }
+
+        throw new IllegalArgumentException("Invalid resource location filter: " + o);
     }
 
     private static ItemStackFactory ofItemStackFactory(@Nullable Object o) {

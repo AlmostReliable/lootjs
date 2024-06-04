@@ -21,6 +21,14 @@ public interface ResourceLocationFilter extends Predicate<ResourceLocation> {
         }
     }
 
+    record ByMod(String mod) implements ResourceLocationFilter {
+
+        @Override
+        public boolean test(ResourceLocation resourceLocation) {
+            return resourceLocation.getNamespace().equals(mod);
+        }
+    }
+
     record Or(List<ResourceLocationFilter> filters) implements ResourceLocationFilter {
         @Override
         public boolean test(ResourceLocation resourceLocation) {

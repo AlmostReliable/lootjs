@@ -4,9 +4,7 @@ import com.almostreliable.lootjs.core.LootType;
 import com.almostreliable.lootjs.core.filters.ResourceLocationFilter;
 import com.almostreliable.lootjs.loot.table.LootTableList;
 import com.almostreliable.lootjs.loot.table.MutableLootTable;
-import com.almostreliable.lootjs.util.BlockFilter;
 import com.mojang.serialization.Lifecycle;
-import net.minecraft.advancements.critereon.EntityTypePredicate;
 import net.minecraft.core.RegistrationInfo;
 import net.minecraft.core.WritableRegistry;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -100,13 +98,21 @@ public class LootTableEvent {
         return new LootTableList(tables);
     }
 
-    public LootTableList modifyBlockTables(BlockFilter filter) {
-        var tables = filter.stream().map(this::getBlockTable).toList();
+    public LootTableList modifyBlockTables(ResourceLocationFilter filter) {
+        var tables = BuiltInRegistries.BLOCK
+                .holders()
+                .filter(ref -> filter.test(ref.key().location()))
+                .map(ref -> this.getBlockTable(ref.value()))
+                .toList();
         return new LootTableList(tables);
     }
 
-    public LootTableList modifyEntityTables(EntityTypePredicate filter) {
-        var tables = BuiltInRegistries.ENTITY_TYPE.stream().filter(filter::matches).map(this::getEntityTable).toList();
+    public LootTableList modifyEntityTables(ResourceLocationFilter filter) {
+        var tables = BuiltInRegistries.ENTITY_TYPE
+                .holders()
+                .filter(ref -> filter.test(ref.key().location()))
+                .map(ref -> this.getEntityTable(ref.value()))
+                .toList();
         return new LootTableList(tables);
     }
 
