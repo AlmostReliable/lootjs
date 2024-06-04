@@ -2,13 +2,9 @@ package com.almostreliable.lootjs.loot.modifier;
 
 import com.almostreliable.lootjs.core.LootBucket;
 import com.almostreliable.lootjs.core.LootType;
+import com.almostreliable.lootjs.core.filters.ItemFilter;
 import com.almostreliable.lootjs.core.filters.ResourceLocationFilter;
-import com.almostreliable.lootjs.loot.LootConditionsContainer;
-import com.almostreliable.lootjs.loot.LootFunctionsContainer;
-import com.almostreliable.lootjs.loot.LootHandlerContainer;
 import com.almostreliable.lootjs.loot.extension.LootContextExtension;
-import com.almostreliable.lootjs.loot.modifier.handler.VanillaConditionWrapper;
-import com.almostreliable.lootjs.loot.modifier.handler.VanillaFunctionWrapper;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.level.block.state.BlockState;
@@ -16,22 +12,21 @@ import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.functions.LootItemFunction;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
+import net.minecraft.world.level.storage.loot.providers.number.NumberProvider;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 import java.util.function.Predicate;
 
-public class LootModifier {
+public class LootModifier extends GroupedLootAction {
 
     private final Predicate<LootContext> shouldRun;
-    private final LootHandler[] handlers;
     private final String name;
 
-    public LootModifier(Predicate<LootContext> shouldRun, Collection<LootHandler> handlers, String name) {
+    public LootModifier(Predicate<LootContext> shouldRun, NumberProvider rolls, List<LootItemCondition> conditions, List<LootItemFunction> functions, Collection<LootAction> handlers, String name, ItemFilter containsLootFilter, boolean exact) {
+        super(rolls, conditions, functions, handlers, containsLootFilter, exact);
         this.shouldRun = shouldRun;
-        this.handlers = handlers.toArray(LootHandler[]::new);
         this.name = name;
     }
 
@@ -44,18 +39,11 @@ public class LootModifier {
             return;
         }
 
-        for (var handler : handlers) {
-            if (!handler.apply(context, loot)) {
-                return;
-            }
-        }
+        super.apply(context, loot);
     }
 
-    public static class Builder implements LootConditionsContainer<Builder>,
-                                           LootFunctionsContainer<Builder>,
-                                           LootHandlerContainer<Builder> {
+    public static class Builder extends GroupedLootAction.Builder {
 
-        private final List<LootHandler> handlers = new ArrayList<>();
         private final Predicate<LootContext> shouldRun;
         private String name;
 
@@ -69,25 +57,8 @@ public class LootModifier {
             return this;
         }
 
-        @Override
-        public Builder addCondition(LootItemCondition condition) {
-            handlers.add(new VanillaConditionWrapper(condition));
-            return this;
-        }
-
-        @Override
-        public Builder addHandler(LootHandler action) {
-            handlers.add(action);
-            return this;
-        }
-
-        @Override
-        public Builder addFunction(LootItemFunction lootItemFunction) {
-            return addHandler(new VanillaFunctionWrapper(lootItemFunction));
-        }
-
         public LootModifier build() {
-            return new LootModifier(shouldRun, handlers, name);
+            return new LootModifier(shouldRun, rolls, conditions, functions, actions, name, containsLootFilter, exact);
         }
     }
 

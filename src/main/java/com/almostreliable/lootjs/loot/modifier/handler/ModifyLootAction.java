@@ -2,11 +2,11 @@ package com.almostreliable.lootjs.loot.modifier.handler;
 
 import com.almostreliable.lootjs.core.LootBucket;
 import com.almostreliable.lootjs.core.filters.ItemFilter;
-import com.almostreliable.lootjs.loot.modifier.LootHandler;
+import com.almostreliable.lootjs.loot.modifier.LootAction;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.storage.loot.LootContext;
 
-public class ModifyLootAction implements LootHandler {
+public class ModifyLootAction implements LootAction {
     private final ItemFilter predicate;
     private final Callback callback;
 
@@ -15,7 +15,7 @@ public class ModifyLootAction implements LootHandler {
         this.callback = callback;
     }
 
-    public boolean apply(LootContext context, LootBucket loot) {
+    public void apply(LootContext context, LootBucket loot) {
         loot.modifyItems(itemStack -> {
             if (predicate.test(itemStack)) {
                 return callback.modify(itemStack);
@@ -23,7 +23,6 @@ public class ModifyLootAction implements LootHandler {
 
             return itemStack;
         });
-        return true;
     }
 
     @FunctionalInterface

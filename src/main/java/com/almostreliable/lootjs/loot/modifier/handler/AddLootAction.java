@@ -1,12 +1,12 @@
 package com.almostreliable.lootjs.loot.modifier.handler;
 
-import com.almostreliable.lootjs.loot.modifier.LootHandler;
 import com.almostreliable.lootjs.core.LootBucket;
 import com.almostreliable.lootjs.core.entry.LootEntry;
+import com.almostreliable.lootjs.loot.modifier.LootAction;
 import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.entries.LootPoolEntryContainer;
 
-public class AddLootAction implements LootHandler {
+public class AddLootAction implements LootAction {
 
     private final LootPoolEntryContainer[] entries;
 
@@ -19,13 +19,11 @@ public class AddLootAction implements LootHandler {
     }
 
     @Override
-    public boolean apply(LootContext context, LootBucket loot) {
+    public void apply(LootContext context, LootBucket loot) {
         for (var entry : entries) {
             entry.expand(context, lootPoolEntry -> {
                 lootPoolEntry.createItemStack(loot::addItem, context);
             });
         }
-
-        return true;
     }
 }
