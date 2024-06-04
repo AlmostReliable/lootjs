@@ -164,30 +164,32 @@ public interface LootConditionsContainer<B extends LootConditionsContainer<?>> {
         return addCondition(LootCondition.hasAnyStage(stages));
     }
 
-    default B or(Consumer<LootConditionsContainer<B>> action) {
-        List<LootItemCondition> conditions = createConditions(action);
-        LootItemCondition[] array = conditions.toArray(new LootItemCondition[0]);
-        return addCondition(LootCondition.or(array));
-    }
-
-    default B and(Consumer<LootConditionsContainer<B>> action) {
-        List<LootItemCondition> conditions = createConditions(action);
-        LootItemCondition[] array = conditions.toArray(new LootItemCondition[0]);
-        return addCondition(LootCondition.and(array));
-    }
-
-    default List<LootItemCondition> createConditions(Consumer<LootConditionsContainer<B>> action) {
+    default B anyOf(Consumer<LootConditionsContainer<B>> action) {
         List<LootItemCondition> conditions = new ArrayList<>();
-        LootConditionsContainer<B> container = new LootConditionsContainer<B>() {
+        action.accept(new LootConditionsContainer<B>() {
             @Override
             public B addCondition(LootItemCondition condition) {
                 conditions.add(condition);
                 //noinspection unchecked
                 return (B) this;
             }
-        };
-        action.accept(container);
-        return conditions;
+        });
+        LootItemCondition[] array = conditions.toArray(new LootItemCondition[0]);
+        return addCondition(LootCondition.anyOf(array));
+    }
+
+    default B allOf(Consumer<LootConditionsContainer<B>> action) {
+        List<LootItemCondition> conditions = new ArrayList<>();
+        action.accept(new LootConditionsContainer<B>() {
+            @Override
+            public B addCondition(LootItemCondition condition) {
+                conditions.add(condition);
+                //noinspection unchecked
+                return (B) this;
+            }
+        });
+        LootItemCondition[] array = conditions.toArray(new LootItemCondition[0]);
+        return addCondition(LootCondition.allOf(array));
     }
 
     default B jsonCondition(JsonObject json) {

@@ -243,11 +243,11 @@ public class LootCondition {
         return LootItemConditions.CODEC.parse(JsonOps.INSTANCE, json).getOrThrow().value();
     }
 
-    public static LootItemCondition or(LootItemCondition... conditions) {
+    public static LootItemCondition anyOf(LootItemCondition... conditions) {
         return new AnyOfCondition(Arrays.asList(conditions));
     }
 
-    public static LootItemCondition and(LootItemCondition... conditions) {
+    public static LootItemCondition allOf(LootItemCondition... conditions) {
         return new AllOfCondition(Arrays.asList(conditions));
     }
 }
