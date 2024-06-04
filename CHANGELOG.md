@@ -35,8 +35,9 @@ and this project adheres to [Semantic Versioning].
       for further modifications.
         - `.group()` can use `.rolls(numberprovider)` to execute the group multiple times
     - `.pool()` now actually consumes a vanilla `LootPool`
-    - Removed `addWeightedLoot()`, use `.pool()` instead now.
+    - Removed `addWeightedLoot()`, use `.pool()` instead now
     - `matchLoot` renamed into `containsLoot`
+    - `.dropExperience()` can now use a number provider instead of a fixed amount
     - `.functions(itemFilter, (f) => {})` removed. Better to just use `group` now
     - `LootContextJS` wrapper removed. Using `LootContext` instead but added all helper methods from `LootContextJS` too
 - Changes to `Loot Functions`:
