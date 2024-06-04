@@ -1,7 +1,5 @@
 package com.almostreliable.lootjs.core.entry;
 
-import com.almostreliable.lootjs.loot.LootConditionList;
-import com.almostreliable.lootjs.loot.LootFunctionList;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.entries.EmptyLootItem;
@@ -35,5 +33,11 @@ public class EmptyLootEntry extends AbstractSimpleLootEntry<EmptyLootItem> imple
         }
 
         return ItemStack.EMPTY;
+    }
+
+    @Override
+    public EmptyLootEntry addCondition(LootItemCondition condition) {
+        getConditions().add(condition);
+        return this;
     }
 }

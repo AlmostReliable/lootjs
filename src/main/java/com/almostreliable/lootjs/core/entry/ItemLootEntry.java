@@ -98,4 +98,10 @@ public class ItemLootEntry extends AbstractSimpleLootEntry<LootItem> implements 
     public boolean test(ItemFilter filter) {
         return filter.test(new ItemStack(getItem()));
     }
+
+    @Override
+    public ItemLootEntry addCondition(LootItemCondition condition) {
+        getConditions().add(condition);
+        return this;
+    }
 }

@@ -7,6 +7,7 @@ import com.almostreliable.lootjs.loot.table.LootApplier;
 import com.almostreliable.lootjs.util.DebugInfo;
 import net.minecraft.world.level.storage.loot.entries.CompositeEntryBase;
 import net.minecraft.world.level.storage.loot.entries.LootPoolEntryType;
+import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
 
 import javax.annotation.Nullable;
 import java.util.function.Consumer;
@@ -102,6 +103,12 @@ public class CompositeLootEntry implements LootEntry, LootApplier {
     @Override
     public CompositeLootEntry removeEntry(Predicate<SimpleLootEntry> onRemove, boolean deepRemove) {
         getEntries().removeEntry(onRemove, deepRemove);
+        return this;
+    }
+
+    @Override
+    public CompositeLootEntry addCondition(LootItemCondition condition) {
+        getConditions().add(condition);
         return this;
     }
 }

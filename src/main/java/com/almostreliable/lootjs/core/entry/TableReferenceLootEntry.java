@@ -7,6 +7,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.level.storage.loot.entries.LootPoolSingletonContainer;
 import net.minecraft.world.level.storage.loot.entries.NestedLootTable;
+import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
 
 public class TableReferenceLootEntry extends AbstractSimpleLootEntry<NestedLootTable> {
     public TableReferenceLootEntry(NestedLootTable vanillaEntry) {
@@ -27,5 +28,11 @@ public class TableReferenceLootEntry extends AbstractSimpleLootEntry<NestedLootT
 
     public void setLocation(ResourceLocation reference) {
         vanillaEntry.contents = Either.left(ResourceKey.create(Registries.LOOT_TABLE, reference));
+    }
+
+    @Override
+    public TableReferenceLootEntry addCondition(LootItemCondition condition) {
+        getConditions().add(condition);
+        return this;
     }
 }

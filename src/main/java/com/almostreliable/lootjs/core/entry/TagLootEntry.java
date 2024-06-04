@@ -1,7 +1,5 @@
 package com.almostreliable.lootjs.core.entry;
 
-import com.almostreliable.lootjs.loot.LootConditionList;
-import com.almostreliable.lootjs.loot.LootFunctionList;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
@@ -86,5 +84,11 @@ public class TagLootEntry extends AbstractSimpleLootEntry<TagEntry> implements S
         }
 
         return null;
+    }
+
+    @Override
+    public TagLootEntry addCondition(LootItemCondition condition) {
+        getConditions().add(condition);
+        return this;
     }
 }

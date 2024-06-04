@@ -1,6 +1,7 @@
 package com.almostreliable.lootjs.core.entry;
 
 import com.almostreliable.lootjs.loot.LootConditionList;
+import com.almostreliable.lootjs.loot.LootConditionsContainer;
 import com.almostreliable.lootjs.loot.LootEntryList;
 import com.almostreliable.lootjs.util.DebugInfo;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -19,7 +20,7 @@ import java.util.List;
 import java.util.function.Consumer;
 
 @SuppressWarnings("UnusedReturnValue")
-public interface LootEntry {
+public interface LootEntry extends LootConditionsContainer<LootEntry> {
 
     List<LootItemCondition> EMPTY_CONDITIONS = List.of();
     List<LootItemFunction> EMPTY_FUNCTIONS = List.of();
@@ -202,6 +203,12 @@ public interface LootEntry {
         @Override
         public void collectDebugInfo(DebugInfo info) {
             info.add("Unknown entry type: " + getType());
+        }
+
+        @Override
+        public Unknown addCondition(LootItemCondition condition) {
+            // no-op
+            return this;
         }
     }
 }
