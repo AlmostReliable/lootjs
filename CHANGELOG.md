@@ -31,14 +31,14 @@ and this project adheres to [Semantic Versioning].
       and if it contains matching loot, then apply all actions and then apply loot functions.
     - `addLootTableModifier`, `addLootTypeModifier`, `addBlockLootModifier`, `addEntityLootModifier` renamed
       into `addTableModifier`, `addTypeModifier`, `addBlockModifier`, `addEntityModifier`
+    - `.functions(itemFilter, (f) => {})` removed. Better to just use `group` now
     - Added `.group((group) => {...})` or `.group(itemFilter, (item) => {...})`. Second one will pre-filter current loot
       for further modifications.
         - `.group()` can use `.rolls(numberprovider)` to execute the group multiple times
     - `.pool()` now actually consumes a vanilla `LootPool`
     - Removed `addWeightedLoot()`, use `.pool()` instead now
     - `matchLoot` renamed into `containsLoot`
-    - `.dropExperience()` can now use a number provider instead of a fixed amount
-    - `.functions(itemFilter, (f) => {})` removed. Better to just use `group` now
+    - `.dropExperience` can now use a number provider instead of a fixed amount
     - `LootContextJS` wrapper removed. Using `LootContext` instead but added all helper methods from `LootContextJS` too
 - Changes to `Loot Functions`:
     - `smeltLoot` renamed to `smelt`
