@@ -1,4 +1,4 @@
-package com.almostreliable.lootjs;
+package com.almostreliable.lootjs.loot;
 
 import com.almostreliable.lootjs.core.LootType;
 import com.almostreliable.lootjs.core.filters.ResourceLocationFilter;
@@ -22,36 +22,42 @@ import java.util.*;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
-public interface LootTableEvent {
-    RegistrationInfo REG_INFO = new RegistrationInfo(Optional.empty(), Lifecycle.stable());
+public class LootTableEvent {
+    private static final RegistrationInfo REG_INFO = new RegistrationInfo(Optional.empty(), Lifecycle.stable());
+    private final WritableRegistry<LootTable> registry;
 
-    WritableRegistry<LootTable> registry();
+    public LootTableEvent(WritableRegistry<LootTable> registry) {
+        this.registry = registry;
+    }
 
+    protected WritableRegistry<LootTable> registry() {
+        return registry;
+    }
 
-    default Set<ResourceLocation> getLootTableIds() {
+    public Set<ResourceLocation> getLootTableIds() {
         return Collections.unmodifiableSet(registry().keySet());
     }
 
-    default Set<ResourceLocation> getLootTableIds(ResourceLocationFilter filter) {
+    public Set<ResourceLocation> getLootTableIds(ResourceLocationFilter filter) {
         return registry().keySet().stream().filter(filter).collect(Collectors.toSet());
     }
 
-    default void forEachTable(ResourceLocationFilter filter, Consumer<MutableLootTable> onForEach) {
+    public void forEachTable(ResourceLocationFilter filter, Consumer<MutableLootTable> onForEach) {
         getLootTableIds(filter).forEach(location -> {
             var table = getLootTable(location);
             onForEach.accept(table);
         });
     }
 
-    default void forEachTable(Consumer<MutableLootTable> onForEach) {
+    public void forEachTable(Consumer<MutableLootTable> onForEach) {
         forEachTable(location -> true, onForEach);
     }
 
-    default boolean hasLootTable(ResourceLocation location) {
+    public boolean hasLootTable(ResourceLocation location) {
         return registry().containsKey(location);
     }
 
-    default void clearLootTables(ResourceLocationFilter filter) {
+    public void clearLootTables(ResourceLocationFilter filter) {
         for (LootTable lootTable : registry()) {
             if (filter.test(lootTable.getLootTableId())) {
                 new MutableLootTable(lootTable).clear();
@@ -59,7 +65,7 @@ public interface LootTableEvent {
         }
     }
 
-    default MutableLootTable getLootTable(ResourceKey<LootTable> key) {
+    public MutableLootTable getLootTable(ResourceKey<LootTable> key) {
         LootTable lootTable = registry().get(key);
         if (lootTable == null) {
             throw new IllegalArgumentException("Unknown loot table: " + key.location());
@@ -68,7 +74,7 @@ public interface LootTableEvent {
         return new MutableLootTable(lootTable);
     }
 
-    default MutableLootTable getLootTable(ResourceLocation location) {
+    public MutableLootTable getLootTable(ResourceLocation location) {
         LootTable lootTable = registry().get(location);
         if (lootTable == null) {
             throw new IllegalArgumentException("Unknown loot table: " + location);
@@ -77,15 +83,15 @@ public interface LootTableEvent {
         return new MutableLootTable(lootTable);
     }
 
-    default MutableLootTable getBlockTable(Block block) {
+    public MutableLootTable getBlockTable(Block block) {
         return getLootTable(block.getLootTable());
     }
 
-    default MutableLootTable getEntityTable(EntityType<?> entityType) {
+    public MutableLootTable getEntityTable(EntityType<?> entityType) {
         return getLootTable(entityType.getDefaultLootTable());
     }
 
-    default LootTableList modifyLootTables(ResourceLocationFilter filter) {
+    public LootTableList modifyLootTables(ResourceLocationFilter filter) {
         var tables = registry()
                 .stream()
                 .filter(lootTable -> filter.test(lootTable.getLootTableId()))
@@ -94,17 +100,17 @@ public interface LootTableEvent {
         return new LootTableList(tables);
     }
 
-    default LootTableList modifyBlockTables(BlockFilter filter) {
+    public LootTableList modifyBlockTables(BlockFilter filter) {
         var tables = filter.stream().map(this::getBlockTable).toList();
         return new LootTableList(tables);
     }
 
-    default LootTableList modifyEntityTables(EntityTypePredicate filter) {
+    public LootTableList modifyEntityTables(EntityTypePredicate filter) {
         var tables = BuiltInRegistries.ENTITY_TYPE.stream().filter(filter::matches).map(this::getEntityTable).toList();
         return new LootTableList(tables);
     }
 
-    default LootTableList modifyLootTypeTables(LootType... types) {
+    public LootTableList modifyLootTypeTables(LootType... types) {
         Set<LootType> asSet = new HashSet<>(Arrays.asList(types));
 
         var tables = registry().stream().filter(lootTable -> {
@@ -114,11 +120,11 @@ public interface LootTableEvent {
         return new LootTableList(tables);
     }
 
-    default MutableLootTable create(ResourceLocation location) {
+    public MutableLootTable create(ResourceLocation location) {
         return create(location, LootType.CHEST);
     }
 
-    default MutableLootTable create(ResourceLocation location, LootType type) {
+    public MutableLootTable create(ResourceLocation location, LootType type) {
         if (hasLootTable(location)) {
             throw new RuntimeException("[LootJS Error] Loot table already exists, cannot create new one: " + location);
         }

@@ -1,9 +1,7 @@
 package testmod;
 
 import com.almostreliable.lootjs.LootEvents;
-import com.almostreliable.lootjs.LootTableEvent;
-import net.minecraft.core.WritableRegistry;
-import net.minecraft.world.level.storage.loot.LootTable;
+import com.almostreliable.lootjs.loot.LootTableEvent;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.neoforge.gametest.GameTestHooks;
 import testmod.event.Entry;
@@ -14,14 +12,7 @@ public class TestMod {
     public TestMod() {
         if (GameTestHooks.isGametestEnabled()) {
             LootEvents.listen(registry -> {
-                var event = new LootTableEvent() {
-
-                    @Override
-                    public WritableRegistry<LootTable> registry() {
-                        return registry;
-                    }
-                };
-
+                var event = new LootTableEvent(registry);
                 Entry.init(event);
             });
         }

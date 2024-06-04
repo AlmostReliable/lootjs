@@ -41,10 +41,14 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.registries.holdersets.OrHolderSet;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
@@ -126,7 +130,18 @@ public class LootJSPlugin implements KubeJSPlugin {
         }
 
         BlockStatePredicate bsp = BlockStatePredicate.of(o);
-        return () -> bsp.getBlocks().iterator();
+        return new BlockFilter() {
+            @NotNull
+            @Override
+            public Iterator<Block> iterator() {
+                return bsp.getBlocks().iterator();
+            }
+
+            @Override
+            public boolean test(BlockState blockState) {
+                return bsp.test(blockState);
+            }
+        };
     }
 
     @Override

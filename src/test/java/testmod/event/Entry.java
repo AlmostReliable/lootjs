@@ -1,7 +1,7 @@
 package testmod.event;
 
-import com.almostreliable.lootjs.LootTableEvent;
 import com.almostreliable.lootjs.core.entry.LootEntry;
+import com.almostreliable.lootjs.loot.LootTableEvent;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.Items;
 
