@@ -8,6 +8,12 @@ and this project adheres to [Semantic Versioning].
 ## [Unreleased]
 - /
 
+## [2.12.0] - 2024-06-06
+
+### Added
+
+- Added `randomTableBonus(enchantment, chances)` for vanillas `table_bonus` condition
+
 ## [2.11.0] - 2023-02-11
 ### Added
 - Added `LootEntry.of("#tag")`, `LootEntry.of("@modid")` to select a random entry from a tag or modid.

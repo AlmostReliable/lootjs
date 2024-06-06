@@ -94,6 +94,10 @@ public interface LootConditionsContainer<B extends LootConditionsContainer<?>> {
         return addCondition(new MainHandTableBonus(enchantment, chances));
     }
 
+    default B randomTableBonus(Enchantment enchantment, float[] chances) {
+        return addCondition(BonusLevelTableCondition.bonusLevelFlatChance(enchantment, chances));
+    }
+
     default B biome(Resolver... resolvers) {
         List<ResourceKey<Biome>> biomes = new ArrayList<>();
         List<TagKey<Biome>> tagKeys = new ArrayList<>();
