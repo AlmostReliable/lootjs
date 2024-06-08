@@ -23,7 +23,7 @@ import dev.latvian.mods.kubejs.block.state.BlockStatePredicate;
 import dev.latvian.mods.kubejs.event.EventGroupRegistry;
 import dev.latvian.mods.kubejs.item.ItemStackJS;
 import dev.latvian.mods.kubejs.item.ingredient.IngredientJS;
-import dev.latvian.mods.kubejs.script.BindingsEvent;
+import dev.latvian.mods.kubejs.script.BindingRegistry;
 import dev.latvian.mods.kubejs.script.WrapperRegistry;
 import dev.latvian.mods.kubejs.util.ConsoleJS;
 import dev.latvian.mods.kubejs.util.NBTUtils;
@@ -163,28 +163,28 @@ public class LootJSPlugin implements KubeJSPlugin {
     }
 
     @Override
-    public void registerBindings(BindingsEvent event) {
-        event.add("LootType", LootType.class);
-        event.add("ItemFilter", ItemFilter.class);
-        event.add("LootEntry", LootEntry.class);
-        event.add("LootCondition", LootCondition.class);
-        event.add("LootFunction", LootFunction.class);
+    public void registerBindings(BindingRegistry bindings) {
+        bindings.add("LootType", LootType.class);
+        bindings.add("ItemFilter", ItemFilter.class);
+        bindings.add("LootEntry", LootEntry.class);
+        bindings.add("LootCondition", LootCondition.class);
+        bindings.add("LootFunction", LootFunction.class);
 
-        event.add("IntBounds", MinMaxBounds.Ints.class);
-        event.add("Bounds", MinMaxBounds.Doubles.class);
+        bindings.add("IntBounds", MinMaxBounds.Ints.class);
+        bindings.add("Bounds", MinMaxBounds.Doubles.class);
 
-        event.add("Predicates", Predicates.class);
-        event.add("ItemPredicate", ItemPredicate.class);
-        event.add("EntityPredicate", EntityPredicate.class);
-        event.add("EntityEquipmentPredicate", EntityEquipmentPredicate.class);
-        event.add("LocationPredicate", LocationPredicate.class);
-        event.add("DistancePredicate", DistancePredicate.class);
-        event.add("BlockPredicate", BlockPredicate.class);
-        event.add("FluidPredicate", FluidPredicate.class);
-        event.add("LightPredicate", LightPredicate.class);
-        event.add("EnchantmentPredicate", EnchantmentPredicate.class);
-        event.add("MobEffectsPredicate", MobEffectsPredicate.class);
-        event.add("NbtPredicate", NbtPredicate.class);
+        bindings.add("Predicates", Predicates.class);
+        bindings.add("ItemPredicate", ItemPredicate.class);
+        bindings.add("EntityPredicate", EntityPredicate.class);
+        bindings.add("EntityEquipmentPredicate", EntityEquipmentPredicate.class);
+        bindings.add("LocationPredicate", LocationPredicate.class);
+        bindings.add("DistancePredicate", DistancePredicate.class);
+        bindings.add("BlockPredicate", BlockPredicate.class);
+        bindings.add("FluidPredicate", FluidPredicate.class);
+        bindings.add("LightPredicate", LightPredicate.class);
+        bindings.add("EnchantmentPredicate", EnchantmentPredicate.class);
+        bindings.add("MobEffectsPredicate", MobEffectsPredicate.class);
+        bindings.add("NbtPredicate", NbtPredicate.class);
     }
 
     @Override
