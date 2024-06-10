@@ -5,29 +5,44 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.storage.loot.LootTable;
 import net.neoforged.neoforge.common.loot.IGlobalLootModifier;
 
-import java.util.ArrayList;
-import java.util.List;
+import javax.annotation.Nullable;
 import java.util.Map;
 import java.util.function.Consumer;
 
 public class LootEvents {
 
-    private static final List<Consumer<WritableRegistry<LootTable>>> TABLE_EVENT_LISTENERS = new ArrayList<>();
-    private static final List<Consumer<Map<ResourceLocation, IGlobalLootModifier>>> MODIFIER_EVENT_LISTENERS = new ArrayList<>();
+    @Nullable
+    private static Consumer<WritableRegistry<LootTable>> TABLE_EVENT_LISTENERS;
+    @Nullable
+    private static Consumer<Map<ResourceLocation, IGlobalLootModifier>> MODIFIER_EVENT_LISTENERS;
 
     public static void listen(Consumer<WritableRegistry<LootTable>> listener) {
-        TABLE_EVENT_LISTENERS.add(listener);
+        if (TABLE_EVENT_LISTENERS == null) {
+            TABLE_EVENT_LISTENERS = listener;
+            return;
+        }
+
+        TABLE_EVENT_LISTENERS = TABLE_EVENT_LISTENERS.andThen(listener);
     }
 
     public static void invoke(WritableRegistry<LootTable> registry) {
-        TABLE_EVENT_LISTENERS.forEach(listener -> listener.accept(registry));
+        if (TABLE_EVENT_LISTENERS != null) {
+            TABLE_EVENT_LISTENERS.accept(registry);
+        }
     }
 
     public static void listenModifiers(Consumer<Map<ResourceLocation, IGlobalLootModifier>> listener) {
-        MODIFIER_EVENT_LISTENERS.add(listener);
+        if (MODIFIER_EVENT_LISTENERS == null) {
+            MODIFIER_EVENT_LISTENERS = listener;
+            return;
+        }
+
+        MODIFIER_EVENT_LISTENERS = MODIFIER_EVENT_LISTENERS.andThen(listener);
     }
 
     public static void invokeModifiers(Map<ResourceLocation, IGlobalLootModifier> modifiers) {
-        MODIFIER_EVENT_LISTENERS.forEach(listener -> listener.accept(modifiers));
+        if (MODIFIER_EVENT_LISTENERS != null) {
+            MODIFIER_EVENT_LISTENERS.accept(modifiers);
+        }
     }
 }
