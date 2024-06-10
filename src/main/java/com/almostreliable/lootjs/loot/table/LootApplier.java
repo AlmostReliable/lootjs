@@ -24,10 +24,22 @@ public interface LootApplier {
 
     LootApplier addEntry(LootEntry entry);
 
-    LootApplier transformEntry(UnaryOperator<SimpleLootEntry> onTransform, boolean deepTransform);
+    LootApplier modifyEntry(UnaryOperator<SimpleLootEntry> onTransform, boolean deepTransform);
 
-    default LootApplier transformEntry(UnaryOperator<SimpleLootEntry> onTransform) {
-        transformEntry(onTransform, true);
+    default LootApplier modifyEntry(UnaryOperator<SimpleLootEntry> onTransform) {
+        modifyEntry(onTransform, true);
+        return this;
+    }
+
+    default LootApplier modifyItem(UnaryOperator<ItemLootEntry> onTransform) {
+        modifyEntry(le -> {
+            if (le instanceof ItemLootEntry ile) {
+                return onTransform.apply(ile);
+            }
+
+            return le;
+        });
+
         return this;
     }
 
@@ -84,7 +96,7 @@ public interface LootApplier {
     }
 
     default LootApplier replaceItem(ItemFilter filter, ItemStack item, boolean deepReplace) {
-        transformEntry(entry -> {
+        modifyEntry(entry -> {
             if (entry instanceof ItemLootEntry ile && ile.test(filter)) {
                 return new ItemLootEntry(item);
             }

@@ -95,8 +95,8 @@ public class CompositeLootEntry implements LootEntry, LootApplier {
     }
 
     @Override
-    public CompositeLootEntry transformEntry(UnaryOperator<SimpleLootEntry> onTransform, boolean deepTransform) {
-        getEntries().transformEntry(onTransform, deepTransform);
+    public CompositeLootEntry modifyEntry(UnaryOperator<SimpleLootEntry> onTransform, boolean deepTransform) {
+        getEntries().modifyEntry(onTransform, deepTransform);
         return this;
     }
 

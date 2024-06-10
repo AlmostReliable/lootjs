@@ -1,5 +1,6 @@
 package com.almostreliable.lootjs.loot;
 
+import com.almostreliable.lootjs.LootJS;
 import com.almostreliable.lootjs.core.entry.CompositeLootEntry;
 import com.almostreliable.lootjs.core.entry.LootEntry;
 import com.almostreliable.lootjs.core.entry.SimpleLootEntry;
@@ -70,26 +71,25 @@ public class LootEntryList extends ListHolder<LootEntry, LootPoolEntryContainer>
         info.add("]");
     }
 
-    public void transform(UnaryOperator<LootEntry> onTransform) {
+    public void modify(UnaryOperator<LootEntry> onTransform) {
         var it = iterator();
         while (it.hasNext()) {
-            LootEntry entry = it.next();
-            LootEntry transformed = onTransform.apply(entry);
-            if (transformed == null) {
-                it.remove();
-                continue;
-            }
-
-            if (transformed != entry) {
-                it.set(transformed);
+            try {
+                LootEntry entry = it.next();
+                LootEntry transformed = onTransform.apply(entry);
+                if (transformed != entry) {
+                    it.set(transformed);
+                }
+            } catch (Exception e) {
+                LootJS.LOG.error("Failed to transform entry", e);
             }
         }
     }
 
-    public LootEntryList transformEntry(UnaryOperator<SimpleLootEntry> onTransform, boolean deepTransform) {
-        transform(entry -> {
+    public LootEntryList modifyEntry(UnaryOperator<SimpleLootEntry> onTransform, boolean deepTransform) {
+        modify(entry -> {
             if (entry instanceof LootApplier helper && deepTransform) {
-                helper.transformEntry(onTransform, true);
+                helper.modifyEntry(onTransform, true);
                 return entry;
             }
 

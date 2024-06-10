@@ -55,8 +55,8 @@ public class LootTableList implements LootApplier, Iterable<MutableLootTable> {
     }
 
     @Override
-    public LootTableList transformEntry(UnaryOperator<SimpleLootEntry> onTransform, boolean deepTransform) {
-        getTables().forEach(table -> table.transformEntry(onTransform, deepTransform));
+    public LootTableList modifyEntry(UnaryOperator<SimpleLootEntry> onTransform, boolean deepTransform) {
+        getTables().forEach(table -> table.modifyEntry(onTransform, deepTransform));
         return this;
     }
 

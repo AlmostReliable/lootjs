@@ -90,8 +90,8 @@ public class MutableLootPool implements LootApplier {
     }
 
     @Override
-    public MutableLootPool transformEntry(UnaryOperator<SimpleLootEntry> onTransform, boolean deepTransform) {
-        getEntries().transformEntry(onTransform, deepTransform);
+    public MutableLootPool modifyEntry(UnaryOperator<SimpleLootEntry> onTransform, boolean deepTransform) {
+        getEntries().modifyEntry(onTransform, deepTransform);
         return this;
     }
 
