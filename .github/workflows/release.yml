@@ -4,7 +4,7 @@ on:
     workflow_dispatch:
     push:
         tags:
-            - 'v1.20.1-*.*.*'
+            - 'v1.20.4-*.*.*'
 
 env:
     JAVA_DIST: 'zulu'
@@ -104,107 +104,6 @@ jobs:
                     echo "# Changelog" >> $GITHUB_STEP_SUMMARY
                     echo "" >> $GITHUB_STEP_SUMMARY
                     cat output/changelog.md >> $GITHUB_STEP_SUMMARY
-
-    mr-fabric-release:
-        name: Modrinth Fabric Release
-        needs: build
-        runs-on: ubuntu-latest
-        steps:
-            -   name: Download build artifacts
-                uses: actions/download-artifact@v3
-                with:
-                    name: build-artifacts
-
-            -   name: Extract build artifacts
-                run: tar -zxvf build.tar.gz
-
-            -   name: Release Fabric on Modrinth
-                uses: Kir-Antipov/mc-publish@v3.3
-                with:
-                    modrinth-id: ${{ env.MODRINTH_ID }}
-                    modrinth-token: ${{ secrets.MODRINTH_TOKEN }}
-
-                    files: output/*fabric*.jar
-                    name: ${{ env.MOD_NAME }}-Fabric-${{ needs.build.outputs.MINECRAFT_VERSION }}-${{ needs.build.outputs.MOD_VERSION }}
-                    version: ${{ needs.build.outputs.MINECRAFT_VERSION }}-${{ needs.build.outputs.MOD_VERSION }}+fabric
-                    version-type: ${{ needs.build.outputs.RELEASE_TYPE }}
-                    changelog-file: output/changelog.md
-
-                    loaders: fabric
-                    game-versions: ${{ needs.build.outputs.MINECRAFT_VERSION }}
-                    java: ${{ env.JAVA_VERSION }}
-
-                    dependencies: |
-                        jei(optional){curseforge:238222}{modrinth:u6dRKJwZ}
-                        rei(optional){curseforge:310111}{modrinth:nfn13YXA}
-
-    cf-fabric-release:
-        name: CurseForge Fabric Release
-        needs: build
-        runs-on: ubuntu-latest
-        steps:
-            -   name: Download build artifacts
-                uses: actions/download-artifact@v3
-                with:
-                    name: build-artifacts
-
-            -   name: Extract build artifacts
-                run: tar -zxvf build.tar.gz
-
-            -   name: Release Fabric on CurseForge
-                uses: Kir-Antipov/mc-publish@v3.3
-                with:
-                    curseforge-id: ${{ env.CURSEFORGE_ID }}
-                    curseforge-token: ${{ secrets.CURSEFORGE_TOKEN }}
-
-                    files: output/*fabric*.jar
-                    name: ${{ env.MOD_NAME }}-Fabric-${{ needs.build.outputs.MINECRAFT_VERSION }}-${{ needs.build.outputs.MOD_VERSION }}
-                    version: ${{ needs.build.outputs.MINECRAFT_VERSION }}-${{ needs.build.outputs.MOD_VERSION }}+fabric
-                    version-type: ${{ needs.build.outputs.RELEASE_TYPE }}
-                    changelog-file: output/changelog.md
-
-                    loaders: fabric
-                    game-versions: ${{ needs.build.outputs.MINECRAFT_VERSION }}
-                    java: ${{ env.JAVA_VERSION }}
-
-                    dependencies: |
-                        jei(optional){curseforge:238222}{modrinth:u6dRKJwZ}
-                        rei(optional){curseforge:310111}{modrinth:nfn13YXA}
-
-    mr-forge-release:
-        name: Modrinth Forge Release
-        needs: build
-        runs-on: ubuntu-latest
-        steps:
-            -   name: Download build artifacts
-                uses: actions/download-artifact@v3
-                with:
-                    name: build-artifacts
-
-            -   name: Extract build artifacts
-                run: tar -zxvf build.tar.gz
-
-            -   name: Release Forge on Modrinth
-                uses: Kir-Antipov/mc-publish@v3.3
-                with:
-                    modrinth-id: ${{ env.MODRINTH_ID }}
-                    modrinth-token: ${{ secrets.MODRINTH_TOKEN }}
-
-                    files: output/*forge*.jar
-                    name: ${{ env.MOD_NAME }}-Forge-${{ needs.build.outputs.MINECRAFT_VERSION }}-${{ needs.build.outputs.MOD_VERSION }}
-                    version: ${{ needs.build.outputs.MINECRAFT_VERSION }}-${{ needs.build.outputs.MOD_VERSION }}+forge
-                    version-type: ${{ needs.build.outputs.RELEASE_TYPE }}
-                    changelog-file: output/changelog.md
-
-                    loaders: |
-                        forge
-                        neoforge
-                    game-versions: ${{ needs.build.outputs.MINECRAFT_VERSION }}
-                    java: ${{ env.JAVA_VERSION }}
-
-                    dependencies: |
-                        jei(optional){curseforge:238222}{modrinth:u6dRKJwZ}
-                        rei(optional){curseforge:310111}{modrinth:nfn13YXA}
 
     cf-forge-release:
         name: CurseForge Forge Release
