@@ -39,6 +39,7 @@ jobs:
         with:
             mod_name: "LootJS"
             curseforge_id: "570630"
+            modrinth_id: "fJFETWDN"
             dependencies: |
                 kubejs(required){curseforge:238086}
             target_version: ${{ github.event.inputs.target_version }}
