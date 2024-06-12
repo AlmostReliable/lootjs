@@ -14,7 +14,7 @@ import java.util.function.Consumer;
 import java.util.function.Predicate;
 import java.util.function.UnaryOperator;
 
-public class MutableLootPool implements LootApplier {
+public class MutableLootPool implements LootEntriesTransformer, LootEntryAppender {
 
     @Nullable private LootConditionList conditions;
     @Nullable private LootFunctionList functions;

@@ -1,6 +1,5 @@
 package com.almostreliable.lootjs.loot.table;
 
-import com.almostreliable.lootjs.core.entry.LootEntry;
 import com.almostreliable.lootjs.core.entry.SimpleLootEntry;
 import com.almostreliable.lootjs.loot.LootFunctionList;
 import org.jetbrains.annotations.NotNull;
@@ -11,7 +10,7 @@ import java.util.function.Consumer;
 import java.util.function.Predicate;
 import java.util.function.UnaryOperator;
 
-public class LootTableList implements LootApplier, Iterable<MutableLootTable> {
+public class LootTableList implements LootEntriesTransformer, Iterable<MutableLootTable> {
 
     private final List<MutableLootTable> tables;
 
@@ -45,12 +44,6 @@ public class LootTableList implements LootApplier, Iterable<MutableLootTable> {
 
     public LootTableList apply(Consumer<LootFunctionList> onModifiers) {
         getTables().forEach(table -> table.apply(onModifiers));
-        return this;
-    }
-
-    @Override
-    public LootTableList addEntry(LootEntry entry) {
-        getTables().forEach(table -> table.addEntry(entry));
         return this;
     }
 

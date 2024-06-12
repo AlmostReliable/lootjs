@@ -3,7 +3,8 @@ package com.almostreliable.lootjs.core.entry;
 import com.almostreliable.lootjs.loot.LootConditionList;
 import com.almostreliable.lootjs.loot.LootEntryList;
 import com.almostreliable.lootjs.loot.extension.CompositeEntryBaseExtension;
-import com.almostreliable.lootjs.loot.table.LootApplier;
+import com.almostreliable.lootjs.loot.table.LootEntriesTransformer;
+import com.almostreliable.lootjs.loot.table.LootEntryAppender;
 import com.almostreliable.lootjs.util.DebugInfo;
 import net.minecraft.world.level.storage.loot.entries.CompositeEntryBase;
 import net.minecraft.world.level.storage.loot.entries.LootPoolEntryType;
@@ -14,7 +15,7 @@ import java.util.function.Consumer;
 import java.util.function.Predicate;
 import java.util.function.UnaryOperator;
 
-public class CompositeLootEntry implements LootEntry, LootApplier {
+public class CompositeLootEntry implements LootEntry, LootEntriesTransformer, LootEntryAppender {
     private final CompositeEntryBase vanillaEntry;
     @Nullable
     private LootEntryList entries;

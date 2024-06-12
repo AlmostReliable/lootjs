@@ -1,7 +1,6 @@
 package com.almostreliable.lootjs.loot.table;
 
 import com.almostreliable.lootjs.core.LootType;
-import com.almostreliable.lootjs.core.entry.LootEntry;
 import com.almostreliable.lootjs.core.entry.SimpleLootEntry;
 import com.almostreliable.lootjs.loot.LootFunctionList;
 import com.almostreliable.lootjs.loot.extension.LootPoolExtension;
@@ -22,7 +21,7 @@ import java.util.function.Predicate;
 import java.util.function.UnaryOperator;
 
 @SuppressWarnings("UnusedReturnValue")
-public class MutableLootTable implements LootApplier {
+public class MutableLootTable implements LootEntriesTransformer {
 
     private final LootTable origin;
     private final ResourceLocation location;
@@ -140,12 +139,6 @@ public class MutableLootTable implements LootApplier {
     public MutableLootTable clear() {
         getFunctions().clear();
         getVanillaPools().clear();
-        return this;
-    }
-
-    @Override
-    public MutableLootTable addEntry(LootEntry entry) {
-        createPool(pool -> pool.addEntry(entry));
         return this;
     }
 

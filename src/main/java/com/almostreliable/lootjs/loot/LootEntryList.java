@@ -5,7 +5,8 @@ import com.almostreliable.lootjs.core.entry.CompositeLootEntry;
 import com.almostreliable.lootjs.core.entry.LootEntry;
 import com.almostreliable.lootjs.core.entry.SimpleLootEntry;
 import com.almostreliable.lootjs.core.filters.ResourceLocationFilter;
-import com.almostreliable.lootjs.loot.table.LootApplier;
+import com.almostreliable.lootjs.loot.table.LootEntriesTransformer;
+import com.almostreliable.lootjs.loot.table.LootEntryAppender;
 import com.almostreliable.lootjs.util.DebugInfo;
 import com.almostreliable.lootjs.util.ListHolder;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -18,7 +19,8 @@ import java.util.ListIterator;
 import java.util.function.Predicate;
 import java.util.function.UnaryOperator;
 
-public class LootEntryList extends ListHolder<LootEntry, LootPoolEntryContainer> implements LootApplier {
+public class LootEntryList extends ListHolder<LootEntry, LootPoolEntryContainer> implements LootEntriesTransformer,
+                                                                                            LootEntryAppender {
 
     public LootEntryList() {
         super();
@@ -88,7 +90,7 @@ public class LootEntryList extends ListHolder<LootEntry, LootPoolEntryContainer>
 
     public LootEntryList modifyEntry(UnaryOperator<SimpleLootEntry> onTransform, boolean deepTransform) {
         modify(entry -> {
-            if (entry instanceof LootApplier helper && deepTransform) {
+            if (entry instanceof LootEntriesTransformer helper && deepTransform) {
                 helper.modifyEntry(onTransform, true);
                 return entry;
             }
