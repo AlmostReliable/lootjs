@@ -5,7 +5,7 @@ import net.minecraft.advancements.critereon.ItemSubPredicate;
 import net.minecraft.world.item.ItemStack;
 
 public record ItemFilterWrapper(ItemFilter filter) implements ItemSubPredicate, ItemFilter {
-    public static final Codec<ItemFilterWrapper> CODEC = Codec.unit(() -> new ItemFilterWrapper(ItemFilter.ALWAYS_FALSE));
+    public static final Codec<ItemFilterWrapper> CODEC = Codec.unit(() -> new ItemFilterWrapper(ItemFilter.NONE));
     public static final Type<ItemFilterWrapper> TYPE = new Type<>(ItemFilterWrapper.CODEC);
 
     @Override

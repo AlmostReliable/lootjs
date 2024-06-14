@@ -109,7 +109,7 @@ public class GroupedLootAction implements LootAction {
         protected final List<LootItemCondition> conditions = new ArrayList<>();
         protected final List<LootItemFunction> functions = new ArrayList<>();
         protected NumberProvider rolls = ConstantValue.exactly(1f);
-        protected ItemFilter containsLootFilter = ItemFilter.ALWAYS_TRUE;
+        protected ItemFilter containsLootFilter = ItemFilter.ANY;
         protected boolean exact = false;
         @Nullable
         private final ItemFilter lootItemsFilter;

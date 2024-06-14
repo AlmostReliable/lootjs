@@ -6,38 +6,27 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.EquipmentSlotGroup;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.item.*;
+import net.minecraft.world.item.ArmorItem;
+import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.ItemEnchantments;
 import net.neoforged.neoforge.common.ToolAction;
 
+import javax.annotation.Nullable;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Objects;
 import java.util.function.Predicate;
 
 @SuppressWarnings("unused")
 public interface ItemFilter {
-    ItemFilter ALWAYS_FALSE = itemStack -> false;
-    ItemFilter ALWAYS_TRUE = itemStack -> true;
+    ItemFilter NONE = itemStack -> false;
+    ItemFilter ANY = itemStack -> true;
     ItemFilter EMPTY = ItemStack::isEmpty;
-    ItemFilter SWORD = itemStack -> itemStack.getItem() instanceof SwordItem;
-    ItemFilter PICKAXE = itemStack -> itemStack.getItem() instanceof PickaxeItem;
-    ItemFilter AXE = itemStack -> itemStack.getItem() instanceof AxeItem;
-    ItemFilter SHOVEL = itemStack -> itemStack.getItem() instanceof ShovelItem;
-    ItemFilter HOE = itemStack -> itemStack.getItem() instanceof HoeItem;
-    ItemFilter TOOL = itemStack -> itemStack.getItem() instanceof DiggerItem;
-    ItemFilter POTION = itemStack -> itemStack.getItem() instanceof PotionItem;
-    ItemFilter HAS_TIER = itemStack -> itemStack.getItem() instanceof TieredItem;
-    ItemFilter PROJECTILE_WEAPON = itemStack -> itemStack.getItem() instanceof ProjectileWeaponItem;
     ItemFilter ARMOR = itemStack -> itemStack.getItem() instanceof ArmorItem;
-    ItemFilter WEAPON = itemStack -> {
-        Item i = itemStack.getItem();
-        return i instanceof SwordItem || i instanceof DiggerItem || i instanceof ProjectileWeaponItem ||
-               i instanceof TridentItem;
-    };
-    ItemFilter HEAD_ARMOR = equipmentSlot(EquipmentSlot.HEAD);
-    ItemFilter CHEST_ARMOR = equipmentSlot(EquipmentSlot.CHEST);
-    ItemFilter LEGS_ARMOR = equipmentSlot(EquipmentSlot.LEGS);
-    ItemFilter FEET_ARMOR = equipmentSlot(EquipmentSlot.FEET);
     ItemFilter EDIBLE = itemStack -> itemStack.getFoodProperties(null) != null;
     ItemFilter DAMAGEABLE = ItemStack::isDamageableItem;
     ItemFilter DAMAGED = ItemStack::isDamaged;
@@ -51,18 +40,7 @@ public interface ItemFilter {
     static ItemFilter hasEnchantment(ResourceLocationFilter filter, MinMaxBounds.Ints levelBounds) {
         return itemStack -> {
             ItemEnchantments enchantments = itemStack.get(DataComponents.ENCHANTMENTS);
-            if (enchantments == null) {
-                return false;
-            }
-
-            for (var entry : enchantments.entrySet()) {
-                boolean matches = entry.getKey().unwrapKey().filter(key -> filter.test(key.location())).isPresent();
-                if (matches && levelBounds.matches(entry.getIntValue())) {
-                    return true;
-                }
-            }
-
-            return false;
+            return hasEnchantmentsInComponent(filter, levelBounds, enchantments);
         };
     }
 
@@ -73,19 +51,23 @@ public interface ItemFilter {
     static ItemFilter hasStoredEnchantment(ResourceLocationFilter filter, MinMaxBounds.Ints levelBounds) {
         return itemStack -> {
             ItemEnchantments enchantments = itemStack.get(DataComponents.STORED_ENCHANTMENTS);
-            if (enchantments == null) {
-                return false;
-            }
-
-            for (var entry : enchantments.entrySet()) {
-                boolean matches = entry.getKey().unwrapKey().filter(key -> filter.test(key.location())).isPresent();
-                if (matches && levelBounds.matches(entry.getIntValue())) {
-                    return true;
-                }
-            }
-
-            return false;
+            return hasEnchantmentsInComponent(filter, levelBounds, enchantments);
         };
+    }
+
+    private static boolean hasEnchantmentsInComponent(ResourceLocationFilter filter, MinMaxBounds.Ints levelBounds, @Nullable ItemEnchantments enchantments) {
+        if (enchantments == null) {
+            return false;
+        }
+
+        for (var entry : enchantments.entrySet()) {
+            boolean matches = entry.getKey().unwrapKey().filter(key -> filter.test(key.location())).isPresent();
+            if (matches && levelBounds.matches(entry.getIntValue())) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     static ItemFilter tag(String tag) {
@@ -96,14 +78,26 @@ public interface ItemFilter {
         return new Tag(TagKey.create(Registries.ITEM, new ResourceLocation(tag)));
     }
 
+    static ItemFilter item(ItemStack otherItemStack, boolean checkComponents) {
+        if (checkComponents) {
+            return itemStack -> ItemStack.isSameItemSameComponents(itemStack, otherItemStack);
+        }
+
+        return itemStack -> itemStack.getItem() == otherItemStack.getItem();
+    }
+
     static ItemFilter equipmentSlot(EquipmentSlot slot) {
         return itemStack -> LivingEntity.getEquipmentSlotForItem(itemStack) == slot;
     }
 
-    static ItemFilter and(ItemFilter... itemFilters) {
+    static ItemFilter equipmentSlotGroup(EquipmentSlotGroup slotGroup) {
+        return itemStack -> slotGroup.test(LivingEntity.getEquipmentSlotForItem(itemStack));
+    }
+
+    static ItemFilter allOf(ItemFilter... itemFilters) {
         Objects.requireNonNull(itemFilters);
         return switch (itemFilters.length) {
-            case 0 -> ALWAYS_TRUE;
+            case 0 -> ANY;
             case 1 -> itemFilters[0];
             case 2 -> itemFilters[0].and(itemFilters[1]);
             default -> itemStack -> {
@@ -122,10 +116,10 @@ public interface ItemFilter {
         return itemFilter.negate();
     }
 
-    static ItemFilter or(ItemFilter... itemFilters) {
+    static ItemFilter anyOf(ItemFilter... itemFilters) {
         Objects.requireNonNull(itemFilters);
         return switch (itemFilters.length) {
-            case 0 -> ALWAYS_FALSE;
+            case 0 -> NONE;
             case 1 -> itemFilters[0];
             case 2 -> itemFilters[0].or(itemFilters[1]);
             default -> itemStack -> {
@@ -160,10 +154,26 @@ public interface ItemFilter {
         return (itemStack) -> test(itemStack) || other.test(itemStack);
     }
 
-    static ItemFilter canPerformAnyAction(String... actions) {
-        ToolAction[] toolActions = getToolActions(actions);
+    static ItemFilter anyToolAction(String... actions) {
+        List<ToolAction> toolActions = Arrays.stream(actions).map(ToolAction::get).toList();
+
+        if (toolActions.isEmpty()) {
+            return itemStack -> true;
+        }
+
+        if (toolActions.size() == 1) {
+            var action = toolActions.getFirst();
+            return itemStack -> itemStack.canPerformAction(action);
+        }
+
+        if (toolActions.size() == 2) {
+            var action1 = toolActions.get(0);
+            var action2 = toolActions.get(1);
+            return itemStack -> itemStack.canPerformAction(action1) || itemStack.canPerformAction(action2);
+        }
+
         return itemStack -> {
-            for (ToolAction action : toolActions) {
+            for (var action : toolActions) {
                 if (itemStack.canPerformAction(action)) {
                     return true;
                 }
@@ -173,25 +183,33 @@ public interface ItemFilter {
         };
     }
 
-    static ItemFilter canPerformAction(String... actions) {
-        ToolAction[] toolActions = getToolActions(actions);
+    static ItemFilter toolAction(String... actions) {
+        List<ToolAction> toolActions = Arrays.stream(actions).map(ToolAction::get).toList();
+
+        if (toolActions.size() == 1) {
+            var action = toolActions.getFirst();
+            return itemStack -> itemStack.canPerformAction(action);
+        }
+
+        if (toolActions.isEmpty()) {
+            return itemStack -> true;
+        }
+
+        if (toolActions.size() == 2) {
+            var action1 = toolActions.get(0);
+            var action2 = toolActions.get(1);
+            return itemStack -> itemStack.canPerformAction(action1) && itemStack.canPerformAction(action2);
+        }
+
         return itemStack -> {
-            for (ToolAction action : toolActions) {
+            for (var action : toolActions) {
                 if (!itemStack.canPerformAction(action)) {
                     return false;
                 }
             }
+
             return true;
         };
-    }
-
-    private static ToolAction[] getToolActions(String[] actions) {
-        ToolAction[] toolActions = new ToolAction[actions.length];
-        for (int i = 0; i < actions.length; i++) {
-            toolActions[i] = ToolAction.get(actions[i]);
-        }
-
-        return toolActions;
     }
 
     record Ingredient(net.minecraft.world.item.crafting.Ingredient ingredient) implements ItemFilter {

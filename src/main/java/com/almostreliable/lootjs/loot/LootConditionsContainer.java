@@ -14,10 +14,8 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
 
-import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 
@@ -52,10 +50,6 @@ public interface LootConditionsContainer<B extends LootConditionsContainer<?>> {
         return addCondition(LootCondition.timeCheck(min, max));
     }
 
-    default B weatherCheck(Map<String, Boolean> map) {
-        return addCondition(LootCondition.weatherCheck(map));
-    }
-
     default B weatherCheck(Boolean isRaining, Boolean isThundering) {
         return addCondition(LootCondition.weatherCheck(isRaining, isThundering));
     }
@@ -68,8 +62,8 @@ public interface LootConditionsContainer<B extends LootConditionsContainer<?>> {
         return addCondition(LootCondition.randomChanceWithLooting(value, looting));
     }
 
-    default B randomChanceWithEnchantment(@Nullable Enchantment enchantment, float[] chances) {
-        return addCondition(LootCondition.randomChanceWithEnchantment(enchantment, chances));
+    default B randomTableBonus(Enchantment enchantment, float[] chances) {
+        return addCondition(LootCondition.randomTableBonus(enchantment, chances));
     }
 
     default B location(LocationPredicate.Builder predicate) {
@@ -98,6 +92,10 @@ public interface LootConditionsContainer<B extends LootConditionsContainer<?>> {
 
     default B lightLevel(int min, int max) {
         return addCondition(LootCondition.lightLevel(min, max));
+    }
+
+    default B luck(MinMaxBounds.Doubles bounds) {
+        return addCondition(LootCondition.luck(bounds));
     }
 
     default B killedByPlayer() {
@@ -164,7 +162,7 @@ public interface LootConditionsContainer<B extends LootConditionsContainer<?>> {
         return addCondition(LootCondition.hasAnyStage(stages));
     }
 
-    default B anyOf(Consumer<LootConditionsContainer<B>> action) {
+    default B matchAnyOf(Consumer<LootConditionsContainer<B>> action) {
         List<LootItemCondition> conditions = new ArrayList<>();
         action.accept(new LootConditionsContainer<B>() {
             @Override
@@ -175,10 +173,10 @@ public interface LootConditionsContainer<B extends LootConditionsContainer<?>> {
             }
         });
         LootItemCondition[] array = conditions.toArray(new LootItemCondition[0]);
-        return addCondition(LootCondition.anyOf(array));
+        return addCondition(LootCondition.matchAnyOf(array));
     }
 
-    default B allOf(Consumer<LootConditionsContainer<B>> action) {
+    default B matchAllOf(Consumer<LootConditionsContainer<B>> action) {
         List<LootItemCondition> conditions = new ArrayList<>();
         action.accept(new LootConditionsContainer<B>() {
             @Override
@@ -189,7 +187,7 @@ public interface LootConditionsContainer<B extends LootConditionsContainer<?>> {
             }
         });
         LootItemCondition[] array = conditions.toArray(new LootItemCondition[0]);
-        return addCondition(LootCondition.allOf(array));
+        return addCondition(LootCondition.matchAllOf(array));
     }
 
     default B jsonCondition(JsonObject json) {

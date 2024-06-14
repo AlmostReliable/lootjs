@@ -46,6 +46,16 @@ public class LootFunction {
         return builder.build();
     }
 
+    public static LootItemFunction enchant(boolean add, Consumer<SetEnchantmentsFunction.Builder> action) {
+        SetEnchantmentsFunction.Builder builder = new SetEnchantmentsFunction.Builder(add);
+        action.accept(builder);
+        return builder.build();
+    }
+
+    public static LootItemFunction enchant(Consumer<SetEnchantmentsFunction.Builder> action) {
+        return enchant(false, action);
+    }
+
     public static LootItemFunction applyLootingBonus(NumberProvider numberProvider) {
         LootingEnchantFunction.Builder lootingEnchantBuilder = LootingEnchantFunction.lootingMultiplier(numberProvider);
         return lootingEnchantBuilder.build();

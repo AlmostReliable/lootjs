@@ -21,7 +21,7 @@ public interface LootEntriesTransformer {
         return this;
     }
 
-    default LootEntriesTransformer modifyItem(UnaryOperator<ItemLootEntry> onTransform) {
+    default LootEntriesTransformer modifyItemEntry(UnaryOperator<ItemLootEntry> onTransform) {
         modifyEntry(le -> {
             if (le instanceof ItemLootEntry ile) {
                 return onTransform.apply(ile);

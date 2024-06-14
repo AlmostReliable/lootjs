@@ -6,6 +6,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.alchemy.Potion;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.level.storage.loot.functions.LootItemFunction;
+import net.minecraft.world.level.storage.loot.functions.SetEnchantmentsFunction;
 import net.minecraft.world.level.storage.loot.providers.number.NumberProvider;
 
 import javax.annotation.Nullable;
@@ -29,6 +30,14 @@ public interface LootFunctionsContainer<F extends LootFunctionsContainer<?>> {
 
     default F enchantWithLevels(NumberProvider numberProvider, boolean allowTreasure) {
         return addFunction(LootFunction.enchantWithLevels(numberProvider, allowTreasure));
+    }
+
+    default F enchant(boolean add, Consumer<SetEnchantmentsFunction.Builder> action) {
+        return addFunction(LootFunction.enchant(add, action));
+    }
+
+    default F enchant(Consumer<SetEnchantmentsFunction.Builder> action) {
+        return enchant(false, action);
     }
 
     default F applyLootingBonus(NumberProvider numberProvider) {

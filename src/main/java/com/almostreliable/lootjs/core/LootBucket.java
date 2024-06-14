@@ -53,7 +53,7 @@ public class LootBucket implements Iterable<ItemStack> {
     }
 
     public void clear() {
-        remove(ItemFilter.ALWAYS_TRUE);
+        remove(ItemFilter.ANY);
     }
 
     public boolean hasItem(ItemFilter filter) {

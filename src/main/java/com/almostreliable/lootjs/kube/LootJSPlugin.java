@@ -9,10 +9,7 @@ import com.almostreliable.lootjs.core.entry.SingleLootEntry;
 import com.almostreliable.lootjs.core.filters.ItemFilter;
 import com.almostreliable.lootjs.core.filters.Resolver;
 import com.almostreliable.lootjs.core.filters.ResourceLocationFilter;
-import com.almostreliable.lootjs.kube.wrappers.ItemPredicateWrapper;
-import com.almostreliable.lootjs.kube.wrappers.MinMaxBoundsWrapper;
-import com.almostreliable.lootjs.kube.wrappers.MobEffectsPredicateWrapper;
-import com.almostreliable.lootjs.kube.wrappers.StatePropsPredicateWrapper;
+import com.almostreliable.lootjs.kube.wrappers.*;
 import com.almostreliable.lootjs.loot.LootCondition;
 import com.almostreliable.lootjs.loot.LootFunction;
 import com.almostreliable.lootjs.loot.Predicates;
@@ -79,7 +76,7 @@ public class LootJSPlugin implements KubeJSPlugin {
             String first = str.substring(0, 1);
             switch (first) {
                 case "*":
-                    return ItemFilter.ALWAYS_TRUE;
+                    return ItemFilter.ANY;
                 case "#":
                     ResourceLocation location = new ResourceLocation(str.substring(1));
                     TagKey<Item> tag = TagKey.create(Registries.ITEM, location);
@@ -172,6 +169,8 @@ public class LootJSPlugin implements KubeJSPlugin {
 
         bindings.add("IntBounds", MinMaxBounds.Ints.class);
         bindings.add("Bounds", MinMaxBounds.Doubles.class);
+
+        bindings.add("NumberProvider", NumberProviderWrapper.class);
 
         bindings.add("Predicates", Predicates.class);
         bindings.add("ItemPredicate", ItemPredicate.class);

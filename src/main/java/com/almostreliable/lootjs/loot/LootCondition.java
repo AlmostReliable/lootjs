@@ -24,7 +24,10 @@ import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.level.storage.loot.predicates.*;
 
 import javax.annotation.Nullable;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
 import java.util.function.Predicate;
 
 public class LootCondition {
@@ -72,12 +75,6 @@ public class LootCondition {
         return timeCheck(24000L, min, max);
     }
 
-    public static LootItemCondition weatherCheck(Map<String, Boolean> map) {
-        Boolean isRaining = map.getOrDefault("raining", null);
-        Boolean isThundering = map.getOrDefault("thundering", null);
-        return weatherCheck(isRaining, isThundering);
-    }
-
     public static LootItemCondition weatherCheck(@Nullable Boolean raining, @Nullable Boolean thundering) {
         WeatherCheck.Builder builder = new WeatherCheck.Builder();
         if (raining != null) builder.setRaining(raining);
@@ -94,12 +91,8 @@ public class LootCondition {
         return LootItemRandomChanceWithLootingCondition.randomChanceAndLootingBoost(value, looting).build();
     }
 
-    public static LootItemCondition randomChanceWithEnchantment(@Nullable Enchantment enchantment, float[] chances) {
-        if (enchantment == null) {
-            throw new IllegalArgumentException("Enchant not found");
-        }
-
-        return new MainHandTableBonus(enchantment, chances);
+    public static LootItemCondition randomTableBonus(Enchantment enchantment, float[] chances) {
+        return BonusLevelTableCondition.bonusLevelFlatChance(enchantment, chances).build();
     }
 
     public static LootItemCondition location(LocationPredicate.Builder predicate) {
@@ -243,11 +236,11 @@ public class LootCondition {
         return LootItemConditions.CODEC.parse(JsonOps.INSTANCE, json).getOrThrow().value();
     }
 
-    public static LootItemCondition anyOf(LootItemCondition... conditions) {
+    public static LootItemCondition matchAnyOf(LootItemCondition... conditions) {
         return new AnyOfCondition(Arrays.asList(conditions));
     }
 
-    public static LootItemCondition allOf(LootItemCondition... conditions) {
+    public static LootItemCondition matchAllOf(LootItemCondition... conditions) {
         return new AllOfCondition(Arrays.asList(conditions));
     }
 }

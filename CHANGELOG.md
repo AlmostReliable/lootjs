@@ -46,6 +46,8 @@ and this project adheres to [Semantic Versioning].
 - Changes to `ItemFilter`:
     - `.hasEnchantments(...)` only works for item enchantments now. For `stored` enchantments
       use `.hasStoredEnchantments(...)`
+  - Removed some filters as they are no longer needed with the new data components.
+  - Renamed `ALWAYS_TRUE` into `ALL` and `ALWAYS_FALSE` into `NONE`
 - Added `vault`, `block_use` and `shearing` LootType
 
 ## [2.10.3] - 2023-09-27
