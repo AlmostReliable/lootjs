@@ -2,6 +2,9 @@ package com.almostreliable.lootjs.loot;
 
 import com.google.gson.JsonObject;
 import com.mojang.serialization.JsonOps;
+import net.minecraft.core.Holder;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.core.HolderSet;
 import net.minecraft.core.component.DataComponentType;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -23,26 +26,25 @@ import java.util.function.Consumer;
 
 public class LootFunction {
 
-    public static LootItemFunction enchantRandomly() {
-        return enchantRandomly(new Enchantment[]{});
+    public static HolderLookup.Provider lookup() {
+        // TODO fix
+        return null;
     }
 
-    public static LootItemFunction enchantRandomly(Enchantment[] enchantments) {
-        EnchantRandomlyFunction.Builder enchantRandomlyFunctionBuilder = EnchantRandomlyFunction.randomEnchantment();
-        for (Enchantment enchantment : enchantments) {
-            enchantRandomlyFunctionBuilder.withEnchantment(enchantment);
-        }
+    public static LootItemFunction enchantRandomly() {
+        return enchantRandomly(List.of());
+    }
 
+    public static LootItemFunction enchantRandomly(List<Holder<Enchantment>> enchantments) {
+        EnchantRandomlyFunction.Builder enchantRandomlyFunctionBuilder = EnchantRandomlyFunction.randomEnchantment();
+        HolderSet<Enchantment> asHolderSet = HolderSet.direct(enchantments);
+        enchantRandomlyFunctionBuilder.withOneOf(asHolderSet);
         return enchantRandomlyFunctionBuilder.build();
     }
 
     public static LootItemFunction enchantWithLevels(NumberProvider numberProvider) {
-        return enchantWithLevels(numberProvider, true);
-    }
-
-    public static LootItemFunction enchantWithLevels(NumberProvider numberProvider, boolean allowTreasure) {
-        EnchantWithLevelsFunction.Builder builder = EnchantWithLevelsFunction.enchantWithLevels(numberProvider);
-        if (allowTreasure) builder.allowTreasure();
+        EnchantWithLevelsFunction.Builder builder = EnchantWithLevelsFunction.enchantWithLevels(lookup(),
+                numberProvider);
         return builder.build();
     }
 
@@ -56,23 +58,26 @@ public class LootFunction {
         return enchant(false, action);
     }
 
-    public static LootItemFunction applyLootingBonus(NumberProvider numberProvider) {
-        LootingEnchantFunction.Builder lootingEnchantBuilder = LootingEnchantFunction.lootingMultiplier(numberProvider);
-        return lootingEnchantBuilder.build();
+    public static LootItemFunction applyEnchantmentBonus(Holder<Enchantment> enchantment, NumberProvider count) {
+        return new EnchantedCountIncreaseFunction.Builder(enchantment, count).build();
     }
 
-    public static LootItemFunction applyBinomialDistributionBonus(Enchantment enchantment, float probability, int extra) {
+    public static LootItemFunction applyEnchantmentBonus(NumberProvider count) {
+        return EnchantedCountIncreaseFunction.lootingMultiplier(lookup(), count).build();
+    }
+
+    public static LootItemFunction applyBinomialDistributionBonus(Holder<Enchantment> enchantment, float probability, int extra) {
         LootItemConditionalFunction.Builder<?> applyBonusBuilder = ApplyBonusCount
                 .addBonusBinomialDistributionCount(enchantment, probability, extra);
         return applyBonusBuilder.build();
     }
 
-    public static LootItemFunction applyOreBonus(Enchantment enchantment) {
+    public static LootItemFunction applyOreBonus(Holder<Enchantment> enchantment) {
         LootItemConditionalFunction.Builder<?> applyBonusBuilder = ApplyBonusCount.addOreBonusCount(enchantment);
         return applyBonusBuilder.build();
     }
 
-    public static LootItemFunction applyBonus(Enchantment enchantment, int multiplier) {
+    public static LootItemFunction applyBonus(Holder<Enchantment> enchantment, int multiplier) {
         LootItemConditionalFunction.Builder<?> applyBonusBuilder = ApplyBonusCount.addUniformBonusCount(enchantment,
                 multiplier);
         return applyBonusBuilder.build();
@@ -138,7 +143,7 @@ public class LootFunction {
     public static LootItemFunction toggleTooltips(Map<String, Boolean> toggles) {
         Map<ToggleTooltips.ComponentToggle<?>, Boolean> map = new HashMap<>();
         toggles.forEach((name, flag) -> {
-            ResourceLocation id = new ResourceLocation(name);
+            ResourceLocation id = ResourceLocation.parse(name);
             DataComponentType<?> type = BuiltInRegistries.DATA_COMPONENT_TYPE.get(id);
             if (type == null) {
                 throw new IllegalArgumentException("Component type not found: " + name);

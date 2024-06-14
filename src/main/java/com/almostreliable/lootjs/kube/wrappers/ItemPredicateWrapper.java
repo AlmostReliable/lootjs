@@ -51,7 +51,7 @@ public class ItemPredicateWrapper {
                             new HashMap<>());
                 }
                 case "#" -> {
-                    var location = new ResourceLocation(str.substring(1));
+                    var location = ResourceLocation.parse(str.substring(1));
                     var tag = TagKey.create(Registries.ITEM, location);
                     var holderSet = BuiltInRegistries.ITEM.getOrCreateTag(tag);
                     return new ItemPredicate(Optional.of(holderSet),

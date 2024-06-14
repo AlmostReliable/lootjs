@@ -51,8 +51,8 @@ public class ParamSetTest {
                 .withParameter(LootContextParams.THIS_ENTITY, cow)
                 .withParameter(LootContextParams.ORIGIN, cow.position())
                 .withParameter(LootContextParams.DAMAGE_SOURCE, ds)
-                .withOptionalParameter(LootContextParams.KILLER_ENTITY, ds.getEntity())
-                .withOptionalParameter(LootContextParams.DIRECT_KILLER_ENTITY, ds.getDirectEntity())
+                .withOptionalParameter(LootContextParams.ATTACKING_ENTITY, ds.getEntity())
+                .withOptionalParameter(LootContextParams.DIRECT_ATTACKING_ENTITY, ds.getDirectEntity())
                 .create(LootContextParamSets.ENTITY);
 
         LootContext ctx = new LootContext.Builder(params).create(Optional.empty());
@@ -85,7 +85,7 @@ public class ParamSetTest {
                 .withParameter(LootContextParams.ORIGIN, TEST_POS)
                 .withParameter(LootContextParams.TOOL, player.getMainHandItem())
                 .withParameter(LootContextParams.THIS_ENTITY, martin)
-                .withOptionalParameter(LootContextParams.KILLER_ENTITY, player)
+                .withOptionalParameter(LootContextParams.ATTACKING_ENTITY, player)
                 .withLuck(0)
                 .create(LootContextParamSets.FISHING);
 

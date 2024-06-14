@@ -1,8 +1,6 @@
 package testmod.gametest.conditions;
 
 import com.almostreliable.lootjs.BuildConfig;
-import testmod.gametest.GameTestTemplates;
-import testmod.gametest.GameTestUtils;
 import com.almostreliable.lootjs.loot.condition.AnyDimension;
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
@@ -11,6 +9,8 @@ import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.gametest.GameTestHolder;
 import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
+import testmod.gametest.GameTestTemplates;
+import testmod.gametest.GameTestUtils;
 
 @GameTestHolder(value = BuildConfig.MOD_ID)
 @PrefixGameTestTemplate(false)
@@ -22,7 +22,7 @@ public class DimensionCheckTest {
         LootContext ctx = GameTestUtils.unknownContext(helper.getLevel(), TEST_POS);
 
         AnyDimension owDim = new AnyDimension(new ResourceLocation[]{
-                new ResourceLocation("overworld")
+                ResourceLocation.parse("overworld")
         });
         helper.succeedIf(() -> GameTestUtils.assertTrue(helper,
                 owDim.test(ctx),
@@ -34,7 +34,7 @@ public class DimensionCheckTest {
         LootContext ctx = GameTestUtils.unknownContext(helper.getLevel(), TEST_POS);
 
         AnyDimension owDim = new AnyDimension(new ResourceLocation[]{
-                new ResourceLocation("nether")
+                ResourceLocation.parse("nether")
         });
         helper.succeedIf(() -> GameTestUtils.assertFalse(helper,
                 owDim.test(ctx),

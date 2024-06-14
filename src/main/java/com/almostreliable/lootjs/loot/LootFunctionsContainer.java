@@ -1,6 +1,7 @@
 package com.almostreliable.lootjs.loot;
 
 import com.google.gson.JsonObject;
+import net.minecraft.core.Holder;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.alchemy.Potion;
@@ -10,6 +11,7 @@ import net.minecraft.world.level.storage.loot.functions.SetEnchantmentsFunction;
 import net.minecraft.world.level.storage.loot.providers.number.NumberProvider;
 
 import javax.annotation.Nullable;
+import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 
@@ -17,19 +19,15 @@ import java.util.function.Consumer;
 public interface LootFunctionsContainer<F extends LootFunctionsContainer<?>> {
 
     default F enchantRandomly() {
-        return enchantRandomly(new Enchantment[]{});
+        return addFunction(LootFunction.enchantRandomly());
     }
 
-    default F enchantRandomly(Enchantment[] enchantments) {
+    default F enchantRandomly(List<Holder<Enchantment>> enchantments) {
         return addFunction(LootFunction.enchantRandomly(enchantments));
     }
 
     default F enchantWithLevels(NumberProvider numberProvider) {
         return addFunction(LootFunction.enchantWithLevels(numberProvider));
-    }
-
-    default F enchantWithLevels(NumberProvider numberProvider, boolean allowTreasure) {
-        return addFunction(LootFunction.enchantWithLevels(numberProvider, allowTreasure));
     }
 
     default F enchant(boolean add, Consumer<SetEnchantmentsFunction.Builder> action) {
@@ -40,19 +38,23 @@ public interface LootFunctionsContainer<F extends LootFunctionsContainer<?>> {
         return enchant(false, action);
     }
 
-    default F applyLootingBonus(NumberProvider numberProvider) {
-        return addFunction(LootFunction.applyLootingBonus(numberProvider));
+    default F applyEnchantmentBonus(Holder<Enchantment> enchantment, NumberProvider count) {
+        return addFunction(LootFunction.applyEnchantmentBonus(enchantment, count));
     }
 
-    default F applyBinomialDistributionBonus(Enchantment enchantment, float probability, int extra) {
+    default F applyEnchantmentBonus(NumberProvider count) {
+        return addFunction(LootFunction.applyEnchantmentBonus(count));
+    }
+
+    default F applyBinomialDistributionBonus(Holder<Enchantment> enchantment, float probability, int extra) {
         return addFunction(LootFunction.applyBinomialDistributionBonus(enchantment, probability, extra));
     }
 
-    default F applyOreBonus(Enchantment enchantment) {
+    default F applyOreBonus(Holder<Enchantment> enchantment) {
         return addFunction(LootFunction.applyOreBonus(enchantment));
     }
 
-    default F applyBonus(Enchantment enchantment, int multiplier) {
+    default F applyBonus(Holder<Enchantment> enchantment, int multiplier) {
         return addFunction(LootFunction.applyBonus(enchantment, multiplier));
     }
 

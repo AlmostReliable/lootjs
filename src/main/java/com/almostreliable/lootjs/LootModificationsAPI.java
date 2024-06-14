@@ -28,7 +28,7 @@ public class LootModificationsAPI {
         modifiers.clear();
         DEBUG_LOOT_MODIFIERS = false;
         FILTERS.clear();
-        FILTERS.add(new ResourceLocationFilter.ByLocation(new ResourceLocation("minecraft:blocks/fire")));
+        FILTERS.add(new ResourceLocationFilter.ByLocation(ResourceLocation.parse("minecraft:blocks/fire")));
     }
 
     public static void invokeActions(List<ItemStack> loot, LootContext context) {

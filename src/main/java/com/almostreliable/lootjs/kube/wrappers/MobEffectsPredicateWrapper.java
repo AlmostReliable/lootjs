@@ -73,7 +73,7 @@ public class MobEffectsPredicateWrapper {
         }
 
         return BuiltInRegistries.MOB_EFFECT.getHolder(ResourceKey.create(Registries.MOB_EFFECT,
-                new ResourceLocation(str)));
+                ResourceLocation.parse(str)));
     }
 
     @Nullable

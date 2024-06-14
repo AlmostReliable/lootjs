@@ -2,8 +2,6 @@ package testmod.gametest.conditions;
 
 import com.almostreliable.lootjs.BuildConfig;
 import com.almostreliable.lootjs.core.filters.ItemFilter;
-import testmod.gametest.GameTestTemplates;
-import testmod.gametest.GameTestUtils;
 import com.almostreliable.lootjs.loot.condition.MatchEquipmentSlot;
 import com.mojang.authlib.GameProfile;
 import net.minecraft.gametest.framework.GameTest;
@@ -19,6 +17,8 @@ import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.neoforged.neoforge.gametest.GameTestHolder;
 import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
+import testmod.gametest.GameTestTemplates;
+import testmod.gametest.GameTestUtils;
 
 import java.util.Optional;
 import java.util.UUID;
@@ -60,7 +60,7 @@ public class MatchEquipmentSlotTest {
     @GameTest(template = GameTestTemplates.EMPTY)
     public void failMatchMainHand(GameTestHelper helper) {
         LootContext ctx = basicSetup(helper);
-        MatchEquipmentSlot check = new MatchEquipmentSlot(EquipmentSlot.MAINHAND, ItemFilter.SWORD);
+        MatchEquipmentSlot check = new MatchEquipmentSlot(EquipmentSlot.MAINHAND, ItemFilter.tag("#minecraft:swords"));
         helper.succeedIf(() -> GameTestUtils.assertFalse(helper,
                 check.test(ctx),
                 "MatchEquipmentSlot check should fail"));

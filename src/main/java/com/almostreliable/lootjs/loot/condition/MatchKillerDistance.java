@@ -16,7 +16,7 @@ public class MatchKillerDistance implements IExtendedLootCondition {
     @Override
     public boolean test(LootContext context) {
         Entity entity = context.getParamOrNull(LootContextParams.THIS_ENTITY);
-        Entity killerEntity = context.getParamOrNull(LootContextParams.KILLER_ENTITY);
+        Entity killerEntity = context.getParamOrNull(LootContextParams.ATTACKING_ENTITY);
         return entity != null && killerEntity != null && predicate.matches(entity.getX(),
                 entity.getY(),
                 entity.getZ(),

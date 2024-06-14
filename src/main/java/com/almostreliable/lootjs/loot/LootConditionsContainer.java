@@ -5,6 +5,7 @@ import com.almostreliable.lootjs.core.filters.Resolver;
 import com.google.gson.JsonObject;
 import net.minecraft.advancements.critereon.*;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Holder;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
@@ -58,11 +59,11 @@ public interface LootConditionsContainer<B extends LootConditionsContainer<?>> {
         return addCondition(LootCondition.randomChance(value));
     }
 
-    default B randomChanceWithLooting(float value, float looting) {
-        return addCondition(LootCondition.randomChanceWithLooting(value, looting));
+    default B randomChanceWithEnchantment(Holder<Enchantment> enchantment, float[] chances) {
+        return addCondition(LootCondition.randomChanceWithEnchantment(enchantment, chances));
     }
 
-    default B randomTableBonus(Enchantment enchantment, float[] chances) {
+    default B randomTableBonus(Holder<Enchantment> enchantment, float[] chances) {
         return addCondition(LootCondition.randomTableBonus(enchantment, chances));
     }
 

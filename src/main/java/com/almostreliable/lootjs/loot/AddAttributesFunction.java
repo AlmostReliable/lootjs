@@ -3,8 +3,9 @@ package com.almostreliable.lootjs.loot;
 import net.minecraft.core.Holder;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.EquipmentSlotGroup;
-import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.item.ItemStack;
@@ -14,7 +15,6 @@ import net.minecraft.world.level.storage.loot.functions.LootItemFunction;
 import net.minecraft.world.level.storage.loot.functions.LootItemFunctionType;
 import net.minecraft.world.level.storage.loot.providers.number.NumberProvider;
 
-import javax.annotation.Nullable;
 import java.util.*;
 import java.util.function.Consumer;
 
@@ -38,7 +38,11 @@ public class AddAttributesFunction implements LootItemFunction {
             }
         }
 
-        var slot = LivingEntity.getEquipmentSlotForItem(itemStack);
+        var slot = itemStack.getEquipmentSlot();
+        if (slot == null) {
+            slot = EquipmentSlot.MAINHAND; // TODO: Is this correct? Need to check
+        }
+
         for (Modifier modifier : modifiers) {
             if (context.getRandom().nextFloat() < modifier.probability) {
                 var am = modifier.createAttributeModifier(context);
@@ -63,38 +67,34 @@ public class AddAttributesFunction implements LootItemFunction {
         protected final float probability;
         protected final AttributeModifier.Operation operation;
         protected final NumberProvider amount;
-        protected final String name;
+        protected final ResourceLocation name;
         protected final Set<EquipmentSlotGroup> slots;
-        @Nullable
-        protected UUID uuid;
 
-        public Modifier(float probability, Holder<Attribute> attribute, AttributeModifier.Operation operation, NumberProvider amount, String name, Set<EquipmentSlotGroup> slots, @Nullable UUID uuid) {
+        public Modifier(float probability, Holder<Attribute> attribute, AttributeModifier.Operation operation, NumberProvider amount, ResourceLocation name, Set<EquipmentSlotGroup> slots) {
             this.attribute = attribute;
             this.probability = probability;
             this.operation = operation;
             this.amount = amount;
             this.name = name;
             this.slots = slots;
-            this.uuid = uuid;
         }
 
         public AttributeModifier createAttributeModifier(LootContext context) {
-            return new AttributeModifier(UUID.randomUUID(), name, amount.getFloat(context), operation);
+            return new AttributeModifier(name, amount.getFloat(context), operation);
         }
 
         public static class Builder {
             protected final Attribute attribute;
+            protected final ResourceLocation name;
             protected final NumberProvider amount;
             protected float probability;
             protected AttributeModifier.Operation operation;
             protected Set<EquipmentSlotGroup> slots;
-            @Nullable
-            protected UUID uuid;
-            @Nullable
-            protected String name;
 
-            public Builder(Attribute attribute, NumberProvider amount) {
+
+            public Builder(Attribute attribute, ResourceLocation name, NumberProvider amount) {
                 this.attribute = attribute;
+                this.name = name;
                 this.amount = amount;
                 this.probability = 1f;
                 this.operation = AttributeModifier.Operation.ADD_VALUE;
@@ -113,21 +113,9 @@ public class AddAttributesFunction implements LootItemFunction {
                 this.slots = new HashSet<>(Arrays.asList(slots));
             }
 
-            public void setName(@Nullable String name) {
-                this.name = name;
-            }
-
-            public void setUuid(@Nullable UUID uuid) {
-                this.uuid = uuid;
-            }
-
             public Modifier build() {
-                if (name == null) {
-                    name = "lootjs." + attribute.getDescriptionId() + "." + operation.name().toLowerCase();
-                }
-
                 Holder<Attribute> attributeHolder = BuiltInRegistries.ATTRIBUTE.wrapAsHolder(attribute);
-                return new Modifier(probability, attributeHolder, operation, amount, name, slots, uuid);
+                return new Modifier(probability, attributeHolder, operation, amount, name, slots);
             }
         }
     }
@@ -142,27 +130,27 @@ public class AddAttributesFunction implements LootItemFunction {
             return this;
         }
 
-        public Builder simple(Attribute attribute, NumberProvider amount) {
-            return simple(1f, attribute, amount);
+        public Builder simple(Attribute attribute, ResourceLocation name, NumberProvider amount) {
+            return simple(1f, attribute, name, amount);
         }
 
-        public Builder simple(float probability, Attribute attribute, NumberProvider amount) {
-            return add(attribute, amount, m -> m.setProbability(probability));
+        public Builder simple(float probability, Attribute attribute, ResourceLocation name, NumberProvider amount) {
+            return add(attribute, name, amount, m -> m.setProbability(probability));
         }
 
-        public Builder forSlots(Attribute attribute, NumberProvider amount, EquipmentSlotGroup[] slots) {
-            return add(attribute, amount, m -> m.setSlots(slots));
+        public Builder forSlots(Attribute attribute, ResourceLocation name, NumberProvider amount, EquipmentSlotGroup[] slots) {
+            return add(attribute, name, amount, m -> m.setSlots(slots));
         }
 
-        public Builder forSlots(float probability, Attribute attribute, NumberProvider amount, EquipmentSlotGroup[] slots) {
-            return add(attribute, amount, m -> {
+        public Builder forSlots(float probability, Attribute attribute, ResourceLocation name, NumberProvider amount, EquipmentSlotGroup[] slots) {
+            return add(attribute, name, amount, m -> {
                 m.setProbability(probability);
                 m.setSlots(slots);
             });
         }
 
-        public Builder add(Attribute attribute, NumberProvider amount, Consumer<Modifier.Builder> action) {
-            Modifier.Builder builder = new Modifier.Builder(attribute, amount);
+        public Builder add(Attribute attribute, ResourceLocation name, NumberProvider amount, Consumer<Modifier.Builder> action) {
+            Modifier.Builder builder = new Modifier.Builder(attribute, name, amount);
             action.accept(builder);
             return add(builder.build());
         }

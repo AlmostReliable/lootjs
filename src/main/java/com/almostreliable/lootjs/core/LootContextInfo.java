@@ -34,9 +34,11 @@ public class LootContextInfo {
         lci.addOptional("Block", context.getParamOrNull(LootContextParams.BLOCK_STATE));
         lci.addOptional("Explosion", context.getParamOrNull(LootContextParams.EXPLOSION_RADIUS));
         lci.addOptional("Entity", context.getParamOrNull(LootContextParams.THIS_ENTITY), Utils::formatEntity);
-        lci.addOptional("Killer Entity", context.getParamOrNull(LootContextParams.KILLER_ENTITY), Utils::formatEntity);
-        lci.addOptional("Direct Killer",
-                context.getParamOrNull(LootContextParams.DIRECT_KILLER_ENTITY),
+        lci.addOptional("Attacking Entity",
+                context.getParamOrNull(LootContextParams.ATTACKING_ENTITY),
+                Utils::formatEntity);
+        lci.addOptional("Direct Attacker",
+                context.getParamOrNull(LootContextParams.DIRECT_ATTACKING_ENTITY),
                 Utils::formatEntity);
 
         ServerPlayer player = LootContextUtils.getPlayerOrNull(context);

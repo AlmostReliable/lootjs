@@ -90,8 +90,9 @@ dependencies {
 
     neoForge("net.neoforged:neoforge:${neoforgeVersion}")
 
-    modApi("dev.latvian.mods:kubejs-neoforge:${kubejsVersion}")
-    testImplementation("dev.latvian.mods:kubejs-neoforge:${kubejsVersion}")
+    compileOnly("dev.latvian.mods:kubejs-neoforge:${kubejsVersion}")
+//    modApi("dev.latvian.mods:kubejs-neoforge:${kubejsVersion}")
+//    testImplementation("dev.latvian.mods:kubejs-neoforge:${kubejsVersion}")
 
     implementation("com.google.code.findbugs:jsr305:3.0.2")
 }

@@ -70,7 +70,7 @@ public class BiomeCheckTest {
         Player player = helper.makeMockPlayer(GameType.SURVIVAL);
         LootContext ctx = GameTestUtils.unknownContext(helper.getLevel(), player.position());
 
-        ResourceKey<Biome> bKey = biome(new ResourceLocation("minecraft:deep_ocean"));
+        ResourceKey<Biome> bKey = biome(ResourceLocation.parse("minecraft:deep_ocean"));
         AnyBiomeCheck check = new AnyBiomeCheck(Collections.singletonList(bKey), new ArrayList<>());
         helper.succeedIf(() -> GameTestUtils.assertFalse(helper,
                 check.test(ctx),
@@ -82,7 +82,7 @@ public class BiomeCheckTest {
         Player player = helper.makeMockPlayer(GameType.SURVIVAL);
         LootContext ctx = GameTestUtils.unknownContext(helper.getLevel(), player.position());
 
-        ResourceKey<Biome> bKey = biome(new ResourceLocation("minecraft:deep_ocean"));
+        ResourceKey<Biome> bKey = biome(ResourceLocation.parse("minecraft:deep_ocean"));
         BiomeCheck check = new BiomeCheck(Collections.singletonList(bKey), new ArrayList<>());
         helper.succeedIf(() -> GameTestUtils.assertFalse(helper,
                 check.test(ctx),

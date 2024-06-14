@@ -37,7 +37,7 @@ public class LootJS {
     private void onRegister(RegisterEvent event) {
         if (event.getRegistry() == BuiltInRegistries.ITEM_SUB_PREDICATE_TYPE) {
             event.register(Registries.ITEM_SUB_PREDICATE_TYPE,
-                    new ResourceLocation(BuildConfig.MOD_ID, "item"),
+                    ResourceLocation.fromNamespaceAndPath(BuildConfig.MOD_ID, "item"),
                     () -> ItemFilterWrapper.TYPE);
         }
     }

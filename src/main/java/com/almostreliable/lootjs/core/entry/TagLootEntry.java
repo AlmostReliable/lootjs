@@ -45,7 +45,7 @@ public class TagLootEntry extends AbstractSimpleLootEntry<TagEntry> implements S
             tag = tag.substring(1);
         }
 
-        vanillaEntry.tag = TagKey.create(Registries.ITEM, new ResourceLocation(tag));
+        vanillaEntry.tag = TagKey.create(Registries.ITEM, ResourceLocation.parse(tag));
     }
 
     public boolean isTag(String tag) {

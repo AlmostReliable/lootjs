@@ -14,9 +14,9 @@ public abstract class Resolver {
 
     public static Resolver of(String value) {
         if (value.startsWith("#")) {
-            return new ByTagKey(new ResourceLocation(value.substring(1)));
+            return new ByTagKey(ResourceLocation.parse(value.substring(1)));
         }
-        return new ByEntry(new ResourceLocation(value));
+        return new ByEntry(ResourceLocation.parse(value));
     }
 
     public static class ByEntry extends Resolver {

@@ -3,10 +3,12 @@ package com.almostreliable.lootjs.loot;
 import com.almostreliable.lootjs.core.filters.ItemFilter;
 import com.almostreliable.lootjs.core.filters.Resolver;
 import com.almostreliable.lootjs.loot.condition.*;
+import com.google.common.base.Preconditions;
 import com.google.gson.JsonObject;
 import com.mojang.serialization.JsonOps;
 import net.minecraft.advancements.critereon.*;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Holder;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
@@ -15,6 +17,7 @@ import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.enchantment.Enchantment;
+import net.minecraft.world.item.enchantment.LevelBasedValue;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -86,12 +89,18 @@ public class LootCondition {
         return LootItemRandomChanceCondition.randomChance(value).build();
     }
 
-    public static LootItemCondition randomChanceWithLooting(float value, float looting) {
-        // wtf are this class names
-        return LootItemRandomChanceWithLootingCondition.randomChanceAndLootingBoost(value, looting).build();
+    public static LootItemCondition randomChanceWithEnchantment(Holder<Enchantment> enchantment, float[] chances) {
+        Preconditions.checkArgument(chances.length > 0, "There must be at least one chance");
+        float first = chances[0];
+        List<Float> enchantmentChances = new ArrayList<>();
+        for (int i = 1; i < chances.length; i++) {
+            enchantmentChances.add(chances[i]);
+        }
+        LevelBasedValue.Lookup lookup = new LevelBasedValue.Lookup(enchantmentChances, new LevelBasedValue.Constant(0));
+        return new LootItemRandomChanceWithEnchantedBonusCondition(first, lookup, enchantment);
     }
 
-    public static LootItemCondition randomTableBonus(Enchantment enchantment, float[] chances) {
+    public static LootItemCondition randomTableBonus(Holder<Enchantment> enchantment, float[] chances) {
         return BonusLevelTableCondition.bonusLevelFlatChance(enchantment, chances).build();
     }
 
@@ -165,12 +174,14 @@ public class LootCondition {
     }
 
     public static LootItemCondition matchKiller(EntityPredicate.Builder entityPredicate) {
-        return LootItemEntityPropertyCondition.hasProperties(LootContext.EntityTarget.KILLER, entityPredicate).build();
+        return LootItemEntityPropertyCondition
+                .hasProperties(LootContext.EntityTarget.ATTACKER, entityPredicate)
+                .build();
     }
 
     public static LootItemCondition matchDirectKiller(EntityPredicate.Builder entityPredicate) {
         return LootItemEntityPropertyCondition
-                .hasProperties(LootContext.EntityTarget.DIRECT_KILLER, entityPredicate)
+                .hasProperties(LootContext.EntityTarget.DIRECT_ATTACKER, entityPredicate)
                 .build();
     }
 
@@ -183,13 +194,11 @@ public class LootCondition {
     }
 
     public static LootItemCondition distance(MinMaxBounds.Doubles bounds) {
-        return customDistance(new DistancePredicate(
+        return customDistance(new DistancePredicate(MinMaxBounds.Doubles.ANY,
                 MinMaxBounds.Doubles.ANY,
                 MinMaxBounds.Doubles.ANY,
                 MinMaxBounds.Doubles.ANY,
-                MinMaxBounds.Doubles.ANY,
-                bounds
-        ));
+                bounds));
     }
 
     public static LootItemCondition customDistance(DistancePredicate predicate) {
@@ -205,11 +214,11 @@ public class LootCondition {
     }
 
     public static LootItemCondition customKillerCheck(Predicate<Entity> predicate) {
-        return new CustomParamPredicate<>(LootContextParams.KILLER_ENTITY, predicate);
+        return new CustomParamPredicate<>(LootContextParams.ATTACKING_ENTITY, predicate);
     }
 
     public static LootItemCondition customDirectKillerCheck(Predicate<Entity> predicate) {
-        return new CustomParamPredicate<>(LootContextParams.DIRECT_KILLER_ENTITY, predicate);
+        return new CustomParamPredicate<>(LootContextParams.DIRECT_ATTACKING_ENTITY, predicate);
     }
 
     public static LootItemCondition blockEntity(Predicate<BlockEntity> predicate) {
@@ -233,7 +242,7 @@ public class LootCondition {
     }
 
     public static LootItemCondition fromJson(JsonObject json) {
-        return LootItemConditions.CODEC.parse(JsonOps.INSTANCE, json).getOrThrow().value();
+        return LootItemCondition.CODEC.parse(JsonOps.INSTANCE, json).getOrThrow().value();
     }
 
     public static LootItemCondition matchAnyOf(LootItemCondition... conditions) {

@@ -7,7 +7,6 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.EquipmentSlotGroup;
-import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
@@ -75,7 +74,7 @@ public interface ItemFilter {
             tag = tag.substring(1);
         }
 
-        return new Tag(TagKey.create(Registries.ITEM, new ResourceLocation(tag)));
+        return new Tag(TagKey.create(Registries.ITEM, ResourceLocation.parse(tag)));
     }
 
     static ItemFilter item(ItemStack otherItemStack, boolean checkComponents) {
@@ -87,11 +86,18 @@ public interface ItemFilter {
     }
 
     static ItemFilter equipmentSlot(EquipmentSlot slot) {
-        return itemStack -> LivingEntity.getEquipmentSlotForItem(itemStack) == slot;
+        return itemStack -> itemStack.getEquipmentSlot() == slot;
     }
 
     static ItemFilter equipmentSlotGroup(EquipmentSlotGroup slotGroup) {
-        return itemStack -> slotGroup.test(LivingEntity.getEquipmentSlotForItem(itemStack));
+        return itemStack -> {
+            EquipmentSlot equipmentSlot = itemStack.getEquipmentSlot();
+            if (equipmentSlot == null) {
+                return false;
+            }
+
+            return slotGroup.test(equipmentSlot);
+        };
     }
 
     static ItemFilter allOf(ItemFilter... itemFilters) {

@@ -97,10 +97,10 @@ public class AnyStructure implements IExtendedLootCondition {
 
         public Builder add(String idOrTag) {
             if (idOrTag.startsWith("#")) {
-                var rl = new ResourceLocation(idOrTag.substring(1));
+                var rl = ResourceLocation.parse(idOrTag.substring(1));
                 tags.add(TagKey.create(Registries.STRUCTURE, rl));
             } else {
-                var rl = new ResourceLocation(idOrTag);
+                var rl = ResourceLocation.parse(idOrTag);
                 ids.add(ResourceKey.create(Registries.STRUCTURE, rl));
             }
             return this;

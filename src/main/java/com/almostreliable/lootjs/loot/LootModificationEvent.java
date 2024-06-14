@@ -38,7 +38,7 @@ public class LootModificationEvent {
             if (locationOrModId.startsWith("@")) {
                 modIds.add(locationOrModId.substring(1));
             } else {
-                locations.add(new ResourceLocation(locationOrModId));
+                locations.add(ResourceLocation.parse(locationOrModId));
             }
         }
 

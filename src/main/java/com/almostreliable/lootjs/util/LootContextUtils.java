@@ -16,14 +16,14 @@ public class LootContextUtils {
             case CHEST:
                 return tryGetPlayer(context.getParamOrNull(LootContextParams.THIS_ENTITY));
             case ENTITY:
-                ServerPlayer player = tryGetPlayer(context.getParamOrNull(LootContextParams.KILLER_ENTITY));
+                ServerPlayer player = tryGetPlayer(context.getParamOrNull(LootContextParams.ATTACKING_ENTITY));
                 if (player != null) {
                     return player;
                 }
 
                 return tryGetPlayer(context.getParamOrNull(LootContextParams.LAST_DAMAGE_PLAYER));
             case FISHING:
-                return tryGetPlayer(context.getParamOrNull(LootContextParams.KILLER_ENTITY));
+                return tryGetPlayer(context.getParamOrNull(LootContextParams.ATTACKING_ENTITY));
         }
 
         return null;

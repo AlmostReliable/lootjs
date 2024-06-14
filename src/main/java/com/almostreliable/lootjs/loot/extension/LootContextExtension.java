@@ -8,9 +8,7 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.phys.Vec3;
@@ -54,8 +52,8 @@ public interface LootContextExtension {
     }
 
     @Nullable
-    default Entity lootjs$getKillerEntity() {
-        return lootjs$self().getParamOrNull(LootContextParams.KILLER_ENTITY);
+    default Entity lootjs$getAttackingEntity() {
+        return lootjs$self().getParamOrNull(LootContextParams.ATTACKING_ENTITY);
     }
 
     @Nullable
@@ -89,15 +87,6 @@ public interface LootContextExtension {
     @Nullable
     default MinecraftServer lootjs$getServer() {
         return lootjs$self().getLevel().getServer();
-    }
-
-    default int lootjs$getLooting() {
-        Entity killer = lootjs$self().getParamOrNull(LootContextParams.KILLER_ENTITY);
-        if (killer instanceof LivingEntity asLiving) {
-            return EnchantmentHelper.getMobLooting(asLiving);
-        }
-
-        return 0;
     }
 
     Map<String, Object> lootjs$getData();

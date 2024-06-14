@@ -54,7 +54,7 @@ public interface LootEntry extends LootConditionsContainer<LootEntry> {
             tag = tag.substring(1);
         }
 
-        return new TagLootEntry(TagKey.create(Registries.ITEM, new ResourceLocation(tag)), expand);
+        return new TagLootEntry(TagKey.create(Registries.ITEM, ResourceLocation.parse(tag)), expand);
     }
 
     static CompositeLootEntry alternative(LootEntry... entries) {

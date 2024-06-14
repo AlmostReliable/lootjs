@@ -33,7 +33,7 @@ public class ConditionsContainer {
             conditions.matchKiller(EntityPredicate.Builder.entity());
             GameTestUtils.assertEquals(helper,
                     conditions.<LootItemEntityPropertyCondition>last().entityTarget,
-                    LootContext.EntityTarget.KILLER);
+                    LootContext.EntityTarget.ATTACKER);
         });
     }
 
@@ -44,7 +44,7 @@ public class ConditionsContainer {
             conditions.matchDirectKiller(EntityPredicate.Builder.entity());
             GameTestUtils.assertEquals(helper,
                     conditions.<LootItemEntityPropertyCondition>last().entityTarget,
-                    LootContext.EntityTarget.DIRECT_KILLER);
+                    LootContext.EntityTarget.DIRECT_ATTACKER);
         });
     }
 

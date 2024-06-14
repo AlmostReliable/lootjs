@@ -78,7 +78,7 @@ public class LootJSPlugin implements KubeJSPlugin {
                 case "*":
                     return ItemFilter.ANY;
                 case "#":
-                    ResourceLocation location = new ResourceLocation(str.substring(1));
+                    ResourceLocation location = ResourceLocation.parse(str.substring(1));
                     TagKey<Item> tag = TagKey.create(Registries.ITEM, location);
                     return new ItemFilter.Tag(tag);
                 case "@":
@@ -245,7 +245,7 @@ public class LootJSPlugin implements KubeJSPlugin {
                 return new ResourceLocationFilter.ByMod(str.substring(1));
             }
 
-            return new ResourceLocationFilter.ByLocation(new ResourceLocation(str));
+            return new ResourceLocationFilter.ByLocation(ResourceLocation.parse(str));
         }
 
         if (o instanceof ResourceLocation rl) {
@@ -316,11 +316,11 @@ public class LootJSPlugin implements KubeJSPlugin {
 
         if (o instanceof String str) {
             if (str.startsWith("#")) {
-                ResourceLocation tag = new ResourceLocation(str.substring(1));
+                ResourceLocation tag = ResourceLocation.parse(str.substring(1));
                 return EntityTypePredicate.of(TagKey.create(Registries.ENTITY_TYPE, tag));
             }
 
-            EntityType<?> et = BuiltInRegistries.ENTITY_TYPE.get(new ResourceLocation(str));
+            EntityType<?> et = BuiltInRegistries.ENTITY_TYPE.get(ResourceLocation.parse(str));
             return EntityTypePredicate.of(et);
         }
 

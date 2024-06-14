@@ -38,8 +38,8 @@ public class MatchKillerDistanceTest {
                 .withParameter(LootContextParams.THIS_ENTITY, cow)
                 .withParameter(LootContextParams.ORIGIN, cow.position())
                 .withParameter(LootContextParams.DAMAGE_SOURCE, ds)
-                .withOptionalParameter(LootContextParams.KILLER_ENTITY, ds.getEntity())
-                .withOptionalParameter(LootContextParams.DIRECT_KILLER_ENTITY, ds.getDirectEntity())
+                .withOptionalParameter(LootContextParams.ATTACKING_ENTITY, ds.getEntity())
+                .withOptionalParameter(LootContextParams.DIRECT_ATTACKING_ENTITY, ds.getDirectEntity())
                 .withParameter(LootContextParams.LAST_DAMAGE_PLAYER, player)
                 .withLuck(player.getLuck())
                 .create(LootContextParamSets.ENTITY);
@@ -65,8 +65,8 @@ public class MatchKillerDistanceTest {
                 .withParameter(LootContextParams.THIS_ENTITY, cow)
                 .withParameter(LootContextParams.ORIGIN, cow.position())
                 .withParameter(LootContextParams.DAMAGE_SOURCE, ds)
-                .withOptionalParameter(LootContextParams.KILLER_ENTITY, ds.getEntity())
-                .withOptionalParameter(LootContextParams.DIRECT_KILLER_ENTITY, ds.getDirectEntity())
+                .withOptionalParameter(LootContextParams.ATTACKING_ENTITY, ds.getEntity())
+                .withOptionalParameter(LootContextParams.DIRECT_ATTACKING_ENTITY, ds.getDirectEntity())
                 .withParameter(LootContextParams.LAST_DAMAGE_PLAYER, player)
                 .withLuck(player.getLuck())
                 .create(LootContextParamSets.ENTITY);
