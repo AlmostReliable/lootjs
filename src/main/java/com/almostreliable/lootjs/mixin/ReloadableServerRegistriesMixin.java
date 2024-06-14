@@ -36,6 +36,7 @@ public class ReloadableServerRegistriesMixin {
             return;
         }
 
+        LootJS.storeLookup(arg.compositeAccess());
         LootEvents.invoke(registry);
     }
 }

@@ -164,8 +164,8 @@ public class LootJSPlugin implements KubeJSPlugin {
         bindings.add("LootType", LootType.class);
         bindings.add("ItemFilter", ItemFilter.class);
         bindings.add("LootEntry", LootEntry.class);
-        bindings.add("LootCondition", LootCondition.class);
-        bindings.add("LootFunction", LootFunction.class);
+        bindings.add("LootCondition", new LootCondition());
+        bindings.add("LootFunction", new LootFunction());
 
         bindings.add("IntBounds", MinMaxBounds.Ints.class);
         bindings.add("Bounds", MinMaxBounds.Doubles.class);

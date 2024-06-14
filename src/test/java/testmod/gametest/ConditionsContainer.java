@@ -1,12 +1,11 @@
 package testmod.gametest;
 
 import com.almostreliable.lootjs.BuildConfig;
-import com.almostreliable.lootjs.loot.LootConditionsContainer;
+import com.almostreliable.lootjs.loot.LootCondition;
 import net.minecraft.advancements.critereon.EntityPredicate;
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.world.level.storage.loot.LootContext;
-import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
 import net.minecraft.world.level.storage.loot.predicates.LootItemEntityPropertyCondition;
 import net.neoforged.neoforge.gametest.GameTestHolder;
 import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
@@ -18,10 +17,9 @@ public class ConditionsContainer {
     @GameTest(template = GameTestTemplates.EMPTY)
     public void entityTarget_Entity(GameTestHelper helper) {
         helper.succeedIf(() -> {
-            TestLootConditionsContainer conditions = new TestLootConditionsContainer();
-            conditions.matchEntity(EntityPredicate.Builder.entity());
+            var condition = (LootItemEntityPropertyCondition) new LootCondition().matchEntity(EntityPredicate.Builder.entity());
             GameTestUtils.assertEquals(helper,
-                    conditions.<LootItemEntityPropertyCondition>last().entityTarget,
+                    condition.entityTarget,
                     LootContext.EntityTarget.THIS);
         });
     }
@@ -29,10 +27,9 @@ public class ConditionsContainer {
     @GameTest(template = GameTestTemplates.EMPTY)
     public void entityTarget_Killer(GameTestHelper helper) {
         helper.succeedIf(() -> {
-            TestLootConditionsContainer conditions = new TestLootConditionsContainer();
-            conditions.matchKiller(EntityPredicate.Builder.entity());
+            var condition = (LootItemEntityPropertyCondition) new LootCondition().matchKiller(EntityPredicate.Builder.entity());
             GameTestUtils.assertEquals(helper,
-                    conditions.<LootItemEntityPropertyCondition>last().entityTarget,
+                    condition.entityTarget,
                     LootContext.EntityTarget.ATTACKER);
         });
     }
@@ -40,26 +37,10 @@ public class ConditionsContainer {
     @GameTest(template = GameTestTemplates.EMPTY)
     public void entityTarget_DirectKiller(GameTestHelper helper) {
         helper.succeedIf(() -> {
-            TestLootConditionsContainer conditions = new TestLootConditionsContainer();
-            conditions.matchDirectKiller(EntityPredicate.Builder.entity());
+            var condition = (LootItemEntityPropertyCondition) new LootCondition().matchDirectKiller(EntityPredicate.Builder.entity());
             GameTestUtils.assertEquals(helper,
-                    conditions.<LootItemEntityPropertyCondition>last().entityTarget,
+                    condition.entityTarget,
                     LootContext.EntityTarget.DIRECT_ATTACKER);
         });
-    }
-
-    public static class TestLootConditionsContainer implements LootConditionsContainer<TestLootConditionsContainer> {
-        private LootItemCondition last;
-
-        @Override
-        public TestLootConditionsContainer addCondition(LootItemCondition condition) {
-            this.last = condition;
-            return this;
-        }
-
-        public <T extends LootItemCondition> T last() {
-            //noinspection unchecked
-            return (T) last;
-        }
     }
 }

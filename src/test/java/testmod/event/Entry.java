@@ -13,7 +13,10 @@ public class Entry {
         event.getEntityTable(EntityType.COW).clear().createPool().addEntry(LootEntry.ofItem(Items.DIAMOND));
 
         event.getEntityTable(EntityType.CREEPER).createPool(pool -> {
-//    pool.name(CREEPER_TEST_POOL).addEntry(LootEntry.ofItem(Items.ANDESITE).)
+//pool.addEntry(LootEntry.ofItem(Items.DIAMOND_SWORD).enchant(builder -> {
+//    builder.
+//}))
         });
+
     }
 }

@@ -1,11 +1,11 @@
 package com.almostreliable.lootjs.core.entry;
 
 import com.almostreliable.lootjs.loot.LootConditionList;
-import com.almostreliable.lootjs.loot.LootFunction;
 import com.almostreliable.lootjs.loot.LootFunctionList;
 import com.almostreliable.lootjs.loot.LootFunctionsContainer;
 import net.minecraft.world.level.storage.loot.functions.LootItemFunction;
 import net.minecraft.world.level.storage.loot.functions.LootItemFunctions;
+import net.minecraft.world.level.storage.loot.functions.SetItemCountFunction;
 import net.minecraft.world.level.storage.loot.providers.number.NumberProvider;
 
 import java.util.function.Consumer;
@@ -32,7 +32,7 @@ public interface SimpleLootEntry extends LootEntry, LootFunctionsContainer<Simpl
     }
 
     default SimpleLootEntry setCount(NumberProvider numberProvider) {
-        LootItemFunction sc = LootFunction.setCount(numberProvider);
+        LootItemFunction sc = SetItemCountFunction.setCount(numberProvider).build();
         if (!getFunctions().replace(LootItemFunctions.SET_COUNT, sc)) {
             getFunctions().add(sc);
         }
