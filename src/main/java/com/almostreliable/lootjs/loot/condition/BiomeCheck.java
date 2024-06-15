@@ -1,19 +1,21 @@
 package com.almostreliable.lootjs.loot.condition;
 
+import com.almostreliable.lootjs.LootJSConditions;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
-import net.minecraft.core.Vec3i;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
+import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
+import net.minecraft.world.level.storage.loot.predicates.LootItemConditionType;
 import net.minecraft.world.phys.Vec3;
 
 import java.util.Collections;
 import java.util.List;
 
-public class BiomeCheck implements IExtendedLootCondition {
+public class BiomeCheck implements LootItemCondition {
     protected final List<ResourceKey<Biome>> biomes;
     protected final List<TagKey<Biome>> tags;
 
@@ -53,5 +55,10 @@ public class BiomeCheck implements IExtendedLootCondition {
 
     public List<TagKey<Biome>> getTags() {
         return Collections.unmodifiableList(tags);
+    }
+
+    @Override
+    public LootItemConditionType getType() {
+        return LootJSConditions.BIOME.value();
     }
 }

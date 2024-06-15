@@ -26,6 +26,7 @@ import java.util.stream.Stream;
 public class LootJS {
     public static final Logger LOG = LogManager.getLogger("LootJS");
     public static Consumer<String> DEBUG_ACTION = LOG::info;
+
     private static final DeferredRegister<HolderSetType> HOLDER_SET_TYPES = DeferredRegister.create(NeoForgeRegistries.Keys.HOLDER_SET_TYPES,
             BuildConfig.MOD_ID);
     public static final Holder<HolderSetType> MOD_HOLDER_SET = HOLDER_SET_TYPES.register("by_mod",
@@ -44,6 +45,8 @@ public class LootJS {
 
     public LootJS(IEventBus bus) {
         bus.addListener(this::onRegister);
+        HOLDER_SET_TYPES.register(bus);
+        LootJSConditions.CONDITIONS.register(bus);
     }
 
     public static HolderLookup.Provider lookup() {

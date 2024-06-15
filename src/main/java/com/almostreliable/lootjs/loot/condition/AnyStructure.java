@@ -1,5 +1,6 @@
 package com.almostreliable.lootjs.loot.condition;
 
+import com.almostreliable.lootjs.LootJSConditions;
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
@@ -13,13 +14,15 @@ import net.minecraft.world.level.StructureManager;
 import net.minecraft.world.level.levelgen.structure.Structure;
 import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
+import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
+import net.minecraft.world.level.storage.loot.predicates.LootItemConditionType;
 import net.minecraft.world.phys.Vec3;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class AnyStructure implements IExtendedLootCondition {
+public class AnyStructure implements LootItemCondition {
 
     private final List<StructureLocator> structureLocators;
     private final boolean exact;
@@ -61,6 +64,11 @@ public class AnyStructure implements IExtendedLootCondition {
 
     public boolean isExact() {
         return exact;
+    }
+
+    @Override
+    public LootItemConditionType getType() {
+        return LootJSConditions.ANY_STRUCTURE.value();
     }
 
     public interface StructureLocator {

@@ -1,9 +1,11 @@
 package com.almostreliable.lootjs.loot.condition;
 
+import com.almostreliable.lootjs.LootJSConditions;
 import net.minecraft.core.Holder;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.level.biome.Biome;
+import net.minecraft.world.level.storage.loot.predicates.LootItemConditionType;
 
 import java.util.List;
 
@@ -27,5 +29,11 @@ public class AnyBiomeCheck extends BiomeCheck {
         }
 
         return false;
+    }
+
+
+    @Override
+    public LootItemConditionType getType() {
+        return LootJSConditions.ANY_BIOME.value();
     }
 }

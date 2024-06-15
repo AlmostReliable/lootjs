@@ -1,9 +1,12 @@
 package com.almostreliable.lootjs.loot.condition;
 
+import com.almostreliable.lootjs.LootJSConditions;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.storage.loot.LootContext;
+import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
+import net.minecraft.world.level.storage.loot.predicates.LootItemConditionType;
 
-public class AnyDimension implements IExtendedLootCondition {
+public class AnyDimension implements LootItemCondition {
 
     private final ResourceLocation[] dimensions;
 
@@ -21,5 +24,11 @@ public class AnyDimension implements IExtendedLootCondition {
         }
 
         return false;
+    }
+
+
+    @Override
+    public LootItemConditionType getType() {
+        return LootJSConditions.ANY_DIMENSION.value();
     }
 }
