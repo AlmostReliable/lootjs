@@ -73,7 +73,6 @@ loom {
         }
 
         forEach {
-            it.runDir("run")
             // Allows DCEVM hot-swapping when using the JetBrains Runtime (https://github.com/JetBrains/JetBrainsRuntime).
             it.vmArgs("-XX:+IgnoreUnrecognizedVMOptions", "-XX:+AllowEnhancedClassRedefinition")
             if (it.environment == "client") {

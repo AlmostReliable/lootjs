@@ -21,7 +21,7 @@ import dev.latvian.mods.kubejs.event.EventGroupRegistry;
 import dev.latvian.mods.kubejs.item.ItemStackJS;
 import dev.latvian.mods.kubejs.item.ingredient.IngredientJS;
 import dev.latvian.mods.kubejs.script.BindingRegistry;
-import dev.latvian.mods.kubejs.script.WrapperRegistry;
+import dev.latvian.mods.kubejs.script.TypeWrapperRegistry;
 import dev.latvian.mods.kubejs.util.ConsoleJS;
 import dev.latvian.mods.kubejs.util.NBTUtils;
 import dev.latvian.mods.rhino.Context;
@@ -69,7 +69,7 @@ public class LootJSPlugin implements KubeJSPlugin {
         return null;
     }
 
-    private static ItemFilter ofItemFilterSingle(@Nullable Object o) {
+    private static ItemFilter ofItemFilterSingle(Context cx, @Nullable Object o) {
         if (o instanceof ItemFilter i) return i;
 
         if (o instanceof String str && !str.isEmpty()) {
@@ -90,7 +90,7 @@ public class LootJSPlugin implements KubeJSPlugin {
             }
         }
 
-        Ingredient ingredient = IngredientJS.of(o);
+        Ingredient ingredient = IngredientJS.wrap(cx, o);
         if (ingredient.isEmpty()) {
             return ItemFilter.EMPTY;
         }
@@ -98,11 +98,11 @@ public class LootJSPlugin implements KubeJSPlugin {
         return new ItemFilter.Ingredient(ingredient);
     }
 
-    private static ItemFilter ofItemFilter(Object o) {
+    private static ItemFilter ofItemFilter(Context cx, Object o) {
         if (o instanceof List<?> list) {
             List<ItemFilter> filters = new ArrayList<>(list.size());
             for (Object entry : list) {
-                var filter = ofItemFilter(entry);
+                var filter = ofItemFilter(cx, entry);
                 filters.add(filter);
             }
 
@@ -117,7 +117,7 @@ public class LootJSPlugin implements KubeJSPlugin {
             };
         }
 
-        return ofItemFilterSingle(o);
+        return ofItemFilterSingle(cx, o);
     }
 
     private static BlockFilter ofBlockFilter(Object o) {
@@ -187,7 +187,7 @@ public class LootJSPlugin implements KubeJSPlugin {
     }
 
     @Override
-    public void registerTypeWrappers(WrapperRegistry registry) {
+    public void registerTypeWrappers(TypeWrapperRegistry registry) {
         registry.register(BlockFilter.class, LootJSPlugin::ofBlockFilter);
         registry.register(LootEntry.class, LootJSPlugin::ofLootEntry);
         registry.register(SingleLootEntry.class, LootJSPlugin::ofSingleLootEntry);
@@ -259,12 +259,12 @@ public class LootJSPlugin implements KubeJSPlugin {
         throw new IllegalArgumentException("Invalid resource location filter: " + o);
     }
 
-    private static ItemStackFactory ofItemStackFactory(@Nullable Object o) {
+    private static ItemStackFactory ofItemStackFactory(Context cx, @Nullable Object o) {
         if (o instanceof ItemStackFactory factory) {
             return factory;
         }
 
-        ItemStack itemStack = ItemStackJS.of(o);
+        ItemStack itemStack = ItemStackJS.wrap(cx, o);
         if (itemStack.isEmpty()) {
             return ItemStackFactory.EMPTY;
         }
@@ -272,12 +272,12 @@ public class LootJSPlugin implements KubeJSPlugin {
         return context -> itemStack;
     }
 
-    public static SingleLootEntry ofSingleLootEntry(@Nullable Object o) {
+    public static SingleLootEntry ofSingleLootEntry(Context cx, @Nullable Object o) {
         if (o instanceof SingleLootEntry e) {
             return e;
         }
 
-        ItemStack itemStack = ItemStackJS.of(o);
+        ItemStack itemStack = ItemStackJS.wrap(cx, o);
         if (itemStack.isEmpty()) {
             ConsoleJS.SERVER.error("[LootEntry.of()] Invalid item stack, returning empty stack: " + o);
             ConsoleJS.SERVER.error("- Consider using `LootEntry.empty()` if you want to create an empty loot entry.");
@@ -287,7 +287,7 @@ public class LootJSPlugin implements KubeJSPlugin {
         return LootEntry.of(itemStack);
     }
 
-    public static LootEntry ofLootEntry(@Nullable Object o) {
+    public static LootEntry ofLootEntry(Context cx, @Nullable Object o) {
         if (o instanceof LootEntry entry) {
             return entry;
         }
@@ -297,7 +297,7 @@ public class LootJSPlugin implements KubeJSPlugin {
             return LootEntry.tag(tag, false);
         }
 
-        return ofSingleLootEntry(o);
+        return ofSingleLootEntry(cx, o);
     }
 
     public static EntityTypePredicate ofEntityTypePredicate(@Nullable Object o) {
