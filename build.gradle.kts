@@ -56,12 +56,14 @@ loom {
     }
 
     runs {
+        val exampleScripts = project.rootDir.resolve("example_scripts").toString()
         create("gametest") {
             name("Gametest")
             server()
             source(sourceSets.test.get())
             property("neoforge.gameTestServer", "true")
             property("neoforge.enabledGameTestNamespaces", modId)
+            property("lootjs.example_scripts", exampleScripts)
         }
 
         create("testmod") {
@@ -70,6 +72,7 @@ loom {
             source(sourceSets.test.get())
             property("neoforge.gameTestServer", "true")
             property("neoforge.enabledGameTestNamespaces", modId)
+            property("lootjs.example_scripts", exampleScripts)
         }
 
         forEach {

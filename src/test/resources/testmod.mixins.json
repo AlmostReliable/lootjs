@@ -1,0 +1,12 @@
+{
+    "required": true,
+    "package": "testmod.mixin",
+    "compatibilityLevel": "JAVA_17",
+    "mixins": [
+        "ScriptManagerMixin"
+    ],
+    "injectors": {
+        "defaultRequire": 1
+    },
+    "minVersion": "0.8"
+}
