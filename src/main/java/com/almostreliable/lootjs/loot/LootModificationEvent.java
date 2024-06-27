@@ -8,7 +8,7 @@ import com.almostreliable.lootjs.util.BlockFilter;
 import com.almostreliable.lootjs.util.Utils;
 import com.google.common.base.Preconditions;
 import dev.latvian.mods.rhino.util.HideFromJS;
-import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.HolderSet;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EntityType;
 import net.neoforged.neoforge.common.loot.IGlobalLootModifier;
@@ -31,33 +31,18 @@ public class LootModificationEvent {
         return modifiers.keySet().stream().map(ResourceLocation::toString).collect(Collectors.toList());
     }
 
-    public void removeGlobalModifier(String... locationOrModIds) {
-        Set<String> modIds = new HashSet<>();
-        Set<ResourceLocation> locations = new HashSet<>();
-        for (String locationOrModId : locationOrModIds) {
-            if (locationOrModId.startsWith("@")) {
-                modIds.add(locationOrModId.substring(1));
-            } else {
-                locations.add(ResourceLocation.parse(locationOrModId));
+    public void removeGlobalModifier(ResourceLocationFilter... filters) {
+        Set<ResourceLocation> toRemove = modifiers.keySet().stream().filter(resourceLocation -> {
+            for (ResourceLocationFilter filter : filters) {
+                if (filter.test(resourceLocation)) {
+                    return true;
+                }
             }
-        }
 
-        Set<ResourceLocation> collectedByModIds = modifiers.keySet()
-                .stream()
-                .filter(rl -> modIds.contains(rl.getNamespace()))
-                .collect(Collectors.toSet());
-        Set<ResourceLocation> collectedByLocations = modifiers.keySet()
-                .stream()
-                .filter(locations::contains)
-                .collect(Collectors.toSet());
-
-        remove(collectedByModIds);
-        remove(collectedByLocations);
-    }
-
-    private void remove(Set<ResourceLocation> locations) {
-        locations.forEach(modifiers::remove);
-        removedGlobalModifiers.addAll(locations);
+            return false;
+        }).collect(Collectors.toSet());
+        toRemove.forEach(modifiers::remove);
+        removedGlobalModifiers.addAll(toRemove);
     }
 
     public void enableLogging() {
@@ -102,19 +87,9 @@ public class LootModificationEvent {
         return builder;
     }
 
-    public LootModifier.Builder addEntityModifier(EntityType<?>... entities) {
-        Set<EntityType<?>> set = Arrays.stream(entities).filter(Objects::nonNull).collect(Collectors.toSet());
-
-        if (set.isEmpty()) {
-            throw new IllegalArgumentException("No valid entities given.");
-        }
-
-        List<ResourceLocation> entityIds = set
-                .stream()
-                .map(BuiltInRegistries.ENTITY_TYPE::getKey)
-                .collect(Collectors.toList());
-        LootModifier.Builder builder = new LootModifier.Builder(new LootModifier.EntityFiltered(set),
-                Utils.quote("Entities", entityIds));
+    public LootModifier.Builder addEntityModifier(HolderSet<EntityType<?>> entities) {
+        LootModifier.Builder builder = new LootModifier.Builder(new LootModifier.EntityFiltered(entities),
+                entities.toString());
         modifierBuilders.add(builder);
         return builder;
     }

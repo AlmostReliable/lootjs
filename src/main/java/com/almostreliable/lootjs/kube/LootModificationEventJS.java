@@ -3,7 +3,7 @@ package com.almostreliable.lootjs.kube;
 import com.almostreliable.lootjs.loot.LootModificationEvent;
 import dev.latvian.mods.kubejs.event.EventResult;
 import dev.latvian.mods.kubejs.event.KubeEvent;
-import dev.latvian.mods.kubejs.util.ConsoleJS;
+import dev.latvian.mods.kubejs.script.ConsoleJS;
 import net.minecraft.resources.ResourceLocation;
 import net.neoforged.neoforge.common.loot.IGlobalLootModifier;
 
@@ -18,10 +18,6 @@ public class LootModificationEventJS extends LootModificationEvent implements Ku
 
     @Override
     public void afterPosted(EventResult result) {
-        if (LootJSPlugin.eventsAreDisabled()) {
-            return;
-        }
-
         if (!removedGlobalModifiers.isEmpty()) {
             ConsoleJS.SERVER.info("[LootJS] Removed " + removedGlobalModifiers.size() + " global loot modifiers: " +
                                   removedGlobalModifiers

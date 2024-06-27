@@ -5,6 +5,7 @@ import com.almostreliable.lootjs.loot.condition.AnyBiomeCheck;
 import com.almostreliable.lootjs.loot.condition.BiomeCheck;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
+import net.minecraft.core.Registry;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
@@ -14,6 +15,7 @@ import net.minecraft.tags.BiomeTags;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.GameType;
 import net.minecraft.world.level.biome.Biome;
+import net.minecraft.world.level.biome.Biomes;
 import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.gametest.GameTestHolder;
@@ -98,6 +100,10 @@ public class BiomeCheckTest {
         var types = biomeHolder.tags().toList();
         AnyBiomeCheck check = new AnyBiomeCheck(new ArrayList<>(), new ArrayList<>(types));
         var biomeReg = helper.getLevel().registryAccess().registryOrThrow(Registries.BIOME);
+        helper.getLevel().registryAccess().registryOrThrow(Registries.BIOME).getHolderOrThrow(Biomes.BADLANDS);
+
+        ResourceLocation registry = Biomes.BADLANDS.registry();
+        ResourceKey<Registry<Object>> registryKey = ResourceKey.createRegistryKey(registry);
         helper.succeedIf(() -> GameTestUtils.assertTrue(helper,
                 check.test(ctx),
                 "Biome " + biomeReg.getKey(biomeHolder.value()) + " tag check should pass"));

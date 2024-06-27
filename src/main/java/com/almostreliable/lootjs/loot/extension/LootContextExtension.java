@@ -4,6 +4,7 @@ import com.almostreliable.lootjs.LootJS;
 import com.almostreliable.lootjs.core.LootType;
 import com.almostreliable.lootjs.util.LootContextUtils;
 import dev.latvian.mods.rhino.util.RemapPrefixForJS;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.damagesource.DamageSource;
@@ -24,6 +25,10 @@ public interface LootContextExtension {
     }
 
     LootContext lootjs$self();
+
+    default ResourceLocation lootjs$getId() {
+        return lootjs$self().getQueriedLootTableId();
+    }
 
     default boolean lootjs$isType(LootType type) {
         return type == lootjs$getType();

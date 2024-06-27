@@ -5,6 +5,7 @@ import com.almostreliable.lootjs.core.LootType;
 import com.almostreliable.lootjs.core.filters.ItemFilter;
 import com.almostreliable.lootjs.core.filters.ResourceLocationFilter;
 import com.almostreliable.lootjs.loot.extension.LootContextExtension;
+import net.minecraft.core.HolderSet;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.level.block.state.BlockState;
@@ -16,7 +17,6 @@ import net.minecraft.world.level.storage.loot.providers.number.NumberProvider;
 
 import java.util.Collection;
 import java.util.List;
-import java.util.Set;
 import java.util.function.Predicate;
 
 public class LootModifier extends GroupedLootAction {
@@ -86,12 +86,12 @@ public class LootModifier extends GroupedLootAction {
         }
     }
 
-    public record EntityFiltered(Set<EntityType<?>> entities) implements Predicate<LootContext> {
+    public record EntityFiltered(HolderSet<EntityType<?>> entities) implements Predicate<LootContext> {
 
         @Override
         public boolean test(LootContext context) {
             Entity entity = context.getParamOrNull(LootContextParams.THIS_ENTITY);
-            return entity != null && entities.contains(entity.getType()) &&
+            return entity != null && entities.contains(entity.getType().builtInRegistryHolder()) &&
                    LootContextExtension.cast(context).lootjs$isType(LootType.ENTITY);
         }
     }

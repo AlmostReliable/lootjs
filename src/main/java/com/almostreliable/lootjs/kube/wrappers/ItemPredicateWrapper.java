@@ -4,7 +4,7 @@ import com.almostreliable.lootjs.core.filters.ItemFilter;
 import com.almostreliable.lootjs.core.filters.ItemFilterWrapper;
 import com.almostreliable.lootjs.util.ModHolderSet;
 import dev.latvian.mods.kubejs.item.ingredient.IngredientJS;
-import dev.latvian.mods.rhino.Context;
+import dev.latvian.mods.kubejs.util.RegistryAccessContainer;
 import net.minecraft.advancements.critereon.ItemPredicate;
 import net.minecraft.advancements.critereon.MinMaxBounds;
 import net.minecraft.core.HolderSet;
@@ -23,15 +23,15 @@ import java.util.Optional;
 
 public class ItemPredicateWrapper {
 
-    public static ItemPredicate.Builder ofBuilder(Context cx, @Nullable Object o) {
+    public static ItemPredicate.Builder ofBuilder(RegistryAccessContainer registries, @Nullable Object o) {
         if (o instanceof ItemPredicate.Builder b) {
             return b;
         }
 
-        return new SelfBuilder(of(cx, o));
+        return new SelfBuilder(of(registries, o));
     }
 
-    public static ItemPredicate of(Context cx, @Nullable Object o) {
+    public static ItemPredicate of(RegistryAccessContainer registries, @Nullable Object o) {
         if (o instanceof ItemPredicate i) return i;
 
         if (o instanceof ItemFilter filter) {
@@ -71,7 +71,7 @@ public class ItemPredicateWrapper {
             }
         }
 
-        var items = IngredientJS.wrap(cx, o).getItems();
+        var items = IngredientJS.wrap(registries, o).getItems();
         Optional<HolderSet<Item>> holders = Optional.of(HolderSet.direct(ItemStack::getItemHolder, items));
 
         return new ItemPredicate(holders,

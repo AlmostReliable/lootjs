@@ -28,13 +28,12 @@ import java.util.function.Consumer;
 public interface LootFunctionsContainer<F> {
 
     default F enchantRandomly() {
-        return enchantRandomly(List.of());
+        return addFunction(EnchantRandomlyFunction.randomEnchantment().build());
     }
 
-    default F enchantRandomly(List<Holder<Enchantment>> enchantments) {
+    default F enchantRandomly(HolderSet<Enchantment> enchantments) {
         var enchantRandomlyFunctionBuilder = EnchantRandomlyFunction.randomEnchantment();
-        HolderSet<Enchantment> asHolderSet = HolderSet.direct(enchantments);
-        enchantRandomlyFunctionBuilder.withOneOf(asHolderSet);
+        enchantRandomlyFunctionBuilder.withOneOf(enchantments);
         return addFunction(enchantRandomlyFunctionBuilder.build());
     }
 
@@ -129,7 +128,7 @@ public interface LootFunctionsContainer<F> {
         return addFunction(SetComponentsFunction.setComponent(DataComponents.CUSTOM_NAME, component).build());
     }
 
-    default F setNbt(CompoundTag tag) {
+    default F setCustomData(CompoundTag tag) {
         return addFunction(SetCustomDataFunction.setCustomData(tag).build());
     }
 
