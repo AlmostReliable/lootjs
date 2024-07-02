@@ -2,8 +2,8 @@ package com.almostreliable.lootjs.kube;
 
 import com.almostreliable.lootjs.LootEvents;
 import com.almostreliable.lootjs.LootJS;
-import com.almostreliable.lootjs.core.ItemStackFactory;
 import com.almostreliable.lootjs.core.LootType;
+import com.almostreliable.lootjs.core.entry.ItemLootEntry;
 import com.almostreliable.lootjs.core.entry.LootEntry;
 import com.almostreliable.lootjs.core.entry.SingleLootEntry;
 import com.almostreliable.lootjs.core.filters.IdFilter;
@@ -188,8 +188,7 @@ public class LootJSPlugin implements KubeJSPlugin {
     public void registerTypeWrappers(TypeWrapperRegistry registry) {
         registry.register(BlockFilter.class, LootJSPlugin::ofBlockFilter);
         registry.register(LootEntry.class, LootJSPlugin::ofLootEntry);
-        registry.register(SingleLootEntry.class, LootJSPlugin::ofSingleLootEntry);
-        registry.register(ItemStackFactory.class, LootJSPlugin::ofItemStackFactory);
+        registry.register(ItemLootEntry.class, LootJSPlugin::ofItemLootEntry);
         registry.register(MinMaxBounds.Doubles.class, MinMaxBoundsWrapper::ofMinMaxDoubles);
         registry.register(MinMaxBounds.Ints.class, MinMaxBoundsWrapper::ofMinMaxInt);
         registry.register(EntityTypePredicate.class, LootJSPlugin::ofEntityTypePredicate);
@@ -214,7 +213,7 @@ public class LootJSPlugin implements KubeJSPlugin {
         registry.register(LootEntry.class, TypeInfo.of(LootEntry.class).or(ItemStackJS.TYPE_INFO));
         registry.register(SingleLootEntry.class, TypeInfo.of(SingleLootEntry.class).or(ItemStackJS.TYPE_INFO));
         registry.register(BlockFilter.class, TypeInfo.of(BlockFilter.class).or(TypeInfo.of(BlockStatePredicate.class)));
-        registry.register(BlockFilter.class,
+        registry.register(IdFilter.class,
                 TypeInfo.of(IdFilter.class).or(TypeInfo.STRING).or(TypeInfo.of(Pattern.class)));
     }
 
@@ -259,21 +258,8 @@ public class LootJSPlugin implements KubeJSPlugin {
         };
     }
 
-    private static ItemStackFactory ofItemStackFactory(RegistryAccessContainer registries, @Nullable Object o) {
-        if (o instanceof ItemStackFactory factory) {
-            return factory;
-        }
-
-        ItemStack itemStack = ItemStackJS.wrap(registries, o);
-        if (itemStack.isEmpty()) {
-            return ItemStackFactory.EMPTY;
-        }
-
-        return context -> itemStack;
-    }
-
-    public static SingleLootEntry ofSingleLootEntry(RegistryAccessContainer registries, @Nullable Object o) {
-        if (o instanceof SingleLootEntry e) {
+    public static ItemLootEntry ofItemLootEntry(RegistryAccessContainer registries, @Nullable Object o) {
+        if (o instanceof ItemLootEntry e) {
             return e;
         }
 
@@ -281,7 +267,7 @@ public class LootJSPlugin implements KubeJSPlugin {
         if (itemStack.isEmpty()) {
             ConsoleJS.SERVER.error("[LootEntry.of()] Invalid item stack, returning empty stack: " + o);
             ConsoleJS.SERVER.error("- Consider using `LootEntry.empty()` if you want to create an empty loot entry.");
-            return LootEntry.empty();
+            return LootEntry.of(ItemStack.EMPTY);
         }
 
         return LootEntry.of(itemStack);
@@ -297,7 +283,7 @@ public class LootJSPlugin implements KubeJSPlugin {
             return LootEntry.tag(tag, false);
         }
 
-        return ofSingleLootEntry(registries, o);
+        return ofItemLootEntry(registries, o);
     }
 
     public static EntityTypePredicate ofEntityTypePredicate(@Nullable Object o) {

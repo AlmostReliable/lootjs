@@ -1,17 +1,12 @@
 package com.almostreliable.lootjs.core.entry;
 
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.entries.LootPoolSingletonContainer;
 import net.minecraft.world.level.storage.loot.entries.TagEntry;
-import net.minecraft.world.level.storage.loot.functions.LootItemFunction;
 import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
-import org.jetbrains.annotations.Nullable;
 
 public class TagLootEntry extends AbstractSimpleLootEntry<TagEntry> implements SingleLootEntry {
 
@@ -54,36 +49,6 @@ public class TagLootEntry extends AbstractSimpleLootEntry<TagEntry> implements S
         }
 
         return tag.equals(getTag());
-    }
-
-    @Nullable
-    @Override
-    public ItemStack create(LootContext context) {
-        if (!getExpand()) {
-            return null;
-        }
-
-        for (LootItemCondition condition : getConditions()) {
-            if (!condition.test(context)) {
-                return null;
-            }
-        }
-
-        var item = BuiltInRegistries.ITEM
-                .getTag(vanillaEntry.tag)
-                .flatMap(holders -> holders.getRandomElement(context.getRandom()))
-                .map(ItemStack::new)
-                .orElse(null);
-
-        if (item == null || item.isEmpty()) {
-            return null;
-        }
-
-        for (LootItemFunction function : getFunctions()) {
-            item = function.apply(item, context);
-        }
-
-        return null;
     }
 
     @Override

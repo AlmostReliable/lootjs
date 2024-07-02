@@ -78,7 +78,6 @@ public class ItemLootEntry extends AbstractSimpleLootEntry<LootItem> implements 
     }
 
     @Nullable
-    @Override
     public ItemStack create(LootContext context) {
         for (LootItemCondition condition : getConditions()) {
             if (!condition.test(context)) {

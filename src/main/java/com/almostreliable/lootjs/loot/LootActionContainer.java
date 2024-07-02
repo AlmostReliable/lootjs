@@ -1,6 +1,6 @@
 package com.almostreliable.lootjs.loot;
 
-import com.almostreliable.lootjs.core.ItemStackFactory;
+import com.almostreliable.lootjs.core.entry.ItemLootEntry;
 import com.almostreliable.lootjs.core.entry.LootEntry;
 import com.almostreliable.lootjs.core.filters.ItemFilter;
 import com.almostreliable.lootjs.loot.modifier.GroupedLootAction;
@@ -32,12 +32,12 @@ public interface LootActionContainer<A extends LootActionContainer<?>> {
         return addAction(new RemoveLootAction(filter));
     }
 
-    default A replaceLoot(ItemFilter filter, ItemStackFactory itemStackFactory) {
-        return replaceLoot(filter, itemStackFactory, false);
+    default A replaceLoot(ItemFilter filter, ItemLootEntry itemLootEntry) {
+        return replaceLoot(filter, itemLootEntry, false);
     }
 
-    default A replaceLoot(ItemFilter filter, ItemStackFactory itemStackFactory, boolean preserveCount) {
-        return addAction(new ReplaceLootAction(filter, itemStackFactory, preserveCount));
+    default A replaceLoot(ItemFilter filter, ItemLootEntry itemLootEntry, boolean preserveCount) {
+        return addAction(new ReplaceLootAction(filter, itemLootEntry, preserveCount));
     }
 
     default A modifyLoot(ItemFilter filter, ModifyLootAction.Callback callback) {

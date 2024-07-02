@@ -1,5 +1,6 @@
 package com.almostreliable.lootjs.core;
 
+import com.almostreliable.lootjs.core.entry.ItemLootEntry;
 import com.almostreliable.lootjs.core.entry.LootEntry;
 import com.almostreliable.lootjs.core.filters.ItemFilter;
 import com.almostreliable.lootjs.util.NullableFunction;
@@ -84,11 +85,11 @@ public class LootBucket implements Iterable<ItemStack> {
         }
     }
 
-    public void replace(ItemFilter filter, ItemStackFactory itemStackFactory) {
-        replace(filter, itemStackFactory, false);
+    public void replace(ItemFilter filter, ItemLootEntry itemLootEntry) {
+        replace(filter, itemLootEntry, false);
     }
 
-    public void replace(ItemFilter filter, ItemStackFactory itemStackFactory, boolean preserveCount) {
+    public void replace(ItemFilter filter, ItemLootEntry itemLootEntry, boolean preserveCount) {
         var it = iterator();
         while (it.hasNext()) {
             ItemStack thisItem = it.next();
@@ -96,7 +97,7 @@ public class LootBucket implements Iterable<ItemStack> {
                 continue;
             }
 
-            ItemStack newItem = itemStackFactory.create(context);
+            ItemStack newItem = itemLootEntry.create(context);
             if (newItem == null) {
                 continue;
             }
