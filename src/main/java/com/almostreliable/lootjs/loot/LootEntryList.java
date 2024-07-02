@@ -4,7 +4,7 @@ import com.almostreliable.lootjs.LootJS;
 import com.almostreliable.lootjs.core.entry.CompositeLootEntry;
 import com.almostreliable.lootjs.core.entry.LootEntry;
 import com.almostreliable.lootjs.core.entry.SimpleLootEntry;
-import com.almostreliable.lootjs.core.filters.ResourceLocationFilter;
+import com.almostreliable.lootjs.core.filters.IdFilter;
 import com.almostreliable.lootjs.loot.table.LootEntriesTransformer;
 import com.almostreliable.lootjs.loot.table.LootEntryAppender;
 import com.almostreliable.lootjs.util.DebugInfo;
@@ -128,7 +128,7 @@ public class LootEntryList extends ListHolder<LootEntry, LootPoolEntryContainer>
         return this;
     }
 
-    public boolean remove(ResourceLocationFilter type) {
+    public boolean remove(IdFilter type) {
         return elements.removeIf(element -> type.test(BuiltInRegistries.LOOT_POOL_ENTRY_TYPE.getKey(element.getType())));
     }
 

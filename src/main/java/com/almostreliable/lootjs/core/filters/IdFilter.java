@@ -7,8 +7,8 @@ import java.util.List;
 import java.util.function.Predicate;
 import java.util.regex.Pattern;
 
-public interface ResourceLocationFilter extends Predicate<ResourceLocation> {
-    record ByLocation(ResourceLocation location) implements ResourceLocationFilter {
+public interface IdFilter extends Predicate<ResourceLocation> {
+    record ByLocation(ResourceLocation location) implements IdFilter {
         @Override
         public boolean test(ResourceLocation resourceLocation) {
             return location.equals(resourceLocation);
@@ -20,7 +20,7 @@ public interface ResourceLocationFilter extends Predicate<ResourceLocation> {
         }
     }
 
-    record ByPattern(Pattern pattern) implements ResourceLocationFilter {
+    record ByPattern(Pattern pattern) implements IdFilter {
         @Override
         public boolean test(ResourceLocation resourceLocation) {
             return pattern.matcher(resourceLocation.toString()).matches();
@@ -32,7 +32,7 @@ public interface ResourceLocationFilter extends Predicate<ResourceLocation> {
         }
     }
 
-    record ByMod(String mod) implements ResourceLocationFilter {
+    record ByMod(String mod) implements IdFilter {
 
         @Override
         public boolean test(ResourceLocation resourceLocation) {
@@ -45,7 +45,7 @@ public interface ResourceLocationFilter extends Predicate<ResourceLocation> {
         }
     }
 
-    record Or(List<ResourceLocationFilter> filters) implements ResourceLocationFilter {
+    record Or(List<IdFilter> filters) implements IdFilter {
         @Override
         public boolean test(ResourceLocation resourceLocation) {
             return filters.stream().anyMatch(filter -> filter.test(resourceLocation));

@@ -6,9 +6,9 @@ import com.almostreliable.lootjs.core.ItemStackFactory;
 import com.almostreliable.lootjs.core.LootType;
 import com.almostreliable.lootjs.core.entry.LootEntry;
 import com.almostreliable.lootjs.core.entry.SingleLootEntry;
+import com.almostreliable.lootjs.core.filters.IdFilter;
 import com.almostreliable.lootjs.core.filters.ItemFilter;
 import com.almostreliable.lootjs.core.filters.Resolver;
-import com.almostreliable.lootjs.core.filters.ResourceLocationFilter;
 import com.almostreliable.lootjs.kube.wrappers.*;
 import com.almostreliable.lootjs.loot.LootCondition;
 import com.almostreliable.lootjs.loot.LootFunction;
@@ -22,6 +22,7 @@ import dev.latvian.mods.kubejs.item.ingredient.IngredientJS;
 import dev.latvian.mods.kubejs.plugin.KubeJSPlugin;
 import dev.latvian.mods.kubejs.script.BindingRegistry;
 import dev.latvian.mods.kubejs.script.ConsoleJS;
+import dev.latvian.mods.kubejs.script.TypeDescriptionRegistry;
 import dev.latvian.mods.kubejs.script.TypeWrapperRegistry;
 import dev.latvian.mods.kubejs.util.NBTUtils;
 import dev.latvian.mods.kubejs.util.RegistryAccessContainer;
@@ -203,8 +204,18 @@ public class LootJSPlugin implements KubeJSPlugin {
         registry.register(ItemPredicate.class, ItemPredicateWrapper::of);
 
         registry.register(ItemFilter.class, LootJSPlugin::ofItemFilter);
-        registry.register(ResourceLocationFilter.class, this::ofResourceLocationFilter);
+        registry.register(IdFilter.class, this::ofIdFilter);
         registry.register(Resolver.class, o -> Resolver.of(o.toString()));
+    }
+
+    @Override
+    public void registerTypeDescriptions(TypeDescriptionRegistry registry) {
+        registry.register(ItemFilter.class, TypeInfo.of(ItemFilter.class).or(IngredientJS.TYPE_INFO));
+        registry.register(LootEntry.class, TypeInfo.of(LootEntry.class).or(ItemStackJS.TYPE_INFO));
+        registry.register(SingleLootEntry.class, TypeInfo.of(SingleLootEntry.class).or(ItemStackJS.TYPE_INFO));
+        registry.register(BlockFilter.class, TypeInfo.of(BlockFilter.class).or(TypeInfo.of(BlockStatePredicate.class)));
+        registry.register(BlockFilter.class,
+                TypeInfo.of(IdFilter.class).or(TypeInfo.STRING).or(TypeInfo.of(Pattern.class)));
     }
 
     private static DistancePredicate ofDistancePredicate(Object o) {
@@ -232,28 +243,20 @@ public class LootJSPlugin implements KubeJSPlugin {
         return new NbtPredicate(new CompoundTag());
     }
 
-    private ResourceLocationFilter ofResourceLocationFilter(Object o) {
-        if (o instanceof List<?> list) {
-            return new ResourceLocationFilter.Or(list.stream().map(this::ofResourceLocationFilter).toList());
-        }
+    private IdFilter ofIdFilter(Object o) {
+        return switch (o) {
+            case List<?> list -> new IdFilter.Or(list.stream().map(this::ofIdFilter).toList());
+            case String str -> {
+                if (str.startsWith("@")) {
+                    yield new IdFilter.ByMod(str.substring(1));
+                }
 
-        if (o instanceof String str) {
-            if (str.startsWith("@")) {
-                return new ResourceLocationFilter.ByMod(str.substring(1));
+                yield new IdFilter.ByLocation(ResourceLocation.parse(str));
             }
-
-            return new ResourceLocationFilter.ByLocation(ResourceLocation.parse(str));
-        }
-
-        if (o instanceof ResourceLocation rl) {
-            return new ResourceLocationFilter.ByLocation(rl);
-        }
-
-        if (o instanceof Pattern pattern) {
-            return new ResourceLocationFilter.ByPattern(pattern);
-        }
-
-        throw new IllegalArgumentException("Invalid resource location filter: " + o);
+            case ResourceLocation rl -> new IdFilter.ByLocation(rl);
+            case Pattern pattern -> new IdFilter.ByPattern(pattern);
+            default -> throw new IllegalArgumentException("Invalid resource location filter: " + o);
+        };
     }
 
     private static ItemStackFactory ofItemStackFactory(RegistryAccessContainer registries, @Nullable Object o) {

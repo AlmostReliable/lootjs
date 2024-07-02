@@ -4,8 +4,8 @@ import com.almostreliable.lootjs.core.entry.ItemLootEntry;
 import com.almostreliable.lootjs.core.entry.SimpleLootEntry;
 import com.almostreliable.lootjs.core.entry.TableReferenceLootEntry;
 import com.almostreliable.lootjs.core.entry.TagLootEntry;
+import com.almostreliable.lootjs.core.filters.IdFilter;
 import com.almostreliable.lootjs.core.filters.ItemFilter;
-import com.almostreliable.lootjs.core.filters.ResourceLocationFilter;
 import net.minecraft.world.item.Item;
 
 import java.util.function.Predicate;
@@ -60,12 +60,12 @@ public interface LootEntriesTransformer {
         return this;
     }
 
-    default LootEntriesTransformer removeReference(ResourceLocationFilter filter) {
+    default LootEntriesTransformer removeReference(IdFilter filter) {
         removeReference(filter, true);
         return this;
     }
 
-    default LootEntriesTransformer removeReference(ResourceLocationFilter filter, boolean deepRemove) {
+    default LootEntriesTransformer removeReference(IdFilter filter, boolean deepRemove) {
         removeEntry(entry -> entry instanceof TableReferenceLootEntry d && filter.test(d.getLocation()), deepRemove);
         return this;
     }

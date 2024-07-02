@@ -1,6 +1,6 @@
 package com.almostreliable.lootjs.loot;
 
-import com.almostreliable.lootjs.core.filters.ResourceLocationFilter;
+import com.almostreliable.lootjs.core.filters.IdFilter;
 import com.almostreliable.lootjs.loot.condition.builder.DistancePredicateBuilder;
 import net.minecraft.advancements.critereon.*;
 import net.minecraft.core.Holder;
@@ -81,11 +81,11 @@ public interface Predicates {
         return LightPredicate.Builder.light().setComposite(MinMaxBounds.Ints.between(min, max)).build();
     }
 
-    static EnchantmentPredicate enchantment(ResourceLocationFilter filter) {
+    static EnchantmentPredicate enchantment(IdFilter filter) {
         return enchantment(filter, MinMaxBounds.Ints.ANY);
     }
 
-    static EnchantmentPredicate enchantment(ResourceLocationFilter filter, MinMaxBounds.Ints levelBound) {
+    static EnchantmentPredicate enchantment(IdFilter filter, MinMaxBounds.Ints levelBound) {
         List<Holder.Reference<Enchantment>> enchantments = lookup()
                 .lookupOrThrow(Registries.ENCHANTMENT)
                 .listElements()

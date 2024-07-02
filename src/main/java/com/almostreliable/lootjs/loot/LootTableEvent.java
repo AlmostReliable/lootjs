@@ -1,7 +1,7 @@
 package com.almostreliable.lootjs.loot;
 
 import com.almostreliable.lootjs.core.LootType;
-import com.almostreliable.lootjs.core.filters.ResourceLocationFilter;
+import com.almostreliable.lootjs.core.filters.IdFilter;
 import com.almostreliable.lootjs.loot.table.LootTableList;
 import com.almostreliable.lootjs.loot.table.MutableLootTable;
 import com.mojang.serialization.Lifecycle;
@@ -36,11 +36,11 @@ public class LootTableEvent {
         return Collections.unmodifiableSet(registry().keySet());
     }
 
-    public Set<ResourceLocation> getLootTableIds(ResourceLocationFilter filter) {
+    public Set<ResourceLocation> getLootTableIds(IdFilter filter) {
         return registry().keySet().stream().filter(filter).collect(Collectors.toSet());
     }
 
-    public void forEachTable(ResourceLocationFilter filter, Consumer<MutableLootTable> onForEach) {
+    public void forEachTable(IdFilter filter, Consumer<MutableLootTable> onForEach) {
         getLootTableIds(filter).forEach(location -> {
             var table = getLootTable(location);
             onForEach.accept(table);
@@ -55,7 +55,7 @@ public class LootTableEvent {
         return registry().containsKey(location);
     }
 
-    public void clearLootTables(ResourceLocationFilter filter) {
+    public void clearLootTables(IdFilter filter) {
         for (LootTable lootTable : registry()) {
             if (filter.test(lootTable.getLootTableId())) {
                 new MutableLootTable(lootTable).clear();
@@ -89,7 +89,7 @@ public class LootTableEvent {
         return getLootTable(entityType.getDefaultLootTable());
     }
 
-    public LootTableList modifyLootTables(ResourceLocationFilter filter) {
+    public LootTableList modifyLootTables(IdFilter filter) {
         var tables = registry()
                 .stream()
                 .filter(lootTable -> filter.test(lootTable.getLootTableId()))
@@ -98,7 +98,7 @@ public class LootTableEvent {
         return new LootTableList(tables);
     }
 
-    public LootTableList modifyBlockTables(ResourceLocationFilter filter) {
+    public LootTableList modifyBlockTables(IdFilter filter) {
         var tables = BuiltInRegistries.BLOCK
                 .holders()
                 .filter(ref -> filter.test(ref.key().location()))
@@ -107,7 +107,7 @@ public class LootTableEvent {
         return new LootTableList(tables);
     }
 
-    public LootTableList modifyEntityTables(ResourceLocationFilter filter) {
+    public LootTableList modifyEntityTables(IdFilter filter) {
         var tables = BuiltInRegistries.ENTITY_TYPE
                 .holders()
                 .filter(ref -> filter.test(ref.key().location()))

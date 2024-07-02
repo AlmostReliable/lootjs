@@ -2,8 +2,8 @@ package com.almostreliable.lootjs.loot.modifier;
 
 import com.almostreliable.lootjs.core.LootBucket;
 import com.almostreliable.lootjs.core.LootType;
+import com.almostreliable.lootjs.core.filters.IdFilter;
 import com.almostreliable.lootjs.core.filters.ItemFilter;
-import com.almostreliable.lootjs.core.filters.ResourceLocationFilter;
 import com.almostreliable.lootjs.loot.extension.LootContextExtension;
 import net.minecraft.core.HolderSet;
 import net.minecraft.world.entity.Entity;
@@ -62,11 +62,11 @@ public class LootModifier extends GroupedLootAction {
         }
     }
 
-    public record TableFiltered(ResourceLocationFilter[] filters) implements Predicate<LootContext> {
+    public record TableFiltered(IdFilter[] filters) implements Predicate<LootContext> {
 
         @Override
         public boolean test(LootContext context) {
-            for (ResourceLocationFilter filter : filters) {
+            for (IdFilter filter : filters) {
                 if (filter.test(context.getQueriedLootTableId())) {
                     return true;
                 }

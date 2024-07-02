@@ -2,7 +2,7 @@ package com.almostreliable.lootjs.loot;
 
 import com.almostreliable.lootjs.LootModificationsAPI;
 import com.almostreliable.lootjs.core.LootType;
-import com.almostreliable.lootjs.core.filters.ResourceLocationFilter;
+import com.almostreliable.lootjs.core.filters.IdFilter;
 import com.almostreliable.lootjs.loot.modifier.LootModifier;
 import com.almostreliable.lootjs.util.BlockFilter;
 import com.almostreliable.lootjs.util.Utils;
@@ -31,9 +31,9 @@ public class LootModificationEvent {
         return modifiers.keySet().stream().map(ResourceLocation::toString).collect(Collectors.toList());
     }
 
-    public void removeGlobalModifier(ResourceLocationFilter... filters) {
+    public void removeGlobalModifier(IdFilter... filters) {
         Set<ResourceLocation> toRemove = modifiers.keySet().stream().filter(resourceLocation -> {
-            for (ResourceLocationFilter filter : filters) {
+            for (IdFilter filter : filters) {
                 if (filter.test(resourceLocation)) {
                     return true;
                 }
@@ -49,7 +49,7 @@ public class LootModificationEvent {
         LootModificationsAPI.DEBUG_LOOT_MODIFIERS = true;
     }
 
-    public void disableLootModification(ResourceLocationFilter... filters) {
+    public void disableLootModification(IdFilter... filters) {
         if (filters.length == 0) {
             throw new IllegalArgumentException("No loot table were given.");
         }
@@ -57,7 +57,7 @@ public class LootModificationEvent {
         LootModificationsAPI.FILTERS.addAll(Arrays.asList(filters));
     }
 
-    public LootModifier.Builder addTableModifier(ResourceLocationFilter... filters) {
+    public LootModifier.Builder addTableModifier(IdFilter... filters) {
         if (filters.length == 0) {
             throw new IllegalArgumentException("No loot table were given.");
         }

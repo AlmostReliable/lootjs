@@ -1,7 +1,7 @@
 package com.almostreliable.lootjs.util;
 
 
-import com.almostreliable.lootjs.core.filters.ResourceLocationFilter;
+import com.almostreliable.lootjs.core.filters.IdFilter;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
@@ -22,7 +22,7 @@ public abstract class LootObjectList<T> extends ArrayList<T> {
         super(entries);
     }
 
-    public void removeById(ResourceLocationFilter filter) {
+    public void removeById(IdFilter filter) {
         removeIf(entry -> entryMatches(entry, filter));
     }
 
@@ -46,5 +46,5 @@ public abstract class LootObjectList<T> extends ArrayList<T> {
     @Nullable
     protected abstract T wrapTransformed(@Nullable Object o);
 
-    protected abstract boolean entryMatches(T entry, ResourceLocationFilter filter);
+    protected abstract boolean entryMatches(T entry, IdFilter filter);
 }

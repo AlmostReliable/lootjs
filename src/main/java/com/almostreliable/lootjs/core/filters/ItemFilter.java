@@ -32,29 +32,29 @@ public interface ItemFilter {
     ItemFilter ENCHANTED = ItemStack::isEnchanted;
     ItemFilter BLOCK_ITEM = itemStack -> itemStack.getItem() instanceof BlockItem;
 
-    static ItemFilter hasEnchantment(ResourceLocationFilter filter) {
+    static ItemFilter hasEnchantment(IdFilter filter) {
         return hasEnchantment(filter, MinMaxBounds.Ints.ANY);
     }
 
-    static ItemFilter hasEnchantment(ResourceLocationFilter filter, MinMaxBounds.Ints levelBounds) {
+    static ItemFilter hasEnchantment(IdFilter filter, MinMaxBounds.Ints levelBounds) {
         return itemStack -> {
             ItemEnchantments enchantments = itemStack.get(DataComponents.ENCHANTMENTS);
             return hasEnchantmentsInComponent(filter, levelBounds, enchantments);
         };
     }
 
-    static ItemFilter hasStoredEnchantment(ResourceLocationFilter filter) {
+    static ItemFilter hasStoredEnchantment(IdFilter filter) {
         return hasStoredEnchantment(filter, MinMaxBounds.Ints.ANY);
     }
 
-    static ItemFilter hasStoredEnchantment(ResourceLocationFilter filter, MinMaxBounds.Ints levelBounds) {
+    static ItemFilter hasStoredEnchantment(IdFilter filter, MinMaxBounds.Ints levelBounds) {
         return itemStack -> {
             ItemEnchantments enchantments = itemStack.get(DataComponents.STORED_ENCHANTMENTS);
             return hasEnchantmentsInComponent(filter, levelBounds, enchantments);
         };
     }
 
-    private static boolean hasEnchantmentsInComponent(ResourceLocationFilter filter, MinMaxBounds.Ints levelBounds, @Nullable ItemEnchantments enchantments) {
+    private static boolean hasEnchantmentsInComponent(IdFilter filter, MinMaxBounds.Ints levelBounds, @Nullable ItemEnchantments enchantments) {
         if (enchantments == null) {
             return false;
         }

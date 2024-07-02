@@ -1,6 +1,6 @@
 package com.almostreliable.lootjs.loot;
 
-import com.almostreliable.lootjs.core.filters.ResourceLocationFilter;
+import com.almostreliable.lootjs.core.filters.IdFilter;
 import com.almostreliable.lootjs.util.DebugInfo;
 import com.almostreliable.lootjs.util.ListHolder;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -85,7 +85,7 @@ public class LootFunctionList extends ListHolder<LootItemFunction, LootItemFunct
         return found.booleanValue();
     }
 
-    public boolean remove(ResourceLocationFilter type) {
+    public boolean remove(IdFilter type) {
         return elements.removeIf(element -> type.test(BuiltInRegistries.LOOT_FUNCTION_TYPE.getKey(element.getType())));
     }
 

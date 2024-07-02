@@ -2,7 +2,7 @@ package com.almostreliable.lootjs;
 
 import com.almostreliable.lootjs.core.LootBucket;
 import com.almostreliable.lootjs.core.LootContextInfo;
-import com.almostreliable.lootjs.core.filters.ResourceLocationFilter;
+import com.almostreliable.lootjs.core.filters.IdFilter;
 import com.almostreliable.lootjs.loot.modifier.LootModifier;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
@@ -13,7 +13,7 @@ import java.util.List;
 
 public class LootModificationsAPI {
 
-    public static final List<ResourceLocationFilter> FILTERS = new ArrayList<>();
+    public static final List<IdFilter> FILTERS = new ArrayList<>();
     private static final List<LootModifier> modifiers = new ArrayList<>();
     public static boolean DISABLE_WITHER_DROPPING_NETHER_STAR = false;
     public static boolean DISABLE_ZOMBIE_DROPPING_HEAD = false;
@@ -28,11 +28,11 @@ public class LootModificationsAPI {
         modifiers.clear();
         DEBUG_LOOT_MODIFIERS = false;
         FILTERS.clear();
-        FILTERS.add(new ResourceLocationFilter.ByLocation(ResourceLocation.parse("minecraft:blocks/fire")));
+        FILTERS.add(new IdFilter.ByLocation(ResourceLocation.parse("minecraft:blocks/fire")));
     }
 
     public static void invokeActions(List<ItemStack> loot, LootContext context) {
-        for (ResourceLocationFilter filter : FILTERS) {
+        for (IdFilter filter : FILTERS) {
             if (filter.test(context.getQueriedLootTableId())) {
                 return;
             }
