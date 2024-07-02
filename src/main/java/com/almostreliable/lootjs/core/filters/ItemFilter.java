@@ -12,7 +12,7 @@ import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.ItemEnchantments;
-import net.neoforged.neoforge.common.ToolAction;
+import net.neoforged.neoforge.common.ItemAbility;
 
 import javax.annotation.Nullable;
 import java.util.Arrays;
@@ -161,7 +161,7 @@ public interface ItemFilter {
     }
 
     static ItemFilter anyToolAction(String... actions) {
-        List<ToolAction> toolActions = Arrays.stream(actions).map(ToolAction::get).toList();
+        List<ItemAbility> toolActions = Arrays.stream(actions).map(ItemAbility::get).toList();
 
         if (toolActions.isEmpty()) {
             return itemStack -> true;
@@ -190,7 +190,7 @@ public interface ItemFilter {
     }
 
     static ItemFilter toolAction(String... actions) {
-        List<ToolAction> toolActions = Arrays.stream(actions).map(ToolAction::get).toList();
+        List<ItemAbility> toolActions = Arrays.stream(actions).map(ItemAbility::get).toList();
 
         if (toolActions.size() == 1) {
             var action = toolActions.getFirst();

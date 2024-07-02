@@ -18,10 +18,10 @@ public abstract class ScriptManagerMixin {
 
     @Shadow @Final public ScriptType scriptType;
 
-    @Shadow
-    protected abstract void loadFile(ScriptPack pack, ScriptFileInfo fileInfo, ScriptSource source);
-
     @Shadow @Final public Map<String, ScriptPack> packs;
+
+    @Shadow
+    protected abstract void loadFile(ScriptPack pack, ScriptFileInfo fileInfo);
 
     @Inject(method = "reload", at = @At(value = "INVOKE", target = "Ldev/latvian/mods/kubejs/script/ScriptManager;load()V"))
     private void testmod$test(CallbackInfo ci) {
@@ -40,7 +40,7 @@ public abstract class ScriptManagerMixin {
         KubeJS.loadScripts(pack, p, "");
 
         for (var script : pack.info.scripts) {
-            loadFile(pack, script, (ScriptSource.FromPath) info -> p.resolve(info.file));
+            loadFile(pack, script);
         }
 
         pack.scripts.sort(null);
