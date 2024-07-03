@@ -6,10 +6,12 @@ import com.almostreliable.lootjs.loot.LootEntryList;
 import com.almostreliable.lootjs.util.DebugInfo;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.storage.loot.entries.*;
 import net.minecraft.world.level.storage.loot.functions.LootItemFunction;
@@ -73,6 +75,10 @@ public interface LootEntry extends LootConditionsContainer<LootEntry> {
         var el = new LootEntryList(entries);
         var cl = new LootConditionList();
         return new CompositeLootEntry(new EntryGroup(el.getElements(), cl.getElements()), el, cl);
+    }
+
+    static ItemLootEntry testItem(String name) {
+        return (ItemLootEntry) LootEntry.ofItem(Items.PAPER).setName(Component.literal(name));
     }
 
     static CompositeLootEntry ofIngredient(Ingredient ingredient) {

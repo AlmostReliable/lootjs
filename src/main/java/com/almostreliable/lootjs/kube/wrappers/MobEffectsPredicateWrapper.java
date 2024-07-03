@@ -1,5 +1,6 @@
 package com.almostreliable.lootjs.kube.wrappers;
 
+import dev.latvian.mods.kubejs.util.RegistryAccessContainer;
 import net.minecraft.advancements.critereon.MobEffectsPredicate;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -17,17 +18,17 @@ import java.util.function.BiConsumer;
 
 public class MobEffectsPredicateWrapper {
 
-    public static MobEffectsPredicate.Builder ofBuilder(@Nullable Object o) {
+    public static MobEffectsPredicate.Builder ofBuilder(RegistryAccessContainer registry, @Nullable Object o) {
         if (o instanceof MobEffectsPredicate.Builder b) {
             return b;
         }
 
         MobEffectsPredicate.Builder effects = MobEffectsPredicate.Builder.effects();
-        write(o, effects::and);
+        write(registry, o, effects::and);
         return effects;
     }
 
-    public static MobEffectsPredicate of(@Nullable Object o) {
+    public static MobEffectsPredicate of(RegistryAccessContainer registry, @Nullable Object o) {
         if (o instanceof MobEffectsPredicate.Builder b) {
             //noinspection OptionalGetWithoutIsPresent
             return b.build().get();
@@ -38,31 +39,31 @@ public class MobEffectsPredicateWrapper {
         }
 
         Map<Holder<MobEffect>, MobEffectsPredicate.MobEffectInstancePredicate> effectMap = new HashMap<>();
-        write(o, effectMap::put);
+        write(registry, o, effectMap::put);
         return new MobEffectsPredicate(effectMap);
     }
 
 
-    private static void write(@Nullable Object o, BiConsumer<Holder<MobEffect>, MobEffectsPredicate.MobEffectInstancePredicate> onAdd) {
+    private static void write(RegistryAccessContainer registry, @Nullable Object o, BiConsumer<Holder<MobEffect>, MobEffectsPredicate.MobEffectInstancePredicate> onAdd) {
         if (o instanceof List<?> list) {
             for (Object entry : list) {
-                writeSingle(entry, onAdd);
+                writeSingle(registry, entry, onAdd);
             }
 
             return;
         }
 
-        writeSingle(o, onAdd);
+        writeSingle(registry, o, onAdd);
     }
 
-    private static void writeSingle(@Nullable Object o, BiConsumer<Holder<MobEffect>, MobEffectsPredicate.MobEffectInstancePredicate> onAdd) {
+    private static void writeSingle(RegistryAccessContainer registry, @Nullable Object o, BiConsumer<Holder<MobEffect>, MobEffectsPredicate.MobEffectInstancePredicate> onAdd) {
         if (o instanceof String str) {
             getEffect(str).ifPresent(h -> onAdd.accept(h, new MobEffectsPredicate.MobEffectInstancePredicate()));
         }
 
         if (o instanceof Map<?, ?> map) {
             getEffect(map.get("id")).ifPresent(h -> {
-                onAdd.accept(h, createPredicate(map));
+                onAdd.accept(h, createPredicate(registry, map));
             });
         }
     }
@@ -85,9 +86,9 @@ public class MobEffectsPredicateWrapper {
         return null;
     }
 
-    private static MobEffectsPredicate.MobEffectInstancePredicate createPredicate(Map<?, ?> map) {
-        var amplifier = MinMaxBoundsWrapper.ofMinMaxInt(map.get("amplifier"));
-        var duration = MinMaxBoundsWrapper.ofMinMaxInt(map.get("duration"));
+    private static MobEffectsPredicate.MobEffectInstancePredicate createPredicate(RegistryAccessContainer registry, Map<?, ?> map) {
+        var amplifier = MinMaxBoundsWrapper.ofMinMaxInt(registry, map.get("amplifier"));
+        var duration = MinMaxBoundsWrapper.ofMinMaxInt(registry, map.get("duration"));
 
         var a = tryGetBoolean(map.get("ambient"));
         var v = tryGetBoolean(map.get("visible"));

@@ -17,7 +17,9 @@ public class ConditionsContainer {
     @GameTest(template = GameTestTemplates.EMPTY)
     public void entityTarget_Entity(GameTestHelper helper) {
         helper.succeedIf(() -> {
-            var condition = (LootItemEntityPropertyCondition) new LootCondition().matchEntity(EntityPredicate.Builder.entity());
+            var condition = (LootItemEntityPropertyCondition) new LootCondition().matchEntity(EntityPredicate.Builder
+                    .entity()
+                    .build());
             GameTestUtils.assertEquals(helper,
                     condition.entityTarget,
                     LootContext.EntityTarget.THIS);
@@ -27,7 +29,9 @@ public class ConditionsContainer {
     @GameTest(template = GameTestTemplates.EMPTY)
     public void entityTarget_Killer(GameTestHelper helper) {
         helper.succeedIf(() -> {
-            var condition = (LootItemEntityPropertyCondition) new LootCondition().matchKiller(EntityPredicate.Builder.entity());
+            var condition = (LootItemEntityPropertyCondition) new LootCondition().matchKiller(EntityPredicate.Builder
+                    .entity()
+                    .build());
             GameTestUtils.assertEquals(helper,
                     condition.entityTarget,
                     LootContext.EntityTarget.ATTACKER);
@@ -37,7 +41,9 @@ public class ConditionsContainer {
     @GameTest(template = GameTestTemplates.EMPTY)
     public void entityTarget_DirectKiller(GameTestHelper helper) {
         helper.succeedIf(() -> {
-            var condition = (LootItemEntityPropertyCondition) new LootCondition().matchDirectKiller(EntityPredicate.Builder.entity());
+            var condition = (LootItemEntityPropertyCondition) new LootCondition().matchDirectKiller(EntityPredicate.Builder
+                    .entity()
+                    .build());
             GameTestUtils.assertEquals(helper,
                     condition.entityTarget,
                     LootContext.EntityTarget.DIRECT_ATTACKER);

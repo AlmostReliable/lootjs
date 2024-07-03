@@ -2,36 +2,25 @@ package com.almostreliable.lootjs.kube.wrappers;
 
 import com.almostreliable.lootjs.core.filters.ItemFilter;
 import com.almostreliable.lootjs.core.filters.ItemFilterWrapper;
-import com.almostreliable.lootjs.util.ModHolderSet;
-import dev.latvian.mods.kubejs.item.ingredient.IngredientJS;
-import dev.latvian.mods.kubejs.util.RegistryAccessContainer;
+import dev.latvian.mods.rhino.Context;
+import dev.latvian.mods.rhino.type.RecordTypeInfo;
+import dev.latvian.mods.rhino.type.TypeInfo;
 import net.minecraft.advancements.critereon.ItemPredicate;
 import net.minecraft.advancements.critereon.MinMaxBounds;
 import net.minecraft.core.HolderSet;
 import net.minecraft.core.component.DataComponentPredicate;
-import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.core.registries.Registries;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
-import net.neoforged.neoforge.registries.holdersets.AnyHolderSet;
 
 import javax.annotation.Nullable;
 import java.util.HashMap;
 import java.util.Optional;
+import java.util.regex.Pattern;
 
 public class ItemPredicateWrapper {
 
-    public static ItemPredicate.Builder ofBuilder(RegistryAccessContainer registries, @Nullable Object o) {
-        if (o instanceof ItemPredicate.Builder b) {
-            return b;
-        }
+    private static final TypeInfo ITEM_HOLDER_SET = TypeInfo.of(HolderSet.class).withParams(TypeInfo.of(Item.class));
 
-        return new SelfBuilder(of(registries, o));
-    }
-
-    public static ItemPredicate of(RegistryAccessContainer registries, @Nullable Object o) {
+    public static ItemPredicate of(Context cx, @Nullable Object o, TypeInfo target) {
         if (o instanceof ItemPredicate i) return i;
 
         if (o instanceof ItemFilter filter) {
@@ -41,55 +30,15 @@ public class ItemPredicateWrapper {
                     .build();
         }
 
-        if (o instanceof String str && !str.isEmpty()) {
-            String first = str.substring(0, 1);
-            switch (first) {
-                case "*" -> {
-                    var anyHolder = new AnyHolderSet<>(BuiltInRegistries.ITEM.asLookup());
-                    return new ItemPredicate(Optional.of(anyHolder),
-                            MinMaxBounds.Ints.ANY,
-                            DataComponentPredicate.EMPTY,
-                            new HashMap<>());
-                }
-                case "#" -> {
-                    var location = ResourceLocation.parse(str.substring(1));
-                    var tag = TagKey.create(Registries.ITEM, location);
-                    var holderSet = BuiltInRegistries.ITEM.getOrCreateTag(tag);
-                    return new ItemPredicate(Optional.of(holderSet),
-                            MinMaxBounds.Ints.ANY,
-                            DataComponentPredicate.EMPTY,
-                            new HashMap<>());
-                }
-                case "@" -> {
-                    String modId = str.substring(1);
-                    ModHolderSet<Item> holderSet = new ModHolderSet<>(BuiltInRegistries.ITEM.asLookup(), modId);
-                    return new ItemPredicate(Optional.of(holderSet),
-                            MinMaxBounds.Ints.ANY,
-                            DataComponentPredicate.EMPTY,
-                            new HashMap<>());
-                }
-            }
+        if (o instanceof String | o instanceof Pattern) {
+            @SuppressWarnings("unchecked")
+            var set = (HolderSet<Item>) cx.jsToJava(o, ITEM_HOLDER_SET);
+            return new ItemPredicate(Optional.of(set),
+                    MinMaxBounds.Ints.ANY,
+                    DataComponentPredicate.EMPTY,
+                    new HashMap<>());
         }
 
-        var items = IngredientJS.wrap(registries, o).getItems();
-        Optional<HolderSet<Item>> holders = Optional.of(HolderSet.direct(ItemStack::getItemHolder, items));
-
-        return new ItemPredicate(holders,
-                MinMaxBounds.Ints.ANY,
-                DataComponentPredicate.EMPTY,
-                new HashMap<>());
-    }
-
-    private static class SelfBuilder extends ItemPredicate.Builder {
-        private final ItemPredicate predicate;
-
-        public SelfBuilder(ItemPredicate predicate) {
-            this.predicate = predicate;
-        }
-
-        @Override
-        public ItemPredicate build() {
-            return predicate;
-        }
+        return (ItemPredicate) ((RecordTypeInfo) target).wrap(cx, o, target);
     }
 }

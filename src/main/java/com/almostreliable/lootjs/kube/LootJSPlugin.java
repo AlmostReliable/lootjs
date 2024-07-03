@@ -15,32 +15,35 @@ import com.almostreliable.lootjs.loot.LootFunction;
 import com.almostreliable.lootjs.loot.Predicates;
 import com.almostreliable.lootjs.loot.condition.builder.DistancePredicateBuilder;
 import com.almostreliable.lootjs.util.BlockFilter;
+import com.mojang.serialization.MapCodec;
 import dev.latvian.mods.kubejs.block.state.BlockStatePredicate;
 import dev.latvian.mods.kubejs.event.EventGroupRegistry;
 import dev.latvian.mods.kubejs.item.ItemStackJS;
 import dev.latvian.mods.kubejs.item.ingredient.IngredientJS;
 import dev.latvian.mods.kubejs.plugin.KubeJSPlugin;
-import dev.latvian.mods.kubejs.script.BindingRegistry;
-import dev.latvian.mods.kubejs.script.ConsoleJS;
-import dev.latvian.mods.kubejs.script.TypeDescriptionRegistry;
-import dev.latvian.mods.kubejs.script.TypeWrapperRegistry;
+import dev.latvian.mods.kubejs.script.*;
 import dev.latvian.mods.kubejs.util.NBTUtils;
 import dev.latvian.mods.kubejs.util.RegistryAccessContainer;
 import dev.latvian.mods.rhino.Context;
+import dev.latvian.mods.rhino.type.RecordTypeInfo;
 import dev.latvian.mods.rhino.type.TypeInfo;
+import net.minecraft.advancements.AdvancementProgress;
 import net.minecraft.advancements.critereon.*;
 import net.minecraft.core.HolderSet;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.TagKey;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.registries.holdersets.OrHolderSet;
 import org.jetbrains.annotations.NotNull;
 
@@ -199,7 +202,10 @@ public class LootJSPlugin implements KubeJSPlugin {
         registry.register(MobEffectsPredicate.Builder.class, MobEffectsPredicateWrapper::ofBuilder);
         registry.register(DistancePredicate.class, LootJSPlugin::ofDistancePredicate);
 
-        registry.register(ItemPredicate.Builder.class, ItemPredicateWrapper::ofBuilder);
+
+        registry.register(PlayerPredicate.AdvancementPredicate.class, LootJSPlugin::ofAdvancementPredicate);
+        registry.register(EntitySubPredicate.class, LootJSPlugin::ofEntitySubPredicate);
+
         registry.register(ItemPredicate.class, ItemPredicateWrapper::of);
 
         registry.register(ItemFilter.class, LootJSPlugin::ofItemFilter);
@@ -215,6 +221,9 @@ public class LootJSPlugin implements KubeJSPlugin {
         registry.register(BlockFilter.class, TypeInfo.of(BlockFilter.class).or(TypeInfo.of(BlockStatePredicate.class)));
         registry.register(IdFilter.class,
                 TypeInfo.of(IdFilter.class).or(TypeInfo.STRING).or(TypeInfo.of(Pattern.class)));
+        registry.register(ItemPredicate.class,
+                ((RecordTypeInfo) TypeInfo.of(ItemPredicate.class)).createCombinedType(TypeInfo.of(
+                        ItemFilter.class)));
     }
 
     private static DistancePredicate ofDistancePredicate(Object o) {
@@ -240,6 +249,34 @@ public class LootJSPlugin implements KubeJSPlugin {
         }
 
         return new NbtPredicate(new CompoundTag());
+    }
+
+    private static PlayerPredicate.AdvancementPredicate ofAdvancementPredicate(Context cx, Object o, TypeInfo target) {
+        return new PlayerPredicate.AdvancementPredicate() {
+            @Override
+            public boolean test(AdvancementProgress advancementProgress) {
+                return false;
+            }
+        };
+    }
+
+    private static EntitySubPredicate ofEntitySubPredicate(Context cx, Object o, TypeInfo target) {
+        if (o instanceof Map<?, ?>) {
+            RegistryAccessContainer registries = ((KubeJSContext) cx).getRegistries();
+            return registries.decode(cx, EntitySubPredicate.CODEC, o);
+        }
+
+        return new EntitySubPredicate() {
+            @Override
+            public MapCodec<? extends EntitySubPredicate> codec() {
+                throw new UnsupportedOperationException("Custom EntitySubPredicate does not have a codec");
+            }
+
+            @Override
+            public boolean matches(Entity arg, ServerLevel arg2, @org.jetbrains.annotations.Nullable Vec3 arg3) {
+                return false;
+            }
+        };
     }
 
     private IdFilter ofIdFilter(Object o) {

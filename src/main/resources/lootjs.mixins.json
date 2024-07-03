@@ -21,6 +21,8 @@
         "SkeletonMixin",
         "WitherBossMixin",
         "ZombieMixin",
+      "ctor_hooks.EntityPredicateMixin",
+      "ctor_hooks.ItemPredicateMixin",
         "forge.CommonHooksMixin",
         "forge.LootModifierManagerMixin"
     ],

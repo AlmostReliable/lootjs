@@ -1,10 +1,12 @@
 package com.almostreliable.lootjs.kube.wrappers;
 
 import com.almostreliable.lootjs.LootJS;
+import dev.latvian.mods.kubejs.util.RegistryAccessContainer;
 import net.minecraft.advancements.critereon.MinMaxBounds;
 
 import javax.annotation.Nullable;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 public class MinMaxBoundsWrapper {
@@ -17,14 +19,14 @@ public class MinMaxBoundsWrapper {
         return Optional.empty();
     }
 
-    public static MinMaxBounds.Doubles ofMinMaxDoubles(Object o) {
+    public static MinMaxBounds.Doubles ofMinMaxDoubles(RegistryAccessContainer registry, Object o) {
         if (o instanceof String s && s.equalsIgnoreCase("any")) {
             return MinMaxBounds.Doubles.ANY;
         }
 
         if (o instanceof List<?> list) {
             if (list.size() == 1) {
-                return ofMinMaxDoubles(list.getFirst());
+                return ofMinMaxDoubles(registry, list.getFirst());
             }
 
             if (list.size() == 2) {
@@ -44,12 +46,17 @@ public class MinMaxBoundsWrapper {
             return new MinMaxBounds.Doubles(min, max, min.map(d -> d * d), max.map(d -> d * d));
         }
 
+        if (o instanceof Map<?, ?>) {
+            return MinMaxBounds.Doubles.CODEC.parse(registry.java(), o).getOrThrow();
+        }
+
         LootJS.LOG.warn("Failed creating bounds, got: " + o);
         return MinMaxBounds.Doubles.exactly(Double.MAX_VALUE);
     }
 
-    public static MinMaxBounds.Ints ofMinMaxInt(Object o) {
-        MinMaxBounds.Doubles doubles = ofMinMaxDoubles(o);
+    public static MinMaxBounds.Ints ofMinMaxInt(RegistryAccessContainer registry, Object o) {
+
+        MinMaxBounds.Doubles doubles = ofMinMaxDoubles(registry, o);
         var min = doubles.min().map(Double::intValue);
         var max = doubles.max().map(Double::intValue);
         return new MinMaxBounds.Ints(min, max, min.map(i -> ((long) i * i)), max.map(i -> ((long) i * i)));

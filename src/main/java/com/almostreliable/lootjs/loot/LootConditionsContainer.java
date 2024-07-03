@@ -40,6 +40,10 @@ import java.util.function.Predicate;
 @SuppressWarnings({ "UnusedReturnValue", "unused" })
 public interface LootConditionsContainer<C> {
 
+    default C testPlayerPredicate(PlayerPredicate pp) {
+        return (C) this;
+    }
+
     default C matchTool(ItemPredicate predicate) {
         return addCondition(new MatchTool(Optional.of(predicate)));
     }
@@ -110,12 +114,12 @@ public interface LootConditionsContainer<C> {
         return addCondition(BonusLevelTableCondition.bonusLevelFlatChance(enchantment, chances).build());
     }
 
-    default C location(LocationPredicate.Builder predicate) {
-        return addCondition(LocationCheck.checkLocation(predicate).build());
+    default C location(LocationPredicate predicate) {
+        return location(BlockPos.ZERO, predicate);
     }
 
-    default C location(BlockPos offset, LocationPredicate.Builder predicate) {
-        return addCondition(LocationCheck.checkLocation(predicate, offset).build());
+    default C location(BlockPos offset, LocationPredicate predicate) {
+        return addCondition(new LocationCheck(Optional.of(predicate), offset));
     }
 
     default C biome(Resolver... resolvers) {
@@ -179,26 +183,26 @@ public interface LootConditionsContainer<C> {
                 .build());
     }
 
-    default C matchEntity(EntityPredicate.Builder entityPredicate) {
+    default C matchEntity(EntityPredicate entityPredicate) {
         return addCondition(LootItemEntityPropertyCondition
                 .hasProperties(LootContext.EntityTarget.THIS, entityPredicate)
                 .build());
     }
 
-    default C matchKiller(EntityPredicate.Builder entityPredicate) {
+    default C matchKiller(EntityPredicate entityPredicate) {
         return addCondition(LootItemEntityPropertyCondition
                 .hasProperties(LootContext.EntityTarget.ATTACKER, entityPredicate)
                 .build());
     }
 
-    default C matchDirectKiller(EntityPredicate.Builder entityPredicate) {
+    default C matchDirectKiller(EntityPredicate entityPredicate) {
         return addCondition(LootItemEntityPropertyCondition
                 .hasProperties(LootContext.EntityTarget.DIRECT_ATTACKER, entityPredicate)
                 .build());
     }
 
-    default C matchPlayer(EntityPredicate.Builder entityPredicate) {
-        return addCondition(new MatchPlayer(entityPredicate.build()));
+    default C matchPlayer(EntityPredicate entityPredicate) {
+        return addCondition(new MatchPlayer(entityPredicate));
     }
 
     default C matchDamageSource(DamageSourcePredicate.Builder predicate) {
