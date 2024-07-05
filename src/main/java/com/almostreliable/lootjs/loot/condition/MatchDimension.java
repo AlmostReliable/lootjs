@@ -6,11 +6,11 @@ import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
 import net.minecraft.world.level.storage.loot.predicates.LootItemConditionType;
 
-public class AnyDimension implements LootItemCondition {
+public class MatchDimension implements LootItemCondition {
 
     private final ResourceLocation[] dimensions;
 
-    public AnyDimension(ResourceLocation[] dimensions) {
+    public MatchDimension(ResourceLocation[] dimensions) {
         this.dimensions = dimensions;
     }
 

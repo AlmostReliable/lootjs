@@ -12,21 +12,6 @@ import java.util.function.Consumer;
 
 public class StatePropsPredicateWrapper {
 
-    public static StatePropertiesPredicate.Builder ofBuilder(@Nullable Object o) {
-        if (o instanceof StatePropertiesPredicate.Builder s) {
-            return s;
-        }
-
-        if (!(o instanceof Map<?, ?> map)) {
-            throw new IllegalArgumentException("Invalid object for state properties. Given type: " +
-                                               (o == null ? "NULL" : o.getClass().getName()));
-        }
-
-        var builder = StatePropertiesPredicate.Builder.properties();
-        loadMatchers(map, builder.matchers::add);
-        return builder;
-    }
-
     public static StatePropertiesPredicate of(@Nullable Object o) {
         if (o instanceof StatePropertiesPredicate s) {
             return s;

@@ -79,5 +79,5 @@ accessible field net/minecraft/advancements/critereon/ItemPredicate$Builder item
 accessible method net/minecraft/world/level/storage/loot/LootPool <init> (Ljava/util/List;Ljava/util/List;Ljava/util/List;Lnet/minecraft/world/level/storage/loot/providers/number/NumberProvider;Lnet/minecraft/world/level/storage/loot/providers/number/NumberProvider;Ljava/util/Optional;)V
 
 accessible class net/minecraft/advancements/critereon/PlayerPredicate$AdvancementPredicate
-#accessible class net/minecraft/advancements/critereon/PlayerPredicate$AdvancementPredicate
-#accessible class net/minecraft/advancements/critereon/PlayerPredicate$AdvancementPredicate
+accessible class net/minecraft/advancements/critereon/LocationPredicate$PositionPredicate
+accessible method net/minecraft/advancements/critereon/LocationPredicate$PositionPredicate <init> (Lnet/minecraft/advancements/critereon/MinMaxBounds$Doubles;Lnet/minecraft/advancements/critereon/MinMaxBounds$Doubles;Lnet/minecraft/advancements/critereon/MinMaxBounds$Doubles;)V

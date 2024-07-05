@@ -40,9 +40,8 @@ and this project adheres to [Semantic Versioning].
     - `matchLoot` renamed into `containsLoot`
     - `.dropExperience` can now use a number provider instead of a fixed amount
     - `LootContextJS` wrapper removed. Using `LootContext` instead but added all helper methods from `LootContextJS` too
-- Changes to `Loot Functions`:
-    - `smeltLoot` renamed to `smelt`
-    - `customFunction` renamed to `jsonFunction`
+- Renamed some loot functions
+- Renamed some loot conditions
 - Changes to `ItemFilter`:
     - `.hasEnchantments(...)` only works for item enchantments now. For `stored` enchantments
       use `.hasStoredEnchantments(...)`

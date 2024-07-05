@@ -8,6 +8,8 @@ import net.minecraft.world.phys.Vec3;
 
 import javax.annotation.Nullable;
 import java.util.Collection;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 public class Utils {
@@ -20,6 +22,24 @@ public class Utils {
     public static <T> String getClassNameEnding(T t) {
         String tName = t.getClass().getName();
         return tName.substring(tName.lastIndexOf('.') + 1);
+    }
+
+    @SuppressWarnings("unchecked")
+    public static Map<String, Object> mapOrThrow(Object o) {
+        if (o instanceof Map<?, ?> m) {
+            return (Map<String, Object>) m;
+        }
+
+        throw new RuntimeException("Expected map, got " + o.getClass().getName());
+    }
+
+    @SuppressWarnings("unchecked")
+    public static List<Object> listOrThrow(Object o) {
+        if (o instanceof List<?> l) {
+            return (List<Object>) l;
+        }
+
+        throw new RuntimeException("Expected list, got " + o.getClass().getName());
     }
 
     public static String formatEntity(Entity entity) {

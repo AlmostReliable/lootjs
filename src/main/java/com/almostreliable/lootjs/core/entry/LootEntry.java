@@ -4,6 +4,7 @@ import com.almostreliable.lootjs.loot.LootConditionList;
 import com.almostreliable.lootjs.loot.LootConditionsContainer;
 import com.almostreliable.lootjs.loot.LootEntryList;
 import com.almostreliable.lootjs.util.DebugInfo;
+import net.minecraft.advancements.critereon.EntityPredicate;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
@@ -79,6 +80,10 @@ public interface LootEntry extends LootConditionsContainer<LootEntry> {
 
     static ItemLootEntry testItem(String name) {
         return (ItemLootEntry) LootEntry.ofItem(Items.PAPER).setName(Component.literal(name));
+    }
+
+    static EntityPredicate ep(EntityPredicate ep) {
+        return ep;
     }
 
     static CompositeLootEntry ofIngredient(Ingredient ingredient) {

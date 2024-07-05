@@ -2,7 +2,6 @@ package com.almostreliable.lootjs.loot;
 
 import com.almostreliable.lootjs.LootJS;
 import com.almostreliable.lootjs.core.filters.ItemFilter;
-import com.almostreliable.lootjs.core.filters.Resolver;
 import com.almostreliable.lootjs.loot.condition.*;
 import com.google.common.base.Preconditions;
 import com.google.gson.JsonObject;
@@ -11,12 +10,10 @@ import dev.latvian.mods.rhino.util.HideFromJS;
 import net.minecraft.advancements.critereon.*;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
-import net.minecraft.core.registries.Registries;
+import net.minecraft.core.HolderSet;
 import net.minecraft.resources.RegistryOps;
-import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.enchantment.Enchantment;
@@ -24,6 +21,7 @@ import net.minecraft.world.item.enchantment.LevelBasedValue;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.levelgen.structure.Structure;
 import net.minecraft.world.level.storage.loot.IntRange;
 import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
@@ -39,10 +37,6 @@ import java.util.function.Predicate;
 
 @SuppressWarnings({ "UnusedReturnValue", "unused" })
 public interface LootConditionsContainer<C> {
-
-    default C testPlayerPredicate(PlayerPredicate pp) {
-        return (C) this;
-    }
 
     default C matchTool(ItemPredicate predicate) {
         return addCondition(new MatchTool(Optional.of(predicate)));
@@ -80,15 +74,15 @@ public interface LootConditionsContainer<C> {
         return addCondition(ExplosionCondition.survivesExplosion().build());
     }
 
-    default C timeCheck(long period, int min, int max) {
+    default C matchTime(long period, int min, int max) {
         return addCondition(new TimeCheck.Builder(IntRange.range(min, max)).setPeriod(period).build());
     }
 
-    default C timeCheck(int min, int max) {
-        return timeCheck(24000L, min, max);
+    default C matchTime(int min, int max) {
+        return matchTime(24000L, min, max);
     }
 
-    default C weatherCheck(@Nullable Boolean raining, @Nullable Boolean thundering) {
+    default C matchWeather(@Nullable Boolean raining, @Nullable Boolean thundering) {
         WeatherCheck.Builder builder = new WeatherCheck.Builder();
         if (raining != null) builder.setRaining(raining);
         if (thundering != null) builder.setThundering(thundering);
@@ -114,57 +108,31 @@ public interface LootConditionsContainer<C> {
         return addCondition(BonusLevelTableCondition.bonusLevelFlatChance(enchantment, chances).build());
     }
 
-    default C location(LocationPredicate predicate) {
-        return location(BlockPos.ZERO, predicate);
+    default C matchLocation(LocationPredicate predicate) {
+        return matchLocation(BlockPos.ZERO, predicate);
     }
 
-    default C location(BlockPos offset, LocationPredicate predicate) {
+    default C matchLocation(BlockPos offset, LocationPredicate predicate) {
         return addCondition(new LocationCheck(Optional.of(predicate), offset));
     }
 
-    default C biome(Resolver... resolvers) {
-        List<ResourceKey<Biome>> biomes = new ArrayList<>();
-        List<TagKey<Biome>> tagKeys = new ArrayList<>();
-
-        for (Resolver resolver : resolvers) {
-            if (resolver instanceof Resolver.ByEntry byEntry) {
-                biomes.add(byEntry.resolve(Registries.BIOME));
-            } else if (resolver instanceof Resolver.ByTagKey byTagKey) {
-                tagKeys.add(byTagKey.resolve(Registries.BIOME));
-            }
-        }
-
-        return addCondition(new BiomeCheck(biomes, tagKeys));
+    default C matchBiome(HolderSet<Biome> biomes) {
+        return addCondition(new MatchBiome(biomes));
     }
 
-    default C anyBiome(Resolver... resolvers) {
-        List<ResourceKey<Biome>> biomes = new ArrayList<>();
-        List<TagKey<Biome>> tagKeys = new ArrayList<>();
-
-        for (Resolver resolver : resolvers) {
-            if (resolver instanceof Resolver.ByEntry byEntry) {
-                biomes.add(byEntry.resolve(Registries.BIOME));
-            } else if (resolver instanceof Resolver.ByTagKey byTagKey) {
-                tagKeys.add(byTagKey.resolve(Registries.BIOME));
-            }
-        }
-        return addCondition(new AnyBiomeCheck(biomes, tagKeys));
+    default C matchDimension(ResourceLocation... dimensions) {
+        return addCondition(new MatchDimension(dimensions));
     }
 
-    default C anyDimension(ResourceLocation... dimensions) {
-        return addCondition(new AnyDimension(dimensions));
+    default C matchStructure(HolderSet<Structure> structures) {
+        return addCondition(new MatchStructure(structures, true));
     }
 
-    default C anyStructure(String[] idOrTags, boolean exact) {
-        AnyStructure.Builder builder = new AnyStructure.Builder();
-        for (String s : idOrTags) {
-            builder.add(s);
-        }
-
-        return addCondition(builder.build(exact));
+    default C matchStructure(HolderSet<Structure> structures, boolean exact) {
+        return addCondition(new MatchStructure(structures, exact));
     }
 
-    default C lightLevel(int min, int max) {
+    default C isLightLevel(int min, int max) {
         return addCondition(new IsLightLevel(min, max));
     }
 
@@ -176,11 +144,15 @@ public interface LootConditionsContainer<C> {
         return addCondition(LootItemKilledByPlayerCondition.killedByPlayer().build());
     }
 
-    default C matchBlockState(Block block, StatePropertiesPredicate.Builder properties) {
-        return addCondition(LootItemBlockStatePropertyCondition
-                .hasBlockStateProperties(block)
-                .setProperties(properties)
-                .build());
+    @SuppressWarnings("deprecation")
+    default C matchBlock(Block block) {
+        return addCondition(new LootItemBlockStatePropertyCondition(block.builtInRegistryHolder(), Optional.empty()));
+    }
+
+    @SuppressWarnings("deprecation")
+    default C matchBlock(Block block, StatePropertiesPredicate properties) {
+        return addCondition(new LootItemBlockStatePropertyCondition(block.builtInRegistryHolder(),
+                Optional.of(properties)));
     }
 
     default C matchEntity(EntityPredicate entityPredicate) {
@@ -205,20 +177,12 @@ public interface LootConditionsContainer<C> {
         return addCondition(new MatchPlayer(entityPredicate));
     }
 
-    default C matchDamageSource(DamageSourcePredicate.Builder predicate) {
-        return addCondition(DamageSourceCondition.hasDamageSource(predicate).build());
+    default C matchDamageSource(DamageSourcePredicate predicate) {
+        return addCondition(new DamageSourceCondition(Optional.of(predicate)));
     }
 
-    default C distance(MinMaxBounds.Doubles bounds) {
-        return customDistance(new DistancePredicate(MinMaxBounds.Doubles.ANY,
-                MinMaxBounds.Doubles.ANY,
-                MinMaxBounds.Doubles.ANY,
-                MinMaxBounds.Doubles.ANY,
-                bounds));
-    }
-
-    default C customDistance(DistancePredicate predicate) {
-        return addCondition(new MatchKillerDistance(predicate));
+    default C distance(DistancePredicate distancePredicate) {
+        return addCondition(new MatchKillerDistance(distancePredicate));
     }
 
     default C customPlayerCheck(Predicate<ServerPlayer> predicate) {

@@ -8,138 +8,27 @@ import com.almostreliable.lootjs.core.entry.LootEntry;
 import com.almostreliable.lootjs.core.entry.SingleLootEntry;
 import com.almostreliable.lootjs.core.filters.IdFilter;
 import com.almostreliable.lootjs.core.filters.ItemFilter;
-import com.almostreliable.lootjs.core.filters.Resolver;
 import com.almostreliable.lootjs.kube.wrappers.*;
 import com.almostreliable.lootjs.loot.LootCondition;
 import com.almostreliable.lootjs.loot.LootFunction;
 import com.almostreliable.lootjs.loot.Predicates;
-import com.almostreliable.lootjs.loot.condition.builder.DistancePredicateBuilder;
 import com.almostreliable.lootjs.util.BlockFilter;
-import com.mojang.serialization.MapCodec;
 import dev.latvian.mods.kubejs.block.state.BlockStatePredicate;
 import dev.latvian.mods.kubejs.event.EventGroupRegistry;
 import dev.latvian.mods.kubejs.item.ItemStackJS;
 import dev.latvian.mods.kubejs.item.ingredient.IngredientJS;
 import dev.latvian.mods.kubejs.plugin.KubeJSPlugin;
-import dev.latvian.mods.kubejs.script.*;
-import dev.latvian.mods.kubejs.util.NBTUtils;
-import dev.latvian.mods.kubejs.util.RegistryAccessContainer;
-import dev.latvian.mods.rhino.Context;
+import dev.latvian.mods.kubejs.script.BindingRegistry;
+import dev.latvian.mods.kubejs.script.ConsoleJS;
+import dev.latvian.mods.kubejs.script.TypeDescriptionRegistry;
+import dev.latvian.mods.kubejs.script.TypeWrapperRegistry;
 import dev.latvian.mods.rhino.type.RecordTypeInfo;
 import dev.latvian.mods.rhino.type.TypeInfo;
-import net.minecraft.advancements.AdvancementProgress;
 import net.minecraft.advancements.critereon.*;
-import net.minecraft.core.HolderSet;
-import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.core.registries.Registries;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.level.ServerLevel;
-import net.minecraft.tags.TagKey;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.crafting.Ingredient;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.phys.Vec3;
-import net.neoforged.neoforge.registries.holdersets.OrHolderSet;
-import org.jetbrains.annotations.NotNull;
 
-import javax.annotation.Nullable;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
 import java.util.regex.Pattern;
 
 public class LootJSPlugin implements KubeJSPlugin {
-
-    public static final EntityTypePredicate EMPTY_ENTITY_TYPE_PREDICATE = new EntityTypePredicate(HolderSet.direct());
-
-    @Nullable
-    public static <T extends Enum<T>> T valueOf(Class<T> clazz, Object o) {
-        String s = o.toString();
-        for (var constant : clazz.getEnumConstants()) {
-            if (s.equalsIgnoreCase(constant.name())) {
-                return constant;
-            }
-        }
-
-        return null;
-    }
-
-    private static ItemFilter ofItemFilterSingle(RegistryAccessContainer cx, @Nullable Object o) {
-        if (o instanceof ItemFilter i) return i;
-
-        if (o instanceof String str && !str.isEmpty()) {
-            String first = str.substring(0, 1);
-            switch (first) {
-                case "*":
-                    return ItemFilter.ANY;
-                case "#":
-                    ResourceLocation location = ResourceLocation.parse(str.substring(1));
-                    TagKey<Item> tag = TagKey.create(Registries.ITEM, location);
-                    return new ItemFilter.Tag(tag);
-                case "@":
-                    String modId = str.substring(1);
-                    return itemStack -> {
-                        var key = BuiltInRegistries.ITEM.getKey(itemStack.getItem());
-                        return key.getNamespace().equals(modId);
-                    };
-            }
-        }
-
-        Ingredient ingredient = IngredientJS.wrap(cx, o);
-        if (ingredient.isEmpty()) {
-            return ItemFilter.EMPTY;
-        }
-
-        return new ItemFilter.Ingredient(ingredient);
-    }
-
-    private static ItemFilter ofItemFilter(RegistryAccessContainer cx, Object o) {
-        if (o instanceof List<?> list) {
-            List<ItemFilter> filters = new ArrayList<>(list.size());
-            for (Object entry : list) {
-                var filter = ofItemFilter(cx, entry);
-                filters.add(filter);
-            }
-
-            return itemStack -> {
-                for (ItemFilter filter : filters) {
-                    if (filter.test(itemStack)) {
-                        return true;
-                    }
-                }
-
-                return false;
-            };
-        }
-
-        return ofItemFilterSingle(cx, o);
-    }
-
-    private static BlockFilter ofBlockFilter(Object o) {
-        if (o instanceof BlockFilter bf) {
-            return bf;
-        }
-
-        BlockStatePredicate bsp = BlockStatePredicate.of(o);
-        return new BlockFilter() {
-            @NotNull
-            @Override
-            public Iterator<Block> iterator() {
-                return bsp.getBlocks().iterator();
-            }
-
-            @Override
-            public boolean test(BlockState blockState) {
-                return bsp.test(blockState);
-            }
-        };
-    }
 
     @Override
     public void initStartup() {
@@ -189,28 +78,24 @@ public class LootJSPlugin implements KubeJSPlugin {
 
     @Override
     public void registerTypeWrappers(TypeWrapperRegistry registry) {
-        registry.register(BlockFilter.class, LootJSPlugin::ofBlockFilter);
-        registry.register(LootEntry.class, LootJSPlugin::ofLootEntry);
-        registry.register(ItemLootEntry.class, LootJSPlugin::ofItemLootEntry);
+        registry.register(BlockFilter.class, BasicWrapper::ofBlockFilter);
+        registry.register(LootEntry.class, LootEntryWrapper::ofLootEntry);
+        registry.register(ItemLootEntry.class, LootEntryWrapper::ofItemLootEntry);
         registry.register(MinMaxBounds.Doubles.class, MinMaxBoundsWrapper::ofMinMaxDoubles);
         registry.register(MinMaxBounds.Ints.class, MinMaxBoundsWrapper::ofMinMaxInt);
-        registry.register(EntityTypePredicate.class, LootJSPlugin::ofEntityTypePredicate);
-        registry.register(NbtPredicate.class, LootJSPlugin::ofNbtPredicate);
-        registry.register(StatePropertiesPredicate.class, StatePropsPredicateWrapper::of);
-        registry.register(StatePropertiesPredicate.Builder.class, StatePropsPredicateWrapper::ofBuilder);
-        registry.register(MobEffectsPredicate.class, MobEffectsPredicateWrapper::of);
-        registry.register(MobEffectsPredicate.Builder.class, MobEffectsPredicateWrapper::ofBuilder);
-        registry.register(DistancePredicate.class, LootJSPlugin::ofDistancePredicate);
-
-
-        registry.register(PlayerPredicate.AdvancementPredicate.class, LootJSPlugin::ofAdvancementPredicate);
-        registry.register(EntitySubPredicate.class, LootJSPlugin::ofEntitySubPredicate);
 
         registry.register(ItemPredicate.class, ItemPredicateWrapper::of);
+        registry.register(EntityTypePredicate.class, BasicWrapper::ofEntityTypePredicate);
+        registry.register(NbtPredicate.class, BasicWrapper::ofNbtPredicate);
+        registry.register(StatePropertiesPredicate.class, StatePropsPredicateWrapper::of);
+        registry.register(MobEffectsPredicate.class, MobEffectsPredicateWrapper::of);
+        registry.register(LightPredicate.class, BasicWrapper::ofLightPredicate);
+        registry.register(DamageSourcePredicate.class, BasicWrapper::ofDamageSourcePredicate);
+        registry.register(PlayerPredicate.AdvancementPredicate.class, BasicWrapper::ofAdvancementPredicate);
+        registry.register(EntitySubPredicate.class, BasicWrapper::ofEntitySubPredicate);
 
-        registry.register(ItemFilter.class, LootJSPlugin::ofItemFilter);
-        registry.register(IdFilter.class, this::ofIdFilter);
-        registry.register(Resolver.class, o -> Resolver.of(o.toString()));
+        registry.register(IdFilter.class, BasicWrapper::ofIdFilter);
+        registry.register(ItemFilter.class, ItemFilterWrapper::ofItemFilter);
     }
 
     @Override
@@ -222,142 +107,7 @@ public class LootJSPlugin implements KubeJSPlugin {
         registry.register(IdFilter.class,
                 TypeInfo.of(IdFilter.class).or(TypeInfo.STRING).or(TypeInfo.of(Pattern.class)));
         registry.register(ItemPredicate.class,
-                ((RecordTypeInfo) TypeInfo.of(ItemPredicate.class)).createCombinedType(TypeInfo.of(
-                        ItemFilter.class)));
+                ((RecordTypeInfo) TypeInfo.of(ItemPredicate.class)).createCombinedType(TypeInfo.of(ItemFilter.class)));
     }
 
-    private static DistancePredicate ofDistancePredicate(Object o) {
-        if (o instanceof DistancePredicate distancePredicate) {
-            return distancePredicate;
-        }
-
-        if (o instanceof DistancePredicateBuilder distancePredicateBuilder) {
-            return distancePredicateBuilder.build();
-        }
-
-        LootJS.LOG.warn("Invalid distance predicate: {}", o);
-        return DistancePredicate.absolute(MinMaxBounds.Doubles.exactly(Double.MAX_VALUE));
-    }
-
-    private static NbtPredicate ofNbtPredicate(Context cx, Object o, TypeInfo target) {
-        if (o instanceof NbtPredicate nbt) {
-            return nbt;
-        }
-
-        if (o instanceof Map<?, ?> map) {
-            return new NbtPredicate((CompoundTag) NBTUtils.compoundTag(cx, map));
-        }
-
-        return new NbtPredicate(new CompoundTag());
-    }
-
-    private static PlayerPredicate.AdvancementPredicate ofAdvancementPredicate(Context cx, Object o, TypeInfo target) {
-        return new PlayerPredicate.AdvancementPredicate() {
-            @Override
-            public boolean test(AdvancementProgress advancementProgress) {
-                return false;
-            }
-        };
-    }
-
-    private static EntitySubPredicate ofEntitySubPredicate(Context cx, Object o, TypeInfo target) {
-        if (o instanceof Map<?, ?>) {
-            RegistryAccessContainer registries = ((KubeJSContext) cx).getRegistries();
-            return registries.decode(cx, EntitySubPredicate.CODEC, o);
-        }
-
-        return new EntitySubPredicate() {
-            @Override
-            public MapCodec<? extends EntitySubPredicate> codec() {
-                throw new UnsupportedOperationException("Custom EntitySubPredicate does not have a codec");
-            }
-
-            @Override
-            public boolean matches(Entity arg, ServerLevel arg2, @org.jetbrains.annotations.Nullable Vec3 arg3) {
-                return false;
-            }
-        };
-    }
-
-    private IdFilter ofIdFilter(Object o) {
-        return switch (o) {
-            case List<?> list -> new IdFilter.Or(list.stream().map(this::ofIdFilter).toList());
-            case String str -> {
-                if (str.startsWith("@")) {
-                    yield new IdFilter.ByMod(str.substring(1));
-                }
-
-                yield new IdFilter.ByLocation(ResourceLocation.parse(str));
-            }
-            case ResourceLocation rl -> new IdFilter.ByLocation(rl);
-            case Pattern pattern -> new IdFilter.ByPattern(pattern);
-            default -> throw new IllegalArgumentException("Invalid resource location filter: " + o);
-        };
-    }
-
-    public static ItemLootEntry ofItemLootEntry(RegistryAccessContainer registries, @Nullable Object o) {
-        if (o instanceof ItemLootEntry e) {
-            return e;
-        }
-
-        ItemStack itemStack = ItemStackJS.wrap(registries, o);
-        if (itemStack.isEmpty()) {
-            ConsoleJS.SERVER.error("[LootEntry.of()] Invalid item stack, returning empty stack: " + o);
-            ConsoleJS.SERVER.error("- Consider using `LootEntry.empty()` if you want to create an empty loot entry.");
-            return LootEntry.of(ItemStack.EMPTY);
-        }
-
-        return LootEntry.of(itemStack);
-    }
-
-    public static LootEntry ofLootEntry(RegistryAccessContainer registries, @Nullable Object o) {
-        if (o instanceof LootEntry entry) {
-            return entry;
-        }
-
-        if (o instanceof String str && str.startsWith("#")) {
-            String tag = str.substring(0, 1);
-            return LootEntry.tag(tag, false);
-        }
-
-        return ofItemLootEntry(registries, o);
-    }
-
-    public static EntityTypePredicate ofEntityTypePredicate(@Nullable Object o) {
-        if (o instanceof EntityType<?> type) {
-            return EntityTypePredicate.of(type);
-        }
-
-        if (o instanceof TagKey<?> tag) {
-            if (tag.registry() != Registries.ENTITY_TYPE) {
-                throw new IllegalArgumentException("Provided tag is not an entity type tag: " + tag);
-            }
-
-            //noinspection unchecked
-            return EntityTypePredicate.of((TagKey<EntityType<?>>) tag);
-        }
-
-        if (o instanceof String str) {
-            if (str.startsWith("#")) {
-                ResourceLocation tag = ResourceLocation.parse(str.substring(1));
-                return EntityTypePredicate.of(TagKey.create(Registries.ENTITY_TYPE, tag));
-            }
-
-            EntityType<?> et = BuiltInRegistries.ENTITY_TYPE.get(ResourceLocation.parse(str));
-            return EntityTypePredicate.of(et);
-        }
-
-        if (o instanceof List<?> list) {
-            List<HolderSet<EntityType<?>>> predicates = new ArrayList<>();
-            for (Object object : list) {
-                var p = ofEntityTypePredicate(object);
-                predicates.add(p.types());
-            }
-
-            return new EntityTypePredicate(new OrHolderSet<>(predicates));
-        }
-
-        LootJS.LOG.error("Failed creating EntityTypePredicate. Will return empty one");
-        return EMPTY_ENTITY_TYPE_PREDICATE;
-    }
 }

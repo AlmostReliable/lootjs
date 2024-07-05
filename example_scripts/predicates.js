@@ -1,93 +1,133 @@
-function createNamedEntry(name) {
-    return LootEntry.of(Item.of("minecraft:stick").withCustomName(name))
-}
-
 /**
  * Check location check automatic record building
  */
-LootJS.lootTables((event) => {
-
-    const entryWithLocCheck = createNamedEntry("LocationCheck").location({
-        biomes: "#minecraft:is_overworld"
-    })
-    event
-            .getEntityTable("minecraft:chicken")
-            .createPool()
-            .addEntry(entryWithLocCheck)
-})
-
-/**
- * Check entity predicate automatic record building
- */
-LootJS.lootTables((event) => {
-
-    const entryWithLocCheck = createNamedEntry("EntityPredicate").matchKiller({
-        equipment: {
-            mainhand: {
-                items: "#c:tools"
+LootJS.modifiers(event => {
+    const entry = LootEntry.testItem("LocationCheck").matchLocation({
+        position: {
+            x: 30,
+            y: {
+                min: 0,
+                max: 200
+            },
+            z: 30
+        },
+        biomes: "#minecraft:is_overworld",
+        dimension: "minecraft:overworld",
+        smokey: false,
+        light: {
+            min: 0,
+            max: 15
+        },
+        block: {
+            blocks: "#minecraft:mineable/pickaxe",
+            properties: {
+                waterlogged: false
             }
         },
-        subPredicate: {
-            type: "minecraft:lightning",
-            blocks_set_on_fire: 0
-        }
+        canSeeSky: true
     })
-    event
-            .getEntityTable("minecraft:chicken")
-            .createPool()
-            .addEntry(entryWithLocCheck)
-})
 
-
-/**
- * Check item predicate automatic record building
- */
-LootJS.lootTables((event) => {
-
-    const ipRecordNested = createNamedEntry("ItemPredicate Record").matchTool({
-        items: "#c:tools",
-        // subPredicates: {
-        //     "minecraft:damage": {
-        //         durability: {
-        //             min: 0,
-        //             max: 10000
-        //         },
-        //         damage: {
-        //             min: 0,
-        //             max: 10000
-        //         },
-        //     }
-        // }
-    })
-    // const ipRecord = createNamedEntry("ItemPredicate Record").matchTool({
-    //     items: "#c:tools"
-    // })
-    // const ipFilter = createNamedEntry("ItemPredicate Record").matchTool(ItemFilter.tag("#c:tools"))
-    // const ipAuto = createNamedEntry("ItemPredicate Record").matchTool("#c:tools")
-    event
-            .getBlockTable("minecraft:dirt")
-            .createPool()
-            .addEntry(ipRecordNested)
+    event.addEntityModifier("minecraft:chicken").addLoot(entry)
 })
 
 /**
- * Check item predicate automatic record building
+ * Check entity check automatic record building
  */
-LootJS.lootTables((event) => {
-
-    const ipRecordNested = createNamedEntry("ItemPredicate Record").testPlayerPredicate({
-        level: {
-            min: 0,
-            max: 10000
+LootJS.modifiers(event => {
+    const entry = LootEntry.testItem("EntityPredicate").matchEntity({
+        entityType: "@minecraft",
+        distance: {
+            absolute: {
+                min: 0,
+                max: 100
+            }
         },
-        gameType: ["survival", "creative"],
-        stats: [],
-        advancements: {
-            "minecraft:test": true
+        movement: {
+            speed: {
+                min: 0,
+                max: 100
+            },
+            fallDistance: {
+                min: 0,
+                max: 100
+            }
+        },
+        location: {
+            located: {
+                // LocationPredicate
+            },
+            steppingOn: {
+                // LocationPredicate
+            }
+        },
+        effects: [
+            {
+                id: "minecraft:strength",
+                duration: {
+                    max: 400
+                }
+            }
+        ],
+        flags: {
+            isOnGround: true
+        },
+        equipment: {
+            // ItemPredicate for each equipment slot
+        },
+        vehicle: {
+            // EntityPredicate
+        },
+        passenger: {
+            // EntityPredicate
         }
     })
-    event
-            .getBlockTable("minecraft:dirt")
-            .createPool()
-            .addEntry(ipRecordNested)
+
+    event.addEntityModifier("minecraft:chicken").addLoot(entry)
+})
+
+/**
+ * Damage source test
+ */
+LootJS.modifiers(event => {
+    const entry = LootEntry.testItem("DamageSource").matchDamageSource({
+        tags: [
+            {
+                expected: true,
+                id: "minecraft:is_explosion"
+            },
+        ]
+    })
+
+    event.addEntityModifier("minecraft:chicken").addLoot(entry)
+})
+
+/**
+ * Item predicate test
+ */
+LootJS.modifiers(event => {
+    const entry = LootEntry.testItem("ItemPredicate").matchTool({
+        items: {
+            type: "neoforge:or",
+            values: [
+                "@minecraft",
+                "#c:tools",
+                /someRegexValue/,
+                {
+                    type: "neoforge:any"
+                }
+            ]
+        },
+        predicates: {
+            enchantments: [
+                {
+                    enchantments: "@minecraft", // Checks if nested holder set still works in predicate
+                    levels: {
+                        min: 3
+                    }
+                }
+            ]
+        }
+    })
+
+    event.addEntityModifier("minecraft:chicken").addLoot(entry)
 })
