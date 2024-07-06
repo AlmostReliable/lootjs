@@ -39,7 +39,7 @@ repositories {
 }
 
 
-base.archivesName.set(modId)
+base.archivesName.set("$modId-neoforge")
 version = "$minecraftVersion-$modVersion"
 
 loom {
