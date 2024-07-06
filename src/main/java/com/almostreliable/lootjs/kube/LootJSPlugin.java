@@ -57,9 +57,7 @@ public class LootJSPlugin implements KubeJSPlugin {
         bindings.add("LootCondition", new LootCondition());
         bindings.add("LootFunction", new LootFunction());
 
-        bindings.add("IntBounds", MinMaxBounds.Ints.class);
-        bindings.add("Bounds", MinMaxBounds.Doubles.class);
-
+        bindings.add("Range", MinMaxBounds.Doubles.class);
         bindings.add("NumberProvider", NumberProviderWrapper.class);
 
         bindings.add("Predicates", Predicates.class);

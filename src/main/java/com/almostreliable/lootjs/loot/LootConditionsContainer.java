@@ -137,7 +137,7 @@ public interface LootConditionsContainer<C> {
     }
 
     default C luck(MinMaxBounds.Doubles bounds) {
-        return customPlayerCheck(serverPlayer -> bounds.matches(serverPlayer.getLuck()));
+        return matchPlayerCustom(serverPlayer -> bounds.matches(serverPlayer.getLuck()));
     }
 
     default C killedByPlayer() {
@@ -161,13 +161,13 @@ public interface LootConditionsContainer<C> {
                 .build());
     }
 
-    default C matchKiller(EntityPredicate entityPredicate) {
+    default C matchAttacker(EntityPredicate entityPredicate) {
         return addCondition(LootItemEntityPropertyCondition
                 .hasProperties(LootContext.EntityTarget.ATTACKER, entityPredicate)
                 .build());
     }
 
-    default C matchDirectKiller(EntityPredicate entityPredicate) {
+    default C matchDirectAttacker(EntityPredicate entityPredicate) {
         return addCondition(LootItemEntityPropertyCondition
                 .hasProperties(LootContext.EntityTarget.DIRECT_ATTACKER, entityPredicate)
                 .build());
@@ -181,23 +181,23 @@ public interface LootConditionsContainer<C> {
         return addCondition(new DamageSourceCondition(Optional.of(predicate)));
     }
 
-    default C distance(DistancePredicate distancePredicate) {
+    default C matchDistance(DistancePredicate distancePredicate) {
         return addCondition(new MatchKillerDistance(distancePredicate));
     }
 
-    default C customPlayerCheck(Predicate<ServerPlayer> predicate) {
+    default C matchPlayerCustom(Predicate<ServerPlayer> predicate) {
         return addCondition(new PlayerParamPredicate(predicate));
     }
 
-    default C customEntityCheck(Predicate<Entity> predicate) {
+    default C matchEntityCustom(Predicate<Entity> predicate) {
         return addCondition(new CustomParamPredicate<>(LootContextParams.THIS_ENTITY, predicate));
     }
 
-    default C customKillerCheck(Predicate<Entity> predicate) {
+    default C matchAttackerCustom(Predicate<Entity> predicate) {
         return addCondition(new CustomParamPredicate<>(LootContextParams.ATTACKING_ENTITY, predicate));
     }
 
-    default C customDirectKillerCheck(Predicate<Entity> predicate) {
+    default C matchDirectAttackerCustom(Predicate<Entity> predicate) {
         return addCondition(new CustomParamPredicate<>(LootContextParams.DIRECT_ATTACKING_ENTITY, predicate));
     }
 
@@ -232,7 +232,7 @@ public interface LootConditionsContainer<C> {
         return addCondition(new AllOfCondition(Arrays.asList(conditions)));
     }
 
-    default C jsonCondition(JsonObject json) {
+    default C matchCustomCondition(JsonObject json) {
         var regOps = RegistryOps.create(JsonOps.INSTANCE, LootJS.lookup());
         var condition = LootItemCondition.CODEC.parse(regOps, json).getOrThrow().value();
         return addCondition(condition);
