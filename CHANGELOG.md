@@ -260,6 +260,7 @@ We are now on 1.18.2!
 
 [unreleased]: https://github.com/AlmostReliable/lootjs/compare/1.18...HEAD
 
+[3.0.0]: https://github.com/AlmostReliable/lootjs/releases/tag/v1.21-neoforge-3.0.0
 [2.10.3]: https://github.com/AlmostReliable/lootjs/releases/tag/v1.18-2.10.3
 
 [2.10.2]: https://github.com/AlmostReliable/lootjs/releases/tag/v1.18-2.10.2
