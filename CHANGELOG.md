@@ -9,10 +9,11 @@ and this project adheres to [Semantic Versioning].
 
 - /
 
-## [3.0.0] -
+## [3.0.0] - 2024-07-06
 
 ### Changes
 
+- New wiki https://docs.almostreliable.com/lootjs/
 - Now on `neoforge`
 - Added `LootJS.loot_tables` event for direct loot table modification
 - Add `LootBucket` as wrapper class for loot for easier execute some helper functions
@@ -48,6 +49,7 @@ and this project adheres to [Semantic Versioning].
   - Removed some filters as they are no longer needed with the new data components.
   - Renamed `ALWAYS_TRUE` into `ALL` and `ALWAYS_FALSE` into `NONE`
 - Added `vault`, `block_use` and `shearing` LootType
+- And probably more stuff I may missed, sorry! :D Feel free to ask in our discord.
 
 ## [2.10.3] - 2023-09-27
 
