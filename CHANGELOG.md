@@ -9,6 +9,12 @@ and this project adheres to [Semantic Versioning].
 
 - /
 
+## [3.0.1] - 2024-07-07
+
+### Fixes
+
+- Fix error `Tag does not exist` when using ItemPredicates with tags
+
 ## [3.0.0] - 2024-07-06
 
 ### Changes
@@ -261,6 +267,7 @@ We are now on 1.18.2!
 [unreleased]: https://github.com/AlmostReliable/lootjs/compare/1.18...HEAD
 
 [3.0.0]: https://github.com/AlmostReliable/lootjs/releases/tag/v1.21-neoforge-3.0.0
+
 [2.10.3]: https://github.com/AlmostReliable/lootjs/releases/tag/v1.18-2.10.3
 
 [2.10.2]: https://github.com/AlmostReliable/lootjs/releases/tag/v1.18-2.10.2

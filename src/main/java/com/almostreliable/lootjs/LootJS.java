@@ -5,6 +5,7 @@ import com.almostreliable.lootjs.util.ModHolderSet;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.Registry;
+import net.minecraft.core.RegistryAccess;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
@@ -31,7 +32,7 @@ public class LootJS {
             BuildConfig.MOD_ID);
     public static final Holder<HolderSetType> MOD_HOLDER_SET = HOLDER_SET_TYPES.register("by_mod",
             () -> ModHolderSet::codec);
-    public static ThreadLocal<HolderLookup.Provider> LOOKUP_PROVIDER = ThreadLocal.withInitial(() -> new HolderLookup.Provider() {
+    public static HolderLookup.Provider LOOKUP_PROVIDER = new HolderLookup.Provider() {
         @Override
         public Stream<ResourceKey<? extends Registry<?>>> listRegistries() {
             return Stream.empty();
@@ -41,7 +42,7 @@ public class LootJS {
         public <T> Optional<HolderLookup.RegistryLookup<T>> lookup(ResourceKey<? extends Registry<? extends T>> arg) {
             return Optional.empty();
         }
-    });
+    };
 
     public LootJS(IEventBus bus) {
         bus.addListener(this::onRegister);
@@ -50,11 +51,11 @@ public class LootJS {
     }
 
     public static HolderLookup.Provider lookup() {
-        return LOOKUP_PROVIDER.get();
+        return LOOKUP_PROVIDER;
     }
 
-    public static void storeLookup(HolderLookup.Provider lookup) {
-        LOOKUP_PROVIDER.set(lookup);
+    public static void storeLookup(RegistryAccess lookup) {
+        LOOKUP_PROVIDER = new LookupProvider(lookup);
     }
 
     /**

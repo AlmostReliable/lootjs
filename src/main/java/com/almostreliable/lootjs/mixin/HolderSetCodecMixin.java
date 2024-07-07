@@ -55,7 +55,7 @@ public class HolderSetCodecMixin<E> {
             return null;
         }
 
-        if (!(kubeOps.owner(this.registryKey).orElse(null) instanceof HolderLookup.RegistryLookup<E> lookup)) {
+        if (!(kubeOps.getter(this.registryKey).orElse(null) instanceof HolderLookup.RegistryLookup<E> lookup)) {
             return null;
         }
 
@@ -71,7 +71,7 @@ public class HolderSetCodecMixin<E> {
             return null;
         }
 
-        if (!(kubeOps.owner(this.registryKey).orElse(null) instanceof HolderLookup.RegistryLookup<E> lookup)) {
+        if (!(kubeOps.getter(this.registryKey).orElse(null) instanceof HolderLookup.RegistryLookup<E> lookup)) {
             return null;
         }
 

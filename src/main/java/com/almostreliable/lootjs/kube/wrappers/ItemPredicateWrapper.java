@@ -31,7 +31,7 @@ public class ItemPredicateWrapper {
                     .build();
             case Map<?, ?> map -> {
                 RegistryAccessContainer registries = ((KubeJSContext) cx).getRegistries();
-                KubeOps ops = new KubeOps(registries.java());
+                KubeOps ops = KubeOps.create(registries);
                 yield ItemPredicate.CODEC.parse(ops, o).getOrThrow();
             }
             default -> {

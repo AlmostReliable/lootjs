@@ -136,27 +136,9 @@ LootJS.modifiers(event => {
  * Distance predicate test
  */
 LootJS.modifiers(event => {
-    const entry = LootEntry.testItem("ItemPredicate").matchTool({
-        items: {
-            type: "neoforge:or",
-            values: [
-                "@minecraft",
-                "#c:tools",
-                /someRegexValue/,
-                {
-                    type: "neoforge:any"
-                }
-            ]
-        },
-        predicates: {
-            enchantments: [
-                {
-                    enchantments: "@minecraft", // Checks if nested holder set still works in predicate
-                    levels: {
-                        min: 3
-                    }
-                }
-            ]
+    const entry = LootEntry.testItem("DistancePredicate").matchDistance({
+        absolute: {
+            min: 42,
         }
     })
 
