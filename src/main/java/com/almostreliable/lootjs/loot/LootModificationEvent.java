@@ -31,7 +31,7 @@ public class LootModificationEvent {
         return modifiers.keySet().stream().map(ResourceLocation::toString).collect(Collectors.toList());
     }
 
-    public void removeGlobalModifier(IdFilter... filters) {
+    public void removeGlobalModifiers(IdFilter... filters) {
         Set<ResourceLocation> toRemove = modifiers.keySet().stream().filter(resourceLocation -> {
             for (IdFilter filter : filters) {
                 if (filter.test(resourceLocation)) {
