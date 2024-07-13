@@ -21,19 +21,21 @@ public class ItemFilterWrapper {
 
         if (o instanceof String str && !str.isEmpty()) {
             String first = str.substring(0, 1);
+            String remaining = str.substring(1);
             switch (first) {
                 case "*":
                     return ItemFilter.ANY;
                 case "#":
-                    ResourceLocation location = ResourceLocation.parse(str.substring(1));
+                    ResourceLocation location = ResourceLocation.parse(remaining);
                     TagKey<Item> tag = TagKey.create(Registries.ITEM, location);
                     return new ItemFilter.Tag(tag);
                 case "@":
-                    String modId = str.substring(1);
                     return itemStack -> {
                         var key = BuiltInRegistries.ITEM.getKey(itemStack.getItem());
-                        return key.getNamespace().equals(modId);
+                        return key.getNamespace().equals(remaining);
                     };
+                case "!":
+                    return ofItemFilterSingle(cx, remaining.trim()).negate();
             }
         }
 
