@@ -1,7 +1,5 @@
 @file:Suppress("UnstableApiUsage")
 
-import net.fabricmc.loom.task.RemapJarTask
-
 val license: String by project
 val neoforgeVersion: String by project
 val minecraftVersion: String by project
@@ -18,102 +16,69 @@ val kubejsVersion: String by project
 plugins {
     java
     `maven-publish`
-    id("dev.architectury.loom") version ("1.6.+")
-    id("com.github.johnrengelman.shadow") version "8.1.1"
+    id("net.neoforged.moddev") version "0.1.112"
     id("com.github.gmazzo.buildconfig") version "4.0.4"
 }
 
-val extraModsPrefix = "extra-mods"
-
 repositories {
-    mavenLocal()
-    mavenCentral()
-    maven("https://maven.parchmentmc.org") // Parchment
     maven("https://maven.saps.dev/minecraft")
     maven("https://www.cursemaven.com")
-    maven("https://maven.neoforged.net/releases")
-    flatDir {
-        name = extraModsPrefix
-        dir(file("$extraModsPrefix-$minecraftVersion"))
-    }
 }
 
+base {
+    archivesName.set("$modId-neoforge")
+    version = "$minecraftVersion-$modVersion"
+}
 
-base.archivesName.set("$modId-neoforge")
-version = "$minecraftVersion-$modVersion"
+neoForge {
+    version = neoforgeVersion
 
-loom {
-    loom.silentMojangMappingsLicense()
-    loom.createRemapConfigurations(sourceSets.getByName("test"))
+    addModdingDependenciesTo(sourceSets.test.get())
 
-    accessWidenerPath.set(file("src/main/resources/${modId}.accesswidener"))
-
-    // load the test mod manually because forge always uses main by default
     mods {
+        create(modId) {
+            sourceSets.add(sourceSets.main.get())
+        }
+
         create("testmod") {
-            sourceSet(sourceSets.test.get())
+            sourceSets.add(sourceSets.test.get())
         }
     }
 
     runs {
         val exampleScripts = project.rootDir.resolve("example_scripts").toString()
+        configureEach {
+            jvmArgument("-XX:+IgnoreUnrecognizedVMOptions")
+            jvmArgument("-XX:+AllowEnhancedClassRedefinition")
+        }
         create("gametest") {
-            name("Gametest")
-            server()
-            source(sourceSets.test.get())
-            property("neoforge.gameTestServer", "true")
-            property("neoforge.enabledGameTestNamespaces", modId)
-            property("lootjs.example_scripts", exampleScripts)
+            server();
+            sourceSet.set(sourceSets.test.get())
+            systemProperty("neoforge.gameTestServer", "true")
+            systemProperty("neoforge.enabledGameTestNamespaces", modId)
+            systemProperty("lootjs.example_scripts", exampleScripts)
         }
-
         create("testmod") {
-            name("Testmod Client")
-            client()
-            source(sourceSets.test.get())
-            property("neoforge.gameTestServer", "true")
-            property("neoforge.enabledGameTestNamespaces", modId)
-            property("lootjs.example_scripts", exampleScripts)
+            client();
+            sourceSet.set(sourceSets.test.get())
+            systemProperty("neoforge.gameTestServer", "true")
+            systemProperty("neoforge.enabledGameTestNamespaces", modId)
+            systemProperty("lootjs.example_scripts", exampleScripts)
         }
-
-        forEach {
-            // Allows DCEVM hot-swapping when using the JetBrains Runtime (https://github.com/JetBrains/JetBrainsRuntime).
-            it.vmArgs("-XX:+IgnoreUnrecognizedVMOptions", "-XX:+AllowEnhancedClassRedefinition")
-            if (it.environment == "client") {
-                it.programArgs("--width", "1920", "--height", "1080")
-            }
+        create("client") {
+            client()
+        }
+        create("server") {
+            server()
         }
     }
 }
 
-
 dependencies {
-    minecraft("com.mojang:minecraft:$minecraftVersion")
-    mappings(loom.officialMojangMappings())
-
-    neoForge("net.neoforged:neoforge:${neoforgeVersion}")
-
-//    compileOnly("dev.latvian.mods:kubejs-neoforge:${kubejsVersion}")
-    modApi("dev.latvian.mods:kubejs-neoforge:${kubejsVersion}")
+    implementation("dev.latvian.mods:kubejs-neoforge:${kubejsVersion}")
     testImplementation("dev.latvian.mods:kubejs-neoforge:${kubejsVersion}")
 
     implementation("com.google.code.findbugs:jsr305:3.0.2")
-}
-
-/**
- * Maven publishing
- */
-publishing {
-    publications {
-        register("mavenNeoForge", MavenPublication::class) {
-            artifactId = base.archivesName.get()
-            from(components["java"])
-        }
-    }
-
-    // See https://docs.gradle.org/current/userguide/publishing_maven.html for information on how to set up publishing.
-    repositories {
-        // Add repositories to publish here.
-    }
 }
 
 tasks {
@@ -145,32 +110,9 @@ tasks {
             expand(replaceProperties)
         }
     }
-
-    withType<JavaCompile> {
-        options.encoding = "UTF-8"
-        options.release.set(21)
-    }
-
-    /**
-     * When publishing to Maven Local, use a timestamp as version so projects can always
-     * use the latest version without having to use a dummy version.
-     */
-    named<Task>("publishToMavenLocal") {
-        version = "$version.${System.currentTimeMillis() / 1000}"
-    }
-
-    named<RemapJarTask>("remapJar") {
-        atAccessWideners.add("${modId}.accesswidener")
-    }
-
-    named<Jar>("jar") {
-        archiveClassifier.set("dev")
-    }
-
 }
 
 extensions.configure<JavaPluginExtension> {
-    toolchain.languageVersion.set(JavaLanguageVersion.of(21))
     withSourcesJar()
 }
 

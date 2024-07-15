@@ -21,7 +21,7 @@ public class ConditionsContainer {
                     .entity()
                     .build());
             GameTestUtils.assertEquals(helper,
-                    condition.entityTarget,
+                    condition.entityTarget(),
                     LootContext.EntityTarget.THIS);
         });
     }
@@ -33,7 +33,7 @@ public class ConditionsContainer {
                     .entity()
                     .build());
             GameTestUtils.assertEquals(helper,
-                    condition.entityTarget,
+                    condition.entityTarget(),
                     LootContext.EntityTarget.ATTACKER);
         });
     }
@@ -45,7 +45,7 @@ public class ConditionsContainer {
                     .entity()
                     .build());
             GameTestUtils.assertEquals(helper,
-                    condition.entityTarget,
+                    condition.entityTarget(),
                     LootContext.EntityTarget.DIRECT_ATTACKER);
         });
     }

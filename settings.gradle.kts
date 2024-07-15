@@ -1,14 +1,7 @@
-pluginManagement {
-    repositories {
-        maven("https://maven.fabricmc.net/")
-        maven("https://maven.architectury.dev/")
-        maven("https://maven.minecraftforge.net/")
-        maven("https://maven.creeperhost.net/")
-        gradlePluginPortal()
-    }
+plugins {
+    id("org.gradle.toolchains.foojay-resolver-convention") version "0.8.0"
 }
 
 val modName: String by extra
 val minecraftVersion: String by extra
 rootProject.name = "$modName-$minecraftVersion"
-//include("Common", "Fabric", "Forge")
