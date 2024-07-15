@@ -16,7 +16,7 @@ val kubejsVersion: String by project
 plugins {
     java
     `maven-publish`
-    id("net.neoforged.moddev") version "0.1.112"
+    id("net.neoforged.moddev") version "1.0.9"
     id("com.github.gmazzo.buildconfig") version "4.0.4"
 }
 
