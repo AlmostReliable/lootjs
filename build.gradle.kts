@@ -45,23 +45,18 @@ neoForge {
 
     runs {
         val exampleScripts = project.rootDir.resolve("example_scripts").toString()
-        configureEach {
-            jvmArgument("-XX:+IgnoreUnrecognizedVMOptions")
-            jvmArgument("-XX:+AllowEnhancedClassRedefinition")
-        }
         create("gametest") {
             server();
-            sourceSet.set(sourceSets.test.get())
             systemProperty("neoforge.gameTestServer", "true")
             systemProperty("neoforge.enabledGameTestNamespaces", modId)
             systemProperty("lootjs.example_scripts", exampleScripts)
         }
         create("testmod") {
             client();
-            sourceSet.set(sourceSets.test.get())
             systemProperty("neoforge.gameTestServer", "true")
             systemProperty("neoforge.enabledGameTestNamespaces", modId)
             systemProperty("lootjs.example_scripts", exampleScripts)
+            programArguments.addAll("--quickPlaySingleplayer", "New World")
         }
         create("client") {
             client()
@@ -70,6 +65,13 @@ neoForge {
         create("server") {
             server()
             mods.set(setOf(mainMod))
+        }
+        configureEach {
+            jvmArgument("-XX:+IgnoreUnrecognizedVMOptions")
+            jvmArgument("-XX:+AllowEnhancedClassRedefinition")
+            if (type.get() == "client") {
+                programArguments.addAll("--width", "1920", "--height", "1080")
+            }
         }
     }
 }
