@@ -35,14 +35,12 @@ neoForge {
 
     addModdingDependenciesTo(sourceSets.test.get())
 
-    mods {
-        create(modId) {
-            sourceSets.add(sourceSets.main.get())
-        }
+    val mainMod = mods.create(modId) {
+        sourceSet(sourceSets.main.get())
+    }
 
-        create("testmod") {
-            sourceSets.add(sourceSets.test.get())
-        }
+    mods.create("testmod") {
+        sourceSet(sourceSets.test.get())
     }
 
     runs {
@@ -67,9 +65,11 @@ neoForge {
         }
         create("client") {
             client()
+            mods.set(setOf(mainMod))
         }
         create("server") {
             server()
+            mods.set(setOf(mainMod))
         }
     }
 }
