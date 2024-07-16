@@ -8,6 +8,7 @@ import dev.latvian.mods.kubejs.block.state.BlockStatePredicate;
 import dev.latvian.mods.kubejs.script.ConsoleJS;
 import dev.latvian.mods.kubejs.script.KubeJSContext;
 import dev.latvian.mods.kubejs.util.NBTUtils;
+import dev.latvian.mods.kubejs.util.RegExpKJS;
 import dev.latvian.mods.kubejs.util.RegistryAccessContainer;
 import dev.latvian.mods.rhino.Context;
 import dev.latvian.mods.rhino.type.RecordTypeInfo;
@@ -149,6 +150,11 @@ public class BasicWrapper {
     }
 
     public static IdFilter ofIdFilter(Object o) {
+        Pattern pattern = RegExpKJS.wrap(o);
+        if (pattern != null) {
+            return new IdFilter.ByPattern(pattern);
+        }
+
         return switch (o) {
             case List<?> list -> new IdFilter.Or(list.stream().map(BasicWrapper::ofIdFilter).toList());
             case String str -> {
@@ -159,7 +165,6 @@ public class BasicWrapper {
                 yield new IdFilter.ByLocation(ResourceLocation.parse(str));
             }
             case ResourceLocation rl -> new IdFilter.ByLocation(rl);
-            case Pattern pattern -> new IdFilter.ByPattern(pattern);
             default -> throw new IllegalArgumentException("Invalid resource location filter: " + o);
         };
     }
