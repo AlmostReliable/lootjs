@@ -9,9 +9,11 @@ and this project adheres to [Semantic Versioning].
 
 - /
 
-## [3.0.2] - 2024-07-13
+## [3.0.2] - 2024-07-16
 
 - Add quick way to negate simple `ItemFilter`s like tag or id filter by using `!`, e.g. `!#c:tools`
+- Fix regex handling with id filters
+- Rename `removeGlobalModifier` to `removeGlobalModifiers` in `LootJS.modifiers` event.
 
 ## [3.0.1] - 2024-07-07
 
