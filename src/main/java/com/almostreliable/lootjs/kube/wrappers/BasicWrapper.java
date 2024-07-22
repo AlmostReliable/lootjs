@@ -39,12 +39,12 @@ public class BasicWrapper {
             .of(HolderSet.class)
             .withParams(TypeInfo.of(EntityType.class));
 
-    public static BlockFilter ofBlockFilter(Object o) {
+    public static BlockFilter ofBlockFilter(RegistryAccessContainer registries, Object o) {
         if (o instanceof BlockFilter bf) {
             return bf;
         }
 
-        BlockStatePredicate bsp = BlockStatePredicate.of(o);
+        BlockStatePredicate bsp = BlockStatePredicate.of(registries, o);
         return new BlockFilter() {
             @NotNull
             @Override
