@@ -38,7 +38,7 @@ public class ItemLootEntry extends AbstractSimpleLootEntry<LootItem> implements 
             getFunctions().setCount(ConstantValue.exactly(itemStack.getCount()));
         }
 
-        if (!itemStack.getComponents().isEmpty()) {
+        if (!itemStack.isComponentsPatchEmpty()) {
             DataComponentPatch.Builder builder = DataComponentPatch.builder();
             for (TypedDataComponent<?> component : itemStack.getComponents()) {
                 builder.set(Utils.cast(component.type()), component.value());

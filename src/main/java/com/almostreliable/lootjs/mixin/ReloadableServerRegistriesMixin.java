@@ -18,7 +18,7 @@ import java.util.List;
 @Mixin(value = ReloadableServerRegistries.class, priority = 1337)
 public class ReloadableServerRegistriesMixin {
 
-    @Inject(method = "apply", at = @At("RETURN"))
+    @Inject(method = "apply", at = @At("HEAD"))
     private static void lootjs$runLootTableEventJS(LayeredRegistryAccess<RegistryLayer> arg, List<WritableRegistry<?>> list, CallbackInfoReturnable<LayeredRegistryAccess<RegistryLayer>> cir) {
         WritableRegistry<LootTable> registry = null;
         try {

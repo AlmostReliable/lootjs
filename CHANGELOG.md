@@ -9,6 +9,10 @@ and this project adheres to [Semantic Versioning].
 
 - /
 
+## [3.0.4] - 2024-07-25
+
+- Fix `.create` in loot tables event
+
 ## [3.0.3] - 2024-07-22
 
 - Bump kubejs version
