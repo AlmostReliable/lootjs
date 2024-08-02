@@ -1,7 +1,7 @@
 package testmod.mixin;
 
 
-import dev.latvian.mods.kubejs.KubeJS;
+import com.almostreliable.lootjs.BuildConfig;
 import dev.latvian.mods.kubejs.script.*;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -23,13 +23,16 @@ public abstract class ScriptManagerMixin {
     @Shadow
     protected abstract void loadFile(ScriptPack pack, ScriptFileInfo fileInfo);
 
+    @Shadow
+    public abstract void collectScripts(ScriptPack pack, Path dir, String path);
+
     @Inject(method = "reload", at = @At(value = "INVOKE", target = "Ldev/latvian/mods/kubejs/script/ScriptManager;load()V"))
     private void testmod$test(CallbackInfo ci) {
         if (scriptType != ScriptType.SERVER) {
             return;
         }
 
-        String prop = System.getProperty("lootjs.example_scripts");
+        String prop = System.getProperty(BuildConfig.MOD_ID + ".example_scripts");
         if (prop == null) {
             return;
         }
@@ -37,7 +40,7 @@ public abstract class ScriptManagerMixin {
         Path p = Path.of(prop);
         var packInfo = new ScriptPackInfo("server_examples", "");
         var pack = new ScriptPack((ScriptManager) (Object) this, packInfo);
-        KubeJS.loadScripts(pack, p, "");
+        this.collectScripts(pack, p, "");
 
         for (var script : pack.info.scripts) {
             loadFile(pack, script);
