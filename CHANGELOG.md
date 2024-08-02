@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning].
 
 ## [Unreleased]
 
-- /
+- Remove `addItem` for loot pools. Prefer to use `addEntry`
 
 ## [3.0.4] - 2024-07-25
 
