@@ -56,7 +56,6 @@ neoForge {
             systemProperty("neoforge.gameTestServer", "true")
             systemProperty("neoforge.enabledGameTestNamespaces", modId)
             systemProperty("lootjs.example_scripts", exampleScripts)
-            programArguments.addAll("--quickPlaySingleplayer", "New World")
         }
         create("client") {
             client()
@@ -79,8 +78,6 @@ neoForge {
 dependencies {
     implementation("dev.latvian.mods:kubejs-neoforge:${kubejsVersion}")
     testImplementation("dev.latvian.mods:kubejs-neoforge:${kubejsVersion}")
-
-    implementation("com.google.code.findbugs:jsr305:3.0.2")
 }
 
 tasks {
