@@ -5,7 +5,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog],
 and this project adheres to [Semantic Versioning].
 
-## [Unreleased]
+## Unreleased
 
 - Remove `addItem` for loot pools. Prefer to use `addEntry`
 - Deprecate `addTypeModifier` in `LootJS.modifiers` and will be removed in future updates, use `addTableModifier` with a
