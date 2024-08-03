@@ -8,6 +8,10 @@ and this project adheres to [Semantic Versioning].
 ## [Unreleased]
 
 - Remove `addItem` for loot pools. Prefer to use `addEntry`
+- Deprecate `addTypeModifier` in `LootJS.modifiers` and will be removed in future updates, use `addTableModifier` with a
+  LootType instead.
+- Deprecate `modifyLootTypeTables` in `LootJS.lootTables` and will be removed in future updates, use `modifyLootTables`
+  with a LootType instead.
 
 ## [3.0.4] - 2024-07-25
 
@@ -66,8 +70,8 @@ and this project adheres to [Semantic Versioning].
 - Changes to `ItemFilter`:
     - `.hasEnchantments(...)` only works for item enchantments now. For `stored` enchantments
       use `.hasStoredEnchantments(...)`
-  - Removed some filters as they are no longer needed with the new data components.
-  - Renamed `ALWAYS_TRUE` into `ALL` and `ALWAYS_FALSE` into `NONE`
+    - Removed some filters as they are no longer needed with the new data components.
+    - Renamed `ALWAYS_TRUE` into `ALL` and `ALWAYS_FALSE` into `NONE`
 - Added `vault`, `block_use` and `shearing` LootType
 - And probably more stuff I may missed, sorry! :D Feel free to ask in our discord.
 
@@ -281,7 +285,9 @@ We are now on 1.18.2!
 [unreleased]: https://github.com/AlmostReliable/lootjs/compare/1.18...HEAD
 
 [3.0.4]: https://github.com/AlmostReliable/lootjs/releases/tag/v1.21-neoforge-3.0.4
+
 [3.0.3]: https://github.com/AlmostReliable/lootjs/releases/tag/v1.21-neoforge-3.0.3
+
 [3.0.2]: https://github.com/AlmostReliable/lootjs/releases/tag/v1.21-neoforge-3.0.2
 
 [3.0.1]: https://github.com/AlmostReliable/lootjs/releases/tag/v1.21-neoforge-3.0.1
