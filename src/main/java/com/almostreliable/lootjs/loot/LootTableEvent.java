@@ -2,9 +2,11 @@ package com.almostreliable.lootjs.loot;
 
 import com.almostreliable.lootjs.core.LootType;
 import com.almostreliable.lootjs.core.filters.IdFilter;
+import com.almostreliable.lootjs.core.filters.LootTableFilter;
 import com.almostreliable.lootjs.loot.table.LootTableList;
 import com.almostreliable.lootjs.loot.table.MutableLootTable;
 import com.mojang.serialization.Lifecycle;
+import dev.latvian.mods.kubejs.script.ConsoleJS;
 import net.minecraft.core.RegistrationInfo;
 import net.minecraft.core.WritableRegistry;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -89,10 +91,18 @@ public class LootTableEvent {
         return getLootTable(entityType.getDefaultLootTable());
     }
 
-    public LootTableList modifyLootTables(IdFilter filter) {
+    public LootTableList modifyLootTables(LootTableFilter... filters) {
         var tables = registry()
                 .stream()
-                .filter(lootTable -> filter.test(lootTable.getLootTableId()))
+                .filter(lootTable -> {
+                    for (var f : filters) {
+                        if (f.test(lootTable)) {
+                            return true;
+                        }
+                    }
+
+                    return false;
+                })
                 .map(MutableLootTable::new)
                 .toList();
         return new LootTableList(tables);
@@ -116,7 +126,10 @@ public class LootTableEvent {
         return new LootTableList(tables);
     }
 
+    @Deprecated(forRemoval = true)
     public LootTableList modifyLootTypeTables(LootType... types) {
+        ConsoleJS.SERVER.error(
+                "LootJS: `modifyLootTypeTables` is deprecated. Use `modifyLootTables` with LootType instead.");
         Set<LootType> asSet = new HashSet<>(Arrays.asList(types));
 
         var tables = registry().stream().filter(lootTable -> {

@@ -3,10 +3,12 @@ package com.almostreliable.lootjs.loot;
 import com.almostreliable.lootjs.LootModificationsAPI;
 import com.almostreliable.lootjs.core.LootType;
 import com.almostreliable.lootjs.core.filters.IdFilter;
+import com.almostreliable.lootjs.core.filters.LootTableFilter;
 import com.almostreliable.lootjs.loot.modifier.LootModifier;
 import com.almostreliable.lootjs.util.BlockFilter;
 import com.almostreliable.lootjs.util.Utils;
 import com.google.common.base.Preconditions;
+import dev.latvian.mods.kubejs.script.ConsoleJS;
 import dev.latvian.mods.rhino.util.HideFromJS;
 import net.minecraft.core.HolderSet;
 import net.minecraft.resources.ResourceLocation;
@@ -57,7 +59,7 @@ public class LootModificationEvent {
         LootModificationsAPI.FILTERS.addAll(Arrays.asList(filters));
     }
 
-    public LootModifier.Builder addTableModifier(IdFilter... filters) {
+    public LootModifier.Builder addTableModifier(LootTableFilter... filters) {
         if (filters.length == 0) {
             throw new IllegalArgumentException("No loot table were given.");
         }
@@ -68,7 +70,9 @@ public class LootModificationEvent {
         return builder;
     }
 
+    @Deprecated(forRemoval = true)
     public LootModifier.Builder addTypeModifier(LootType... types) {
+        ConsoleJS.SERVER.error("LootJS: `addTypeModifier` is deprecated. Use `addTableModifier` with LootType instead.");
         if (types.length == 0) {
             throw new IllegalArgumentException("No loot type were given.");
         }

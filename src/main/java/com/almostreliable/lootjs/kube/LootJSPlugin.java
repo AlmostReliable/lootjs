@@ -8,6 +8,7 @@ import com.almostreliable.lootjs.core.entry.LootEntry;
 import com.almostreliable.lootjs.core.entry.SingleLootEntry;
 import com.almostreliable.lootjs.core.filters.IdFilter;
 import com.almostreliable.lootjs.core.filters.ItemFilter;
+import com.almostreliable.lootjs.core.filters.LootTableFilter;
 import com.almostreliable.lootjs.kube.wrappers.*;
 import com.almostreliable.lootjs.loot.LootCondition;
 import com.almostreliable.lootjs.loot.LootFunction;
@@ -93,6 +94,7 @@ public class LootJSPlugin implements KubeJSPlugin {
         registry.register(EntitySubPredicate.class, BasicWrapper::ofEntitySubPredicate);
 
         registry.register(IdFilter.class, BasicWrapper::ofIdFilter);
+        registry.register(LootTableFilter.class, BasicWrapper::ofLootTableFilter);
         registry.register(ItemFilter.class, ItemFilterWrapper::ofItemFilter);
     }
 

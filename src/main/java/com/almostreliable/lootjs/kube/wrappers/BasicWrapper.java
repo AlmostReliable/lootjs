@@ -1,6 +1,8 @@
 package com.almostreliable.lootjs.kube.wrappers;
 
+import com.almostreliable.lootjs.core.LootType;
 import com.almostreliable.lootjs.core.filters.IdFilter;
+import com.almostreliable.lootjs.core.filters.LootTableFilter;
 import com.almostreliable.lootjs.util.BlockFilter;
 import com.almostreliable.lootjs.util.Utils;
 import com.mojang.serialization.MapCodec;
@@ -167,5 +169,13 @@ public class BasicWrapper {
             case ResourceLocation rl -> new IdFilter.ByLocation(rl);
             default -> throw new IllegalArgumentException("Invalid resource location filter: " + o);
         };
+    }
+
+    public static LootTableFilter ofLootTableFilter(Object o) {
+        if (o instanceof LootType lootType) {
+            return new LootTableFilter.ByLootType(lootType);
+        }
+
+        return new LootTableFilter.ByIdFilter(ofIdFilter(o));
     }
 }
