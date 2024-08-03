@@ -14,6 +14,7 @@ public enum LootType {
     CHEST(LootContextParamSets.CHEST),
     FISHING(LootContextParamSets.FISHING),
     ENTITY(LootContextParamSets.ENTITY),
+    EQUIPMENT(LootContextParamSets.EQUIPMENT),
     ARCHAEOLOGY(LootContextParamSets.ARCHAEOLOGY),
     GIFT(LootContextParamSets.GIFT),
     VAULT(LootContextParamSets.VAULT),
