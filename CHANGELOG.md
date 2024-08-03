@@ -5,7 +5,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog],
 and this project adheres to [Semantic Versioning].
 
-## Unreleased
+## [3.1.0] - 2024-08-03
 
 - Remove `addItem` for loot pools. Prefer to use `addEntry`
 - Deprecate `addTypeModifier` in `LootJS.modifiers` and will be removed in future updates, use `addTableModifier` with a
@@ -284,6 +284,7 @@ We are now on 1.18.2!
 
 [unreleased]: https://github.com/AlmostReliable/lootjs/compare/1.18...HEAD
 
+[3.1.0]: https://github.com/AlmostReliable/lootjs/releases/tag/v1.21-neoforge-3.1.0
 [3.0.4]: https://github.com/AlmostReliable/lootjs/releases/tag/v1.21-neoforge-3.0.4
 
 [3.0.3]: https://github.com/AlmostReliable/lootjs/releases/tag/v1.21-neoforge-3.0.3
