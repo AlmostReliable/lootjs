@@ -65,15 +65,6 @@ public class LootTableEvent {
         }
     }
 
-    public MutableLootTable getLootTable(ResourceKey<LootTable> key) {
-        LootTable lootTable = registry().get(key);
-        if (lootTable == null) {
-            throw new IllegalArgumentException("Unknown loot table: " + key.location());
-        }
-
-        return new MutableLootTable(lootTable);
-    }
-
     public MutableLootTable getLootTable(ResourceLocation location) {
         LootTable lootTable = registry().get(location);
         if (lootTable == null) {
@@ -84,11 +75,11 @@ public class LootTableEvent {
     }
 
     public MutableLootTable getBlockTable(Block block) {
-        return getLootTable(block.getLootTable());
+        return getLootTable(block.getLootTable().location());
     }
 
     public MutableLootTable getEntityTable(EntityType<?> entityType) {
-        return getLootTable(entityType.getDefaultLootTable());
+        return getLootTable(entityType.getDefaultLootTable().location());
     }
 
     public LootTableList modifyLootTables(LootTableFilter... filters) {
