@@ -32,7 +32,6 @@ base {
 
 neoForge {
     version = neoforgeVersion
-
     addModdingDependenciesTo(sourceSets.test.get())
 
     val mainMod = mods.create(modId) {
@@ -46,16 +45,18 @@ neoForge {
     runs {
         val exampleScripts = project.rootDir.resolve("example_scripts").toString()
         create("gametest") {
-            server();
+            server()
+            sourceSet.set(sourceSets.test.get())
             systemProperty("neoforge.gameTestServer", "true")
             systemProperty("neoforge.enabledGameTestNamespaces", modId)
-            systemProperty("lootjs.example_scripts", exampleScripts)
+            systemProperty("$modId.example_scripts", exampleScripts)
         }
         create("testmod") {
             client();
+            sourceSet.set(sourceSets.test.get())
             systemProperty("neoforge.gameTestServer", "true")
             systemProperty("neoforge.enabledGameTestNamespaces", modId)
-            systemProperty("lootjs.example_scripts", exampleScripts)
+            systemProperty("$modId.example_scripts", exampleScripts)
         }
         create("client") {
             client()
