@@ -1,5 +1,6 @@
 package com.almostreliable.lootjs.core.entry;
 
+import com.almostreliable.lootjs.util.DebugInfo;
 import com.mojang.datafixers.util.Either;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
@@ -34,5 +35,11 @@ public class TableReferenceLootEntry extends AbstractSimpleLootEntry<NestedLootT
     public TableReferenceLootEntry addCondition(LootItemCondition condition) {
         getConditions().add(condition);
         return this;
+    }
+
+    @Override
+    public void collectDebugInfo(DebugInfo info) {
+        info.add("% Table: " + getLocation());
+        super.collectDebugInfo(info);
     }
 }

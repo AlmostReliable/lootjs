@@ -5,6 +5,10 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog],
 and this project adheres to [Semantic Versioning].
 
+# Unreleased
+
+- Fix `print` method for loot tables. Will now print the entries correctly.
+
 ## [3.1.0] - 2024-08-03
 
 - Remove `addItem` for loot pools. Prefer to use `addEntry`

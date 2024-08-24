@@ -1,5 +1,6 @@
 package com.almostreliable.lootjs.core.entry;
 
+import com.almostreliable.lootjs.util.DebugInfo;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
@@ -55,5 +56,11 @@ public class TagLootEntry extends AbstractSimpleLootEntry<TagEntry> implements S
     public TagLootEntry addCondition(LootItemCondition condition) {
         getConditions().add(condition);
         return this;
+    }
+
+    @Override
+    public void collectDebugInfo(DebugInfo info) {
+        info.add("% Tag: " + getTag());
+        super.collectDebugInfo(info);
     }
 }

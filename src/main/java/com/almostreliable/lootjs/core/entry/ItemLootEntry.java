@@ -1,9 +1,11 @@
 package com.almostreliable.lootjs.core.entry;
 
 import com.almostreliable.lootjs.core.filters.ItemFilter;
+import com.almostreliable.lootjs.util.DebugInfo;
 import com.almostreliable.lootjs.util.Utils;
 import net.minecraft.core.component.DataComponentPatch;
 import net.minecraft.core.component.TypedDataComponent;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -102,5 +104,11 @@ public class ItemLootEntry extends AbstractSimpleLootEntry<LootItem> implements 
     public ItemLootEntry addCondition(LootItemCondition condition) {
         getConditions().add(condition);
         return this;
+    }
+
+    @Override
+    public void collectDebugInfo(DebugInfo info) {
+        info.add("% Item: " + BuiltInRegistries.ITEM.getKey(getItem()));
+        super.collectDebugInfo(info);
     }
 }
