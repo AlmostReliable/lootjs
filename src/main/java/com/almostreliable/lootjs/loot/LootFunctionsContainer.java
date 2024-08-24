@@ -154,7 +154,7 @@ public interface LootFunctionsContainer<F> {
 
     default F jsonFunction(JsonObject json) {
         var regOps = RegistryOps.create(JsonOps.INSTANCE, LootJS.lookup());
-        LootItemFunction function = LootItemFunctions.CODEC.parse(regOps, json).getOrThrow().value();
+        LootItemFunction function = LootItemFunctions.ROOT_CODEC.parse(regOps, json).getOrThrow();
         return addFunction(function);
     }
 

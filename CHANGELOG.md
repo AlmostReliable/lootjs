@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning].
 # Unreleased
 
 - Fix `print` method for loot tables. Will now print the entries correctly.
+- Fix `matchCustomCondition` and `jsonFunction` using wrong codec.
 
 ## [3.1.0] - 2024-08-03
 

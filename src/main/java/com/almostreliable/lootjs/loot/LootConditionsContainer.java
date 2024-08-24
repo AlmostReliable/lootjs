@@ -234,7 +234,7 @@ public interface LootConditionsContainer<C> {
 
     default C matchCustomCondition(JsonObject json) {
         var regOps = RegistryOps.create(JsonOps.INSTANCE, LootJS.lookup());
-        var condition = LootItemCondition.CODEC.parse(regOps, json).getOrThrow().value();
+        var condition = LootItemCondition.DIRECT_CODEC.parse(regOps, json).getOrThrow();
         return addCondition(condition);
     }
 
