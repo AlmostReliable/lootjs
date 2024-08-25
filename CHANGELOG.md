@@ -6,6 +6,9 @@ The format is based on [Keep a Changelog],
 and this project adheres to [Semantic Versioning].
 
 ## Unreleased
+- /
+
+## [3.1.1] - 2024-08-25
 
 - Fix `print` method for loot tables. Will now print the entries correctly.
 - Fix `matchCustomCondition` and `jsonFunction` using wrong codec.
@@ -287,6 +290,7 @@ We are now on 1.18.2!
 
 <!-- Versions -->
 
+[3.1.1]: https://github.com/AlmostReliable/lootjs/releases/tag/v1.21-neoforge-3.1.1
 [3.1.0]: https://github.com/AlmostReliable/lootjs/releases/tag/v1.21-neoforge-3.1.0
 
 [3.0.4]: https://github.com/AlmostReliable/lootjs/releases/tag/v1.21-neoforge-3.0.4
