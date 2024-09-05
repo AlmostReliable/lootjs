@@ -18,9 +18,9 @@ import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
 
-@Mod("lootjs")
+@Mod(BuildConfig.MOD_ID)
 public class LootJS {
-    public static final Logger LOG = LogManager.getLogger("LootJS");
+    public static final Logger LOG = LogManager.getLogger(BuildConfig.MOD_NAME);
     public static Consumer<String> DEBUG_ACTION = LOG::info;
 
     public static HolderLookup.Provider LOOKUP_PROVIDER = new HolderLookup.Provider() {
