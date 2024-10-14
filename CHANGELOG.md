@@ -6,7 +6,8 @@ The format is based on [Keep a Changelog],
 and this project adheres to [Semantic Versioning].
 
 ## Unreleased
-- /
+
+- Fix loot modification being skipped when loot table doesn't contain any entries
 
 ## [3.1.1] - 2024-08-25
 

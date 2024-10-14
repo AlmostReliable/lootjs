@@ -24,14 +24,14 @@ import java.util.function.Predicate;
 public class GroupedLootAction implements LootAction {
 
     private final List<LootAction> actions;
-    private final ItemFilter containsLootFilter;
+    @Nullable private final ItemFilter containsLootFilter;
     private final boolean exact;
     private final Predicate<LootContext> compositeCondition;
     private final BiFunction<ItemStack, LootContext, ItemStack> compositeFunction;
     private final NumberProvider rolls;
     private final List<LootItemFunction> functions;
 
-    public GroupedLootAction(NumberProvider rolls, List<LootItemCondition> conditions, List<LootItemFunction> functions, Collection<LootAction> actions, ItemFilter containsLootFilter, boolean exact) {
+    public GroupedLootAction(NumberProvider rolls, List<LootItemCondition> conditions, List<LootItemFunction> functions, Collection<LootAction> actions, @Nullable ItemFilter containsLootFilter, boolean exact) {
         this.rolls = rolls;
         this.compositeCondition = Util.allOf(List.copyOf(conditions));
         this.functions = List.copyOf(functions);
@@ -43,8 +43,7 @@ public class GroupedLootAction implements LootAction {
 
     @Override
     public void apply(LootContext context, LootBucket loot) {
-        boolean containsLoot = exact ? matchExact(loot) : match(loot);
-        if (!containsLoot) {
+        if (!matchLoot(loot)) {
             return;
         }
 
@@ -64,7 +63,15 @@ public class GroupedLootAction implements LootAction {
         }
     }
 
+    private boolean matchLoot(LootBucket loot) {
+        return exact ? matchExact(loot) : match(loot);
+    }
+
     private boolean match(LootBucket loot) {
+        if (containsLootFilter == null) {
+            return true;
+        }
+
         for (ItemStack itemStack : loot) {
             if (containsLootFilter.test(itemStack)) {
                 return true;
@@ -75,6 +82,10 @@ public class GroupedLootAction implements LootAction {
     }
 
     private boolean matchExact(LootBucket loot) {
+        if (containsLootFilter == null) {
+            return true;
+        }
+
         for (ItemStack itemStack : loot) {
             if (!containsLootFilter.test(itemStack)) {
                 return false;
@@ -88,7 +99,7 @@ public class GroupedLootAction implements LootAction {
 
         private final ItemFilter lootItemsFilter;
 
-        public Filtered(NumberProvider rolls, List<LootItemCondition> conditions, List<LootItemFunction> functions, Collection<LootAction> actions, ItemFilter lootItemsFilter, ItemFilter containsLootFilter, boolean exact) {
+        public Filtered(NumberProvider rolls, List<LootItemCondition> conditions, List<LootItemFunction> functions, Collection<LootAction> actions, ItemFilter lootItemsFilter, @Nullable ItemFilter containsLootFilter, boolean exact) {
             super(rolls, conditions, functions, actions, containsLootFilter, exact);
             this.lootItemsFilter = lootItemsFilter;
         }
@@ -101,18 +112,16 @@ public class GroupedLootAction implements LootAction {
         }
     }
 
-    public static class Builder implements LootConditionsContainer<Builder>,
-                                           LootFunctionsContainer<Builder>,
-                                           LootActionContainer<Builder> {
+    public static class Builder
+            implements LootConditionsContainer<Builder>, LootFunctionsContainer<Builder>, LootActionContainer<Builder> {
 
         protected final List<LootAction> actions = new ArrayList<>();
         protected final List<LootItemCondition> conditions = new ArrayList<>();
         protected final List<LootItemFunction> functions = new ArrayList<>();
         protected NumberProvider rolls = ConstantValue.exactly(1f);
-        protected ItemFilter containsLootFilter = ItemFilter.ANY;
+        @Nullable protected ItemFilter containsLootFilter = null;
         protected boolean exact = false;
-        @Nullable
-        private final ItemFilter lootItemsFilter;
+        @Nullable private final ItemFilter lootItemsFilter;
 
         public Builder(ItemFilter lootItemsFilter) {
             this.lootItemsFilter = lootItemsFilter;
