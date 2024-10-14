@@ -6,6 +6,9 @@ The format is based on [Keep a Changelog],
 and this project adheres to [Semantic Versioning].
 
 ## Unreleased
+- /
+
+## [3.1.2] - 2024-10-14
 
 - Fix loot modification being skipped when loot table doesn't contain any entries
 
@@ -291,6 +294,7 @@ We are now on 1.18.2!
 
 <!-- Versions -->
 
+[3.1.2]: https://github.com/AlmostReliable/lootjs/releases/tag/v1.21.1-neoforge-3.1.2
 [3.1.1]: https://github.com/AlmostReliable/lootjs/releases/tag/v1.21-neoforge-3.1.1
 [3.1.0]: https://github.com/AlmostReliable/lootjs/releases/tag/v1.21-neoforge-3.1.0
 
