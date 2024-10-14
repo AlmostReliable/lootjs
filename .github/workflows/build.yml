@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
   push:
     branches:
-      - "1.21"
+      - "1.21.1"
     tags-ignore:
       - "**"
     paths:
@@ -15,7 +15,7 @@ on:
       - "**/build.yml"
   pull_request:
     branches:
-      - "1.21"
+      - "1.21.1"
     paths:
       - "gradle/**"
       - "**.java"
