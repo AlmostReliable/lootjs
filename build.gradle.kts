@@ -1,6 +1,6 @@
 plugins {
     id("net.neoforged.moddev") version "2.0.+"
-    id("com.almostreliable.almostgradle") version "1.0.+"
+    id("com.almostreliable.almostgradle") version "1.1.+"
 }
 
 repositories {
@@ -17,5 +17,5 @@ dependencies {
     implementation("dev.latvian.mods:kubejs-neoforge:${kubejsVersion}")
     testImplementation("dev.latvian.mods:kubejs-neoforge:${kubejsVersion}")
 
-    localRuntime(almostgradle.recipeViewers.emi.dependency)
+    testLocalRuntime(almostgradle.recipeViewers.emi.dependency)
 }
