@@ -6,6 +6,9 @@ The format is based on [Keep a Changelog],
 and this project adheres to [Semantic Versioning].
 
 ## Unreleased
+- /
+
+## [3.4.0] - 2025-03-21
 
 - Added `getPools`, `modifyPool`, `getPool`, `modifyPoolByName`, `getPoolByName` to loot tables
 - Added `hasItem` for pools and grouped loot entries
@@ -303,6 +306,7 @@ We are now on 1.18.2!
 
 <!-- Versions -->
 
+[3.4.0]: https://github.com/AlmostReliable/lootjs/releases/tag/v1.21.1-neoforge-3.4.0
 [3.3.0]: https://github.com/AlmostReliable/lootjs/releases/tag/v1.21.1-neoforge-3.3.0
 [3.2.2]: https://github.com/AlmostReliable/lootjs/releases/tag/v1.21.1-neoforge-3.2.2
 [3.1.2]: https://github.com/AlmostReliable/lootjs/releases/tag/v1.21.1-neoforge-3.1.2
