@@ -8,6 +8,7 @@ import com.almostreliable.lootjs.core.filters.IdFilter;
 import com.almostreliable.lootjs.core.filters.ItemFilter;
 import net.minecraft.world.item.Item;
 
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Predicate;
 import java.util.function.UnaryOperator;
 
@@ -84,5 +85,18 @@ public interface LootEntriesTransformer {
             return entry;
         }, deepReplace);
         return this;
+    }
+
+    default boolean hasItem(ItemFilter filter) {
+        AtomicBoolean hasItem = new AtomicBoolean(false);
+        modifyItemEntry(ile -> {
+            if (hasItem.get() || ile.test(filter)) {
+                hasItem.set(true);
+            }
+
+            return ile;
+        });
+
+        return hasItem.get();
     }
 }

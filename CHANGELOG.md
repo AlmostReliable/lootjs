@@ -6,7 +6,9 @@ The format is based on [Keep a Changelog],
 and this project adheres to [Semantic Versioning].
 
 ## Unreleased
-- /
+
+- Added `getPools`, `modifyPool`, `getPool`, `modifyPoolByName`, `getPoolByName` to loot tables
+- Added `hasItem` for pools and grouped loot entries
 
 ## [3.3.0] - 2025-01-17
 - Fixed a bug where loot entries are not correctly removed from loot tables

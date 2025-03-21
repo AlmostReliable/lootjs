@@ -61,6 +61,10 @@ public class MutableLootTable implements LootEntriesTransformer {
         return LootTableExtension.cast(origin).lootjs$getPools();
     }
 
+    public List<MutableLootPool> getPools() {
+        return getVanillaPools().stream().map(MutableLootPool::new).toList();
+    }
+
     public MutableLootTable firstPool(Consumer<MutableLootPool> onModifyPool) {
         onModifyPool.accept(firstPool());
         return this;
@@ -72,7 +76,47 @@ public class MutableLootTable implements LootEntriesTransformer {
             return createPool();
         }
 
-        return new MutableLootPool(pools.get(0));
+        return new MutableLootPool(pools.getFirst());
+    }
+
+    public MutableLootTable modifyPool(int index, Consumer<MutableLootPool> onModifyPool) {
+        var pool = getPool(index);
+        if (pool != null) {
+            onModifyPool.accept(pool);
+        }
+
+        return this;
+    }
+
+    @Nullable
+    public MutableLootPool getPool(int index) {
+        var pools = LootTableExtension.cast(origin).lootjs$getPools();
+        if (index < 0 || index >= pools.size()) {
+            return null;
+        }
+
+        return new MutableLootPool(pools.get(index));
+    }
+
+    public MutableLootTable modifyPoolByName(String name, Consumer<MutableLootPool> onModifyPool) {
+        var pool = getPoolByName(name);
+        if (pool != null) {
+            onModifyPool.accept(pool);
+        }
+
+        return this;
+    }
+
+    @Nullable
+    public MutableLootPool getPoolByName(String name) {
+        var pools = LootTableExtension.cast(origin).lootjs$getPools();
+        for (var pool : pools) {
+            if (pool.getName() != null && pool.getName().equals(name)) {
+                return new MutableLootPool(pool);
+            }
+        }
+
+        return null;
     }
 
     public MutableLootTable createPool(Consumer<MutableLootPool> onCreatePool) {
