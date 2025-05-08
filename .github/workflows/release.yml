@@ -80,7 +80,7 @@ jobs:
                 run: tar -zcvf build.tar.gz output
 
             -   name: Upload results
-                uses: actions/upload-artifact@v3
+                uses: actions/upload-artifact@v4
                 with:
                     name: build-artifacts
                     path: build.tar.gz
