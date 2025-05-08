@@ -1,8 +1,8 @@
 package com.almostreliable.lootjs;
 
-import com.almostreliable.lootjs.core.LootJSParamSets;
 import com.almostreliable.lootjs.core.ILootAction;
 import com.almostreliable.lootjs.core.ILootContextData;
+import com.almostreliable.lootjs.core.LootJSParamSets;
 import com.almostreliable.lootjs.filters.ResourceLocationFilter;
 import com.almostreliable.lootjs.loot.results.LootContextInfo;
 import com.almostreliable.lootjs.loot.results.LootInfoCollector;
@@ -51,9 +51,18 @@ public class LootModificationsAPI {
 
         context.getLevel().getProfiler().push("LootModificationsAPI::invokeActions");
 
-        // TODO more testing here. I don't really know why there are empty items in the list or better:
-        // TODO There are items which refer to the correct item but their cache flag is true so it acts like air
-        loot.removeIf(ItemStack::isEmpty);
+        // It's possible to add empty items to a loot table by using `set_count: 0` as loot function.
+        // We don't want these items
+        var emptyItems = new ArrayList<ItemStack>();
+        var it = loot.listIterator();
+        while (it.hasNext()) {
+            ItemStack item = it.next();
+            if (item.isEmpty()) {
+                emptyItems.add(item);
+                it.remove();
+            }
+        }
+
         contextData.setGeneratedLoot(loot);
 
         LootContextInfo lootContextInfo = LootContextInfo.create(context);
@@ -64,6 +73,7 @@ public class LootModificationsAPI {
         }
 
         handleCollector(context, lootContextInfo);
+        loot.addAll(emptyItems); // Add back empty items
         context.getLevel().getProfiler().pop();
     }
 

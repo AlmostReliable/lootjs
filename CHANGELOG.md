@@ -6,7 +6,10 @@ The format is based on [Keep a Changelog],
 and this project adheres to [Semantic Versioning].
 
 ## [Unreleased]
-- /
+
+### Fixed
+
+- Fixed [#23](https://github.com/AlmostReliable/lootjs/issues/23)
 
 ## [2.12.0] - 2024-06-06
 
