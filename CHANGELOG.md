@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning].
 
 ## [Unreleased]
 
+- /
+
+## [2.13.0] - 2025-05-08
 ### Fixed
 
 - Fixed [#23](https://github.com/AlmostReliable/lootjs/issues/23)
