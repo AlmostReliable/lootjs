@@ -111,7 +111,7 @@ jobs:
         runs-on: ubuntu-latest
         steps:
             -   name: Download build artifacts
-                uses: actions/download-artifact@v3
+                uses: actions/download-artifact@v4
                 with:
                     name: build-artifacts
 
@@ -144,7 +144,7 @@ jobs:
         runs-on: ubuntu-latest
         steps:
             -   name: Download build artifacts
-                uses: actions/download-artifact@v3
+                uses: actions/download-artifact@v4
                 with:
                     name: build-artifacts
 
@@ -177,7 +177,7 @@ jobs:
         runs-on: ubuntu-latest
         steps:
             -   name: Download build artifacts
-                uses: actions/download-artifact@v3
+                uses: actions/download-artifact@v4
                 with:
                     name: build-artifacts
 
@@ -212,7 +212,7 @@ jobs:
         runs-on: ubuntu-latest
         steps:
             -   name: Download build artifacts
-                uses: actions/download-artifact@v3
+                uses: actions/download-artifact@v4
                 with:
                     name: build-artifacts
 
@@ -247,7 +247,7 @@ jobs:
         runs-on: ubuntu-latest
         steps:
             -   name: Download build artifacts
-                uses: actions/download-artifact@v3
+                uses: actions/download-artifact@v34
                 with:
                     name: build-artifacts
 
