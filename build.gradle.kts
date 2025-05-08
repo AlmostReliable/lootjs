@@ -44,7 +44,7 @@ allprojects {
         mavenLocal()
         mavenCentral()
         maven("https://maven.parchmentmc.org") // Parchment
-        maven("https://maven.saps.dev/minecraft")
+        maven("https://maven.latvian.dev/releases")
         maven("https://www.cursemaven.com")
         flatDir {
             name = extraModsPrefix
