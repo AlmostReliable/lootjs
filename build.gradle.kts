@@ -4,7 +4,7 @@ plugins {
 }
 
 repositories {
-    maven("https://maven.saps.dev/minecraft")
+    maven("https://maven.latvian.dev/releases")
     maven("https://www.cursemaven.com")
 }
 
