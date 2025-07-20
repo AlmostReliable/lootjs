@@ -11,12 +11,7 @@ import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
 import net.minecraft.world.level.storage.loot.predicates.LootItemConditionType;
 import net.minecraft.world.phys.Vec3;
 
-public class MatchBiome implements LootItemCondition {
-    protected final HolderSet<Biome> biomes;
-
-    public MatchBiome(HolderSet<Biome> biomes) {
-        this.biomes = biomes;
-    }
+public record MatchBiome(HolderSet<Biome> biomes) implements LootItemCondition {
 
     @Override
     public boolean test(LootContext context) {

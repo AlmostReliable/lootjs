@@ -10,6 +10,7 @@ import net.minecraft.core.Holder;
 import net.minecraft.core.HolderSet;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
 import net.minecraft.world.level.storage.loot.predicates.LootItemConditionType;
@@ -27,7 +28,7 @@ public class LootJSConditions {
     }
 
     public static Holder<LootItemConditionType> MATCH_EQUIP = CONDITIONS.register("match_equip",
-            () -> create(new MatchEquipmentSlot()));
+            () -> create(new MatchEquipmentSlot(EquipmentSlot.MAINHAND, ItemFilter.NONE)));
     public static Holder<LootItemConditionType> MATCH_ANY_INVENTORY_SLOT = CONDITIONS.register(
             "match_any_inventory_slot",
             () -> create(new MatchAnyInventorySlot(ItemFilter.NONE, false)));

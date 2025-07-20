@@ -9,6 +9,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.storage.loot.LootContext;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class LootModificationsAPI {
@@ -29,6 +30,10 @@ public class LootModificationsAPI {
         DEBUG_LOOT_MODIFIERS = false;
         FILTERS.clear();
         FILTERS.add(new IdFilter.ByLocation(ResourceLocation.parse("minecraft:blocks/fire")));
+    }
+
+    public List<LootModifier> modifiers() {
+        return Collections.unmodifiableList(modifiers);
     }
 
     public static void invokeActions(List<ItemStack> loot, LootContext context) {

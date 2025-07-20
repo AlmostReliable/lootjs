@@ -21,21 +21,25 @@ import java.util.function.Predicate;
 
 public class LootModifier extends GroupedLootAction {
 
-    private final Predicate<LootContext> shouldRun;
+    private final Predicate<LootContext> runPredicate;
     private final String name;
 
-    public LootModifier(Predicate<LootContext> shouldRun, NumberProvider rolls, List<LootItemCondition> conditions, List<LootItemFunction> functions, Collection<LootAction> handlers, String name, ItemFilter containsLootFilter, boolean exact) {
+    public LootModifier(Predicate<LootContext> runPredicate, NumberProvider rolls, List<LootItemCondition> conditions, List<LootItemFunction> functions, Collection<LootAction> handlers, String name, ItemFilter containsLootFilter, boolean exact) {
         super(rolls, conditions, functions, handlers, containsLootFilter, exact);
-        this.shouldRun = shouldRun;
+        this.runPredicate = runPredicate;
         this.name = name;
     }
 
-    public String getName() {
+    public String name() {
         return name;
     }
 
+    public Predicate<LootContext> runPredicate() {
+        return runPredicate;
+    }
+
     public void run(LootContext context, LootBucket loot) {
-        if (!shouldRun.test(context)) {
+        if (!runPredicate().test(context)) {
             return;
         }
 

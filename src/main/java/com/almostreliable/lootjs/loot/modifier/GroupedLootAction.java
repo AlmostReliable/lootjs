@@ -29,16 +29,43 @@ public class GroupedLootAction implements LootAction {
     private final Predicate<LootContext> compositeCondition;
     private final BiFunction<ItemStack, LootContext, ItemStack> compositeFunction;
     private final NumberProvider rolls;
+    private final List<LootItemCondition> conditions;
     private final List<LootItemFunction> functions;
 
     public GroupedLootAction(NumberProvider rolls, List<LootItemCondition> conditions, List<LootItemFunction> functions, Collection<LootAction> actions, @Nullable ItemFilter containsLootFilter, boolean exact) {
         this.rolls = rolls;
-        this.compositeCondition = Util.allOf(List.copyOf(conditions));
+        this.conditions = List.copyOf(conditions);
+        this.compositeCondition = Util.allOf(this.conditions);
         this.functions = List.copyOf(functions);
         this.compositeFunction = LootItemFunctions.compose(this.functions);
         this.actions = List.copyOf(actions);
         this.containsLootFilter = containsLootFilter;
         this.exact = exact;
+    }
+
+    public NumberProvider rolls() {
+        return rolls;
+    }
+
+    public boolean exact() {
+        return exact;
+    }
+
+    @Nullable
+    public ItemFilter containsLootFilter() {
+        return containsLootFilter;
+    }
+
+    public List<LootItemFunction> functions() {
+        return functions;
+    }
+
+    public List<LootItemCondition> conditions() {
+        return conditions;
+    }
+
+    public List<LootAction> actions() {
+        return actions;
     }
 
     @Override
@@ -47,27 +74,28 @@ public class GroupedLootAction implements LootAction {
             return;
         }
 
-        int r = rolls.getInt(context);
+        int r = rolls().getInt(context);
         for (int i = 0; i < r; i++) {
             if (!compositeCondition.test(context)) {
                 continue;
             }
 
-            for (var action : actions) {
+            for (var action : actions()) {
                 action.apply(context, loot);
             }
 
-            if (!functions.isEmpty()) {
+            if (!functions().isEmpty()) {
                 loot.modifyItems(itemStack -> compositeFunction.apply(itemStack, context));
             }
         }
     }
 
     private boolean matchLoot(LootBucket loot) {
-        return exact ? matchExact(loot) : match(loot);
+        return exact() ? matchExact(loot) : match(loot);
     }
 
     private boolean match(LootBucket loot) {
+        var containsLootFilter = containsLootFilter();
         if (containsLootFilter == null) {
             return true;
         }

@@ -8,13 +8,7 @@ import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
 import net.minecraft.world.level.storage.loot.predicates.LootItemConditionType;
 
-public class MatchKillerDistance implements LootItemCondition {
-
-    private final DistancePredicate predicate;
-
-    public MatchKillerDistance(DistancePredicate predicate) {
-        this.predicate = predicate;
-    }
+public record MatchKillerDistance(DistancePredicate predicate) implements LootItemCondition {
 
     @Override
     public boolean test(LootContext context) {

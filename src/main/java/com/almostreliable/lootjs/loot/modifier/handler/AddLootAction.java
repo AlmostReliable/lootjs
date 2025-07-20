@@ -15,7 +15,10 @@ public class AddLootAction implements LootAction {
         for (int i = 0; i < entries.length; i++) {
             this.entries[i] = entries[i].getVanillaEntry();
         }
+    }
 
+    public LootPoolEntryContainer[] entries() {
+        return entries.clone();
     }
 
     @Override

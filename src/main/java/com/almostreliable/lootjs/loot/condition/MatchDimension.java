@@ -6,13 +6,7 @@ import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
 import net.minecraft.world.level.storage.loot.predicates.LootItemConditionType;
 
-public class MatchDimension implements LootItemCondition {
-
-    private final ResourceLocation[] dimensions;
-
-    public MatchDimension(ResourceLocation[] dimensions) {
-        this.dimensions = dimensions;
-    }
+public record MatchDimension(ResourceLocation[] dimensions) implements LootItemCondition {
 
     @Override
     public boolean test(LootContext context) {
@@ -26,6 +20,10 @@ public class MatchDimension implements LootItemCondition {
         return false;
     }
 
+    @Override
+    public ResourceLocation[] dimensions() {
+        return dimensions.clone();
+    }
 
     @Override
     public LootItemConditionType getType() {

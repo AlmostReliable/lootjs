@@ -6,7 +6,8 @@ The format is based on [Keep a Changelog],
 and this project adheres to [Semantic Versioning].
 
 ## Unreleased
-- /
+
+- Added some access to private fields
 
 ## [3.4.0] - 2025-03-21
 

@@ -9,18 +9,7 @@ import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
 import net.minecraft.world.level.storage.loot.predicates.LootItemConditionType;
 
-public class MatchEquipmentSlot implements LootItemCondition {
-    private final ItemFilter itemFilter;
-    private final EquipmentSlot slot;
-
-    public MatchEquipmentSlot() {
-        this(EquipmentSlot.MAINHAND, ItemFilter.NONE);
-    }
-
-    public MatchEquipmentSlot(EquipmentSlot slot, ItemFilter itemFilter) {
-        this.slot = slot;
-        this.itemFilter = itemFilter;
-    }
+public record MatchEquipmentSlot(EquipmentSlot slot, ItemFilter itemFilter) implements LootItemCondition {
 
     @Override
     public boolean test(LootContext context) {

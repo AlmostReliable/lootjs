@@ -10,15 +10,7 @@ import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
 import net.minecraft.world.level.storage.loot.predicates.LootItemConditionType;
 import net.minecraft.world.phys.Vec3;
 
-public class MatchStructure implements LootItemCondition {
-
-    private final HolderSet<Structure> structures;
-    private final boolean exact;
-
-    public MatchStructure(HolderSet<Structure> structures, boolean exact) {
-        this.structures = structures;
-        this.exact = exact;
-    }
+public record MatchStructure(HolderSet<Structure> structures, boolean exact) implements LootItemCondition {
 
     @Override
     public boolean test(LootContext context) {
@@ -43,10 +35,6 @@ public class MatchStructure implements LootItemCondition {
         }
 
         return false;
-    }
-
-    public boolean isExact() {
-        return exact;
     }
 
     @Override

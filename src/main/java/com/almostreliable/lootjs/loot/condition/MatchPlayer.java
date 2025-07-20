@@ -10,12 +10,7 @@ import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
 import net.minecraft.world.level.storage.loot.predicates.LootItemConditionType;
 import net.minecraft.world.phys.Vec3;
 
-public class MatchPlayer implements LootItemCondition {
-    private final EntityPredicate predicate;
-
-    public MatchPlayer(EntityPredicate predicate) {
-        this.predicate = predicate;
-    }
+public record MatchPlayer(EntityPredicate predicate) implements LootItemCondition {
 
     @Override
     public boolean test(LootContext context) {

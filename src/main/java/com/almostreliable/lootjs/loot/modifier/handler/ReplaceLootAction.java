@@ -6,16 +6,8 @@ import com.almostreliable.lootjs.core.filters.ItemFilter;
 import com.almostreliable.lootjs.loot.modifier.LootAction;
 import net.minecraft.world.level.storage.loot.LootContext;
 
-public class ReplaceLootAction implements LootAction {
-    private final ItemFilter filter;
-    private final ItemLootEntry itemLootEntry;
-    private final boolean preserveCount;
-
-    public ReplaceLootAction(ItemFilter filter, ItemLootEntry itemLootEntry, boolean preserveCount) {
-        this.filter = filter;
-        this.itemLootEntry = itemLootEntry;
-        this.preserveCount = preserveCount;
-    }
+public record ReplaceLootAction(ItemFilter filter, ItemLootEntry itemLootEntry, boolean preserveCount)
+        implements LootAction {
 
     @Override
     public void apply(LootContext context, LootBucket loot) {

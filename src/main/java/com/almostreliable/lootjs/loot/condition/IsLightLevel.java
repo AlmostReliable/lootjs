@@ -8,15 +8,7 @@ import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
 import net.minecraft.world.level.storage.loot.predicates.LootItemConditionType;
 import net.minecraft.world.phys.Vec3;
 
-public class IsLightLevel implements LootItemCondition {
-
-    private final int min;
-    private final int max;
-
-    public IsLightLevel(int min, int max) {
-        this.min = min;
-        this.max = max;
-    }
+public record IsLightLevel(int min, int max) implements LootItemCondition {
 
     @Override
     public boolean test(LootContext context) {
