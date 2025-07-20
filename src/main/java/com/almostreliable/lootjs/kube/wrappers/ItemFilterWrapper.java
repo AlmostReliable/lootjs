@@ -1,6 +1,7 @@
 package com.almostreliable.lootjs.kube.wrappers;
 
 import com.almostreliable.lootjs.core.filters.ItemFilter;
+import com.almostreliable.lootjs.core.filters.ItemFilterImpl;
 import dev.latvian.mods.kubejs.item.ingredient.IngredientJS;
 import dev.latvian.mods.kubejs.util.RegistryAccessContainer;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -28,7 +29,7 @@ public class ItemFilterWrapper {
                 case "#":
                     ResourceLocation location = ResourceLocation.parse(remaining);
                     TagKey<Item> tag = TagKey.create(Registries.ITEM, location);
-                    return new ItemFilter.Tag(tag);
+                    return new ItemFilterImpl.ByTag(tag);
                 case "@":
                     return itemStack -> {
                         var key = BuiltInRegistries.ITEM.getKey(itemStack.getItem());
@@ -44,7 +45,7 @@ public class ItemFilterWrapper {
             return ItemFilter.EMPTY;
         }
 
-        return new ItemFilter.Ingredient(ingredient);
+        return new ItemFilterImpl.ByIngredient(ingredient);
     }
 
     public static ItemFilter ofItemFilter(RegistryAccessContainer cx, Object o) {

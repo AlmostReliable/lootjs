@@ -6,7 +6,7 @@ The format is based on [Keep a Changelog],
 and this project adheres to [Semantic Versioning].
 
 ## Unreleased
-- /
+- Refactor different ` ItemFilters` into own classes
 
 ## [3.4.1] - 2025-07-20
 
