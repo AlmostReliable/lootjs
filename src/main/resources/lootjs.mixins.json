@@ -17,6 +17,7 @@
     "LootPoolMixin",
     "LootTableMixin",
     "ReloadableServerRegistriesMixin",
+    "SetComponentsFunctionAccessor",
     "SkeletonMixin",
     "WitherBossMixin",
     "ZombieMixin",

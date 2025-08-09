@@ -1,6 +1,7 @@
 package com.almostreliable.lootjs.core.entry;
 
 import com.almostreliable.lootjs.core.filters.ItemFilter;
+import com.almostreliable.lootjs.mixin.SetComponentsFunctionAccessor;
 import com.almostreliable.lootjs.util.DebugInfo;
 import com.almostreliable.lootjs.util.Utils;
 import net.minecraft.core.component.DataComponentPatch;
@@ -15,7 +16,6 @@ import net.minecraft.world.level.storage.loot.entries.LootPoolEntries;
 import net.minecraft.world.level.storage.loot.entries.LootPoolEntryType;
 import net.minecraft.world.level.storage.loot.entries.LootPoolSingletonContainer;
 import net.minecraft.world.level.storage.loot.functions.LootItemFunction;
-import net.minecraft.world.level.storage.loot.functions.SetComponentsFunction;
 import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
 import net.minecraft.world.level.storage.loot.providers.number.ConstantValue;
 import net.minecraft.world.level.storage.loot.providers.number.NumberProvider;
@@ -46,7 +46,8 @@ public class ItemLootEntry extends AbstractSimpleLootEntry<LootItem> implements 
                 builder.set(Utils.cast(component.type()), component.value());
             }
 
-            getFunctions().addFunction(new SetComponentsFunction(new ArrayList<>(), builder.build()));
+            var function = SetComponentsFunctionAccessor.lootjs$create(new ArrayList<>(), builder.build());
+            getFunctions().addFunction(function);
         }
     }
 
