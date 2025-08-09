@@ -6,7 +6,7 @@ The format is based on [Keep a Changelog],
 and this project adheres to [Semantic Versioning].
 
 ## Unreleased
-- /
+- Fix internal access to private constructor `SetComponentsFunction`
 
 ## [3.4.2] - 2025-07-20
 - Refactor different ` ItemFilters` into own classes
