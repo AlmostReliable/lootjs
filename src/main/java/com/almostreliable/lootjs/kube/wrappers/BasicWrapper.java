@@ -7,9 +7,9 @@ import com.almostreliable.lootjs.util.BlockFilter;
 import com.almostreliable.lootjs.util.Utils;
 import com.mojang.serialization.MapCodec;
 import dev.latvian.mods.kubejs.block.state.BlockStatePredicate;
+import dev.latvian.mods.kubejs.plugin.builtin.wrapper.NBTWrapper;
 import dev.latvian.mods.kubejs.script.ConsoleJS;
 import dev.latvian.mods.kubejs.script.KubeJSContext;
-import dev.latvian.mods.kubejs.util.NBTUtils;
 import dev.latvian.mods.kubejs.util.RegExpKJS;
 import dev.latvian.mods.kubejs.util.RegistryAccessContainer;
 import dev.latvian.mods.rhino.Context;
@@ -41,12 +41,12 @@ public class BasicWrapper {
             .of(HolderSet.class)
             .withParams(TypeInfo.of(EntityType.class));
 
-    public static BlockFilter ofBlockFilter(RegistryAccessContainer registries, Object o) {
+    public static BlockFilter ofBlockFilter(Context cx, Object o) {
         if (o instanceof BlockFilter bf) {
             return bf;
         }
 
-        BlockStatePredicate bsp = BlockStatePredicate.of(registries, o);
+        BlockStatePredicate bsp = BlockStatePredicate.wrap(cx, o);
         return new BlockFilter() {
             @NotNull
             @Override
@@ -67,7 +67,7 @@ public class BasicWrapper {
         }
 
         if (o instanceof Map<?, ?> map) {
-            return new NbtPredicate((CompoundTag) NBTUtils.compoundTag(cx, map));
+            return new NbtPredicate((CompoundTag) NBTWrapper.compoundTag(cx, map));
         }
 
         return new NbtPredicate(new CompoundTag());

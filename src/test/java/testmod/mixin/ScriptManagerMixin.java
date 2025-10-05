@@ -26,7 +26,7 @@ public abstract class ScriptManagerMixin {
     @Shadow
     public abstract void collectScripts(ScriptPack pack, Path dir, String path);
 
-    @Inject(method = "reload", at = @At(value = "INVOKE", target = "Ldev/latvian/mods/kubejs/script/ScriptManager;load()V"))
+    @Inject(method = "reload", at = @At(value = "INVOKE", target = "Ldev/latvian/mods/kubejs/script/ScriptManager;load(J)V"))
     private void testmod$test(CallbackInfo ci) {
         if (scriptType != ScriptType.SERVER) {
             return;
