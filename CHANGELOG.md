@@ -6,6 +6,9 @@ The format is based on [Keep a Changelog],
 and this project adheres to [Semantic Versioning].
 
 ## Unreleased
+- /
+
+## [3.5.0] - 2025-10-13
 - Update to KubeJS 7.2
 
 ## [3.4.3] - 2025-08-09
@@ -316,6 +319,7 @@ We are now on 1.18.2!
 
 <!-- Versions -->
 
+[3.5.0]: https://github.com/AlmostReliable/lootjs/releases/tag/v1.21.1-neoforge-3.5.0
 [3.4.3]: https://github.com/AlmostReliable/lootjs/releases/tag/v1.21.1-neoforge-3.4.3
 [3.4.2]: https://github.com/AlmostReliable/lootjs/releases/tag/v1.21.1-neoforge-3.4.2
 [3.4.1]: https://github.com/AlmostReliable/lootjs/releases/tag/v1.21.1-neoforge-3.4.1
