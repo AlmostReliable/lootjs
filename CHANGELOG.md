@@ -6,7 +6,7 @@ The format is based on [Keep a Changelog],
 and this project adheres to [Semantic Versioning].
 
 ## Unreleased
-- /
+- Update to KubeJS 7.2
 
 ## [3.4.3] - 2025-08-09
 - Fix internal access to private constructor `SetComponentsFunction`
