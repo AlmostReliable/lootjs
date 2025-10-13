@@ -2,8 +2,8 @@ package com.almostreliable.lootjs.kube.wrappers;
 
 import com.almostreliable.lootjs.core.filters.ItemFilter;
 import com.almostreliable.lootjs.core.filters.ItemFilterImpl;
-import dev.latvian.mods.kubejs.item.ingredient.IngredientJS;
-import dev.latvian.mods.kubejs.util.RegistryAccessContainer;
+import dev.latvian.mods.kubejs.plugin.builtin.wrapper.IngredientWrapper;
+import dev.latvian.mods.rhino.Context;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
@@ -17,7 +17,7 @@ import java.util.List;
 
 public class ItemFilterWrapper {
 
-    private static ItemFilter ofItemFilterSingle(RegistryAccessContainer cx, @Nullable Object o) {
+    private static ItemFilter ofItemFilterSingle(Context cx, @Nullable Object o) {
         if (o instanceof ItemFilter i) return i;
 
         if (o instanceof String str && !str.isEmpty()) {
@@ -40,7 +40,7 @@ public class ItemFilterWrapper {
             }
         }
 
-        Ingredient ingredient = IngredientJS.wrap(cx, o);
+        Ingredient ingredient = IngredientWrapper.wrap(cx, o);
         if (ingredient.isEmpty()) {
             return ItemFilter.EMPTY;
         }
@@ -48,7 +48,7 @@ public class ItemFilterWrapper {
         return new ItemFilterImpl.ByIngredient(ingredient);
     }
 
-    public static ItemFilter ofItemFilter(RegistryAccessContainer cx, Object o) {
+    public static ItemFilter ofItemFilter(Context cx, Object o) {
         if (o instanceof List<?> list) {
             List<ItemFilter> filters = new ArrayList<>(list.size());
             for (Object entry : list) {

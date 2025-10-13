@@ -16,9 +16,9 @@ import com.almostreliable.lootjs.loot.Predicates;
 import com.almostreliable.lootjs.util.BlockFilter;
 import dev.latvian.mods.kubejs.block.state.BlockStatePredicate;
 import dev.latvian.mods.kubejs.event.EventGroupRegistry;
-import dev.latvian.mods.kubejs.item.ItemStackJS;
-import dev.latvian.mods.kubejs.item.ingredient.IngredientJS;
 import dev.latvian.mods.kubejs.plugin.KubeJSPlugin;
+import dev.latvian.mods.kubejs.plugin.builtin.wrapper.IngredientWrapper;
+import dev.latvian.mods.kubejs.plugin.builtin.wrapper.ItemWrapper;
 import dev.latvian.mods.kubejs.script.BindingRegistry;
 import dev.latvian.mods.kubejs.script.ConsoleJS;
 import dev.latvian.mods.kubejs.script.TypeDescriptionRegistry;
@@ -100,9 +100,9 @@ public class LootJSPlugin implements KubeJSPlugin {
 
     @Override
     public void registerTypeDescriptions(TypeDescriptionRegistry registry) {
-        registry.register(ItemFilter.class, TypeInfo.of(ItemFilter.class).or(IngredientJS.TYPE_INFO));
-        registry.register(LootEntry.class, TypeInfo.of(LootEntry.class).or(ItemStackJS.TYPE_INFO));
-        registry.register(SingleLootEntry.class, TypeInfo.of(SingleLootEntry.class).or(ItemStackJS.TYPE_INFO));
+        registry.register(ItemFilter.class, TypeInfo.of(ItemFilter.class).or(IngredientWrapper.TYPE_INFO));
+        registry.register(LootEntry.class, TypeInfo.of(LootEntry.class).or(ItemWrapper.TYPE_INFO));
+        registry.register(SingleLootEntry.class, TypeInfo.of(SingleLootEntry.class).or(ItemWrapper.TYPE_INFO));
         registry.register(BlockFilter.class, TypeInfo.of(BlockFilter.class).or(TypeInfo.of(BlockStatePredicate.class)));
         registry.register(IdFilter.class,
                 TypeInfo.of(IdFilter.class).or(TypeInfo.STRING).or(TypeInfo.of(Pattern.class)));

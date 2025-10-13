@@ -2,21 +2,21 @@ package com.almostreliable.lootjs.kube.wrappers;
 
 import com.almostreliable.lootjs.core.entry.ItemLootEntry;
 import com.almostreliable.lootjs.core.entry.LootEntry;
-import dev.latvian.mods.kubejs.item.ItemStackJS;
+import dev.latvian.mods.kubejs.plugin.builtin.wrapper.ItemWrapper;
 import dev.latvian.mods.kubejs.script.ConsoleJS;
-import dev.latvian.mods.kubejs.util.RegistryAccessContainer;
+import dev.latvian.mods.rhino.Context;
 import net.minecraft.world.item.ItemStack;
 
 import javax.annotation.Nullable;
 
 public class LootEntryWrapper {
 
-    public static ItemLootEntry ofItemLootEntry(RegistryAccessContainer registries, @Nullable Object o) {
+    public static ItemLootEntry ofItemLootEntry(Context cx, @Nullable Object o) {
         if (o instanceof ItemLootEntry e) {
             return e;
         }
 
-        ItemStack itemStack = ItemStackJS.wrap(registries, o);
+        ItemStack itemStack = ItemWrapper.wrap(cx, o);
         if (itemStack.isEmpty()) {
             ConsoleJS.SERVER.error("[LootEntry.of()] Invalid item stack, returning empty stack: " + o);
             ConsoleJS.SERVER.error("- Consider using `LootEntry.empty()` if you want to create an empty loot entry.");
@@ -26,7 +26,7 @@ public class LootEntryWrapper {
         return LootEntry.of(itemStack);
     }
 
-    public static LootEntry ofLootEntry(RegistryAccessContainer registries, @Nullable Object o) {
+    public static LootEntry ofLootEntry(Context cx, @Nullable Object o) {
         if (o instanceof LootEntry entry) {
             return entry;
         }
@@ -36,6 +36,6 @@ public class LootEntryWrapper {
             return LootEntry.tag(tag, false);
         }
 
-        return ofItemLootEntry(registries, o);
+        return ofItemLootEntry(cx, o);
     }
 }

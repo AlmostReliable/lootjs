@@ -6,6 +6,12 @@ plugins {
 repositories {
     maven("https://maven.latvian.dev/releases")
     maven("https://www.cursemaven.com")
+    maven {
+        setUrl("https://jitpack.io")
+        content {
+            includeGroup("com.github.rtyley")
+        }
+    }
 }
 
 almostgradle.setup {
