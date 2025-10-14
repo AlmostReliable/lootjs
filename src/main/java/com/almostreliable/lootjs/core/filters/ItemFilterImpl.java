@@ -41,6 +41,20 @@ public class ItemFilterImpl {
         }
     }
 
+    public record HasComponent(DataComponentType<?>[] types) implements ItemFilter {
+
+        @Override
+        public boolean test(ItemStack itemStack) {
+            for (var type : types) {
+                if (!itemStack.has(type)) {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+    }
+
     public record IsEquipmentSlot(EquipmentSlot equipmentSlot) implements ItemFilter {
 
         @Override

@@ -1,6 +1,7 @@
 package com.almostreliable.lootjs.core.filters;
 
 import net.minecraft.advancements.critereon.MinMaxBounds;
+import net.minecraft.core.component.DataComponentType;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
@@ -42,6 +43,10 @@ public interface ItemFilter {
 
     static ItemFilter hasStoredEnchantment(IdFilter filter, MinMaxBounds.Ints levelBounds) {
         return new ItemFilterImpl.HasEnchantment(filter, levelBounds, DataComponents.STORED_ENCHANTMENTS);
+    }
+
+    static ItemFilter hasComponent(DataComponentType<?>... types) {
+        return new ItemFilterImpl.HasComponent(types);
     }
 
     static ItemFilter tag(String tag) {
