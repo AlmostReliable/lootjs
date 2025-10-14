@@ -7,6 +7,7 @@ import com.almostreliable.lootjs.loot.modifier.GroupedLootAction;
 import com.almostreliable.lootjs.loot.modifier.LootAction;
 import com.almostreliable.lootjs.loot.modifier.handler.*;
 import com.almostreliable.lootjs.loot.table.MutableLootPool;
+import net.minecraft.core.component.DataComponentType;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.Explosion;
 import net.minecraft.world.level.storage.loot.LootPool;
@@ -37,7 +38,11 @@ public interface LootActionContainer<A extends LootActionContainer<?>> {
     }
 
     default A replaceLoot(ItemFilter filter, ItemLootEntry itemLootEntry, boolean preserveCount) {
-        return addAction(new ReplaceLootAction(filter, itemLootEntry, preserveCount));
+        return replaceLoot(filter, itemLootEntry, preserveCount, new DataComponentType<?>[0]);
+    }
+
+    default A replaceLoot(ItemFilter filter, ItemLootEntry itemLootEntry, boolean preserveCount, DataComponentType<?>[] preserveComponentTypes) {
+        return addAction(new ReplaceLootAction(filter, itemLootEntry, preserveCount, preserveComponentTypes));
     }
 
     default A modifyLoot(ItemFilter filter, ModifyLootAction.Callback callback) {

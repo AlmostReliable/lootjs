@@ -6,6 +6,7 @@ import com.almostreliable.lootjs.core.entry.LootEntry;
 import com.almostreliable.lootjs.loot.modifier.handler.AddLootAction;
 import com.almostreliable.lootjs.loot.modifier.handler.RemoveLootAction;
 import com.almostreliable.lootjs.loot.modifier.handler.ReplaceLootAction;
+import net.minecraft.core.component.DataComponentType;
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.world.entity.player.Player;
@@ -80,7 +81,7 @@ public class LootActionGameTests {
                     "Magma cream does not exist currently");
 
             ReplaceLootAction action = new ReplaceLootAction(i -> i.getItem().equals(Items.DIAMOND),
-                    LootEntry.of(Items.MAGMA_CREAM.getDefaultInstance()), false);
+                    LootEntry.of(Items.MAGMA_CREAM.getDefaultInstance()), false, new DataComponentType<?>[0]);
             action.apply(ctx, loot);
 
             GameTestUtils.assertFalse(helper,

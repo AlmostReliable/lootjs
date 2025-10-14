@@ -4,6 +4,8 @@ import com.almostreliable.lootjs.core.entry.ItemLootEntry;
 import com.almostreliable.lootjs.core.entry.LootEntry;
 import com.almostreliable.lootjs.core.filters.ItemFilter;
 import com.almostreliable.lootjs.util.NullableFunction;
+import com.almostreliable.lootjs.util.Utils;
+import net.minecraft.core.component.DataComponentType;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.entries.LootPoolEntry;
@@ -90,14 +92,18 @@ public class LootBucket implements Iterable<ItemStack> {
     }
 
     public void replace(ItemFilter filter, ItemLootEntry itemLootEntry, boolean preserveCount) {
+        replace(filter, itemLootEntry, preserveCount, new DataComponentType<?>[0]);
+    }
+
+    public void replace(ItemFilter filter, ItemLootEntry itemLootEntry, boolean preserveCount, DataComponentType<?>[] componentTypes) {
         var it = iterator();
         while (it.hasNext()) {
-            ItemStack thisItem = it.next();
+            var thisItem = it.next();
             if (!filter.test(thisItem)) {
                 continue;
             }
 
-            ItemStack newItem = itemLootEntry.create(context);
+            var newItem = itemLootEntry.create(context);
             if (newItem == null) {
                 continue;
             }
@@ -109,6 +115,13 @@ public class LootBucket implements Iterable<ItemStack> {
 
             if (preserveCount) {
                 newItem.setCount(Math.min(thisItem.getCount(), newItem.getMaxStackSize()));
+            }
+
+            for (var type : componentTypes) {
+                var component = thisItem.get(type);
+                if (component != null) {
+                    newItem.set(type, Utils.cast(component));
+                }
             }
 
             it.set(newItem);
