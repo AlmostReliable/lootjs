@@ -6,7 +6,10 @@ The format is based on [Keep a Changelog],
 and this project adheres to [Semantic Versioning].
 
 ## Unreleased
-- /
+
+- Add `ItemFilter.hasComponent()
+- Add `.replaceLoot(filter, lootEntry, preserveCount, preserveComponentTypes)` action to allow preserving certain
+  component types when replacing loot
 
 ## [3.5.0] - 2025-10-13
 - Update to KubeJS 7.2
