@@ -6,6 +6,9 @@ The format is based on [Keep a Changelog],
 and this project adheres to [Semantic Versioning].
 
 ## Unreleased
+- /
+
+## [3.6.1] - 2026-01-02
 
 - Fix `addCondition` not being visible for loot condition containers
 
@@ -326,6 +329,7 @@ We are now on 1.18.2!
 
 <!-- Versions -->
 
+[3.6.1]: https://github.com/AlmostReliable/lootjs/releases/tag/v1.21.1-neoforge-3.6.1
 [3.6.0]: https://github.com/AlmostReliable/lootjs/releases/tag/v1.21.1-neoforge-3.6.0
 [3.5.0]: https://github.com/AlmostReliable/lootjs/releases/tag/v1.21.1-neoforge-3.5.0
 [3.4.3]: https://github.com/AlmostReliable/lootjs/releases/tag/v1.21.1-neoforge-3.4.3
