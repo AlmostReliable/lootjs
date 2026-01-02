@@ -6,7 +6,8 @@ The format is based on [Keep a Changelog],
 and this project adheres to [Semantic Versioning].
 
 ## Unreleased
-- /
+
+- Fix `addCondition` not being visible for loot condition containers
 
 ## [3.6.0] - 2025-10-14
 

@@ -6,7 +6,6 @@ import com.almostreliable.lootjs.loot.condition.*;
 import com.google.common.base.Preconditions;
 import com.google.gson.JsonObject;
 import com.mojang.serialization.JsonOps;
-import dev.latvian.mods.rhino.util.HideFromJS;
 import net.minecraft.advancements.critereon.*;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
@@ -246,6 +245,5 @@ public interface LootConditionsContainer<C> {
         return addCondition(condition);
     }
 
-    @HideFromJS
     C addCondition(LootItemCondition condition);
 }
