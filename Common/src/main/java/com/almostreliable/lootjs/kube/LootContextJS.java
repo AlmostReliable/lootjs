@@ -15,6 +15,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
@@ -81,7 +82,7 @@ public class LootContextJS {
 
     public BlockPos getBlockPos() {
         Vec3 position = getPosition();
-        return new BlockPos((int) position.x, (int) position.y, (int) position.z);
+        return new BlockPos(Mth.floor(position.x), Mth.floor(position.y), Mth.floor(position.z));
     }
 
     @Nullable

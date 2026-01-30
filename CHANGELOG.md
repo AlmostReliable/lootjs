@@ -9,6 +9,12 @@ and this project adheres to [Semantic Versioning].
 
 - /
 
+## [2.13.1] - 2026-01-30
+
+### Fixed
+
+- Fixed [#32](https://github.com/AlmostReliable/lootjs/issues/32)
+
 ## [2.13.0] - 2025-05-08
 ### Fixed
 
