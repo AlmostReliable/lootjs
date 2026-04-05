@@ -82,8 +82,13 @@ public class LootJSPlugin extends KubeJSPlugin {
     public void registerTypeWrappers(ScriptType type, TypeWrappers typeWrappers) {
         typeWrappers.registerSimple(LootEntry.class, LootEntryWrapper::of);
         typeWrappers.registerSimple(MinMaxBounds.Doubles.class, IntervalJS::ofDoubles);
-        typeWrappers.registerSimple(MinMaxBounds.Ints.class, IntervalJS::ofInt);
-
+        
+        try {
+            typeWrappers.registerSimple(MinMaxBounds.Ints.class, IntervalJS::ofInt);
+        } catch (IllegalArgumentException ignored) {
+            // Wrapper already registered by KubeJS, skip
+        }
+        
         typeWrappers.registerSimple(ItemFilter.class, o -> {
             if (o instanceof List<?> list) {
                 Map<Boolean, ? extends List<?>> split = list
