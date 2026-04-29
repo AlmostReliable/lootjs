@@ -6,12 +6,12 @@ The format is based on [Keep a Changelog],
 and this project adheres to [Semantic Versioning].
 
 ## Unreleased
-- /
+
+- Allow composite loot entries like alternatives, sequences and groups in `replaceLoot` action
 
 ## [3.6.1] - 2026-01-02
 
 - Fix `addCondition` not being visible for loot condition containers
-- Allow composite loot entries like alternatives, sequences and groups in `replaceLoot` action
 
 ## [3.6.0] - 2025-10-14
 
