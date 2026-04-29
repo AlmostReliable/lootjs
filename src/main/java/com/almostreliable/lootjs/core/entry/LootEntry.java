@@ -14,11 +14,13 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.Ingredient;
+import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.entries.*;
 import net.minecraft.world.level.storage.loot.functions.LootItemFunction;
 import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
 import net.minecraft.world.level.storage.loot.providers.number.NumberProvider;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 
@@ -194,6 +196,24 @@ public interface LootEntry extends LootConditionsContainer<LootEntry> {
         return isAlternative() || isSequence() || isGroup();
     }
 
+    default ItemStack createRandomItem(LootContext context) {
+        var entries = new ArrayList<LootPoolEntry>();
+        getVanillaEntry().expand(context, entries::add);
+
+        var randomEntry = entries.isEmpty() ? null : entries.get(context.getRandom().nextInt(entries.size()));
+        if (randomEntry == null) {
+            return ItemStack.EMPTY;
+        }
+
+        var loot = new ArrayList<ItemStack>();
+        randomEntry.createItemStack(loot::add, context);
+        if (loot.isEmpty()) {
+            return ItemStack.EMPTY;
+        }
+
+        return loot.get(context.getRandom().nextInt(loot.size()));
+    }
+
     record Unknown(LootPoolEntryContainer getVanillaEntry) implements LootEntry {
 
         @Override
@@ -214,6 +234,11 @@ public interface LootEntry extends LootConditionsContainer<LootEntry> {
         @Override
         public void collectDebugInfo(DebugInfo info) {
             info.add("Unknown entry type: " + getType());
+        }
+
+        @Override
+        public ItemStack createRandomItem(LootContext context) {
+            return ItemStack.EMPTY;
         }
 
         @Override

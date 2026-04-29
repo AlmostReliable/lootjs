@@ -80,11 +80,11 @@ public class ItemLootEntry extends AbstractSimpleLootEntry<LootItem> implements 
         vanillaEntry.item = item.builtInRegistryHolder();
     }
 
-    @Nullable
-    public ItemStack create(LootContext context) {
+    @Override
+    public ItemStack createRandomItem(LootContext context) {
         for (LootItemCondition condition : getConditions()) {
             if (!condition.test(context)) {
-                return null;
+                return ItemStack.EMPTY;
             }
         }
 

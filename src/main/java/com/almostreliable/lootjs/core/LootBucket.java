@@ -1,6 +1,5 @@
 package com.almostreliable.lootjs.core;
 
-import com.almostreliable.lootjs.core.entry.ItemLootEntry;
 import com.almostreliable.lootjs.core.entry.LootEntry;
 import com.almostreliable.lootjs.core.filters.ItemFilter;
 import com.almostreliable.lootjs.util.NullableFunction;
@@ -87,15 +86,15 @@ public class LootBucket implements Iterable<ItemStack> {
         }
     }
 
-    public void replace(ItemFilter filter, ItemLootEntry itemLootEntry) {
-        replace(filter, itemLootEntry, false);
+    public void replace(ItemFilter filter, LootEntry lootEntry) {
+        replace(filter, lootEntry, false);
     }
 
-    public void replace(ItemFilter filter, ItemLootEntry itemLootEntry, boolean preserveCount) {
-        replace(filter, itemLootEntry, preserveCount, new DataComponentType<?>[0]);
+    public void replace(ItemFilter filter, LootEntry lootEntry, boolean preserveCount) {
+        replace(filter, lootEntry, preserveCount, new DataComponentType<?>[0]);
     }
 
-    public void replace(ItemFilter filter, ItemLootEntry itemLootEntry, boolean preserveCount, DataComponentType<?>[] componentTypes) {
+    public void replace(ItemFilter filter, LootEntry lootEntry, boolean preserveCount, DataComponentType<?>[] componentTypes) {
         var it = iterator();
         while (it.hasNext()) {
             var thisItem = it.next();
@@ -103,11 +102,7 @@ public class LootBucket implements Iterable<ItemStack> {
                 continue;
             }
 
-            var newItem = itemLootEntry.create(context);
-            if (newItem == null) {
-                continue;
-            }
-
+            var newItem = lootEntry.createRandomItem(context);
             if (newItem.isEmpty()) {
                 it.remove();
                 continue;

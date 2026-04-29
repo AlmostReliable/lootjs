@@ -1,6 +1,5 @@
 package com.almostreliable.lootjs.loot;
 
-import com.almostreliable.lootjs.core.entry.ItemLootEntry;
 import com.almostreliable.lootjs.core.entry.LootEntry;
 import com.almostreliable.lootjs.core.filters.ItemFilter;
 import com.almostreliable.lootjs.loot.modifier.GroupedLootAction;
@@ -33,16 +32,16 @@ public interface LootActionContainer<A extends LootActionContainer<?>> {
         return addAction(new RemoveLootAction(filter));
     }
 
-    default A replaceLoot(ItemFilter filter, ItemLootEntry itemLootEntry) {
-        return replaceLoot(filter, itemLootEntry, false);
+    default A replaceLoot(ItemFilter filter, LootEntry lootEntry) {
+        return replaceLoot(filter, lootEntry, false);
     }
 
-    default A replaceLoot(ItemFilter filter, ItemLootEntry itemLootEntry, boolean preserveCount) {
-        return replaceLoot(filter, itemLootEntry, preserveCount, new DataComponentType<?>[0]);
+    default A replaceLoot(ItemFilter filter, LootEntry lootEntry, boolean preserveCount) {
+        return replaceLoot(filter, lootEntry, preserveCount, new DataComponentType<?>[0]);
     }
 
-    default A replaceLoot(ItemFilter filter, ItemLootEntry itemLootEntry, boolean preserveCount, DataComponentType<?>[] preserveComponentTypes) {
-        return addAction(new ReplaceLootAction(filter, itemLootEntry, preserveCount, preserveComponentTypes));
+    default A replaceLoot(ItemFilter filter, LootEntry lootEntry, boolean preserveCount, DataComponentType<?>[] preserveComponentTypes) {
+        return addAction(new ReplaceLootAction(filter, lootEntry, preserveCount, preserveComponentTypes));
     }
 
     default A modifyLoot(ItemFilter filter, ModifyLootAction.Callback callback) {
