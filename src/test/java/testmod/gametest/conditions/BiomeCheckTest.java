@@ -9,7 +9,7 @@ import net.minecraft.core.Registry;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.tags.BiomeTags;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.GameType;
@@ -46,7 +46,7 @@ public class BiomeCheckTest {
                 .getLevel()
                 .registryAccess()
                 .registryOrThrow(Registries.BIOME)
-                .getHolder(ResourceLocation.parse("minecraft:deep_ocean"))
+                .getHolder(Identifier.parse("minecraft:deep_ocean"))
                 .orElseThrow();
         MatchBiome check = new MatchBiome(HolderSet.direct(biomeReference));
         helper.succeedIf(() -> GameTestUtils.assertFalse(helper,

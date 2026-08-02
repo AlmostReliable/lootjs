@@ -4,11 +4,11 @@ import com.almostreliable.lootjs.loot.LootConditionList;
 import com.almostreliable.lootjs.loot.LootConditionsContainer;
 import com.almostreliable.lootjs.loot.LootEntryList;
 import com.almostreliable.lootjs.util.DebugInfo;
-import net.minecraft.advancements.critereon.EntityPredicate;
+import net.minecraft.advancements.criterion.EntityPredicate;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -30,12 +30,8 @@ public interface LootEntry extends LootConditionsContainer<LootEntry> {
     List<LootItemCondition> EMPTY_CONDITIONS = List.of();
     List<LootItemFunction> EMPTY_FUNCTIONS = List.of();
 
-    static ItemLootEntry ofItem(Item item) {
-        return new ItemLootEntry(new ItemStack(item));
-    }
-
-    static ItemLootEntry of(ItemStack itemStack) {
-        return new ItemLootEntry(itemStack);
+    static ItemLootEntry of(Item item) {
+        return new ItemLootEntry(item, null);
     }
 
     static ItemLootEntry of(Item item, NumberProvider count) {
@@ -46,7 +42,7 @@ public interface LootEntry extends LootConditionsContainer<LootEntry> {
         return new EmptyLootEntry();
     }
 
-    static TableReferenceLootEntry reference(ResourceLocation location) {
+    static TableReferenceLootEntry reference(Identifier location) {
         return new TableReferenceLootEntry(location);
     }
 
@@ -59,7 +55,7 @@ public interface LootEntry extends LootConditionsContainer<LootEntry> {
             tag = tag.substring(1);
         }
 
-        return new TagLootEntry(TagKey.create(Registries.ITEM, ResourceLocation.parse(tag)), expand);
+        return new TagLootEntry(TagKey.create(Registries.ITEM, Identifier.parse(tag)), expand);
     }
 
     static CompositeLootEntry alternative(LootEntry... entries) {
@@ -81,7 +77,7 @@ public interface LootEntry extends LootConditionsContainer<LootEntry> {
     }
 
     static ItemLootEntry testItem(String name) {
-        return (ItemLootEntry) LootEntry.ofItem(Items.PAPER).setName(Component.literal(name));
+        return (ItemLootEntry) LootEntry.of(Items.PAPER).setName(Component.literal(name));
     }
 
     static EntityPredicate ep(EntityPredicate ep) {
@@ -96,8 +92,10 @@ public interface LootEntry extends LootConditionsContainer<LootEntry> {
 
         CompositeLootEntry group = LootEntry.group();
         LootEntryList entries = group.getEntries();
-        for (ItemStack item : ingredient.getItems()) {
-            entries.add(new ItemLootEntry(item));
+        if (ingredient.isCustom()) {
+            ingredient.getCustomIngredient().items().forEach(item -> entries.add(new ItemLootEntry(item)));
+        } else {
+            ingredient.getValues().stream().forEach(item -> entries.add(new ItemLootEntry(item)));
         }
 
         return group;
@@ -105,34 +103,17 @@ public interface LootEntry extends LootConditionsContainer<LootEntry> {
 
 
     static LootEntry ofVanilla(LootPoolEntryContainer vanillaEntry) {
-        if (vanillaEntry instanceof LootItem e) {
-            return new ItemLootEntry(e);
-        }
+        return switch (vanillaEntry) {
+            case LootItem e -> new ItemLootEntry(e);
+            case TagEntry e -> new TagLootEntry(e);
+            case EmptyLootItem e -> new EmptyLootEntry(e);
+            case NestedLootTable e -> new TableReferenceLootEntry(e);
+            case DynamicLoot e -> new DynamicLootEntry(e);
+            case CompositeEntryBase c -> new CompositeLootEntry(c);
+            default -> new Unknown(vanillaEntry);
+        };
 
-        if (vanillaEntry instanceof TagEntry e) {
-            return new TagLootEntry(e);
-        }
-
-        if (vanillaEntry instanceof EmptyLootItem e) {
-            return new EmptyLootEntry(e);
-        }
-
-        if (vanillaEntry instanceof NestedLootTable e) {
-            return new TableReferenceLootEntry(e);
-        }
-
-        if (vanillaEntry instanceof DynamicLoot e) {
-            return new DynamicLootEntry(e);
-        }
-
-        if (vanillaEntry instanceof CompositeEntryBase c) {
-            return new CompositeLootEntry(c);
-        }
-
-        return new Unknown(vanillaEntry);
     }
-
-    LootPoolEntryType getVanillaType();
 
     LootPoolEntryContainer getVanillaEntry();
 
@@ -140,10 +121,10 @@ public interface LootEntry extends LootConditionsContainer<LootEntry> {
 
     LootConditionList getConditions();
 
-    default ResourceLocation getType() {
-        ResourceLocation key = BuiltInRegistries.LOOT_POOL_ENTRY_TYPE.getKey(getVanillaType());
+    default Identifier getType() {
+        Identifier key = BuiltInRegistries.LOOT_POOL_ENTRY_TYPE.getKey(getVanillaEntry().codec());
         if (key == null) {
-            throw new IllegalStateException("Could not find key for loot pool entry type " + getVanillaType());
+            throw new IllegalStateException("Could not find key for loot pool entry " + getVanillaEntry());
         }
 
         return key;
@@ -155,23 +136,23 @@ public interface LootEntry extends LootConditionsContainer<LootEntry> {
 
 
     default boolean isItem() {
-        return getVanillaType() == LootPoolEntries.ITEM;
+        return getVanillaEntry() instanceof LootItem;
     }
 
     default boolean isTag() {
-        return getVanillaType() == LootPoolEntries.TAG;
+        return getVanillaEntry() instanceof TagEntry;
     }
 
     default boolean isEmpty() {
-        return getVanillaType() == LootPoolEntries.EMPTY;
+        return getVanillaEntry() instanceof EmptyLootItem;
     }
 
     default boolean isDynamic() {
-        return getVanillaType() == LootPoolEntries.DYNAMIC;
+        return getVanillaEntry() instanceof DynamicLoot;
     }
 
     default boolean isReference() {
-        return getVanillaType() == LootPoolEntries.LOOT_TABLE;
+        return getVanillaEntry() instanceof NestedLootTable;
     }
 
     default boolean isSimple() {
@@ -179,17 +160,17 @@ public interface LootEntry extends LootConditionsContainer<LootEntry> {
     }
 
     default boolean isAlternative() {
-        return getVanillaType() == LootPoolEntries.ALTERNATIVES;
+        return getVanillaEntry() instanceof AlternativesEntry;
     }
 
 
     default boolean isSequence() {
-        return getVanillaType() == LootPoolEntries.SEQUENCE;
+        return getVanillaEntry() instanceof SequentialEntry;
     }
 
 
     default boolean isGroup() {
-        return getVanillaType() == LootPoolEntries.ALTERNATIVES;
+        return getVanillaEntry() instanceof EntryGroup;
     }
 
     default boolean isComposite() {
@@ -215,11 +196,6 @@ public interface LootEntry extends LootConditionsContainer<LootEntry> {
     }
 
     record Unknown(LootPoolEntryContainer getVanillaEntry) implements LootEntry {
-
-        @Override
-        public LootPoolEntryType getVanillaType() {
-            return getVanillaEntry().getType();
-        }
 
         @Override
         public LootEntry when(Consumer<LootConditionList> callback) {

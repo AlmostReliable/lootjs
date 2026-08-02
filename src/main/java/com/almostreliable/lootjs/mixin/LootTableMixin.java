@@ -8,20 +8,19 @@ import com.almostreliable.lootjs.loot.extension.LootTableExtension;
 import com.almostreliable.lootjs.loot.table.LootTracker;
 import com.almostreliable.lootjs.loot.table.PostLootAction;
 import com.almostreliable.lootjs.loot.table.PostLootActionOwner;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.LootPool;
 import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.level.storage.loot.functions.LootItemFunction;
-import net.minecraft.world.level.storage.loot.parameters.LootContextParamSet;
+import org.jspecify.annotations.Nullable;
 import org.spongepowered.asm.mixin.*;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.BiFunction;
@@ -30,12 +29,11 @@ import java.util.function.Consumer;
 @Mixin(LootTable.class)
 public abstract class LootTableMixin implements PostLootActionOwner, LootTableExtension {
 
-    @Mutable @Shadow @Final private LootContextParamSet paramSet;
     @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
     @Mutable
     @Shadow
     @Final
-    private Optional<ResourceLocation> randomSequence;
+    private Optional<Identifier> randomSequence;
     @Mutable @Shadow @Final private List<LootItemFunction> functions;
     @Mutable @Shadow @Final private BiFunction<ItemStack, LootContext, ItemStack> compositeFunction;
     @Mutable @Shadow @Final private List<LootPool> pools;
@@ -44,7 +42,7 @@ public abstract class LootTableMixin implements PostLootActionOwner, LootTableEx
     private PostLootAction lootjs$postLootAction;
 
     @Shadow
-    public abstract ResourceLocation getLootTableId();
+    public abstract Identifier getLootTableId();
 
     @Override
     public void lootjs$setPostLootAction(PostLootAction postLootAction) {
@@ -108,24 +106,14 @@ public abstract class LootTableMixin implements PostLootActionOwner, LootTableEx
     }
 
     @Override
-    public void lootjs$setRandomSequence(@Nullable ResourceLocation randomSequence) {
+    public void lootjs$setRandomSequence(@Nullable Identifier randomSequence) {
         this.randomSequence = Optional.ofNullable(randomSequence);
     }
 
     @Override
     @Nullable
-    public ResourceLocation lootjs$getRandomSequence() {
+    public Identifier lootjs$getRandomSequence() {
         return this.randomSequence.orElse(null);
-    }
-
-    @Override
-    public void lootjs$setParamSet(LootContextParamSet paramSet) {
-        this.paramSet = paramSet;
-    }
-
-    @Override
-    public LootContextParamSet lootjs$getParamSet() {
-        return this.paramSet;
     }
 
     @Override

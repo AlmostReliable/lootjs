@@ -1,14 +1,14 @@
 package com.almostreliable.lootjs.core;
 
-import net.minecraft.Util;
-import net.minecraft.world.level.storage.loot.parameters.LootContextParamSet;
+import net.minecraft.util.Util;
+import net.minecraft.util.context.ContextKeySet;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
 
 import java.util.HashMap;
 import java.util.Map;
 
 public enum LootType {
-    UNKNOWN(new LootContextParamSet.Builder().build()),
+    UNKNOWN(new ContextKeySet.Builder().build()),
     BLOCK(LootContextParamSets.BLOCK),
     BLOCK_USE(LootContextParamSets.BLOCK_USE),
     CHEST(LootContextParamSets.CHEST),
@@ -27,23 +27,23 @@ public enum LootType {
     SHEARING(LootContextParamSets.SHEARING),
     GENERIC(LootContextParamSets.ALL_PARAMS);
 
-    private static final Map<LootContextParamSet, LootType> MAPPINGS = Util.make(new HashMap<>(), (m) -> {
+    private static final Map<ContextKeySet, LootType> MAPPINGS = Util.make(new HashMap<>(), (m) -> {
         for (LootType lootType : values()) {
             m.put(lootType.getParamSet(), lootType);
         }
     });
 
-    public static LootType getLootType(LootContextParamSet paramSet) {
+    public static LootType getLootType(ContextKeySet paramSet) {
         return MAPPINGS.getOrDefault(paramSet, LootType.UNKNOWN);
     }
 
-    private final LootContextParamSet paramSet;
+    private final ContextKeySet paramSet;
 
-    LootType(LootContextParamSet paramSet) {
+    LootType(ContextKeySet paramSet) {
         this.paramSet = paramSet;
     }
 
-    public LootContextParamSet getParamSet() {
+    public ContextKeySet getParamSet() {
         return this.paramSet;
     }
 }

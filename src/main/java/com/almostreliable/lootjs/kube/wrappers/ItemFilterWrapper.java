@@ -6,12 +6,12 @@ import dev.latvian.mods.kubejs.plugin.builtin.wrapper.IngredientWrapper;
 import dev.latvian.mods.rhino.Context;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.crafting.Ingredient;
+import org.jspecify.annotations.Nullable;
 
-import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,7 +27,7 @@ public class ItemFilterWrapper {
                 case "*":
                     return ItemFilter.ANY;
                 case "#":
-                    ResourceLocation location = ResourceLocation.parse(remaining);
+                    Identifier location = Identifier.parse(remaining);
                     TagKey<Item> tag = TagKey.create(Registries.ITEM, location);
                     return new ItemFilterImpl.ByTag(tag);
                 case "@":

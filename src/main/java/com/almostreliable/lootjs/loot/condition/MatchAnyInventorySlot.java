@@ -3,10 +3,10 @@ package com.almostreliable.lootjs.loot.condition;
 import com.almostreliable.lootjs.LootJSConditions;
 import com.almostreliable.lootjs.core.filters.ItemFilter;
 import com.almostreliable.lootjs.util.LootContextUtils;
+import com.mojang.serialization.MapCodec;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
-import net.minecraft.world.level.storage.loot.predicates.LootItemConditionType;
 
 public record MatchAnyInventorySlot(ItemFilter filter, boolean hotbar) implements LootItemCondition {
 
@@ -29,7 +29,7 @@ public record MatchAnyInventorySlot(ItemFilter filter, boolean hotbar) implement
     }
 
     @Override
-    public LootItemConditionType getType() {
+    public MapCodec<? extends LootItemCondition> codec() {
         return LootJSConditions.MATCH_ANY_INVENTORY_SLOT.value();
     }
 }

@@ -5,8 +5,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
-
-import javax.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 public class LootContextUtils {
     @Nullable
@@ -14,16 +13,16 @@ public class LootContextUtils {
         switch (LootContextExtension.cast(context).lootjs$getType()) {
             case BLOCK:
             case CHEST:
-                return tryGetPlayer(context.getParamOrNull(LootContextParams.THIS_ENTITY));
+                return tryGetPlayer(context.getOptionalParameter(LootContextParams.THIS_ENTITY));
             case ENTITY:
-                ServerPlayer player = tryGetPlayer(context.getParamOrNull(LootContextParams.ATTACKING_ENTITY));
+                ServerPlayer player = tryGetPlayer(context.getOptionalParameter(LootContextParams.ATTACKING_ENTITY));
                 if (player != null) {
                     return player;
                 }
 
-                return tryGetPlayer(context.getParamOrNull(LootContextParams.LAST_DAMAGE_PLAYER));
+                return tryGetPlayer(context.getOptionalParameter(LootContextParams.LAST_DAMAGE_PLAYER));
             case FISHING:
-                return tryGetPlayer(context.getParamOrNull(LootContextParams.ATTACKING_ENTITY));
+                return tryGetPlayer(context.getOptionalParameter(LootContextParams.ATTACKING_ENTITY));
         }
 
         return null;

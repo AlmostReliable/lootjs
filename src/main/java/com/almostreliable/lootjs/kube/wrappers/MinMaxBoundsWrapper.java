@@ -2,9 +2,10 @@ package com.almostreliable.lootjs.kube.wrappers;
 
 import com.almostreliable.lootjs.LootJS;
 import dev.latvian.mods.kubejs.util.RegistryAccessContainer;
-import net.minecraft.advancements.critereon.MinMaxBounds;
+import net.minecraft.advancements.criterion.MinMaxBounds;
+import net.minecraft.util.Mth;
+import org.jspecify.annotations.Nullable;
 
-import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -32,7 +33,8 @@ public class MinMaxBoundsWrapper {
             if (list.size() == 2) {
                 var min = saveNumber(list.get(0)).map(Number::doubleValue);
                 var max = saveNumber(list.get(1)).map(Number::doubleValue);
-                return new MinMaxBounds.Doubles(min, max, min.map(d -> d * d), max.map(d -> d * d));
+                var bounds = new MinMaxBounds.Bounds<>(min, max);
+                return new MinMaxBounds.Doubles(bounds, bounds.map(Mth::square));
             }
         }
 
@@ -43,7 +45,8 @@ public class MinMaxBoundsWrapper {
         if (o instanceof MinMaxBounds<? extends Number> minMaxBounds) {
             var min = minMaxBounds.min().map(Number::doubleValue);
             var max = minMaxBounds.max().map(Number::doubleValue);
-            return new MinMaxBounds.Doubles(min, max, min.map(d -> d * d), max.map(d -> d * d));
+            var bounds = new MinMaxBounds.Bounds<>(min, max);
+            return new MinMaxBounds.Doubles(bounds, bounds.map(Mth::square));
         }
 
         if (o instanceof Map<?, ?>) {
@@ -59,6 +62,7 @@ public class MinMaxBoundsWrapper {
         MinMaxBounds.Doubles doubles = ofMinMaxDoubles(registry, o);
         var min = doubles.min().map(Double::intValue);
         var max = doubles.max().map(Double::intValue);
-        return new MinMaxBounds.Ints(min, max, min.map(i -> ((long) i * i)), max.map(i -> ((long) i * i)));
+        var bounds = new MinMaxBounds.Bounds<>(min, max);
+        return new MinMaxBounds.Ints(bounds, bounds.map(i -> Mth.square(i.longValue())));
     }
 }

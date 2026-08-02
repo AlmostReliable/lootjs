@@ -6,8 +6,8 @@ import net.minecraft.core.Registry;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.neoforge.registries.RegisterEvent;
@@ -24,8 +24,9 @@ public class LootJS {
     public static Consumer<String> DEBUG_ACTION = LOG::info;
 
     public static HolderLookup.Provider LOOKUP_PROVIDER = new HolderLookup.Provider() {
+
         @Override
-        public Stream<ResourceKey<? extends Registry<?>>> listRegistries() {
+        public Stream<ResourceKey<? extends Registry<?>>> listRegistryKeys() {
             return Stream.empty();
         }
 
@@ -53,9 +54,9 @@ public class LootJS {
      * really serialize our ItemFilter's as they are dynamic and can't be serialized.
      */
     private void onRegister(RegisterEvent event) {
-        if (event.getRegistry() == BuiltInRegistries.ITEM_SUB_PREDICATE_TYPE) {
-            event.register(Registries.ITEM_SUB_PREDICATE_TYPE,
-                    ResourceLocation.fromNamespaceAndPath(BuildConfig.MOD_ID, "item"),
+        if (event.getRegistry() == BuiltInRegistries.DATA_COMPONENT_PREDICATE_TYPE) {
+            event.register(Registries.DATA_COMPONENT_PREDICATE_TYPE,
+                    Identifier.fromNamespaceAndPath(BuildConfig.MOD_ID, "item"),
                     () -> ItemFilterWrapper.TYPE);
         }
     }

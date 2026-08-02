@@ -1,6 +1,6 @@
 package com.almostreliable.lootjs.util;
 
-import javax.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 @FunctionalInterface
 public interface NullableFunction<T, R> {

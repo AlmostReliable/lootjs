@@ -1,13 +1,13 @@
 package com.almostreliable.lootjs.loot;
 
 import com.almostreliable.lootjs.core.filters.IdFilter;
-import net.minecraft.advancements.critereon.EnchantmentPredicate;
-import net.minecraft.advancements.critereon.ItemEnchantmentsPredicate;
-import net.minecraft.advancements.critereon.MinMaxBounds;
-import net.minecraft.advancements.critereon.NbtPredicate;
+import net.minecraft.advancements.criterion.EnchantmentPredicate;
+import net.minecraft.advancements.criterion.MinMaxBounds;
+import net.minecraft.advancements.criterion.NbtPredicate;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.HolderSet;
+import net.minecraft.core.component.predicates.EnchantmentsPredicate;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.item.enchantment.Enchantment;
@@ -30,20 +30,19 @@ public interface Predicates {
     static EnchantmentPredicate enchantment(IdFilter filter, MinMaxBounds.Ints levelBound) {
         List<Holder.Reference<Enchantment>> enchantments = lookup()
                 .lookupOrThrow(Registries.ENCHANTMENT)
-                .listElements()
-                .filter(ref -> filter.test(ref.key().location()))
+                .listElements().filter(ref -> filter.test(ref.key().identifier()))
                 .toList();
 
         HolderSet.Direct<Enchantment> holderSet = HolderSet.direct(enchantments);
         return new EnchantmentPredicate(Optional.of(holderSet), levelBound);
     }
 
-    static ItemEnchantmentsPredicate itemEnchantments(EnchantmentPredicate[] predicates) {
-        return ItemEnchantmentsPredicate.enchantments(Arrays.asList(predicates));
+    static EnchantmentsPredicate itemEnchantments(EnchantmentPredicate[] predicates) {
+        return EnchantmentsPredicate.enchantments(Arrays.asList(predicates));
     }
 
-    static ItemEnchantmentsPredicate storedEnchantments(EnchantmentPredicate[] predicates) {
-        return ItemEnchantmentsPredicate.storedEnchantments(Arrays.asList(predicates));
+    static EnchantmentsPredicate storedEnchantments(EnchantmentPredicate[] predicates) {
+        return EnchantmentsPredicate.storedEnchantments(Arrays.asList(predicates));
     }
 
     static NbtPredicate nbt(CompoundTag nbt) {

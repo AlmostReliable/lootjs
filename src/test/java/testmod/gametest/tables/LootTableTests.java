@@ -6,8 +6,8 @@ import com.almostreliable.lootjs.loot.table.MutableLootTable;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
+import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
 import net.neoforged.neoforge.gametest.GameTestHolder;
@@ -19,39 +19,39 @@ import testmod.gametest.GameTestUtils;
 @PrefixGameTestTemplate(false)
 public class LootTableTests {
 
-    private static final ResourceLocation BURIED_TREASURE = ResourceLocation.parse("minecraft:chests/buried_treasure"); //6 pools
-    private static final ResourceLocation PILLAGER_OUTPOST = ResourceLocation.parse("minecraft:chests/pillager_outpost"); //6 pools
-    private static final ResourceLocation ELDER_GUARDIAN = ResourceLocation.parse("minecraft:entities/elder_guardian"); //5 pools
-    private static final ResourceLocation BASTION_BRIDGE = ResourceLocation.parse("minecraft:chests/bastion_bridge"); //5 pools
-    private static final ResourceLocation BASTION_OTHER = ResourceLocation.parse("minecraft:chests/bastion_other"); //5 pools
-    private static final ResourceLocation BASTION_TREASURE = ResourceLocation.parse("minecraft:chests/bastion_treasure"); //4 pools
-    private static final ResourceLocation SPAWN_BONUS_CHEST = ResourceLocation.parse(
+    private static final Identifier BURIED_TREASURE = Identifier.parse("minecraft:chests/buried_treasure"); //6 pools
+    private static final Identifier PILLAGER_OUTPOST = Identifier.parse("minecraft:chests/pillager_outpost"); //6 pools
+    private static final Identifier ELDER_GUARDIAN = Identifier.parse("minecraft:entities/elder_guardian"); //5 pools
+    private static final Identifier BASTION_BRIDGE = Identifier.parse("minecraft:chests/bastion_bridge"); //5 pools
+    private static final Identifier BASTION_OTHER = Identifier.parse("minecraft:chests/bastion_other"); //5 pools
+    private static final Identifier BASTION_TREASURE = Identifier.parse("minecraft:chests/bastion_treasure"); //4 pools
+    private static final Identifier SPAWN_BONUS_CHEST = Identifier.parse(
             "minecraft:chests/spawn_bonus_chest"); //4 pools
-    private static final ResourceLocation BASTION_HOGLIN_STABLE = ResourceLocation.parse(
+    private static final Identifier BASTION_HOGLIN_STABLE = Identifier.parse(
             "minecraft:chests/bastion_hoglin_stable"); //4 pools
-    private static final ResourceLocation WOODLAND_MANSION = ResourceLocation.parse("minecraft:chests/woodland_mansion"); //4 pools
-    private static final ResourceLocation SIMPLE_DUNGEON = ResourceLocation.parse("minecraft:chests/simple_dungeon"); //3 pools
-    private static final ResourceLocation DARK_OAK_LEAVES = ResourceLocation.parse("minecraft:blocks/dark_oak_leaves"); //3 pools
-    private static final ResourceLocation SHIPWRECK_MAP = ResourceLocation.parse("minecraft:chests/shipwreck_map"); //3 pools
-    private static final ResourceLocation ZOMBIFIED_PIGLIN = ResourceLocation.parse(
+    private static final Identifier WOODLAND_MANSION = Identifier.parse("minecraft:chests/woodland_mansion"); //4 pools
+    private static final Identifier SIMPLE_DUNGEON = Identifier.parse("minecraft:chests/simple_dungeon"); //3 pools
+    private static final Identifier DARK_OAK_LEAVES = Identifier.parse("minecraft:blocks/dark_oak_leaves"); //3 pools
+    private static final Identifier SHIPWRECK_MAP = Identifier.parse("minecraft:chests/shipwreck_map"); //3 pools
+    private static final Identifier ZOMBIFIED_PIGLIN = Identifier.parse(
             "minecraft:entities/zombified_piglin"); //3 pools
-    private static final ResourceLocation ABANDONED_MINESHAFT = ResourceLocation.parse(
+    private static final Identifier ABANDONED_MINESHAFT = Identifier.parse(
             "minecraft:chests/abandoned_mineshaft"); //3 pools
-    private static final ResourceLocation SHIPWRECK_TREASURE = ResourceLocation.parse(
+    private static final Identifier SHIPWRECK_TREASURE = Identifier.parse(
             "minecraft:chests/shipwreck_treasure"); //3 pools
-    private static final ResourceLocation GUARDIAN = ResourceLocation.parse("minecraft:entities/guardian"); //3 pools
-    private static final ResourceLocation WITHER_SKELETON = ResourceLocation.parse("minecraft:entities/wither_skeleton"); //3 pools
-    private static final ResourceLocation RABBIT = ResourceLocation.parse("minecraft:entities/rabbit"); //3 pools
-    private static final ResourceLocation DESERT_PYRAMID = ResourceLocation.parse("minecraft:chests/desert_pyramid"); //3 pools
-    private static final ResourceLocation STRAY = ResourceLocation.parse("minecraft:entities/stray"); //3 pools
-    private static final ResourceLocation POTATOES = ResourceLocation.parse("minecraft:blocks/potatoes"); //3 pools
-    private static final ResourceLocation OAK_LEAVES = ResourceLocation.parse("minecraft:blocks/oak_leaves"); //3 pools
+    private static final Identifier GUARDIAN = Identifier.parse("minecraft:entities/guardian"); //3 pools
+    private static final Identifier WITHER_SKELETON = Identifier.parse("minecraft:entities/wither_skeleton"); //3 pools
+    private static final Identifier RABBIT = Identifier.parse("minecraft:entities/rabbit"); //3 pools
+    private static final Identifier DESERT_PYRAMID = Identifier.parse("minecraft:chests/desert_pyramid"); //3 pools
+    private static final Identifier STRAY = Identifier.parse("minecraft:entities/stray"); //3 pools
+    private static final Identifier POTATOES = Identifier.parse("minecraft:blocks/potatoes"); //3 pools
+    private static final Identifier OAK_LEAVES = Identifier.parse("minecraft:blocks/oak_leaves"); //3 pools
 
     private static MutableLootTable lootTable() {
-        return new MutableLootTable(LootContextParamSets.ALL_PARAMS, ResourceLocation.parse("testmod:some_table"));
+        return new MutableLootTable(LootContextParamSets.ALL_PARAMS, Identifier.parse("testmod:some_table"));
     }
 
-    private static LootTable getTable(GameTestHelper helper, ResourceLocation location) {
+    private static LootTable getTable(GameTestHelper helper, Identifier location) {
         return helper
                 .getLevel()
                 .getServer()

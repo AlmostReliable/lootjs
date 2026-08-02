@@ -6,13 +6,13 @@ import com.almostreliable.lootjs.loot.LootFunctionList;
 import com.almostreliable.lootjs.loot.extension.LootPoolExtension;
 import com.almostreliable.lootjs.loot.extension.LootTableExtension;
 import com.almostreliable.lootjs.util.DebugInfo;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
+import net.minecraft.util.context.ContextKeySet;
 import net.minecraft.world.level.storage.loot.LootPool;
 import net.minecraft.world.level.storage.loot.LootTable;
-import net.minecraft.world.level.storage.loot.parameters.LootContextParamSet;
 import net.minecraft.world.level.storage.loot.providers.number.ConstantValue;
+import org.jspecify.annotations.Nullable;
 
-import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -24,28 +24,28 @@ import java.util.function.UnaryOperator;
 public class MutableLootTable implements LootEntriesTransformer {
 
     private final LootTable origin;
-    private final ResourceLocation location;
+    private final Identifier location;
     @Nullable private LootFunctionList functions;
 
     public MutableLootTable(LootTable lootTable) {
         this(lootTable, lootTable.getLootTableId());
     }
 
-    public MutableLootTable(LootTable lootTable, ResourceLocation location) {
+    public MutableLootTable(LootTable lootTable, Identifier location) {
         this.location = location;
         this.origin = lootTable;
     }
 
-    public MutableLootTable(LootContextParamSet paramSet, ResourceLocation location) {
+    public MutableLootTable(ContextKeySet paramSet, Identifier location) {
         this(new LootTable.Builder().setParamSet(paramSet).setRandomSequence(location).build(), location);
     }
 
-    public ResourceLocation getRandomSequence() {
-        ResourceLocation rs = LootTableExtension.cast(origin).lootjs$getRandomSequence();
+    public Identifier getRandomSequence() {
+        Identifier rs = LootTableExtension.cast(origin).lootjs$getRandomSequence();
         return rs == null ? getLocation() : rs;
     }
 
-    public void setRandomSequence(@Nullable ResourceLocation randomSequence) {
+    public void setRandomSequence(@Nullable Identifier randomSequence) {
         LootTableExtension.cast(origin).lootjs$setRandomSequence(randomSequence);
     }
 
@@ -53,7 +53,7 @@ public class MutableLootTable implements LootEntriesTransformer {
         return LootType.getLootType(origin.getParamSet());
     }
 
-    public ResourceLocation getLocation() {
+    public Identifier getLocation() {
         return location;
     }
 

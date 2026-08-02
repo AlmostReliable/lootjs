@@ -1,12 +1,12 @@
 package com.almostreliable.lootjs.util;
 
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.Vec3;
+import org.jspecify.annotations.Nullable;
 
-import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -46,7 +46,7 @@ public class Utils {
         return String.format("Type=%s, Id=%s, Dim=%s, x=%.2f, y=%.2f, z=%.2f",
                 quote(BuiltInRegistries.ENTITY_TYPE.getKey(entity.getType())),
                 entity.getId(),
-                quote(entity.level().dimension().location()),
+                quote(entity.level().dimension().identifier()),
                 entity.getX(),
                 entity.getY(),
                 entity.getZ());
@@ -64,7 +64,7 @@ public class Utils {
         return "\"" + s + "\"";
     }
 
-    public static String quote(@Nullable ResourceLocation rl) {
+    public static String quote(@Nullable Identifier rl) {
         return quote(rl == null ? "NO_LOCATION" : rl.toString());
     }
 

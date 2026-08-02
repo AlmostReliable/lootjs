@@ -4,7 +4,7 @@ import com.almostreliable.lootjs.BuildConfig;
 import com.almostreliable.lootjs.loot.condition.MatchDimension;
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.gametest.GameTestHolder;
@@ -21,8 +21,8 @@ public class DimensionCheckTest {
     public void AnyDimension_match(GameTestHelper helper) {
         LootContext ctx = GameTestUtils.unknownContext(helper.getLevel(), TEST_POS);
 
-        MatchDimension owDim = new MatchDimension(new ResourceLocation[]{
-                ResourceLocation.parse("overworld")
+        MatchDimension owDim = new MatchDimension(new Identifier[]{
+                Identifier.parse("overworld")
         });
         helper.succeedIf(() -> GameTestUtils.assertTrue(helper,
                 owDim.test(ctx),
@@ -33,8 +33,8 @@ public class DimensionCheckTest {
     public void AnyDimension_fail(GameTestHelper helper) {
         LootContext ctx = GameTestUtils.unknownContext(helper.getLevel(), TEST_POS);
 
-        MatchDimension owDim = new MatchDimension(new ResourceLocation[]{
-                ResourceLocation.parse("nether")
+        MatchDimension owDim = new MatchDimension(new Identifier[]{
+                Identifier.parse("nether")
         });
         helper.succeedIf(() -> GameTestUtils.assertFalse(helper,
                 owDim.test(ctx),

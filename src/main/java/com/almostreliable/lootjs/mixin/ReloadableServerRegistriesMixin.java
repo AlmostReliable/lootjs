@@ -2,6 +2,7 @@ package com.almostreliable.lootjs.mixin;
 
 import com.almostreliable.lootjs.LootEvents;
 import com.almostreliable.lootjs.LootJS;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.core.LayeredRegistryAccess;
 import net.minecraft.core.WritableRegistry;
 import net.minecraft.core.registries.Registries;
@@ -18,12 +19,12 @@ import java.util.List;
 @Mixin(value = ReloadableServerRegistries.class, priority = 1337)
 public class ReloadableServerRegistriesMixin {
 
-    @Inject(method = "apply", at = @At("HEAD"))
-    private static void lootjs$runLootTableEventJS(LayeredRegistryAccess<RegistryLayer> arg, List<WritableRegistry<?>> list, CallbackInfoReturnable<LayeredRegistryAccess<RegistryLayer>> cir) {
+    @Inject(method = "createAndValidateFullContext", at = @At("HEAD"))
+    private static void lootjs$runLootTableEventJS(LayeredRegistryAccess<RegistryLayer> contextLayers, HolderLookup.Provider contextLookupWithUpdatedTags, List<WritableRegistry<?>> newRegistries, CallbackInfoReturnable<ReloadableServerRegistries.LoadResult> cir) {
         WritableRegistry<LootTable> registry = null;
         try {
             //noinspection unchecked
-            registry = (WritableRegistry<LootTable>) list
+            registry = (WritableRegistry<LootTable>) newRegistries
                     .stream()
                     .filter(r -> r.key().equals(Registries.LOOT_TABLE))
                     .findFirst()
@@ -36,7 +37,7 @@ public class ReloadableServerRegistriesMixin {
             return;
         }
 
-        LootJS.storeLookup(arg.compositeAccess());
+        LootJS.storeLookup(contextLayers.compositeAccess());
         LootEvents.invoke(registry);
     }
 }

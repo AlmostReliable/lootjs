@@ -1,17 +1,17 @@
 package com.almostreliable.lootjs.core.filters;
 
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.List;
 import java.util.function.Predicate;
 import java.util.regex.Pattern;
 
-public interface IdFilter extends Predicate<ResourceLocation> {
-    record ByLocation(ResourceLocation location) implements IdFilter {
+public interface IdFilter extends Predicate<Identifier> {
+    record ByLocation(Identifier location) implements IdFilter {
         @Override
-        public boolean test(ResourceLocation resourceLocation) {
-            return location.equals(resourceLocation);
+        public boolean test(Identifier Identifier) {
+            return location.equals(Identifier);
         }
 
         @Override
@@ -22,8 +22,8 @@ public interface IdFilter extends Predicate<ResourceLocation> {
 
     record ByPattern(Pattern pattern) implements IdFilter {
         @Override
-        public boolean test(ResourceLocation resourceLocation) {
-            return pattern.matcher(resourceLocation.toString()).matches();
+        public boolean test(Identifier Identifier) {
+            return pattern.matcher(Identifier.toString()).matches();
         }
 
         @Override
@@ -35,8 +35,8 @@ public interface IdFilter extends Predicate<ResourceLocation> {
     record ByMod(String mod) implements IdFilter {
 
         @Override
-        public boolean test(ResourceLocation resourceLocation) {
-            return resourceLocation.getNamespace().equals(mod);
+        public boolean test(Identifier Identifier) {
+            return Identifier.getNamespace().equals(mod);
         }
 
         @Override
@@ -47,8 +47,8 @@ public interface IdFilter extends Predicate<ResourceLocation> {
 
     record Or(List<IdFilter> filters) implements IdFilter {
         @Override
-        public boolean test(ResourceLocation resourceLocation) {
-            return filters.stream().anyMatch(filter -> filter.test(resourceLocation));
+        public boolean test(Identifier Identifier) {
+            return filters.stream().anyMatch(filter -> filter.test(Identifier));
         }
 
         @Override

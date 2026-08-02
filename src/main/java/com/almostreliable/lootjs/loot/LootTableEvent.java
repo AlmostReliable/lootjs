@@ -11,12 +11,11 @@ import net.minecraft.core.RegistrationInfo;
 import net.minecraft.core.WritableRegistry;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.storage.loot.LootTable;
-import net.minecraft.world.level.storage.loot.parameters.LootContextParamSet;
 
 import java.util.*;
 import java.util.function.Consumer;
@@ -34,11 +33,11 @@ public class LootTableEvent {
         return registry;
     }
 
-    public Set<ResourceLocation> getLootTableIds() {
+    public Set<Identifier> getLootTableIds() {
         return Collections.unmodifiableSet(registry().keySet());
     }
 
-    public Set<ResourceLocation> getLootTableIds(IdFilter filter) {
+    public Set<Identifier> getLootTableIds(IdFilter filter) {
         return registry().keySet().stream().filter(filter).collect(Collectors.toSet());
     }
 
@@ -53,7 +52,7 @@ public class LootTableEvent {
         forEachTable(location -> true, onForEach);
     }
 
-    public boolean hasLootTable(ResourceLocation location) {
+    public boolean hasLootTable(Identifier location) {
         return registry().containsKey(location);
     }
 
@@ -65,8 +64,8 @@ public class LootTableEvent {
         }
     }
 
-    public MutableLootTable getLootTable(ResourceLocation location) {
-        LootTable lootTable = registry().get(location);
+    public MutableLootTable getLootTable(Identifier location) {
+        LootTable lootTable = registry().getValue(location);
         if (lootTable == null) {
             throw new IllegalArgumentException("Unknown loot table: " + location);
         }
@@ -75,11 +74,13 @@ public class LootTableEvent {
     }
 
     public MutableLootTable getBlockTable(Block block) {
-        return getLootTable(block.getLootTable().location());
+        var tableId = block.getLootTable().orElseThrow().identifier();
+        return getLootTable(tableId);
     }
 
     public MutableLootTable getEntityTable(EntityType<?> entityType) {
-        return getLootTable(entityType.getDefaultLootTable().location());
+        var tableId = entityType.getDefaultLootTable().orElseThrow().identifier();
+        return getLootTable(tableId);
     }
 
     public LootTableList modifyLootTables(LootTableFilter... filters) {
@@ -101,8 +102,8 @@ public class LootTableEvent {
 
     public LootTableList modifyBlockTables(IdFilter filter) {
         var tables = BuiltInRegistries.BLOCK
-                .holders()
-                .filter(ref -> filter.test(ref.key().location()))
+                .listElements()
+                .filter(ref -> filter.test(ref.key().identifier()))
                 .map(ref -> this.getBlockTable(ref.value()))
                 .toList();
         return new LootTableList(tables);
@@ -110,8 +111,8 @@ public class LootTableEvent {
 
     public LootTableList modifyEntityTables(IdFilter filter) {
         var tables = BuiltInRegistries.ENTITY_TYPE
-                .holders()
-                .filter(ref -> filter.test(ref.key().location()))
+                .listElements()
+                .filter(ref -> filter.test(ref.key().identifier()))
                 .map(ref -> this.getEntityTable(ref.value()))
                 .toList();
         return new LootTableList(tables);
@@ -130,17 +131,17 @@ public class LootTableEvent {
         return new LootTableList(tables);
     }
 
-    public MutableLootTable create(ResourceLocation location) {
+    public MutableLootTable create(Identifier location) {
         return create(location, LootType.CHEST);
     }
 
-    public MutableLootTable create(ResourceLocation location, LootType type) {
+    public MutableLootTable create(Identifier location, LootType type) {
         if (hasLootTable(location)) {
             throw new RuntimeException("[LootJS Error] Loot table already exists, cannot create new one: " + location);
         }
 
-        LootContextParamSet paramSet = type.getParamSet();
-        LootTable lootTable = new LootTable.Builder().setParamSet(paramSet).setRandomSequence(location).build();
+        var paramSet = type.getParamSet();
+        var lootTable = new LootTable.Builder().setParamSet(paramSet).setRandomSequence(location).build();
         //noinspection ConstantValue
         if (lootTable.getLootTableId() == null) {
             lootTable.setLootTableId(location);

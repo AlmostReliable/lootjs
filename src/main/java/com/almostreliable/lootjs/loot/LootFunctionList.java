@@ -4,11 +4,10 @@ import com.almostreliable.lootjs.core.filters.IdFilter;
 import com.almostreliable.lootjs.util.DebugInfo;
 import com.almostreliable.lootjs.util.ListHolder;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.functions.LootItemFunction;
-import net.minecraft.world.level.storage.loot.functions.LootItemFunctionType;
 import org.apache.commons.lang3.mutable.MutableBoolean;
 
 import java.util.Iterator;
@@ -53,7 +52,7 @@ public class LootFunctionList extends ListHolder<LootItemFunction, LootItemFunct
         info.add("% Functions: [");
         info.push();
         for (var entry : this) {
-            ResourceLocation key = BuiltInRegistries.LOOT_FUNCTION_TYPE.getKey(entry.getType());
+            var key = BuiltInRegistries.LOOT_FUNCTION_TYPE.getKey(entry.codec());
             if (key == null) continue;
             info.add(key.toString());
         }
@@ -71,10 +70,11 @@ public class LootFunctionList extends ListHolder<LootItemFunction, LootItemFunct
         return itemStack;
     }
 
-    public boolean replace(LootItemFunctionType<?> type, LootItemFunction function) {
+    public boolean replace(Identifier id, LootItemFunction function) {
         MutableBoolean found = new MutableBoolean(false);
         elements.replaceAll(entry -> {
-            if (entry.getType().equals(type)) {
+            var entryId = BuiltInRegistries.LOOT_FUNCTION_TYPE.getKey(entry.codec());
+            if (entryId != null && entryId.equals(id)) {
                 found.setValue(true);
                 return function;
             }
@@ -86,16 +86,21 @@ public class LootFunctionList extends ListHolder<LootItemFunction, LootItemFunct
     }
 
     public boolean remove(IdFilter type) {
-        return elements.removeIf(element -> type.test(BuiltInRegistries.LOOT_FUNCTION_TYPE.getKey(element.getType())));
+        return elements.removeIf(element -> {
+            var id = BuiltInRegistries.LOOT_FUNCTION_TYPE.getKey(element.codec());
+            if (id == null) return false;
+            return type.test(id);
+        });
     }
 
-    public boolean contains(LootItemFunctionType<?> type) {
-        return indexOf(type) != -1;
+    public boolean contains(Identifier id) {
+        return indexOf(id) != -1;
     }
 
-    public int indexOf(LootItemFunctionType<?> type) {
+    public int indexOf(Identifier id) {
         for (int i = 0; i < elements.size(); i++) {
-            if (elements.get(i).getType().equals(type)) {
+            var entryId = BuiltInRegistries.LOOT_FUNCTION_TYPE.getKey(elements.get(i).codec());
+            if (entryId != null && entryId.equals(id)) {
                 return i;
             }
         }
@@ -103,9 +108,10 @@ public class LootFunctionList extends ListHolder<LootItemFunction, LootItemFunct
         return -1;
     }
 
-    public int lastIndexOf(LootItemFunctionType<?> type) {
+    public int lastIndexOf(Identifier id) {
         for (int i = elements.size() - 1; i >= 0; i--) {
-            if (elements.get(i).getType().equals(type)) {
+            var entryId = BuiltInRegistries.LOOT_FUNCTION_TYPE.getKey(elements.get(i).codec());
+            if (entryId != null && entryId.equals(id)) {
                 return i;
             }
         }

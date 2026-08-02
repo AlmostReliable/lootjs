@@ -4,7 +4,7 @@ import com.almostreliable.lootjs.LootJS;
 import com.almostreliable.lootjs.core.LootType;
 import com.almostreliable.lootjs.util.LootContextUtils;
 import dev.latvian.mods.rhino.util.RemapPrefixForJS;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.damagesource.DamageSource;
@@ -13,8 +13,8 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.phys.Vec3;
+import org.jspecify.annotations.Nullable;
 
-import javax.annotation.Nullable;
 import java.util.Map;
 
 @RemapPrefixForJS("lootjs$")
@@ -26,7 +26,7 @@ public interface LootContextExtension {
 
     LootContext lootjs$self();
 
-    default ResourceLocation lootjs$getId() {
+    default Identifier lootjs$getId() {
         return lootjs$self().getQueriedLootTableId();
     }
 
@@ -37,7 +37,7 @@ public interface LootContextExtension {
     LootType lootjs$getType();
 
     default Vec3 lootjs$getPosition() {
-        Vec3 pos = lootjs$self().getParamOrNull(LootContextParams.ORIGIN);
+        Vec3 pos = lootjs$self().getOptionalParameter(LootContextParams.ORIGIN);
         if (pos != null) {
             return pos;
         }
@@ -53,12 +53,12 @@ public interface LootContextExtension {
 
     @Nullable
     default Entity lootjs$getEntity() {
-        return lootjs$self().getParamOrNull(LootContextParams.THIS_ENTITY);
+        return lootjs$self().getOptionalParameter(LootContextParams.THIS_ENTITY);
     }
 
     @Nullable
     default Entity lootjs$getAttackingEntity() {
-        return lootjs$self().getParamOrNull(LootContextParams.ATTACKING_ENTITY);
+        return lootjs$self().getOptionalParameter(LootContextParams.ATTACKING_ENTITY);
     }
 
     @Nullable
@@ -68,24 +68,24 @@ public interface LootContextExtension {
 
     @Nullable
     default DamageSource lootjs$getDamageSource() {
-        return lootjs$self().getParamOrNull(LootContextParams.DAMAGE_SOURCE);
+        return lootjs$self().getOptionalParameter(LootContextParams.DAMAGE_SOURCE);
     }
 
     default ItemStack lootjs$getTool() {
-        ItemStack tool = lootjs$self().getParamOrNull(LootContextParams.TOOL);
-        if (tool != null) {
-            return tool;
+        var tool = lootjs$self().getOptionalParameter(LootContextParams.TOOL);
+        if (tool instanceof ItemStack itemStack) {
+            return itemStack;
         }
 
         return ItemStack.EMPTY;
     }
 
     default boolean lootjs$isExploded() {
-        return lootjs$self().hasParam(LootContextParams.EXPLOSION_RADIUS);
+        return lootjs$self().hasParameter(LootContextParams.EXPLOSION_RADIUS);
     }
 
     default float lootjs$getExplosionRadius() {
-        Float f = lootjs$self().getParamOrNull(LootContextParams.EXPLOSION_RADIUS);
+        Float f = lootjs$self().getOptionalParameter(LootContextParams.EXPLOSION_RADIUS);
         return f != null ? f : 0f;
     }
 

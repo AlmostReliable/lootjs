@@ -1,7 +1,8 @@
 package com.almostreliable.lootjs.loot.condition.builder;
 
-import net.minecraft.advancements.critereon.DistancePredicate;
-import net.minecraft.advancements.critereon.MinMaxBounds;
+
+import net.minecraft.advancements.criterion.DistancePredicate;
+import net.minecraft.advancements.criterion.MinMaxBounds;
 
 public class DistancePredicateBuilder {
     private MinMaxBounds.Doubles x = MinMaxBounds.Doubles.ANY;

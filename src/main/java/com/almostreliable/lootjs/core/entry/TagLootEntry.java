@@ -2,7 +2,7 @@ package com.almostreliable.lootjs.core.entry;
 
 import com.almostreliable.lootjs.util.DebugInfo;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.storage.loot.entries.LootPoolSingletonContainer;
@@ -41,7 +41,7 @@ public class TagLootEntry extends AbstractSimpleLootEntry<TagEntry> implements S
             tag = tag.substring(1);
         }
 
-        vanillaEntry.tag = TagKey.create(Registries.ITEM, ResourceLocation.parse(tag));
+        vanillaEntry.tag = TagKey.create(Registries.ITEM, Identifier.parse(tag));
     }
 
     public boolean isTag(String tag) {

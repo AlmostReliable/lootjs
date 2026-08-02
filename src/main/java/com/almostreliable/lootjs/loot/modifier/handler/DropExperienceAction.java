@@ -17,7 +17,7 @@ public class DropExperienceAction implements LootAction {
 
     @Override
     public void apply(LootContext context, LootBucket loot) {
-        Vec3 origin = context.getParamOrNull(LootContextParams.ORIGIN);
+        Vec3 origin = context.getOptionalParameter(LootContextParams.ORIGIN);
         if (origin != null) {
             ExperienceOrb.award(context.getLevel(), origin, amount.getInt(context));
         }

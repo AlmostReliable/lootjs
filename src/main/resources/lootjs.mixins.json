@@ -4,7 +4,6 @@
   "compatibilityLevel" : "JAVA_21",
   "mixins" : [
     "CompositeEntryBaseMixin",
-    "CreeperMixin",
     "EntityPredicateMixin",
     "HolderSetCodecMixin",
     "ItemPredicateMixin",
@@ -18,9 +17,7 @@
     "LootTableMixin",
     "ReloadableServerRegistriesMixin",
     "SetComponentsFunctionAccessor",
-    "SkeletonMixin",
     "WitherBossMixin",
-    "ZombieMixin",
     "forge.CommonHooksMixin",
     "forge.LootModifierManagerMixin"
   ],

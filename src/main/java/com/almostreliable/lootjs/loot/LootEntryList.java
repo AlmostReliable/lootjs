@@ -10,8 +10,8 @@ import com.almostreliable.lootjs.loot.table.LootEntryAppender;
 import com.almostreliable.lootjs.util.DebugInfo;
 import com.almostreliable.lootjs.util.ListHolder;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.level.storage.loot.entries.LootPoolEntryContainer;
-import net.minecraft.world.level.storage.loot.entries.LootPoolEntryType;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -134,16 +134,21 @@ public class LootEntryList extends ListHolder<LootEntry, LootPoolEntryContainer>
     }
 
     public boolean remove(IdFilter type) {
-        return elements.removeIf(element -> type.test(BuiltInRegistries.LOOT_POOL_ENTRY_TYPE.getKey(element.getType())));
+        return elements.removeIf(element -> {
+            var id = BuiltInRegistries.LOOT_POOL_ENTRY_TYPE.getKey(element.codec());
+            if (id == null) return false;
+            return type.test(id);
+        });
     }
 
-    public boolean contains(LootPoolEntryType type) {
-        return indexOf(type) != -1;
+    public boolean contains(Identifier id) {
+        return indexOf(id) != -1;
     }
 
-    public int indexOf(LootPoolEntryType type) {
+    public int indexOf(Identifier id) {
         for (int i = 0; i < elements.size(); i++) {
-            if (elements.get(i).getType().equals(type)) {
+            var entryId = BuiltInRegistries.LOOT_POOL_ENTRY_TYPE.getKey(elements.get(i).codec());
+            if (entryId != null && entryId.equals(id)) {
                 return i;
             }
         }
@@ -151,9 +156,10 @@ public class LootEntryList extends ListHolder<LootEntry, LootPoolEntryContainer>
         return -1;
     }
 
-    public int lastIndexOf(LootPoolEntryType type) {
+    public int lastIndexOf(Identifier id) {
         for (int i = elements.size() - 1; i >= 0; i--) {
-            if (elements.get(i).getType().equals(type)) {
+            var entryId = BuiltInRegistries.LOOT_POOL_ENTRY_TYPE.getKey(elements.get(i).codec());
+            if (entryId != null && entryId.equals(id)) {
                 return i;
             }
         }

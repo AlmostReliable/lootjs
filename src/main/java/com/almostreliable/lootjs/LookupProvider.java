@@ -17,12 +17,12 @@ public class LookupProvider implements HolderLookup.Provider {
     }
 
     @Override
-    public Stream<ResourceKey<? extends Registry<?>>> listRegistries() {
-        return registryAccess.listRegistries();
+    public Stream<ResourceKey<? extends Registry<?>>> listRegistryKeys() {
+        return registryAccess.listRegistryKeys();
     }
 
     @Override
-    public <T> Optional<HolderLookup.RegistryLookup<T>> lookup(ResourceKey<? extends Registry<? extends T>> arg) {
-        return registryAccess.registry(arg).map(Registry::asTagAddingLookup);
+    public <T> Optional<Registry<T>> lookup(ResourceKey<? extends Registry<? extends T>> arg) {
+        return registryAccess.lookup(arg);
     }
 }

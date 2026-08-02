@@ -3,10 +3,8 @@ package com.almostreliable.lootjs.core.entry;
 import com.almostreliable.lootjs.loot.LootConditionList;
 import com.almostreliable.lootjs.loot.LootFunctionList;
 import com.almostreliable.lootjs.util.DebugInfo;
-import net.minecraft.world.level.storage.loot.entries.LootPoolEntryType;
 import net.minecraft.world.level.storage.loot.entries.LootPoolSingletonContainer;
-
-import javax.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 public abstract class AbstractSimpleLootEntry<E extends LootPoolSingletonContainer> implements SimpleLootEntry {
 
@@ -24,11 +22,6 @@ public abstract class AbstractSimpleLootEntry<E extends LootPoolSingletonContain
         this(vanillaEntry);
         this.conditions = conditions;
         this.functions = functions;
-    }
-
-    @Override
-    public LootPoolEntryType getVanillaType() {
-        return vanillaEntry.getType();
     }
 
     @Override

@@ -15,11 +15,11 @@ import dev.latvian.mods.kubejs.util.RegistryAccessContainer;
 import dev.latvian.mods.rhino.Context;
 import dev.latvian.mods.rhino.type.RecordTypeInfo;
 import dev.latvian.mods.rhino.type.TypeInfo;
-import net.minecraft.advancements.critereon.*;
+import net.minecraft.advancements.criterion.*;
 import net.minecraft.core.HolderSet;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.damagesource.DamageType;
@@ -29,8 +29,8 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.Nullable;
 
-import javax.annotation.Nullable;
 import java.util.*;
 import java.util.regex.Pattern;
 
@@ -104,7 +104,8 @@ public class BasicWrapper {
     @SuppressWarnings("unchecked")
     public static EntityTypePredicate ofEntityTypePredicate(Context cx, @Nullable Object o) {
         if (o instanceof EntityType<?> type) {
-            return EntityTypePredicate.of(type);
+            //noinspection deprecation
+            return new EntityTypePredicate(HolderSet.direct(type.builtInRegistryHolder()));
         }
 
         HolderSet<EntityType<?>> holderSet = (HolderSet<EntityType<?>>) cx.jsToJava(o, ENTITY_HOLDER_SET);
@@ -114,7 +115,7 @@ public class BasicWrapper {
     public static DamageSourcePredicate ofDamageSourcePredicate(Context cx, Object o, TypeInfo target) {
         if (o instanceof String str && str.startsWith("#")) {
             var tag = str.substring(0, 1);
-            var predicate = TagPredicate.is(TagKey.create(Registries.DAMAGE_TYPE, ResourceLocation.parse(tag)));
+            var predicate = TagPredicate.is(TagKey.create(Registries.DAMAGE_TYPE, Identifier.parse(tag)));
             return DamageSourcePredicate.Builder.damageType().tag(predicate).build();
         }
 
@@ -142,7 +143,7 @@ public class BasicWrapper {
             var id = map.get("id").toString();
             boolean expected = (boolean) map.get("expected");
 
-            var tag = TagKey.create(Registries.DAMAGE_TYPE, ResourceLocation.parse(id));
+            var tag = TagKey.create(Registries.DAMAGE_TYPE, Identifier.parse(id));
             return Optional.of(new TagPredicate<>(tag, expected));
         } catch (Exception e) {
             ConsoleJS.SERVER.error("Error parsing damage source predicate: " + rawPredicate, e);
@@ -164,9 +165,9 @@ public class BasicWrapper {
                     yield new IdFilter.ByMod(str.substring(1));
                 }
 
-                yield new IdFilter.ByLocation(ResourceLocation.parse(str));
+                yield new IdFilter.ByLocation(Identifier.parse(str));
             }
-            case ResourceLocation rl -> new IdFilter.ByLocation(rl);
+            case Identifier rl -> new IdFilter.ByLocation(rl);
             default -> throw new IllegalArgumentException("Invalid resource location filter: " + o);
         };
     }

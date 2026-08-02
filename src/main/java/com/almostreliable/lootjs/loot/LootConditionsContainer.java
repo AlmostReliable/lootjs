@@ -6,12 +6,12 @@ import com.almostreliable.lootjs.loot.condition.*;
 import com.google.common.base.Preconditions;
 import com.google.gson.JsonObject;
 import com.mojang.serialization.JsonOps;
-import net.minecraft.advancements.critereon.*;
+import net.minecraft.advancements.criterion.*;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderSet;
+import net.minecraft.resources.Identifier;
 import net.minecraft.resources.RegistryOps;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlot;
@@ -21,13 +21,12 @@ import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.levelgen.structure.Structure;
-import net.minecraft.world.level.storage.loot.IntRange;
 import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.level.storage.loot.predicates.*;
 import net.minecraft.world.level.storage.loot.providers.number.NumberProvider;
+import org.jspecify.annotations.Nullable;
 
-import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -82,11 +81,11 @@ public interface LootConditionsContainer<C> {
     }
 
     default C matchTime(long period, int min, int max) {
-        return addCondition(new TimeCheck.Builder(IntRange.range(min, max)).setPeriod(period).build());
+        throw new UnsupportedOperationException("Currently not support - prefer to use `matchCustomCondition`");
     }
 
     default C matchTime(int min, int max) {
-        return matchTime(24000L, min, max);
+        throw new UnsupportedOperationException("Currently not support - prefer to use `matchCustomCondition`");
     }
 
     default C matchWeather(@Nullable Boolean raining, @Nullable Boolean thundering) {
@@ -127,7 +126,7 @@ public interface LootConditionsContainer<C> {
         return addCondition(new MatchBiome(biomes));
     }
 
-    default C matchDimension(ResourceLocation... dimensions) {
+    default C matchDimension(Identifier... dimensions) {
         return addCondition(new MatchDimension(dimensions));
     }
 
@@ -215,13 +214,13 @@ public interface LootConditionsContainer<C> {
     default C hasAnyStage(String... stages) {
         if (stages.length == 1) {
             String stage = stages[0];
-            var condition = new PlayerParamPredicate((player) -> player.getTags().contains(stage));
+            var condition = new PlayerParamPredicate((player) -> player.entityTags().contains(stage));
             return addCondition(condition);
         }
 
         var condition = new PlayerParamPredicate((player) -> {
             for (String stage : stages) {
-                if (player.getTags().contains(stage)) {
+                if (player.entityTags().contains(stage)) {
                     return true;
                 }
             }

@@ -2,21 +2,14 @@ package com.almostreliable.lootjs.loot.condition;
 
 import com.almostreliable.lootjs.LootJSConditions;
 import com.almostreliable.lootjs.util.LootContextUtils;
+import com.mojang.serialization.MapCodec;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
-import net.minecraft.world.level.storage.loot.predicates.LootItemConditionType;
 
-import java.util.Objects;
 import java.util.function.Predicate;
 
-public class PlayerParamPredicate implements LootItemCondition {
-    private final Predicate<ServerPlayer> predicate;
-
-    public PlayerParamPredicate(Predicate<ServerPlayer> predicate) {
-        Objects.requireNonNull(predicate);
-        this.predicate = predicate;
-    }
+public record PlayerParamPredicate(Predicate<ServerPlayer> predicate) implements LootItemCondition {
 
     @Override
     public boolean test(LootContext lootContext) {
@@ -24,9 +17,8 @@ public class PlayerParamPredicate implements LootItemCondition {
         return player != null && predicate.test(player);
     }
 
-
     @Override
-    public LootItemConditionType getType() {
+    public MapCodec<? extends LootItemCondition> codec() {
         return LootJSConditions.PLAYER_PARAM.value();
     }
 }

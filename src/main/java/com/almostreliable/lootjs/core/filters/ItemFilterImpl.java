@@ -1,6 +1,6 @@
 package com.almostreliable.lootjs.core.filters;
 
-import net.minecraft.advancements.critereon.MinMaxBounds;
+import net.minecraft.advancements.criterion.MinMaxBounds;
 import net.minecraft.core.component.DataComponentType;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.EquipmentSlot;
@@ -10,8 +10,8 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.enchantment.ItemEnchantments;
 import net.neoforged.neoforge.common.ItemAbility;
+import org.jspecify.annotations.Nullable;
 
-import javax.annotation.Nullable;
 import java.util.List;
 import java.util.function.Predicate;
 
@@ -31,7 +31,7 @@ public class ItemFilterImpl {
 
         public boolean hasEnchantmentsInComponent(ItemEnchantments enchantments) {
             for (var entry : enchantments.entrySet()) {
-                boolean matches = entry.getKey().unwrapKey().filter(key -> filter.test(key.location())).isPresent();
+                boolean matches = entry.getKey().unwrapKey().filter(key -> filter.test(key.identifier())).isPresent();
                 if (matches && levelBounds.matches(entry.getIntValue())) {
                     return true;
                 }

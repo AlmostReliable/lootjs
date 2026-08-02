@@ -84,7 +84,7 @@ public class LootModifier extends GroupedLootAction {
 
         @Override
         public boolean test(LootContext context) {
-            BlockState blockState = context.getParamOrNull(LootContextParams.BLOCK_STATE);
+            BlockState blockState = context.getOptionalParameter(LootContextParams.BLOCK_STATE);
             return blockState != null && predicate.test(blockState) &&
                    LootContextExtension.cast(context).lootjs$isType(LootType.BLOCK);
         }
@@ -94,7 +94,7 @@ public class LootModifier extends GroupedLootAction {
 
         @Override
         public boolean test(LootContext context) {
-            Entity entity = context.getParamOrNull(LootContextParams.THIS_ENTITY);
+            Entity entity = context.getOptionalParameter(LootContextParams.THIS_ENTITY);
             return entity != null && entities.contains(entity.getType().builtInRegistryHolder()) &&
                    LootContextExtension.cast(context).lootjs$isType(LootType.ENTITY);
         }

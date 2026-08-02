@@ -2,8 +2,8 @@ package com.almostreliable.lootjs.util;
 
 
 import com.almostreliable.lootjs.core.filters.IdFilter;
+import org.jspecify.annotations.Nullable;
 
-import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.ListIterator;

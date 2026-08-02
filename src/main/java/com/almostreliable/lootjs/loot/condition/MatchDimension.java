@@ -1,17 +1,17 @@
 package com.almostreliable.lootjs.loot.condition;
 
 import com.almostreliable.lootjs.LootJSConditions;
-import net.minecraft.resources.ResourceLocation;
+import com.mojang.serialization.MapCodec;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
-import net.minecraft.world.level.storage.loot.predicates.LootItemConditionType;
 
-public record MatchDimension(ResourceLocation[] dimensions) implements LootItemCondition {
+public record MatchDimension(Identifier[] dimensions) implements LootItemCondition {
 
     @Override
     public boolean test(LootContext context) {
-        ResourceLocation levelDimension = context.getLevel().dimension().location();
-        for (ResourceLocation dimension : dimensions) {
+        Identifier levelDimension = context.getLevel().dimension().identifier();
+        for (Identifier dimension : dimensions) {
             if (dimension.equals(levelDimension)) {
                 return true;
             }
@@ -21,12 +21,12 @@ public record MatchDimension(ResourceLocation[] dimensions) implements LootItemC
     }
 
     @Override
-    public ResourceLocation[] dimensions() {
+    public Identifier[] dimensions() {
         return dimensions.clone();
     }
 
     @Override
-    public LootItemConditionType getType() {
+    public MapCodec<? extends LootItemCondition> codec() {
         return LootJSConditions.ANY_DIMENSION.value();
     }
 }

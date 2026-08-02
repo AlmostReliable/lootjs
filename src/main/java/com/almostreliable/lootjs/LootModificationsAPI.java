@@ -4,7 +4,7 @@ import com.almostreliable.lootjs.core.LootBucket;
 import com.almostreliable.lootjs.core.LootContextInfo;
 import com.almostreliable.lootjs.core.filters.IdFilter;
 import com.almostreliable.lootjs.loot.modifier.LootModifier;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.storage.loot.LootContext;
 
@@ -17,9 +17,6 @@ public class LootModificationsAPI {
     public static final List<IdFilter> FILTERS = new ArrayList<>();
     private static final List<LootModifier> modifiers = new ArrayList<>();
     public static boolean DISABLE_WITHER_DROPPING_NETHER_STAR = false;
-    public static boolean DISABLE_ZOMBIE_DROPPING_HEAD = false;
-    public static boolean DISABLE_SKELETON_DROPPING_HEAD = false;
-    public static boolean DISABLE_CREEPER_DROPPING_HEAD = false;
     public static boolean DEBUG_LOOT_MODIFIERS = false;
 
     private LootModificationsAPI() {
@@ -29,7 +26,7 @@ public class LootModificationsAPI {
         modifiers.clear();
         DEBUG_LOOT_MODIFIERS = false;
         FILTERS.clear();
-        FILTERS.add(new IdFilter.ByLocation(ResourceLocation.parse("minecraft:blocks/fire")));
+        FILTERS.add(new IdFilter.ByLocation(Identifier.parse("minecraft:blocks/fire")));
     }
 
     public List<LootModifier> modifiers() {
@@ -42,8 +39,6 @@ public class LootModificationsAPI {
                 return;
             }
         }
-
-        context.getLevel().getProfiler().push("LootModificationsAPI::invokeActions");
 
         // TODO more testing here. I don't really know why there are empty items in the list or better:
         // TODO There are items which refer to the correct item but their cache flag is true so it acts like air
@@ -63,7 +58,6 @@ public class LootModificationsAPI {
             runModifiers(context, lootBucket);
         }
 
-        context.getLevel().getProfiler().pop();
     }
 
     private static void runModifiers(LootContext context, LootBucket lootBucket) {

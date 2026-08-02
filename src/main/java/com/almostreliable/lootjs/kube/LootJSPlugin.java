@@ -25,7 +25,7 @@ import dev.latvian.mods.kubejs.script.TypeDescriptionRegistry;
 import dev.latvian.mods.kubejs.script.TypeWrapperRegistry;
 import dev.latvian.mods.rhino.type.RecordTypeInfo;
 import dev.latvian.mods.rhino.type.TypeInfo;
-import net.minecraft.advancements.critereon.*;
+import net.minecraft.advancements.criterion.*;
 
 import java.util.regex.Pattern;
 

@@ -4,10 +4,9 @@ import com.almostreliable.lootjs.core.filters.IdFilter;
 import com.almostreliable.lootjs.util.DebugInfo;
 import com.almostreliable.lootjs.util.ListHolder;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
-import net.minecraft.world.level.storage.loot.predicates.LootItemConditionType;
 
 import java.util.Iterator;
 import java.util.List;
@@ -51,7 +50,7 @@ public class LootConditionList extends ListHolder<LootItemCondition, LootItemCon
         info.add("% Conditions: [");
         info.push();
         for (var entry : this) {
-            ResourceLocation key = BuiltInRegistries.LOOT_CONDITION_TYPE.getKey(entry.getType());
+            Identifier key = BuiltInRegistries.LOOT_CONDITION_TYPE.getKey(entry.codec());
             if (key == null) continue;
             info.add(key.toString());
         }
@@ -63,7 +62,7 @@ public class LootConditionList extends ListHolder<LootItemCondition, LootItemCon
     @Override
     public boolean test(LootContext context) {
         for (LootItemCondition condition : this) {
-            if(!condition.test(context)) {
+            if (!condition.test(context)) {
                 return false;
             }
         }
@@ -72,16 +71,21 @@ public class LootConditionList extends ListHolder<LootItemCondition, LootItemCon
     }
 
     public boolean remove(IdFilter type) {
-        return elements.removeIf(element -> type.test(BuiltInRegistries.LOOT_CONDITION_TYPE.getKey(element.getType())));
+        return elements.removeIf(element -> {
+            var id = BuiltInRegistries.LOOT_CONDITION_TYPE.getKey(element.codec());
+            if (id == null) return false;
+            return type.test(id);
+        });
     }
 
-    public boolean contains(LootItemConditionType type) {
+    public boolean contains(Identifier type) {
         return indexOf(type) != -1;
     }
 
-    public int indexOf(LootItemConditionType type) {
+    public int indexOf(Identifier type) {
         for (int i = 0; i < elements.size(); i++) {
-            if (elements.get(i).getType().equals(type)) {
+            var id = BuiltInRegistries.LOOT_CONDITION_TYPE.getKey(elements.get(i).codec());
+            if (id != null && id.equals(type)) {
                 return i;
             }
         }
@@ -89,9 +93,10 @@ public class LootConditionList extends ListHolder<LootItemCondition, LootItemCon
         return -1;
     }
 
-    public int lastIndexOf(LootItemConditionType type) {
+    public int lastIndexOf(Identifier type) {
         for (int i = elements.size() - 1; i >= 0; i--) {
-            if (elements.get(i).getType().equals(type)) {
+            var id = BuiltInRegistries.LOOT_CONDITION_TYPE.getKey(elements.get(i).codec());
+            if (id != null && id.equals(type)) {
                 return i;
             }
         }

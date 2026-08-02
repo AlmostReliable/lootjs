@@ -7,13 +7,12 @@ import dev.latvian.mods.kubejs.script.KubeJSContext;
 import dev.latvian.mods.kubejs.util.RegistryAccessContainer;
 import dev.latvian.mods.rhino.Context;
 import dev.latvian.mods.rhino.type.TypeInfo;
-import net.minecraft.advancements.critereon.ItemPredicate;
-import net.minecraft.advancements.critereon.MinMaxBounds;
+import net.minecraft.advancements.criterion.DataComponentMatchers;
+import net.minecraft.advancements.criterion.ItemPredicate;
+import net.minecraft.advancements.criterion.MinMaxBounds;
 import net.minecraft.core.HolderSet;
-import net.minecraft.core.component.DataComponentPredicate;
 import net.minecraft.world.item.Item;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
@@ -25,10 +24,16 @@ public class ItemPredicateWrapper {
     public static ItemPredicate of(Context cx, Object o, TypeInfo target) {
         return switch (o) {
             case ItemPredicate i -> i;
-            case ItemFilter filter -> ItemPredicate.Builder
-                    .item()
-                    .withSubPredicate(ItemFilterWrapper.TYPE, new ItemFilterWrapper(filter))
-                    .build();
+            case ItemFilter filter -> {
+                var matcher = DataComponentMatchers.Builder
+                        .components()
+                        .partial(ItemFilterWrapper.TYPE, new ItemFilterWrapper(filter))
+                        .build();
+                yield ItemPredicate.Builder
+                        .item()
+                        .withComponents(matcher)
+                        .build();
+            }
             case Map<?, ?> map -> {
                 RegistryAccessContainer registries = ((KubeJSContext) cx).getRegistries();
                 KubeOps ops = KubeOps.create(registries);
@@ -38,8 +43,7 @@ public class ItemPredicateWrapper {
                 var set = (HolderSet<Item>) cx.jsToJava(o, ITEM_HOLDER_SET);
                 yield new ItemPredicate(Optional.of(set),
                         MinMaxBounds.Ints.ANY,
-                        DataComponentPredicate.EMPTY,
-                        new HashMap<>());
+                        DataComponentMatchers.ANY);
             }
         };
     }

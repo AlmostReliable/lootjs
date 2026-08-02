@@ -5,22 +5,18 @@ import com.google.gson.JsonObject;
 import com.mojang.serialization.JsonOps;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderSet;
-import net.minecraft.core.component.DataComponentType;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.RegistryOps;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.alchemy.Potion;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.level.storage.loot.IntRange;
 import net.minecraft.world.level.storage.loot.functions.*;
 import net.minecraft.world.level.storage.loot.providers.number.NumberProvider;
+import org.jspecify.annotations.Nullable;
 
-import javax.annotation.Nullable;
-import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 
@@ -133,23 +129,24 @@ public interface LootFunctionsContainer<F> {
     }
 
     default F toggleTooltips(Map<String, Boolean> toggles) {
-        Map<ToggleTooltips.ComponentToggle<?>, Boolean> map = new HashMap<>();
-        toggles.forEach((name, flag) -> {
-            ResourceLocation id = ResourceLocation.parse(name);
-            DataComponentType<?> type = BuiltInRegistries.DATA_COMPONENT_TYPE.get(id);
-            if (type == null) {
-                throw new IllegalArgumentException("Component type not found: " + name);
-            }
-
-            ToggleTooltips.ComponentToggle<?> toggle = ToggleTooltips.TOGGLES.get(type);
-            if (toggle == null) {
-                throw new IllegalArgumentException("Can't toggle tooltip visiblity for: " + name);
-            }
-
-            map.put(toggle, flag);
-        });
-
-        return addFunction(new ToggleTooltips(List.of(), map));
+        throw new UnsupportedOperationException("Currently not support - prefer to use `jsonFunction`");
+//        Map<ToggleTooltips.ComponentToggle<?>, Boolean> map = new HashMap<>();
+//        toggles.forEach((name, flag) -> {
+//            Identifier id = Identifier.parse(name);
+//            DataComponentType<?> type = BuiltInRegistries.DATA_COMPONENT_TYPE.get(id);
+//            if (type == null) {
+//                throw new IllegalArgumentException("Component type not found: " + name);
+//            }
+//
+//            ToggleTooltips.ComponentToggle<?> toggle = ToggleTooltips.TOGGLES.get(type);
+//            if (toggle == null) {
+//                throw new IllegalArgumentException("Can't toggle tooltip visiblity for: " + name);
+//            }
+//
+//            map.put(toggle, flag);
+//        });
+//
+//        return addFunction(new ToggleTooltips(List.of(), map));
     }
 
     default F jsonFunction(JsonObject json) {

@@ -7,10 +7,9 @@ import com.almostreliable.lootjs.loot.table.LootEntriesTransformer;
 import com.almostreliable.lootjs.loot.table.LootEntryAppender;
 import com.almostreliable.lootjs.util.DebugInfo;
 import net.minecraft.world.level.storage.loot.entries.CompositeEntryBase;
-import net.minecraft.world.level.storage.loot.entries.LootPoolEntryType;
 import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
+import org.jspecify.annotations.Nullable;
 
-import javax.annotation.Nullable;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 import java.util.function.UnaryOperator;
@@ -43,11 +42,6 @@ public class CompositeLootEntry implements LootEntry, LootEntriesTransformer, Lo
     public CompositeLootEntry entries(Consumer<LootEntryList> callback) {
         callback.accept(getEntries());
         return this;
-    }
-
-    @Override
-    public LootPoolEntryType getVanillaType() {
-        return vanillaEntry.getType();
     }
 
     @Override

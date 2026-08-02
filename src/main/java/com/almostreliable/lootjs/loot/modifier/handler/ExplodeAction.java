@@ -21,7 +21,7 @@ public class ExplodeAction implements LootAction {
 
     @Override
     public void apply(LootContext context, LootBucket loot) {
-        Vec3 origin = context.getParamOrNull(LootContextParams.ORIGIN);
+        Vec3 origin = context.getOptionalParameter(LootContextParams.ORIGIN);
         // TODO Explosion
 //        Explosion explosion = new Explosion(context.getLevel(),
 //                null,

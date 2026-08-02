@@ -1,9 +1,9 @@
 package com.almostreliable.lootjs.kube.wrappers;
 
 import com.almostreliable.lootjs.LootJS;
-import net.minecraft.advancements.critereon.StatePropertiesPredicate;
+import net.minecraft.advancements.criterion.StatePropertiesPredicate;
+import org.jspecify.annotations.Nullable;
 
-import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;

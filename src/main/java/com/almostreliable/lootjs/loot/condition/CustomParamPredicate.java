@@ -1,34 +1,23 @@
 package com.almostreliable.lootjs.loot.condition;
 
 import com.almostreliable.lootjs.LootJSConditions;
+import com.mojang.serialization.MapCodec;
+import net.minecraft.util.context.ContextKey;
 import net.minecraft.world.level.storage.loot.LootContext;
-import net.minecraft.world.level.storage.loot.parameters.LootContextParam;
 import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
-import net.minecraft.world.level.storage.loot.predicates.LootItemConditionType;
 
-import java.util.Objects;
 import java.util.function.Predicate;
 
-public class CustomParamPredicate<T> implements LootItemCondition {
-    private final Predicate<T> predicate;
-    private final LootContextParam<T> param;
-
-    public CustomParamPredicate(LootContextParam<T> param, Predicate<T> predicate) {
-        Objects.requireNonNull(param);
-        Objects.requireNonNull(predicate);
-        this.param = param;
-        this.predicate = predicate;
-    }
+public record CustomParamPredicate<T>(ContextKey<T> param, Predicate<T> predicate) implements LootItemCondition {
 
     @Override
     public boolean test(LootContext lootContext) {
-        T paramOrNull = lootContext.getParamOrNull(param);
+        T paramOrNull = lootContext.getOptionalParameter(param);
         return paramOrNull != null && predicate.test(paramOrNull);
     }
 
-
     @Override
-    public LootItemConditionType getType() {
+    public MapCodec<? extends LootItemCondition> codec() {
         return LootJSConditions.PARAM.value();
     }
 }

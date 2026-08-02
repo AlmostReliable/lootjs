@@ -1,14 +1,13 @@
 package com.almostreliable.lootjs.core.filters;
 
-import net.minecraft.advancements.critereon.MinMaxBounds;
+import net.minecraft.advancements.criterion.MinMaxBounds;
 import net.minecraft.core.component.DataComponentType;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.EquipmentSlotGroup;
-import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.common.ItemAbility;
@@ -22,8 +21,12 @@ public interface ItemFilter {
     ItemFilter NONE = itemStack -> false;
     ItemFilter ANY = itemStack -> true;
     ItemFilter EMPTY = ItemStack::isEmpty;
-    ItemFilter ARMOR = itemStack -> itemStack.getItem() instanceof ArmorItem;
-    ItemFilter EDIBLE = itemStack -> itemStack.getFoodProperties(null) != null;
+    ItemFilter ARMOR = itemStack -> {
+        var equipable = itemStack.get(DataComponents.EQUIPPABLE);
+        if (equipable == null) return false;
+        return equipable.slot().isArmor();
+    };
+    ItemFilter EDIBLE = itemStack -> itemStack.get(DataComponents.FOOD) != null;
     ItemFilter DAMAGEABLE = ItemStack::isDamageableItem;
     ItemFilter DAMAGED = ItemStack::isDamaged;
     ItemFilter ENCHANTED = ItemStack::isEnchanted;
@@ -54,7 +57,7 @@ public interface ItemFilter {
             tag = tag.substring(1);
         }
 
-        return new ItemFilterImpl.ByTag(TagKey.create(Registries.ITEM, ResourceLocation.parse(tag)));
+        return new ItemFilterImpl.ByTag(TagKey.create(Registries.ITEM, Identifier.parse(tag)));
     }
 
     static ItemFilter item(ItemStack otherItemStack, boolean checkComponents) {

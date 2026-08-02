@@ -2,9 +2,10 @@ package com.almostreliable.lootjs.mixin.forge;
 
 import com.almostreliable.lootjs.LootEvents;
 import com.almostreliable.lootjs.LootModificationsAPI;
-import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.BiMap;
+import com.google.common.collect.ImmutableBiMap;
 import com.google.gson.JsonElement;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.util.profiling.ProfilerFiller;
 import net.neoforged.neoforge.common.loot.IGlobalLootModifier;
@@ -22,15 +23,15 @@ import java.util.Set;
 @Mixin(LootModifierManager.class)
 public class LootModifierManagerMixin {
 
-    @Shadow(remap = false) private Map<ResourceLocation, IGlobalLootModifier> registeredLootModifiers;
+    @Shadow private BiMap<Identifier, IGlobalLootModifier> registeredLootModifiers;
 
     @Inject(method = "apply(Ljava/util/Map;Lnet/minecraft/server/packs/resources/ResourceManager;Lnet/minecraft/util/profiling/ProfilerFiller;)V", at = @At("RETURN"), remap = false)
-    private void lootjs$lootModifierReload(Map<ResourceLocation, JsonElement> resourceList, ResourceManager resourceManagerIn, ProfilerFiller profilerIn, CallbackInfo ci) {
-        Set<ResourceLocation> locations = this.registeredLootModifiers.keySet();
+    private void lootjs$lootModifierReload(Map<Identifier, JsonElement> resourceList, ResourceManager resourceManagerIn, ProfilerFiller profilerIn, CallbackInfo ci) {
+        Set<Identifier> locations = this.registeredLootModifiers.keySet();
         LootModificationsAPI.reload();
 
-        Map<ResourceLocation, IGlobalLootModifier> modifiers = new HashMap<>(registeredLootModifiers);
+        Map<Identifier, IGlobalLootModifier> modifiers = new HashMap<>(registeredLootModifiers);
         LootEvents.invokeModifiers(modifiers);
-        registeredLootModifiers = ImmutableMap.copyOf(modifiers);
+        registeredLootModifiers = ImmutableBiMap.copyOf(modifiers);
     }
 }

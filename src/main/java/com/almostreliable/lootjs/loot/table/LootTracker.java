@@ -1,9 +1,9 @@
 package com.almostreliable.lootjs.loot.table;
 
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.ItemStack;
+import org.jspecify.annotations.Nullable;
 
-import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
@@ -13,9 +13,9 @@ public class LootTracker implements Consumer<ItemStack> {
     private final List<ItemStack> loot = new ArrayList<>();
     private final Consumer<ItemStack> originConsumer;
     @Nullable
-    private final ResourceLocation tableId;
+    private final Identifier tableId;
 
-    public LootTracker(Consumer<ItemStack> originConsumer, @Nullable ResourceLocation tableId) {
+    public LootTracker(Consumer<ItemStack> originConsumer, @Nullable Identifier tableId) {
         this.originConsumer = originConsumer;
         this.tableId = tableId;
     }
@@ -34,7 +34,7 @@ public class LootTracker implements Consumer<ItemStack> {
     }
 
     @Nullable
-    public ResourceLocation getTableId() {
+    public Identifier getTableId() {
         return tableId;
     }
 

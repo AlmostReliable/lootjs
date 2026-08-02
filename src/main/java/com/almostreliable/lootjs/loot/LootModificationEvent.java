@@ -11,7 +11,7 @@ import com.google.common.base.Preconditions;
 import dev.latvian.mods.kubejs.script.ConsoleJS;
 import dev.latvian.mods.rhino.util.HideFromJS;
 import net.minecraft.core.HolderSet;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.EntityType;
 import net.neoforged.neoforge.common.loot.IGlobalLootModifier;
 import org.apache.commons.lang3.StringUtils;
@@ -21,22 +21,22 @@ import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 public class LootModificationEvent {
-    protected final Map<ResourceLocation, IGlobalLootModifier> modifiers;
-    protected final List<ResourceLocation> removedGlobalModifiers = new ArrayList<>();
+    protected final Map<Identifier, IGlobalLootModifier> modifiers;
+    protected final List<Identifier> removedGlobalModifiers = new ArrayList<>();
     protected final List<LootModifier.Builder> modifierBuilders = new ArrayList<>();
 
-    public LootModificationEvent(Map<ResourceLocation, IGlobalLootModifier> modifiers) {
+    public LootModificationEvent(Map<Identifier, IGlobalLootModifier> modifiers) {
         this.modifiers = modifiers;
     }
 
     public List<String> getGlobalModifiers() {
-        return modifiers.keySet().stream().map(ResourceLocation::toString).collect(Collectors.toList());
+        return modifiers.keySet().stream().map(Identifier::toString).collect(Collectors.toList());
     }
 
     public void removeGlobalModifiers(IdFilter... filters) {
-        Set<ResourceLocation> toRemove = modifiers.keySet().stream().filter(resourceLocation -> {
+        Set<Identifier> toRemove = modifiers.keySet().stream().filter(Identifier -> {
             for (IdFilter filter : filters) {
-                if (filter.test(resourceLocation)) {
+                if (filter.test(Identifier)) {
                     return true;
                 }
             }
@@ -100,18 +100,6 @@ public class LootModificationEvent {
 
     public void disableWitherStarDrop() {
         LootModificationsAPI.DISABLE_WITHER_DROPPING_NETHER_STAR = true;
-    }
-
-    public void disableCreeperHeadDrop() {
-        LootModificationsAPI.DISABLE_CREEPER_DROPPING_HEAD = true;
-    }
-
-    public void disableSkeletonHeadDrop() {
-        LootModificationsAPI.DISABLE_SKELETON_DROPPING_HEAD = true;
-    }
-
-    public void disableZombieHeadDrop() {
-        LootModificationsAPI.DISABLE_ZOMBIE_DROPPING_HEAD = true;
     }
 
     @HideFromJS

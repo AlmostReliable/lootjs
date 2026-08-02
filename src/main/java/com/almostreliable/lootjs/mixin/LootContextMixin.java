@@ -5,12 +5,12 @@ import com.almostreliable.lootjs.loot.extension.LootContextExtension;
 import com.almostreliable.lootjs.loot.extension.LootParamsExtension;
 import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.LootParams;
+import org.jspecify.annotations.Nullable;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 
-import javax.annotation.Nullable;
 import java.util.HashMap;
 import java.util.Map;
 

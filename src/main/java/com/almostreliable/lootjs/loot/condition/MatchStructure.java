@@ -1,20 +1,20 @@
 package com.almostreliable.lootjs.loot.condition;
 
 import com.almostreliable.lootjs.LootJSConditions;
+import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderSet;
 import net.minecraft.world.level.levelgen.structure.Structure;
 import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
-import net.minecraft.world.level.storage.loot.predicates.LootItemConditionType;
 import net.minecraft.world.phys.Vec3;
 
 public record MatchStructure(HolderSet<Structure> structures, boolean exact) implements LootItemCondition {
 
     @Override
     public boolean test(LootContext context) {
-        Vec3 origin = context.getParamOrNull(LootContextParams.ORIGIN);
+        Vec3 origin = context.getOptionalParameter(LootContextParams.ORIGIN);
         if (origin == null) {
             return false;
         }
@@ -38,7 +38,7 @@ public record MatchStructure(HolderSet<Structure> structures, boolean exact) imp
     }
 
     @Override
-    public LootItemConditionType getType() {
+    public MapCodec<? extends LootItemCondition> codec() {
         return LootJSConditions.ANY_STRUCTURE.value();
     }
 }

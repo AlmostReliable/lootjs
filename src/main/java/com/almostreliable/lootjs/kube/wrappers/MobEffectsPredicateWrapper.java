@@ -6,11 +6,11 @@ import dev.latvian.mods.kubejs.script.KubeJSContext;
 import dev.latvian.mods.rhino.Context;
 import dev.latvian.mods.rhino.type.RecordTypeInfo;
 import dev.latvian.mods.rhino.type.TypeInfo;
-import net.minecraft.advancements.critereon.MobEffectsPredicate;
+import net.minecraft.advancements.criterion.MobEffectsPredicate;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.effect.MobEffect;
 
 import java.util.HashMap;
@@ -24,7 +24,7 @@ public class MobEffectsPredicateWrapper {
             return m;
         }
 
-        var allEffects = ((KubeJSContext) cx).getRegistries().access().lookupOrThrow(Registries.MOB_EFFECT);
+        var allEffects = ((KubeJSContext) cx).getRegistries().registryAccess().lookupOrThrow(Registries.MOB_EFFECT);
         Map<Holder<MobEffect>, MobEffectsPredicate.MobEffectInstancePredicate> effectMap = new HashMap<>();
         var list = Utils.listOrThrow(o);
         for (Object obj : list) {
@@ -36,7 +36,7 @@ public class MobEffectsPredicateWrapper {
 
                 var effectId = map.get("id").toString();
                 var effect = allEffects.getOrThrow(ResourceKey.create(Registries.MOB_EFFECT,
-                        ResourceLocation.parse(effectId)));
+                        Identifier.parse(effectId)));
                 var instance = (MobEffectsPredicate.MobEffectInstancePredicate) EIP_TYPE_INFO.wrap(cx,
                         map.get("duration"),
                         EIP_TYPE_INFO);

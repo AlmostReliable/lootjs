@@ -10,8 +10,8 @@ import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.phys.Vec3;
 import org.apache.commons.lang3.StringUtils;
+import org.jspecify.annotations.Nullable;
 
-import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
@@ -29,16 +29,16 @@ public class LootContextInfo {
         lci.add("LootTable", Utils.quote(context.getQueriedLootTableId()));
         lci.add("LootType", LootContextExtension.cast(context).lootjs$getType().name());
 
-        Vec3 origin = context.getParamOrNull(LootContextParams.ORIGIN);
+        Vec3 origin = context.getOptionalParameter(LootContextParams.ORIGIN);
         lci.addOptional("Position", origin, Utils::formatPosition);
-        lci.addOptional("Block", context.getParamOrNull(LootContextParams.BLOCK_STATE));
-        lci.addOptional("Explosion", context.getParamOrNull(LootContextParams.EXPLOSION_RADIUS));
-        lci.addOptional("Entity", context.getParamOrNull(LootContextParams.THIS_ENTITY), Utils::formatEntity);
+        lci.addOptional("Block", context.getOptionalParameter(LootContextParams.BLOCK_STATE));
+        lci.addOptional("Explosion", context.getOptionalParameter(LootContextParams.EXPLOSION_RADIUS));
+        lci.addOptional("Entity", context.getOptionalParameter(LootContextParams.THIS_ENTITY), Utils::formatEntity);
         lci.addOptional("Attacking Entity",
-                context.getParamOrNull(LootContextParams.ATTACKING_ENTITY),
+                context.getOptionalParameter(LootContextParams.ATTACKING_ENTITY),
                 Utils::formatEntity);
         lci.addOptional("Direct Attacker",
-                context.getParamOrNull(LootContextParams.DIRECT_ATTACKING_ENTITY),
+                context.getOptionalParameter(LootContextParams.DIRECT_ATTACKING_ENTITY),
                 Utils::formatEntity);
 
         ServerPlayer player = LootContextUtils.getPlayerOrNull(context);
