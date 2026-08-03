@@ -6,7 +6,10 @@ The format is based on [Keep a Changelog],
 and this project adheres to [Semantic Versioning].
 
 ## Unreleased
-- /
+
+- Port to 26.1
+- Due to internal Minecraft changes `Item.of` does not work anymore inside `LootJS.lootTables` event. Use `LootEntry.of`
+  instead.
 
 ## [3.7.0] - 2026-04-29
 
