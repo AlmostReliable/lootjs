@@ -16,7 +16,6 @@ repositories {
 }
 
 almostgradle.setup {
-    withAccessTransformerValidation = false
     tests {
         testMod = true
     }
