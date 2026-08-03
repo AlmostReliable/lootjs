@@ -38,7 +38,7 @@ jobs:
     secrets: inherit
     with:
       java-distribution: "microsoft"
-      java-version: "21"
+      java-version: "25"
       mod_name: "LootJS"
       curseforge_id: "570630"
       modrinth_id: "fJFETWDN"
