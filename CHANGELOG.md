@@ -6,6 +6,9 @@ The format is based on [Keep a Changelog],
 and this project adheres to [Semantic Versioning].
 
 ## Unreleased
+- /
+
+## [4.0.0] - 2026-08-03
 
 - Port to 26.1
 - Due to internal Minecraft changes `Item.of` does not work anymore inside `LootJS.lootTables` event. Use `LootEntry.of`
@@ -336,6 +339,7 @@ We are now on 1.18.2!
 
 <!-- Versions -->
 
+[4.0.0]: https://github.com/AlmostReliable/lootjs/releases/tag/v26.1.2-neoforge-4.0.0
 [3.7.0]: https://github.com/AlmostReliable/lootjs/releases/tag/v1.21.1-neoforge-3.7.0
 [3.6.1]: https://github.com/AlmostReliable/lootjs/releases/tag/v1.21.1-neoforge-3.6.1
 [3.6.0]: https://github.com/AlmostReliable/lootjs/releases/tag/v1.21.1-neoforge-3.6.0
